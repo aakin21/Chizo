@@ -4,8 +4,15 @@ import 'turnuva_tab.dart';
 import 'settings_tab.dart';
 import 'voting_tab.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _profileRefreshKey = 0;
 
   void _openPage(BuildContext context, Widget page, String title) {
     Navigator.push(
@@ -24,6 +31,12 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  void _refreshProfile() {
+    setState(() {
+      _profileRefreshKey++;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +53,7 @@ class HomeScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                  onPressed: () => _openPage(context, const ProfileTab(), "Profilim"),
+                  onPressed: () => _openPage(context, ProfileTab(key: ValueKey(_profileRefreshKey), onRefresh: _refreshProfile), "Profilim"),
                   child: const Text('Profil'),
                 ),
                 ElevatedButton(
@@ -60,7 +73,7 @@ class HomeScreen extends StatelessWidget {
 
           // Altta tam ekran Voting
           Expanded(
-            child: const VotingTab(),
+            child: VotingTab(onVoteCompleted: _refreshProfile),
           ),
         ],
       ),

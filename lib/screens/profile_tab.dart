@@ -6,7 +6,9 @@ import '../services/user_service.dart';
 import '../services/image_service.dart';
 
 class ProfileTab extends StatefulWidget {
-  const ProfileTab({super.key});
+  final VoidCallback? onRefresh;
+  
+  const ProfileTab({super.key, this.onRefresh});
 
   @override
   State<ProfileTab> createState() => _ProfileTabState();
@@ -16,6 +18,11 @@ class _ProfileTabState extends State<ProfileTab> {
   UserModel? currentUser;
   bool isLoading = true;
   bool isUpdating = false;
+  
+  // İstatistik verileri
+  int totalMatches = 0;
+  int wins = 0;
+  int winRate = 0;
 
   @override
   void initState() {
@@ -23,19 +30,63 @@ class _ProfileTabState extends State<ProfileTab> {
     loadUserData();
   }
 
+  @override
+  void didUpdateWidget(ProfileTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Widget güncellendiğinde veriyi yeniden yükle
+    loadUserData();
+  }
+
   Future<void> loadUserData() async {
+    print('ProfileTab: loadUserData called');
     setState(() => isLoading = true);
     try {
       final user = await UserService.getCurrentUser();
-      setState(() {
-        currentUser = user;
-        isLoading = false;
-      });
+      print('ProfileTab: User loaded - totalMatches: ${user?.totalMatches}, wins: ${user?.wins}');
+      
+      // Supabase'den doğrudan istatistik verilerini çek
+      await _loadStatsFromSupabase();
+      
+      if (mounted) {
+        setState(() {
+          currentUser = user;
+          isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() => isLoading = false);
+      print('ProfileTab: Error loading user data: $e');
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Hata: $e')),
       );
+    }
+  }
+
+  // Supabase'den doğrudan istatistik verilerini çek
+  Future<void> _loadStatsFromSupabase() async {
+    try {
+      final user = await UserService.getCurrentUser();
+      if (user != null && mounted) {
+        // Supabase'den doğrudan veriyi çek
+        final response = await UserService.client
+            .from('users')
+            .select('total_matches, wins')
+            .eq('id', user.id)
+            .maybeSingle();
+        
+        if (response != null && mounted) {
+          setState(() {
+            totalMatches = response['total_matches'] ?? 0;
+            wins = response['wins'] ?? 0;
+            winRate = totalMatches > 0 ? ((wins / totalMatches) * 100).round() : 0;
+          });
+          print('ProfileTab: Stats loaded from Supabase for user ${user.id} - matches: $totalMatches, wins: $wins, winRate: $winRate%');
+        }
+      }
+    } catch (e) {
+      print('ProfileTab: Error loading stats from Supabase: $e');
     }
   }
 
@@ -129,6 +180,15 @@ class _ProfileTabState extends State<ProfileTab> {
         leading: BackButton(onPressed: () {
           Navigator.pop(context); // HomeScreen'e döner
         }),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () async {
+              await loadUserData();
+              await _loadStatsFromSupabase();
+            },
+          ),
+        ],
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -199,38 +259,65 @@ class _ProfileTabState extends State<ProfileTab> {
 
                       const SizedBox(height: 24),
 
-                      // İstatistikler
-                      FutureBuilder<Map<String, int>>(
-                        future: UserService.getUserStats(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            final stats = snapshot.data!;
-                            return Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'İstatistikler',
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: [
-                                        _buildStatItem('Kazanma', '${stats['wins'] ?? 0}'),
-                                        _buildStatItem('Toplam Maç', '${stats['totalMatches'] ?? 0}'),
-                                        _buildStatItem('Kazanma Oranı', '%${stats['winRate'] ?? 0}'),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                      // Yeni İstatistikler Barı - Supabase'den doğrudan çekilen veriler
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'İstatistikler',
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               ),
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
+                              const SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Column(
+                                    children: [
+                                      Text(
+                                        '$totalMatches',
+                                        style: const TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                      const Text('Toplam Match'),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      Text(
+                                        '$wins',
+                                        style: const TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                                      const Text('Kazanma'),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      Text(
+                                        '$winRate%',
+                                        style: const TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.orange,
+                                        ),
+                                      ),
+                                      const Text('Kazanma Oranı'),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
 
                       const SizedBox(height: 24),
@@ -308,18 +395,4 @@ class _ProfileTabState extends State<ProfileTab> {
     );
   }
 
-  Widget _buildStatItem(String label, String value) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        Text(
-          label,
-          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-        ),
-      ],
-    );
-  }
 }

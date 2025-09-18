@@ -5,7 +5,9 @@ import '../models/user_model.dart';
 import '../services/match_service.dart';
 
 class VotingTab extends StatefulWidget {
-  const VotingTab({super.key});
+  final VoidCallback? onVoteCompleted;
+  
+  const VotingTab({super.key, this.onVoteCompleted});
 
   @override
   State<VotingTab> createState() => _VotingTabState();
@@ -24,12 +26,12 @@ class _VotingTabState extends State<VotingTab> {
 
   Future<void> loadMatches() async {
     setState(() => isLoading = true);
-    try {
-      // Yeni random match oluştur
-      final newMatches = await MatchService.generateRandomMatches(matchCount: 1);
-      
-      // Oluşturulan match'leri yükle (otomatik temizlik dahil)
-      final votableMatches = await MatchService.getVotableMatches();
+      try {
+        // Yeni random match oluştur
+        await MatchService.generateRandomMatches(matchCount: 1);
+        
+        // Oluşturulan match'leri yükle (otomatik temizlik dahil)
+        final votableMatches = await MatchService.getVotableMatches();
       
       setState(() {
         matches = votableMatches;
@@ -53,6 +55,9 @@ class _VotingTabState extends State<VotingTab> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Oyunuz kaydedildi!')),
           );
+          
+          // Profil sayfasını yenile
+          widget.onVoteCompleted?.call();
           
           // Mevcut match'i listeden kaldır
           setState(() {
@@ -85,7 +90,6 @@ class _VotingTabState extends State<VotingTab> {
             'Oylama',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          
           
           const SizedBox(height: 20),
           

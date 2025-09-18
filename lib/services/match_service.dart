@@ -157,6 +157,69 @@ class MatchService {
     }
   }
 
+  // Duplicate user'ları temizle (aynı username'e sahip olanları)
+  static Future<void> cleanupDuplicateUsers() async {
+    try {
+      // Tüm kullanıcıları getir
+      final allUsers = await _client.from('users').select();
+      
+      // Username'e göre grupla
+      Map<String, List<Map<String, dynamic>>> userGroups = {};
+      for (var user in allUsers) {
+        String username = user['username'] ?? '';
+        if (!userGroups.containsKey(username)) {
+          userGroups[username] = [];
+        }
+        userGroups[username]!.add(user);
+      }
+      
+      // Her grup için duplicate'ları temizle
+      for (var entry in userGroups.entries) {
+        String username = entry.key;
+        List<Map<String, dynamic>> users = entry.value;
+        
+        if (users.length > 1) {
+          print('Found ${users.length} duplicate users for username: $username');
+          
+          // En eski kullanıcıyı tut (created_at'e göre sırala)
+          users.sort((a, b) {
+            DateTime aDate = DateTime.parse(a['created_at'] ?? '2025-01-01');
+            DateTime bDate = DateTime.parse(b['created_at'] ?? '2025-01-01');
+            return aDate.compareTo(bDate);
+          });
+          
+          // İlk (en eski) user'ı tut, diğerlerini sil
+          for (int i = 1; i < users.length; i++) {
+            String userIdToDelete = users[i]['id'];
+            print('Deleting duplicate user: $userIdToDelete (keeping oldest: ${users[0]['id']})');
+            
+            // Önce bu user'ın match'lerini sil
+            await _client
+                .from('matches')
+                .delete()
+                .or('user1_id.eq.$userIdToDelete,user2_id.eq.$userIdToDelete');
+            
+            // Bu user'ın vote'larını sil
+            await _client
+                .from('votes')
+                .delete()
+                .eq('voter_id', userIdToDelete);
+            
+            // Sonra user'ı sil
+            await _client
+                .from('users')
+                .delete()
+                .eq('id', userIdToDelete);
+          }
+        }
+      }
+      
+      print('Duplicate users cleanup completed!');
+    } catch (e) {
+      print('Error cleaning up duplicate users: $e');
+    }
+  }
+
   // Silinmiş kullanıcıların match'lerini temizle
   static Future<void> cleanupInvalidMatches() async {
     try {
@@ -245,10 +308,14 @@ class MatchService {
           .from('matches')
           .select('user1_id, user2_id')
           .eq('id', matchId)
-          .single();
+          .maybeSingle();
       
-      final loserId = match['user1_id'] == winnerId ? match['user2_id'] : match['user1_id'];
-      await _updateUserStats(loserId, false);
+      if (match != null) {
+        final loserId = match['user1_id'] == winnerId ? match['user2_id'] : match['user1_id'];
+        await _updateUserStats(loserId, false);
+      }
+
+      // Oylama yapan kullanıcının istatistiklerini güncelleme - sadece kazanan/kaybeden güncellenir
 
       return true;
     } catch (e) {
@@ -260,29 +327,44 @@ class MatchService {
   // Kullanıcı istatistiklerini güncelle
   static Future<void> _updateUserStats(String userId, bool isWinner) async {
     try {
+      print('Updating stats for user: $userId, isWinner: $isWinner');
+      
       // Kullanıcının mevcut istatistiklerini al
       final user = await _client
           .from('users')
           .select('total_matches, wins')
           .eq('id', userId)
-          .single();
+          .maybeSingle();
 
+      if (user == null) {
+        print('User not found for stats update: $userId');
+        return;
+      }
+
+      print('Current user data: $user');
       final currentMatches = user['total_matches'] ?? 0;
       final currentWins = user['wins'] ?? 0;
+      print('Current matches: $currentMatches, current wins: $currentWins');
 
       // İstatistikleri güncelle
-      await _client
+      final updateData = {
+        'total_matches': currentMatches + 1,
+        'wins': isWinner ? currentWins + 1 : currentWins,
+        'updated_at': DateTime.now().toIso8601String(),
+      };
+      
+      print('Updating with data: $updateData');
+      
+      final result = await _client
           .from('users')
-          .update({
-            'total_matches': currentMatches + 1,
-            'wins': isWinner ? currentWins + 1 : currentWins,
-            'updated_at': DateTime.now().toIso8601String(),
-          })
+          .update(updateData)
           .eq('id', userId);
 
+      print('Update result: $result');
       print('User stats updated: $userId, matches: ${currentMatches + 1}, wins: ${isWinner ? currentWins + 1 : currentWins}');
     } catch (e) {
       print('Error updating user stats: $e');
+      print('Error type: ${e.runtimeType}');
       // Eğer total_matches veya wins kolonları yoksa, sadece updated_at'i güncelle
       try {
         await _client
@@ -348,6 +430,9 @@ class MatchService {
     try {
       final currentUser = _client.auth.currentUser;
       if (currentUser == null) return [];
+
+      // Duplicate cleanup'ı sadece gerektiğinde manuel olarak çağır
+      // await cleanupDuplicateUsers();
 
       // Get all visible users with profile pictures, grouped by gender (excluding current user)
       final maleUsers = await _client
