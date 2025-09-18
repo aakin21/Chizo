@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
@@ -73,7 +72,7 @@ class _ProfileTabState extends State<ProfileTab> {
     setState(() => isUpdating = true);
 
     try {
-      File? imageFile;
+      XFile? imageFile;
       if (source == ImageSource.gallery) {
         imageFile = await ImageService.pickImageFromGallery();
       } else {
