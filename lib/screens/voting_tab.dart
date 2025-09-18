@@ -25,7 +25,12 @@ class _VotingTabState extends State<VotingTab> {
   Future<void> loadMatches() async {
     setState(() => isLoading = true);
     try {
+      // Yeni random match oluştur
+      final newMatches = await MatchService.generateRandomMatches(matchCount: 1);
+      
+      // Oluşturulan match'leri yükle (otomatik temizlik dahil)
       final votableMatches = await MatchService.getVotableMatches();
+      
       setState(() {
         matches = votableMatches;
         isLoading = false;
@@ -38,35 +43,35 @@ class _VotingTabState extends State<VotingTab> {
     }
   }
 
-  Future<void> _voteForUser(String winnerId) async {
-    if (currentMatchIndex >= matches.length) return;
+      Future<void> _voteForUser(String winnerId) async {
+        if (currentMatchIndex >= matches.length) return;
 
-    final currentMatch = matches[currentMatchIndex];
-    final success = await MatchService.voteForMatch(currentMatch.id, winnerId);
-    
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Oyunuz kaydedildi!')),
-      );
-      
-      // Sonraki match'e geç
-      setState(() {
-        currentMatchIndex++;
-      });
-      
-      // Eğer tüm match'ler bittiyse yenilerini yükle
-      if (currentMatchIndex >= matches.length) {
-        await loadMatches();
-        setState(() {
-          currentMatchIndex = 0;
-        });
+        final currentMatch = matches[currentMatchIndex];
+        final success = await MatchService.voteForMatch(currentMatch.id, winnerId);
+        
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Oyunuz kaydedildi!')),
+          );
+          
+          // Mevcut match'i listeden kaldır
+          setState(() {
+            matches.removeAt(currentMatchIndex);
+            if (currentMatchIndex >= matches.length) {
+              currentMatchIndex = 0;
+            }
+          });
+          
+          // Eğer match kalmadıysa yeni match'ler oluştur
+          if (matches.isEmpty) {
+            await loadMatches();
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Oylama sırasında hata oluştu')),
+          );
+        }
       }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Oylama sırasında hata oluştu')),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,25 +85,7 @@ class _VotingTabState extends State<VotingTab> {
             'Oylama',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 10),
           
-          // Test butonu
-          ElevatedButton(
-            onPressed: () async {
-              final match = await MatchService.createTestMatch();
-              if (match != null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Test match oluşturuldu!')),
-                );
-                await loadMatches(); // Match'leri yeniden yükle
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Test match oluşturulamadı')),
-                );
-              }
-            },
-            child: const Text('Test Match Oluştur'),
-          ),
           
           const SizedBox(height: 20),
           

@@ -68,6 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (user != null) {
         // users tablosuna veri ekle
         await Supabase.instance.client.from('users').insert({
+          'id': user.id, // CRITICAL: Auth user ID'sini ekle
           'username': _usernameController.text.trim(),
           'email': _emailController.text.trim(),
           'coins': 100, // Yeni kullanıcılara 100 coin hediye
@@ -77,6 +78,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'country': _selectedCountry,
           'gender': _selectedGender,
           'is_visible': true,
+          'total_matches': 0,
+          'wins': 0,
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
         });
 
         ScaffoldMessenger.of(context).showSnackBar(

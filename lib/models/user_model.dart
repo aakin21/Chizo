@@ -10,6 +10,8 @@ class UserModel {
   final String? instagramHandle;
   final String? profession;
   final bool isVisible;
+  final int totalMatches;
+  final int wins;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -25,6 +27,8 @@ class UserModel {
     this.instagramHandle,
     this.profession,
     this.isVisible = true,
+    this.totalMatches = 0,
+    this.wins = 0,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -42,6 +46,8 @@ class UserModel {
       instagramHandle: json['instagram_handle'],
       profession: json['profession'],
       isVisible: json['is_visible'] ?? true,
+      totalMatches: json['total_matches'] ?? 0,
+      wins: json['wins'] ?? 0,
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
     );
@@ -60,6 +66,8 @@ class UserModel {
       'instagram_handle': instagramHandle,
       'profession': profession,
       'is_visible': isVisible,
+      'total_matches': totalMatches,
+      'wins': wins,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
