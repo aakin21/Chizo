@@ -1,15 +1,15 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
+import 'package:cross_file/cross_file.dart';
 
 class ImageService {
   static final SupabaseClient _client = Supabase.instance.client;
   static final ImagePicker _picker = ImagePicker();
 
   // Galeriden resim seç
-  static Future<File?> pickImageFromGallery() async {
+  static Future<XFile?> pickImageFromGallery() async {
     try {
       final XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
@@ -18,10 +18,7 @@ class ImageService {
         imageQuality: 80,
       );
       
-      if (image != null) {
-        return File(image.path);
-      }
-      return null;
+      return image;
     } catch (e) {
       print('Error picking image from gallery: $e');
       return null;
@@ -29,7 +26,7 @@ class ImageService {
   }
 
   // Kameradan resim çek
-  static Future<File?> pickImageFromCamera() async {
+  static Future<XFile?> pickImageFromCamera() async {
     try {
       final XFile? image = await _picker.pickImage(
         source: ImageSource.camera,
@@ -38,10 +35,7 @@ class ImageService {
         imageQuality: 80,
       );
       
-      if (image != null) {
-        return File(image.path);
-      }
-      return null;
+      return image;
     } catch (e) {
       print('Error picking image from camera: $e');
       return null;
@@ -49,7 +43,7 @@ class ImageService {
   }
 
   // Resmi Supabase Storage'a yükle
-  static Future<String?> uploadImage(File imageFile, String fileName) async {
+  static Future<String?> uploadImage(XFile imageFile, String fileName) async {
     try {
       final user = _client.auth.currentUser;
       if (user == null) {
@@ -68,25 +62,18 @@ class ImageService {
         finalFileName = '${fileName}.jpg';
       }
 
-      // Basit dosya adı
-      final uniqueFileName = '${DateTime.now().millisecondsSinceEpoch}_$finalFileName';
+      // Kullanıcı ID'si ile dosya adı oluştur (RLS policy için gerekli)
+      final uniqueFileName = '${user.id}_${DateTime.now().millisecondsSinceEpoch}_$finalFileName';
       
       print('Final file name: $uniqueFileName');
       
-      Uint8List fileBytes;
+      // XFile'dan bytes al
+      final Uint8List fileBytes = await imageFile.readAsBytes();
+      print('File bytes length: ${fileBytes.length}');
       
-      if (kIsWeb) {
-        // Web için özel işlem
-        fileBytes = await imageFile.readAsBytes();
-        print('File bytes length: ${fileBytes.length}');
-        
-        // İlk birkaç byte'ı kontrol et (dosya tipi için)
-        if (fileBytes.isNotEmpty) {
-          print('First bytes: ${fileBytes.take(10).toList()}');
-        }
-      } else {
-        // Mobil için normal işlem
-        fileBytes = await imageFile.readAsBytes();
+      // İlk birkaç byte'ı kontrol et (dosya tipi için)
+      if (fileBytes.isNotEmpty) {
+        print('First bytes: ${fileBytes.take(10).toList()}');
       }
       
       print('About to upload to storage...');
