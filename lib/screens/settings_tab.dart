@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import '../models/coin_transaction_model.dart';
 import '../services/user_service.dart';
@@ -286,6 +287,86 @@ class _SettingsTabState extends State<SettingsTab> {
                         ),
                       ),
                     ],
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Reklam İzle
+                  Card(
+                    color: Colors.purple.shade50,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.play_circle, color: Colors.purple),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'Reklam İzle',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Günde maksimum 5 reklam izleyebilirsiniz',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              const Icon(Icons.monetization_on, color: Colors.amber, size: 20),
+                              const SizedBox(width: 4),
+                              const Text('Reklam başına: 20 coin'),
+                              const Spacer(),
+                              FutureBuilder<int>(
+                                future: _getTodayAdCount(),
+                                builder: (context, snapshot) {
+                                  final adCount = snapshot.data ?? 0;
+                                  final remainingAds = 5 - adCount;
+                                  return Text(
+                                    'Kalan: $remainingAds/5',
+                                    style: TextStyle(
+                                      color: remainingAds > 0 ? Colors.green : Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: double.infinity,
+                            child: FutureBuilder<int>(
+                              future: _getTodayAdCount(),
+                              builder: (context, snapshot) {
+                                final adCount = snapshot.data ?? 0;
+                                final canWatchAd = adCount < 5;
+                                
+                                return ElevatedButton.icon(
+                                  onPressed: canWatchAd ? _watchAd : null,
+                                  icon: const Icon(Icons.play_arrow),
+                                  label: Text(canWatchAd ? 'Reklam İzle' : 'Günlük limit doldu'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: canWatchAd ? Colors.purple : Colors.grey,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   
                   const SizedBox(height: 16),
@@ -671,6 +752,107 @@ class _SettingsTabState extends State<SettingsTab> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Hesap silinirken hata oluştu: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // Bugünkü reklam sayısını al
+  Future<int> _getTodayAdCount() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final today = DateTime.now().toIso8601String().split('T')[0]; // YYYY-MM-DD formatında
+      final adCount = prefs.getInt('ad_count_$today') ?? 0;
+      return adCount;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  // Reklam izle
+  Future<void> _watchAd() async {
+    try {
+      // Reklam izleme simülasyonu (gerçek reklam entegrasyonu için buraya reklam SDK'sı eklenebilir)
+      await _showAdDialog();
+      
+      // Reklam sayısını artır
+      final prefs = await SharedPreferences.getInstance();
+      final today = DateTime.now().toIso8601String().split('T')[0];
+      final currentCount = prefs.getInt('ad_count_$today') ?? 0;
+      await prefs.setInt('ad_count_$today', currentCount + 1);
+      
+      // Coin ekle
+      await _addCoinsFromAd();
+      
+      // UI'yi güncelle
+      setState(() {});
+      
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Reklam izlenirken hata oluştu: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // Reklam dialog'u göster
+  Future<void> _showAdDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Reklam İzleniyor'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              const Text('Reklam yükleniyor...'),
+              const SizedBox(height: 16),
+              const Text(
+                'Bu simülasyon reklamıdır. Gerçek uygulamada burada reklam gösterilecektir.',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Reklamdan coin ekle
+  Future<void> _addCoinsFromAd() async {
+    try {
+      // UserService'e coin ekleme fonksiyonu çağır
+      final success = await UserService.updateCoins(20, 'earned', 'Reklam izleme');
+      
+      if (success) {
+        // Kullanıcı verilerini yenile
+        await loadUserData();
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Reklam izlendi! +20 coin kazandınız!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Coin eklenirken hata oluştu'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Hata: $e'),
           backgroundColor: Colors.red,
         ),
       );
