@@ -14,9 +14,45 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _usernameController = TextEditingController();
   final _ageController = TextEditingController();
-  final _countryController = TextEditingController();
+  String? _selectedCountry;
   String? _selectedGender;
   bool _isLoading = false;
+
+  // Avrupa ülkeleri + Türkiye listesi
+  static const List<String> _countries = [
+    'turkiye',
+    'Almanya',
+    'Fransa',
+    'İtalya',
+    'İspanya',
+    'Hollanda',
+    'Belçika',
+    'Avusturya',
+    'İsviçre',
+    'Polonya',
+    'Çek Cumhuriyeti',
+    'Macaristan',
+    'Romanya',
+    'Bulgaristan',
+    'Hırvatistan',
+    'Slovenya',
+    'Slovakya',
+    'Estonya',
+    'Letonya',
+    'Litvanya',
+    'Finlandiya',
+    'İsveç',
+    'Norveç',
+    'Danimarka',
+    'Portekiz',
+    'Yunanistan',
+    'Kıbrıs',
+    'Malta',
+    'Lüksemburg',
+    'İrlanda',
+    'İngiltere',
+    'İzlanda',
+  ];
 
   void register() async {
     setState(() => _isLoading = true);
@@ -38,9 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'age': _ageController.text.trim().isNotEmpty 
               ? int.tryParse(_ageController.text.trim()) 
               : null,
-          'country': _countryController.text.trim().isNotEmpty 
-              ? _countryController.text.trim() 
-              : null,
+          'country': _selectedCountry,
           'gender': _selectedGender,
           'is_visible': true,
         });
@@ -74,7 +108,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _passwordController.dispose();
     _usernameController.dispose();
     _ageController.dispose();
-    _countryController.dispose();
     super.dispose();
   }
 
@@ -90,7 +123,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
             TextField(controller: _emailController, decoration: const InputDecoration(labelText: "Email")),
             TextField(controller: _passwordController, decoration: const InputDecoration(labelText: "Password"), obscureText: true),
             TextField(controller: _ageController, decoration: const InputDecoration(labelText: "Yaş"), keyboardType: TextInputType.number),
-            TextField(controller: _countryController, decoration: const InputDecoration(labelText: "Ülke")),
+            DropdownButtonFormField<String>(
+              value: _selectedCountry,
+              decoration: const InputDecoration(labelText: "Ülke"),
+              items: _countries.map((country) => 
+                DropdownMenuItem(value: country, child: Text(country))
+              ).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedCountry = value;
+                });
+              },
+            ),
             DropdownButtonFormField<String>(
               value: _selectedGender,
               decoration: const InputDecoration(labelText: "Cinsiyet"),

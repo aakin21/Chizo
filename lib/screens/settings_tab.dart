@@ -21,10 +21,46 @@ class _SettingsTabState extends State<SettingsTab> {
 
   final _usernameController = TextEditingController();
   final _ageController = TextEditingController();
-  final _countryController = TextEditingController();
   final _genderController = TextEditingController();
   final _instagramController = TextEditingController();
   final _professionController = TextEditingController();
+  String? _selectedCountry;
+
+  // Avrupa ülkeleri + Türkiye listesi
+  static const List<String> _countries = [
+    'turkiye',
+    'Almanya',
+    'Fransa',
+    'İtalya',
+    'İspanya',
+    'Hollanda',
+    'Belçika',
+    'Avusturya',
+    'İsviçre',
+    'Polonya',
+    'Çek Cumhuriyeti',
+    'Macaristan',
+    'Romanya',
+    'Bulgaristan',
+    'Hırvatistan',
+    'Slovenya',
+    'Slovakya',
+    'Estonya',
+    'Letonya',
+    'Litvanya',
+    'Finlandiya',
+    'İsveç',
+    'Norveç',
+    'Danimarka',
+    'Portekiz',
+    'Yunanistan',
+    'Kıbrıs',
+    'Malta',
+    'Lüksemburg',
+    'İrlanda',
+    'İngiltere',
+    'İzlanda',
+  ];
 
   @override
   void initState() {
@@ -36,7 +72,6 @@ class _SettingsTabState extends State<SettingsTab> {
   void dispose() {
     _usernameController.dispose();
     _ageController.dispose();
-    _countryController.dispose();
     _genderController.dispose();
     _instagramController.dispose();
     _professionController.dispose();
@@ -55,7 +90,7 @@ class _SettingsTabState extends State<SettingsTab> {
       if (user != null) {
         _usernameController.text = user.username;
         _ageController.text = user.age?.toString() ?? '';
-        _countryController.text = user.country ?? '';
+        _selectedCountry = user.country;
         _genderController.text = user.gender ?? '';
         _instagramController.text = user.instagramHandle ?? '';
         _professionController.text = user.profession ?? '';
@@ -77,9 +112,7 @@ class _SettingsTabState extends State<SettingsTab> {
         age: _ageController.text.trim().isNotEmpty 
             ? int.tryParse(_ageController.text.trim()) 
             : null,
-        country: _countryController.text.trim().isNotEmpty 
-            ? _countryController.text.trim() 
-            : null,
+        country: _selectedCountry,
         gender: _genderController.text.trim().isNotEmpty 
             ? _genderController.text.trim() 
             : null,
@@ -167,12 +200,22 @@ class _SettingsTabState extends State<SettingsTab> {
                   
                   const SizedBox(height: 16),
                   
-                  TextField(
-                    controller: _countryController,
+                  DropdownButtonFormField<String>(
+                    value: _selectedCountry != null && _countries.contains(_selectedCountry) 
+                        ? _selectedCountry 
+                        : null,
                     decoration: const InputDecoration(
                       labelText: 'Ülke',
                       border: OutlineInputBorder(),
                     ),
+                    items: _countries.map((country) => 
+                      DropdownMenuItem(value: country, child: Text(country))
+                    ).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCountry = value;
+                      });
+                    },
                   ),
                   
                   const SizedBox(height: 16),
