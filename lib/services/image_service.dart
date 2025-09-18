@@ -62,8 +62,8 @@ class ImageService {
         finalFileName = '${fileName}.jpg';
       }
 
-      // Basit dosya adı
-      final uniqueFileName = '${DateTime.now().millisecondsSinceEpoch}_$finalFileName';
+      // Kullanıcı ID'si ile dosya adı oluştur (RLS policy için gerekli)
+      final uniqueFileName = '${user.id}_${DateTime.now().millisecondsSinceEpoch}_$finalFileName';
       
       print('Final file name: $uniqueFileName');
       
