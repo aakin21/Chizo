@@ -99,12 +99,70 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       }
     } catch (e) {
+      String errorMessage = _getUserFriendlyErrorMessage(e.toString());
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Beklenmedik bir hata oluştu: $e")),
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  // Kullanıcı dostu hata mesajları
+  String _getUserFriendlyErrorMessage(String error) {
+    // E-posta ile ilgili hatalar
+    if (error.contains('Invalid email')) {
+      return '❌ Geçersiz e-posta adresi! Lütfen doğru formatta e-posta girin.';
+    }
+    if (error.contains('User already registered')) {
+      return '❌ Bu e-posta adresi zaten kayıtlı! Giriş yapmayı deneyin.';
+    }
+    
+    // Şifre ile ilgili hatalar
+    if (error.contains('Password should be at least')) {
+      return '❌ Şifre en az 6 karakter olmalıdır!';
+    }
+    if (error.contains('Password is too weak')) {
+      return '❌ Şifre çok zayıf! Daha güçlü bir şifre seçin.';
+    }
+    
+    // Kullanıcı adı ile ilgili hatalar
+    if (error.contains('Username already taken')) {
+      return '❌ Bu kullanıcı adı zaten alınmış! Başka bir kullanıcı adı seçin.';
+    }
+    if (error.contains('Username too short')) {
+      return '❌ Kullanıcı adı en az 3 karakter olmalıdır!';
+    }
+    
+    // Ağ bağlantısı hataları
+    if (error.contains('network') || error.contains('connection')) {
+      return '❌ İnternet bağlantınızı kontrol edin!';
+    }
+    if (error.contains('timeout')) {
+      return '❌ Bağlantı zaman aşımı! Lütfen tekrar deneyin.';
+    }
+    
+    // Veritabanı hataları
+    if (error.contains('duplicate key')) {
+      return '❌ Bu bilgiler zaten kullanılıyor! Farklı bilgiler deneyin.';
+    }
+    if (error.contains('constraint')) {
+      return '❌ Girdiğiniz bilgilerde hata var! Lütfen kontrol edin.';
+    }
+    
+    // Genel hatalar
+    if (error.contains('Invalid credentials')) {
+      return '❌ Geçersiz bilgiler! Lütfen kontrol edin.';
+    }
+    if (error.contains('Email rate limit')) {
+      return '❌ Çok fazla e-posta gönderildi! Lütfen bekleyin.';
+    }
+    
+    // Bilinmeyen hatalar için
+    return '❌ Kayıt olunamadı! Lütfen bilgilerinizi kontrol edin.';
   }
 
   @override
