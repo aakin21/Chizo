@@ -11,11 +11,11 @@ class UserService {
       final user = _client.auth.currentUser;
       if (user == null) return null;
 
-      // Önce email ile kullanıcıyı bul
+      // ID ile kullanıcıyı bul (daha güvenli)
       final response = await _client
           .from('users')
           .select()
-          .eq('email', user.email!)
+          .eq('id', user.id)
           .single();
 
       return UserModel.fromJson(response);
@@ -56,7 +56,7 @@ class UserService {
       await _client
           .from('users')
           .update(updateData)
-          .eq('email', user.email!);
+          .eq('id', user.id);
 
       return true;
     } catch (e) {
