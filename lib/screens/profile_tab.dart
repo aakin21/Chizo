@@ -230,6 +230,42 @@ class _ProfileTabState extends State<ProfileTab> {
 
                       const SizedBox(height: 24),
 
+                      // Matchlere Açık Toggle
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Matchlere Açık',
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                              ),
+                              Switch(
+                                value: currentUser?.isVisible ?? false,
+                                onChanged: (value) async {
+                                  final success = await UserService.updateProfile(isVisible: value);
+                                  if (success) {
+                                    await loadUserData();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          value 
+                                            ? 'Artık matchlerde görüneceksiniz!' 
+                                            : 'Matchlerden çıkarıldınız!'
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
                       // Premium Bilgiler
                       if (currentUser!.instagramHandle != null || currentUser!.profession != null)
                         Card(

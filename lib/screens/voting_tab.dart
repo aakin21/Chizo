@@ -80,6 +80,26 @@ class _VotingTabState extends State<VotingTab> {
             'Oylama',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
+          const SizedBox(height: 10),
+          
+          // Test butonu
+          ElevatedButton(
+            onPressed: () async {
+              final match = await MatchService.createTestMatch();
+              if (match != null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Test match oluşturuldu!')),
+                );
+                await loadMatches(); // Match'leri yeniden yükle
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Test match oluşturulamadı')),
+                );
+              }
+            },
+            child: const Text('Test Match Oluştur'),
+          ),
+          
           const SizedBox(height: 20),
           
           if (isLoading)

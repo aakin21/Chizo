@@ -76,7 +76,7 @@ class MatchService {
       final user = _client.auth.currentUser;
       if (user == null) return [];
 
-      // Henüz tamamlanmamış match'leri getir
+      // Henüz tamamlanmamış match'leri getir (kendisi dahil değil)
       final response = await _client
           .from('matches')
           .select('''
@@ -85,8 +85,8 @@ class MatchService {
             user2:users!matches_user2_id_fkey(*)
           ''')
           .eq('is_completed', false)
-          .neq('user1_id', user.id)
-          .neq('user2_id', user.id)
+          .neq('user1_id', user.id)  // Kendisi user1 değil
+          .neq('user2_id', user.id)  // Kendisi user2 değil
           .limit(10);
 
       return (response as List)
@@ -174,6 +174,36 @@ class MatchService {
     } catch (e) {
       print('Error getting match users: $e');
       return [];
+    }
+  }
+
+  // Test için basit match oluştur
+  static Future<MatchModel?> createTestMatch() async {
+    try {
+      // Sadece matchlere açık olan kullanıcıları getir
+      final response = await _client
+          .from('users')
+          .select()
+          .eq('is_visible', true)  // Sadece matchlere açık olanlar
+          .not('profile_image_url', 'is', null)  // Profil fotoğrafı olanlar
+          .limit(10);
+
+      if (response.length < 2) {
+        print('Yeterli kullanıcı yok (is_visible=true ve profil fotoğrafı olan)');
+        return null;
+      }
+
+      // İlk iki kullanıcıyı seç
+      final user1 = response[0];
+      final user2 = response[1];
+
+      // Match oluştur
+      final match = await createMatch(user1['id'], user2['id']);
+      print('Test match oluşturuldu: ${match?.id}');
+      return match;
+    } catch (e) {
+      print('Error creating test match: $e');
+      return null;
     }
   }
 }
