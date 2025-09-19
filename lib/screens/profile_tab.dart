@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import '../models/user_model.dart';
 import '../services/user_service.dart';
 import '../services/image_service.dart';
+import 'match_history_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   final VoidCallback? onRefresh;
@@ -389,6 +390,39 @@ class _ProfileTabState extends State<ProfileTab> {
                               ),
                             ],
                           ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Match History Butonu
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.history,
+                            color: Colors.purple,
+                            size: 28,
+                          ),
+                          title: const Text(
+                            '📊 Match Geçmişi',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: const Text(
+                            'Son 5 matchinizi ve rakiplerinizi görün (5 coin)',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const MatchHistoryScreen(),
+                              ),
+                            );
+                          },
                         ),
                       ),
 
