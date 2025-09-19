@@ -35,6 +35,8 @@ class UserService {
           'username': authUser.email!.split('@')[0],
           'coins': 100,
           'is_visible': true,
+          'show_instagram': false,
+          'show_profession': false,
           'total_matches': 0,
           'wins': 0,
           'created_at': DateTime.now().toIso8601String(),
@@ -95,6 +97,34 @@ class UserService {
       return true;
     } catch (e) {
       print('Error updating profile: $e');
+      return false;
+    }
+  }
+
+  // Premium bilgi görünürlüğünü güncelle
+  static Future<bool> updatePremiumVisibility({
+    bool? showInstagram,
+    bool? showProfession,
+  }) async {
+    try {
+      final authUser = _client.auth.currentUser;
+      if (authUser == null) return false;
+
+      final updateData = <String, dynamic>{
+        'updated_at': DateTime.now().toIso8601String(),
+      };
+
+      if (showInstagram != null) updateData['show_instagram'] = showInstagram;
+      if (showProfession != null) updateData['show_profession'] = showProfession;
+
+      await _client
+          .from('users')
+          .update(updateData)
+          .eq('auth_id', authUser.id);
+
+      return true;
+    } catch (e) {
+      print('Error updating premium visibility: $e');
       return false;
     }
   }

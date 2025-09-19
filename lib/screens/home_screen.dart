@@ -3,6 +3,7 @@ import 'profile_tab.dart';
 import 'turnuva_tab.dart';
 import 'settings_tab.dart';
 import 'voting_tab.dart';
+import 'leaderboard_tab.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -46,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           const SizedBox(height: 16),
-          // Üstte 3 buton
+          // Üstte 4 buton
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -59,6 +60,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ElevatedButton(
                   onPressed: () => _openPage(context, const TurnuvaTab(), "Turnuvalar"),
                   child: const Text('Turnuva'),
+                ),
+                ElevatedButton(
+                  onPressed: () => _openPage(context, const LeaderboardTab(), "Liderlik Tablosu"),
+                  child: const Text('🏆 Liderlik'),
                 ),
                 ElevatedButton(
                   onPressed: () => _openPage(context, const SettingsTab(), "Ayarlar"),

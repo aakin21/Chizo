@@ -284,6 +284,8 @@ class MatchService {
           'username': user.email!.split('@')[0], // Email'den username oluştur
           'coins': 100, // Yeni kullanıcılara 100 coin hediye
           'is_visible': true, // Varsayılan olarak görünür yap
+          'show_instagram': false,
+          'show_profession': false,
           'total_matches': 0,
           'wins': 0,
           'created_at': DateTime.now().toIso8601String(),
@@ -336,6 +338,7 @@ class MatchService {
       if (match != null) {
         final loserId = match['user1_id'] == winnerId ? match['user2_id'] : match['user1_id'];
         await _updateUserStats(loserId, false);
+        
       }
 
       // Oylama yapan kullanıcının istatistiklerini güncelleme - sadece kazanan/kaybeden güncellenir
@@ -447,6 +450,7 @@ class MatchService {
       return [];
     }
   }
+
 
   // Random match generation algorithm
   static Future<List<MatchModel>> generateRandomMatches({int matchCount = 5}) async {

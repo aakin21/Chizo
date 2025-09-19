@@ -23,8 +23,6 @@ class _SettingsTabState extends State<SettingsTab> {
   final _usernameController = TextEditingController();
   final _ageController = TextEditingController();
   final _genderController = TextEditingController();
-  final _instagramController = TextEditingController();
-  final _professionController = TextEditingController();
   String? _selectedCountry;
 
 
@@ -39,8 +37,6 @@ class _SettingsTabState extends State<SettingsTab> {
     _usernameController.dispose();
     _ageController.dispose();
     _genderController.dispose();
-    _instagramController.dispose();
-    _professionController.dispose();
     super.dispose();
   }
 
@@ -58,8 +54,6 @@ class _SettingsTabState extends State<SettingsTab> {
         _ageController.text = user.age?.toString() ?? '';
         _selectedCountry = user.country;
         _genderController.text = user.gender ?? '';
-        _instagramController.text = user.instagramHandle ?? '';
-        _professionController.text = user.profession ?? '';
       }
     } catch (e) {
       setState(() => isLoading = false);
@@ -81,12 +75,6 @@ class _SettingsTabState extends State<SettingsTab> {
         country: _selectedCountry,
         gender: _genderController.text.trim().isNotEmpty 
             ? _genderController.text.trim() 
-            : null,
-        instagramHandle: _instagramController.text.trim().isNotEmpty 
-            ? _instagramController.text.trim() 
-            : null,
-        profession: _professionController.text.trim().isNotEmpty 
-            ? _professionController.text.trim() 
             : null,
       );
       
@@ -227,25 +215,6 @@ class _SettingsTabState extends State<SettingsTab> {
                   ),
                   const SizedBox(height: 16),
                   
-                  TextField(
-                    controller: _instagramController,
-                    decoration: const InputDecoration(
-                      labelText: 'Instagram Hesabı (10 coin)',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.camera_alt),
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  TextField(
-                    controller: _professionController,
-                    decoration: const InputDecoration(
-                      labelText: 'Meslek (5 coin)',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.work),
-                    ),
-                  ),
                 ],
               ),
             ),

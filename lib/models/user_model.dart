@@ -10,6 +10,8 @@ class UserModel {
   final String? instagramHandle;
   final String? profession;
   final bool isVisible;
+  final bool showInstagram;
+  final bool showProfession;
   final int totalMatches;
   final int wins;
   final DateTime createdAt;
@@ -27,6 +29,8 @@ class UserModel {
     this.instagramHandle,
     this.profession,
     this.isVisible = true,
+    this.showInstagram = false,
+    this.showProfession = false,
     this.totalMatches = 0,
     this.wins = 0,
     required this.createdAt,
@@ -46,6 +50,8 @@ class UserModel {
       instagramHandle: json['instagram_handle'],
       profession: json['profession'],
       isVisible: json['is_visible'] ?? true,
+      showInstagram: json['show_instagram'] ?? false,
+      showProfession: json['show_profession'] ?? false,
       totalMatches: json['total_matches'] ?? 0,
       wins: json['wins'] ?? 0,
       createdAt: DateTime.parse(json['created_at']),
@@ -66,11 +72,24 @@ class UserModel {
       'instagram_handle': instagramHandle,
       'profession': profession,
       'is_visible': isVisible,
+      'show_instagram': showInstagram,
+      'show_profession': showProfession,
       'total_matches': totalMatches,
       'wins': wins,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
+  }
+
+  // Kazanma oranını hesapla
+  double get winRate {
+    if (totalMatches == 0) return 0.0;
+    return (wins / totalMatches) * 100;
+  }
+
+  // Kazanma oranını string olarak döndür
+  String get winRateString {
+    return '${winRate.toStringAsFixed(1)}%';
   }
 }
 

@@ -227,6 +227,110 @@ class _ProfileTabState extends State<ProfileTab> {
 
                       const SizedBox(height: 24),
 
+                      // Instagram ve Meslek Ekleme
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                '📱 Premium Bilgiler',
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 12),
+                              const Text(
+                                'Bu bilgileri diğer kullanıcılar coin harcayarak görebilir',
+                                style: TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                              const SizedBox(height: 16),
+                              
+                              // Instagram Ekleme
+                              if (currentUser!.instagramHandle == null)
+                                _buildAddInfoButton(
+                                  'Instagram Hesabı Ekle',
+                                  Icons.camera_alt,
+                                  Colors.pink,
+                                  () => _showAddInfoDialog('Instagram', 'instagram'),
+                                ),
+                              
+                              // Meslek Ekleme
+                              if (currentUser!.profession == null)
+                                _buildAddInfoButton(
+                                  'Meslek Ekle',
+                                  Icons.work,
+                                  Colors.blue,
+                                  () => _showAddInfoDialog('Meslek', 'profession'),
+                                ),
+                              
+                              if (currentUser!.instagramHandle != null || currentUser!.profession != null)
+                                const Text(
+                                  'Premium bilgileriniz eklendi! Görünürlük ayarlarını aşağıdan yapabilirsiniz.',
+                                  style: TextStyle(fontSize: 12, color: Colors.green),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Premium Bilgi Görünürlük Ayarları
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                '💎 Premium Bilgi Görünürlüğü',
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 12),
+                              const Text(
+                                'Bu bilgileri diğer kullanıcılar coin harcayarak görebilir',
+                                style: TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                              const SizedBox(height: 16),
+                              
+                              // Instagram Görünürlük
+                              if (currentUser!.instagramHandle != null)
+                                SwitchListTile(
+                                  title: const Text('Instagram Hesabı'),
+                                  subtitle: Text('@${currentUser!.instagramHandle}'),
+                                  value: currentUser!.showInstagram,
+                                  onChanged: (value) async {
+                                    await UserService.updatePremiumVisibility(showInstagram: value);
+                                    await loadUserData();
+                                  },
+                                  secondary: const Icon(Icons.camera_alt, color: Colors.pink),
+                                ),
+                              
+                              // Meslek Görünürlük
+                              if (currentUser!.profession != null)
+                                SwitchListTile(
+                                  title: const Text('Meslek'),
+                                  subtitle: Text(currentUser!.profession!),
+                                  value: currentUser!.showProfession,
+                                  onChanged: (value) async {
+                                    await UserService.updatePremiumVisibility(showProfession: value);
+                                    await loadUserData();
+                                  },
+                                  secondary: const Icon(Icons.work, color: Colors.blue),
+                                ),
+                              
+                              if (currentUser!.instagramHandle == null && currentUser!.profession == null)
+                                const Text(
+                                  'Instagram ve meslek bilgilerini ayarlardan ekleyerek bu özelliği kullanabilirsin',
+                                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
                       // İstatistikler
                       Card(
                         child: Padding(
@@ -361,5 +465,94 @@ class _ProfileTabState extends State<ProfileTab> {
         subtitle: Text(value),
       ),
     );
+  }
+
+  Widget _buildAddInfoButton(String title, IconData icon, Color color, VoidCallback onTap) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: ElevatedButton.icon(
+        onPressed: onTap,
+        icon: Icon(icon, size: 20),
+        label: Text(title),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+      ),
+    );
+  }
+
+  void _showAddInfoDialog(String type, String field) {
+    final controller = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('$type Ekle'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('$type bilginizi girin:'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                labelText: type,
+                border: const OutlineInputBorder(),
+                prefixIcon: Icon(field == 'instagram' ? Icons.camera_alt : Icons.work),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('İptal'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (controller.text.trim().isNotEmpty) {
+                Navigator.pop(context);
+                await _addPremiumInfo(field, controller.text.trim());
+              }
+            },
+            child: const Text('Ekle'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _addPremiumInfo(String field, String value) async {
+    try {
+      bool success;
+      if (field == 'instagram') {
+        success = await UserService.updateProfile(instagramHandle: value);
+      } else {
+        success = await UserService.updateProfile(profession: value);
+      }
+      
+      if (success) {
+        await loadUserData();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('✅ ${field == 'instagram' ? 'Instagram' : 'Meslek'} bilgisi eklendi!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('❌ Bilgi eklenirken hata oluştu!'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Hata: $e')),
+      );
+    }
   }
 }

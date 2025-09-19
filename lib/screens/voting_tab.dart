@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../models/match_model.dart';
 import '../models/user_model.dart';
 import '../services/match_service.dart';
+import '../services/user_service.dart';
 
 class VotingTab extends StatefulWidget {
   final VoidCallback? onVoteCompleted;
@@ -169,32 +170,57 @@ class _VotingTabState extends State<VotingTab> {
                         child: Column(
                           children: [
                             Expanded(
-                              child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(8),
-                                  ),
-                                ),
-                                child: user1.profileImageUrl != null
-                                    ? CachedNetworkImage(
-                                        imageUrl: user1.profileImageUrl!,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) => Container(
-                                          color: Colors.grey[300],
-                                          child: const Center(
-                                            child: CircularProgressIndicator(),
-                                          ),
-                                        ),
-                                        errorWidget: (context, url, error) => Container(
-                                          color: Colors.grey[300],
-                                          child: const Icon(Icons.person, size: 80),
-                                        ),
-                                      )
-                                    : Container(
-                                        color: Colors.grey[300],
-                                        child: const Icon(Icons.person, size: 50),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.vertical(
+                                        top: Radius.circular(8),
                                       ),
+                                    ),
+                                    child: user1.profileImageUrl != null
+                                        ? CachedNetworkImage(
+                                            imageUrl: user1.profileImageUrl!,
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) => Container(
+                                              color: Colors.grey[300],
+                                              child: const Center(
+                                                child: CircularProgressIndicator(),
+                                              ),
+                                            ),
+                                            errorWidget: (context, url, error) => Container(
+                                              color: Colors.grey[300],
+                                              child: const Icon(Icons.person, size: 80),
+                                            ),
+                                          )
+                                        : Container(
+                                            color: Colors.grey[300],
+                                            child: const Icon(Icons.person, size: 50),
+                                          ),
+                                  ),
+                                  // Premium bilgi butonları
+                                  Positioned(
+                                    top: 8,
+                                    right: 8,
+                                    child: Column(
+                                      children: [
+                                        if (user1.showInstagram && user1.instagramHandle != null)
+                                          _buildOverlayButton(
+                                            Icons.camera_alt,
+                                            Colors.pink,
+                                            () => _showPremiumInfo(user1.instagramHandle!, 'Instagram'),
+                                          ),
+                                        if (user1.showProfession && user1.profession != null)
+                                          _buildOverlayButton(
+                                            Icons.work,
+                                            Colors.blue,
+                                            () => _showPremiumInfo(user1.profession!, 'Meslek'),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             Padding(
@@ -239,32 +265,57 @@ class _VotingTabState extends State<VotingTab> {
                         child: Column(
                           children: [
                             Expanded(
-                              child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(8),
-                                  ),
-                                ),
-                                child: user2.profileImageUrl != null
-                                    ? CachedNetworkImage(
-                                        imageUrl: user2.profileImageUrl!,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) => Container(
-                                          color: Colors.grey[300],
-                                          child: const Center(
-                                            child: CircularProgressIndicator(),
-                                          ),
-                                        ),
-                                        errorWidget: (context, url, error) => Container(
-                                          color: Colors.grey[300],
-                                          child: const Icon(Icons.person, size: 80),
-                                        ),
-                                      )
-                                    : Container(
-                                        color: Colors.grey[300],
-                                        child: const Icon(Icons.person, size: 50),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.vertical(
+                                        top: Radius.circular(8),
                                       ),
+                                    ),
+                                    child: user2.profileImageUrl != null
+                                        ? CachedNetworkImage(
+                                            imageUrl: user2.profileImageUrl!,
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) => Container(
+                                              color: Colors.grey[300],
+                                              child: const Center(
+                                                child: CircularProgressIndicator(),
+                                              ),
+                                            ),
+                                            errorWidget: (context, url, error) => Container(
+                                              color: Colors.grey[300],
+                                              child: const Icon(Icons.person, size: 80),
+                                            ),
+                                          )
+                                        : Container(
+                                            color: Colors.grey[300],
+                                            child: const Icon(Icons.person, size: 50),
+                                          ),
+                                  ),
+                                  // Premium bilgi butonları
+                                  Positioned(
+                                    top: 8,
+                                    right: 8,
+                                    child: Column(
+                                      children: [
+                                        if (user2.showInstagram && user2.instagramHandle != null)
+                                          _buildOverlayButton(
+                                            Icons.camera_alt,
+                                            Colors.pink,
+                                            () => _showPremiumInfo(user2.instagramHandle!, 'Instagram'),
+                                          ),
+                                        if (user2.showProfession && user2.profession != null)
+                                          _buildOverlayButton(
+                                            Icons.work,
+                                            Colors.blue,
+                                            () => _showPremiumInfo(user2.profession!, 'Meslek'),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             Padding(
@@ -286,6 +337,8 @@ class _VotingTabState extends State<VotingTab> {
                 ],
               ),
             ),
+            
+            const SizedBox(height: 20),
             
             const SizedBox(height: 20),
             
@@ -312,5 +365,131 @@ class _VotingTabState extends State<VotingTab> {
     } catch (e) {
       return [];
     }
+  }
+
+  Widget _buildOverlayButton(IconData icon, Color color, VoidCallback onTap) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 4),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.8),
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Icon(
+            icon,
+            color: Colors.white,
+            size: 20,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showPremiumInfo(String info, String type) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('💎 $type Bilgisi'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Bu bilgiyi görmek için 5 coin harcayacaksın',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('İptal'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _purchasePremiumInfo(info, type);
+            },
+            child: const Text('5 Coin Harca'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _purchasePremiumInfo(String info, String type) async {
+    try {
+      // 5 coin harca
+      final success = await UserService.updateCoins(-5, 'spent', '$type bilgisi görüntüleme');
+      
+      if (success) {
+        // Bilgiyi göster
+        _showPremiumInfoResult(info, type);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('❌ Yeterli coin yok!'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Hata: $e')),
+      );
+    }
+  }
+
+  void _showPremiumInfoResult(String info, String type) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('💎 $type Bilgisi'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                info,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '✅ 5 coin harcandı',
+              style: TextStyle(
+                color: Colors.green[600],
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Tamam'),
+          ),
+        ],
+      ),
+    );
   }
 }
