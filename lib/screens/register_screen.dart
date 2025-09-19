@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_screen.dart';
+import '../utils/constants.dart';
+import '../utils/error_handler.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -18,41 +20,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? _selectedGender;
   bool _isLoading = false;
 
-  // Avrupa ülkeleri + Türkiye listesi
-  static const List<String> _countries = [
-    'turkiye',
-    'Almanya',
-    'Fransa',
-    'İtalya',
-    'İspanya',
-    'Hollanda',
-    'Belçika',
-    'Avusturya',
-    'İsviçre',
-    'Polonya',
-    'Çek Cumhuriyeti',
-    'Macaristan',
-    'Romanya',
-    'Bulgaristan',
-    'Hırvatistan',
-    'Slovenya',
-    'Slovakya',
-    'Estonya',
-    'Letonya',
-    'Litvanya',
-    'Finlandiya',
-    'İsveç',
-    'Norveç',
-    'Danimarka',
-    'Portekiz',
-    'Yunanistan',
-    'Kıbrıs',
-    'Malta',
-    'Lüksemburg',
-    'İrlanda',
-    'İngiltere',
-    'İzlanda',
-  ];
 
   void register() async {
     setState(() => _isLoading = true);
@@ -68,7 +35,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (user != null) {
         // users tablosuna veri ekle
         await Supabase.instance.client.from('users').insert({
-          'id': user.id, // CRITICAL: Auth user ID'sini ekle
+          'auth_id': user.id, // CRITICAL: Auth user ID'sini ekle
           'username': _usernameController.text.trim(),
           'email': _emailController.text.trim(),
           'coins': 100, // Yeni kullanıcılara 100 coin hediye
@@ -99,7 +66,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       }
     } catch (e) {
-      String errorMessage = _getUserFriendlyErrorMessage(e.toString());
+      String errorMessage = ErrorHandler.getUserFriendlyErrorMessage(e.toString());
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
@@ -109,60 +76,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } finally {
       setState(() => _isLoading = false);
     }
-  }
-
-  // Kullanıcı dostu hata mesajları
-  String _getUserFriendlyErrorMessage(String error) {
-    // E-posta ile ilgili hatalar
-    if (error.contains('Invalid email')) {
-      return '❌ Geçersiz e-posta adresi! Lütfen doğru formatta e-posta girin.';
-    }
-    if (error.contains('User already registered')) {
-      return '❌ Bu e-posta adresi zaten kayıtlı! Giriş yapmayı deneyin.';
-    }
-    
-    // Şifre ile ilgili hatalar
-    if (error.contains('Password should be at least')) {
-      return '❌ Şifre en az 6 karakter olmalıdır!';
-    }
-    if (error.contains('Password is too weak')) {
-      return '❌ Şifre çok zayıf! Daha güçlü bir şifre seçin.';
-    }
-    
-    // Kullanıcı adı ile ilgili hatalar
-    if (error.contains('Username already taken')) {
-      return '❌ Bu kullanıcı adı zaten alınmış! Başka bir kullanıcı adı seçin.';
-    }
-    if (error.contains('Username too short')) {
-      return '❌ Kullanıcı adı en az 3 karakter olmalıdır!';
-    }
-    
-    // Ağ bağlantısı hataları
-    if (error.contains('network') || error.contains('connection')) {
-      return '❌ İnternet bağlantınızı kontrol edin!';
-    }
-    if (error.contains('timeout')) {
-      return '❌ Bağlantı zaman aşımı! Lütfen tekrar deneyin.';
-    }
-    
-    // Veritabanı hataları
-    if (error.contains('duplicate key')) {
-      return '❌ Bu bilgiler zaten kullanılıyor! Farklı bilgiler deneyin.';
-    }
-    if (error.contains('constraint')) {
-      return '❌ Girdiğiniz bilgilerde hata var! Lütfen kontrol edin.';
-    }
-    
-    // Genel hatalar
-    if (error.contains('Invalid credentials')) {
-      return '❌ Geçersiz bilgiler! Lütfen kontrol edin.';
-    }
-    if (error.contains('Email rate limit')) {
-      return '❌ Çok fazla e-posta gönderildi! Lütfen bekleyin.';
-    }
-    
-    // Bilinmeyen hatalar için
-    return '❌ Kayıt olunamadı! Lütfen bilgilerinizi kontrol edin.';
   }
 
   @override
@@ -189,7 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             DropdownButtonFormField<String>(
               value: _selectedCountry,
               decoration: const InputDecoration(labelText: "Ülke"),
-              items: _countries.map((country) => 
+              items: AppConstants.countries.map((country) => 
                 DropdownMenuItem(value: country, child: Text(country))
               ).toList(),
               onChanged: (value) {
@@ -201,10 +114,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             DropdownButtonFormField<String>(
               value: _selectedGender,
               decoration: const InputDecoration(labelText: "Cinsiyet"),
-              items: const [
-                DropdownMenuItem(value: 'Erkek', child: Text('Erkek')),
-                DropdownMenuItem(value: 'Kadın', child: Text('Kadın')),
-              ],
+              items: AppConstants.genders.map((gender) => 
+                DropdownMenuItem(value: gender, child: Text(gender))
+              ).toList(),
               onChanged: (value) {
                 setState(() {
                   _selectedGender = value;

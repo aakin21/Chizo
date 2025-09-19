@@ -77,6 +77,20 @@ class MatchService {
       final user = _client.auth.currentUser;
       if (user == null) return [];
 
+      // Önce kullanıcının users tablosundaki ID'sini al
+      final currentUserRecord = await _client
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+      
+      if (currentUserRecord == null) {
+        print('Current user not found in users table');
+        return [];
+      }
+      
+      final currentUserId = currentUserRecord['id'];
+
       // Tüm tamamlanmamış match'leri getir (kendisi dahil değil)
       final response = await _client
           .from('matches')
@@ -86,8 +100,8 @@ class MatchService {
             user2:users!matches_user2_id_fkey(*)
           ''')
           .eq('is_completed', false)
-          .neq('user1_id', user.id)  // Kendisi user1 değil
-          .neq('user2_id', user.id)  // Kendisi user2 değil
+          .neq('user1_id', currentUserId)  // Kendisi user1 değil
+          .neq('user2_id', currentUserId)  // Kendisi user2 değil
           .limit(10);
 
       print('Total matches found: ${response.length}');
@@ -255,25 +269,34 @@ class MatchService {
       if (user == null) return false;
 
       // Önce kullanıcının users tablosunda olup olmadığını kontrol et
-      final userExists = await _client
+      var userExists = await _client
           .from('users')
           .select('id')
-          .eq('id', user.id)
+          .eq('auth_id', user.id)
           .maybeSingle();
 
       if (userExists == null) {
         print('User not found in users table: ${user.id}');
         // Kullanıcıyı users tablosuna ekle (sadece temel bilgiler)
         await _client.from('users').insert({
-          'id': user.id,
+          'auth_id': user.id,
           'email': user.email!,
           'username': user.email!.split('@')[0], // Email'den username oluştur
           'coins': 100, // Yeni kullanıcılara 100 coin hediye
           'is_visible': true, // Varsayılan olarak görünür yap
+          'total_matches': 0,
+          'wins': 0,
           'created_at': DateTime.now().toIso8601String(),
           'updated_at': DateTime.now().toIso8601String(),
         });
         print('User added to users table: ${user.id}');
+        
+        // Yeni oluşturulan kullanıcının ID'sini al
+        userExists = await _client
+            .from('users')
+            .select('id')
+            .eq('auth_id', user.id)
+            .single();
       }
 
       // Önce bu kullanıcının bu match için oy verip vermediğini kontrol et
@@ -281,7 +304,7 @@ class MatchService {
           .from('votes')
           .select('id')
           .eq('match_id', matchId)
-          .eq('voter_id', user.id)
+          .eq('voter_id', userExists['id']) // users tablosundaki id'yi kullan
           .maybeSingle();
 
       if (existingVote != null) {
@@ -291,7 +314,7 @@ class MatchService {
       // Oy kaydını ekle
       await _client.from('votes').insert({
         'match_id': matchId,
-        'voter_id': user.id,
+        'voter_id': userExists['id'], // users tablosundaki id'yi kullan
         'winner_id': winnerId,
         'is_correct': true, // Oy veren kazananı belirliyor
         'created_at': DateTime.now().toIso8601String(),
@@ -434,6 +457,20 @@ class MatchService {
       // Duplicate cleanup'ı sadece gerektiğinde manuel olarak çağır
       // await cleanupDuplicateUsers();
 
+      // Önce kullanıcının users tablosundaki ID'sini al
+      final currentUserRecord = await _client
+          .from('users')
+          .select('id')
+          .eq('auth_id', currentUser.id)
+          .maybeSingle();
+      
+      if (currentUserRecord == null) {
+        print('Current user not found in users table');
+        return [];
+      }
+      
+      final currentUserId = currentUserRecord['id'];
+
       // Get all visible users with profile pictures, grouped by gender (excluding current user)
       final maleUsers = await _client
           .from('users')
@@ -441,7 +478,7 @@ class MatchService {
           .eq('is_visible', true)
           .eq('gender', 'Erkek')
           .not('profile_image_url', 'is', null)
-          .neq('id', currentUser.id); // Exclude current user
+          .neq('id', currentUserId); // Exclude current user
 
       final femaleUsers = await _client
           .from('users')
@@ -449,7 +486,7 @@ class MatchService {
           .eq('is_visible', true)
           .eq('gender', 'Kadın')
           .not('profile_image_url', 'is', null)
-          .neq('id', currentUser.id); // Exclude current user
+          .neq('id', currentUserId); // Exclude current user
 
       print('Male users with is_visible=true: ${maleUsers.length}');
       print('Female users with is_visible=true: ${femaleUsers.length}');

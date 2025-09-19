@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/user_model.dart';
-import '../services/user_service.dart';
+import '../services/user_service_new.dart';
 import '../services/image_service.dart';
 
 class ProfileTab extends StatefulWidget {

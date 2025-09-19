@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import '../models/coin_transaction_model.dart';
 import '../services/user_service.dart';
+import '../utils/constants.dart';
 import 'coin_purchase_screen.dart';
 import 'login_screen.dart';
 
@@ -26,41 +27,6 @@ class _SettingsTabState extends State<SettingsTab> {
   final _professionController = TextEditingController();
   String? _selectedCountry;
 
-  // Avrupa ülkeleri + Türkiye listesi
-  static const List<String> _countries = [
-    'turkiye',
-    'Almanya',
-    'Fransa',
-    'İtalya',
-    'İspanya',
-    'Hollanda',
-    'Belçika',
-    'Avusturya',
-    'İsviçre',
-    'Polonya',
-    'Çek Cumhuriyeti',
-    'Macaristan',
-    'Romanya',
-    'Bulgaristan',
-    'Hırvatistan',
-    'Slovenya',
-    'Slovakya',
-    'Estonya',
-    'Letonya',
-    'Litvanya',
-    'Finlandiya',
-    'İsveç',
-    'Norveç',
-    'Danimarka',
-    'Portekiz',
-    'Yunanistan',
-    'Kıbrıs',
-    'Malta',
-    'Lüksemburg',
-    'İrlanda',
-    'İngiltere',
-    'İzlanda',
-  ];
 
   @override
   void initState() {
@@ -201,14 +167,14 @@ class _SettingsTabState extends State<SettingsTab> {
                   const SizedBox(height: 16),
                   
                   DropdownButtonFormField<String>(
-                    value: _selectedCountry != null && _countries.contains(_selectedCountry) 
+                    value: _selectedCountry != null && AppConstants.countries.contains(_selectedCountry) 
                         ? _selectedCountry 
                         : null,
                     decoration: const InputDecoration(
                       labelText: 'Ülke',
                       border: OutlineInputBorder(),
                     ),
-                    items: _countries.map((country) => 
+                    items: AppConstants.countries.map((country) => 
                       DropdownMenuItem(value: country, child: Text(country))
                     ).toList(),
                     onChanged: (value) {
@@ -226,10 +192,9 @@ class _SettingsTabState extends State<SettingsTab> {
                       labelText: 'Cinsiyet',
                       border: OutlineInputBorder(),
                     ),
-                    items: const [
-                      DropdownMenuItem(value: 'Erkek', child: Text('Erkek')),
-                      DropdownMenuItem(value: 'Kadın', child: Text('Kadın')),
-                    ],
+                    items: AppConstants.genders.map((gender) => 
+                      DropdownMenuItem(value: gender, child: Text(gender))
+                    ).toList(),
                     onChanged: (value) {
                       _genderController.text = value ?? '';
                     },

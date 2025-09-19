@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'home_screen.dart'; // Path doğru olduğundan emin ol
+import 'home_screen.dart';
 import 'register_screen.dart';
+import '../utils/error_handler.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -46,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } catch (e) {
-      String errorMessage = _getUserFriendlyErrorMessage(e.toString());
+      String errorMessage = ErrorHandler.getUserFriendlyErrorMessage(e.toString());
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
@@ -58,55 +59,6 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = false;
       });
     }
-  }
-
-  // Kullanıcı dostu hata mesajları
-  String _getUserFriendlyErrorMessage(String error) {
-    // E-posta ile ilgili hatalar
-    if (error.contains('Invalid email')) {
-      return '❌ Geçersiz e-posta adresi! Lütfen doğru formatta e-posta girin.';
-    }
-    if (error.contains('User not found')) {
-      return '❌ Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı!';
-    }
-    
-    // Şifre ile ilgili hatalar
-    if (error.contains('Invalid password')) {
-      return '❌ Yanlış şifre! Lütfen şifrenizi kontrol edin.';
-    }
-    if (error.contains('Password should be at least')) {
-      return '❌ Şifre en az 6 karakter olmalıdır!';
-    }
-    
-    // Ağ bağlantısı hataları
-    if (error.contains('network') || error.contains('connection')) {
-      return '❌ İnternet bağlantınızı kontrol edin!';
-    }
-    if (error.contains('timeout')) {
-      return '❌ Bağlantı zaman aşımı! Lütfen tekrar deneyin.';
-    }
-    
-    // Hesap durumu hataları
-    if (error.contains('Email not confirmed')) {
-      return '❌ E-posta adresinizi onaylamanız gerekiyor!';
-    }
-    if (error.contains('Too many requests')) {
-      return '❌ Çok fazla deneme! Lütfen birkaç dakika sonra tekrar deneyin.';
-    }
-    if (error.contains('Account disabled')) {
-      return '❌ Hesabınız devre dışı bırakılmış!';
-    }
-    
-    // Genel hatalar
-    if (error.contains('Invalid credentials')) {
-      return '❌ E-posta veya şifre hatalı!';
-    }
-    if (error.contains('User already registered')) {
-      return '❌ Bu e-posta adresi zaten kayıtlı!';
-    }
-    
-    // Bilinmeyen hatalar için
-    return '❌ Giriş yapılamadı! Lütfen bilgilerinizi kontrol edin.';
   }
 
   @override
