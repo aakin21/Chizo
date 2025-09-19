@@ -14,6 +14,9 @@ class UserModel {
   final bool showProfession;
   final int totalMatches;
   final int wins;
+  final int currentStreak;
+  final int totalStreakDays;
+  final DateTime? lastLoginDate;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -33,6 +36,9 @@ class UserModel {
     this.showProfession = false,
     this.totalMatches = 0,
     this.wins = 0,
+    this.currentStreak = 0,
+    this.totalStreakDays = 0,
+    this.lastLoginDate,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -54,6 +60,11 @@ class UserModel {
       showProfession: json['show_profession'] ?? false,
       totalMatches: json['total_matches'] ?? 0,
       wins: json['wins'] ?? 0,
+      currentStreak: json['current_streak'] ?? 0,
+      totalStreakDays: json['total_streak_days'] ?? 0,
+      lastLoginDate: json['last_login_date'] != null 
+          ? DateTime.parse(json['last_login_date']) 
+          : null,
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
     );
@@ -76,6 +87,9 @@ class UserModel {
       'show_profession': showProfession,
       'total_matches': totalMatches,
       'wins': wins,
+      'current_streak': currentStreak,
+      'total_streak_days': totalStreakDays,
+      'last_login_date': lastLoginDate?.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
