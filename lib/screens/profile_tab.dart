@@ -4,6 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import '../models/user_model.dart';
 import '../services/user_service.dart';
 import '../services/image_service.dart';
+import '../services/prediction_service.dart';
+import '../services/app_localizations.dart';
 import 'match_history_screen.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -19,6 +21,7 @@ class _ProfileTabState extends State<ProfileTab> {
   UserModel? currentUser;
   bool isLoading = true;
   bool isUpdating = false;
+  Map<String, dynamic> predictionStats = {};
 
   @override
   void initState() {
@@ -41,11 +44,13 @@ class _ProfileTabState extends State<ProfileTab> {
     
     try {
       final user = await UserService.getCurrentUser();
+      final stats = await PredictionService.getUserPredictionStats();
       print('ProfileTab: User loaded - totalMatches: ${user?.totalMatches}, wins: ${user?.wins}');
       
       if (mounted) {
         setState(() {
           currentUser = user;
+          predictionStats = stats;
           isLoading = false;
         });
       }
@@ -55,7 +60,7 @@ class _ProfileTabState extends State<ProfileTab> {
         setState(() => isLoading = false);
       }
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hata: $e')),
+        SnackBar(content: Text('${AppLocalizations.of(context).error}: $e')),
       );
     }
   }
@@ -115,27 +120,27 @@ class _ProfileTabState extends State<ProfileTab> {
           if (success) {
             await loadUserData();
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Profil fotoğrafı güncellendi!')),
+              SnackBar(content: Text(AppLocalizations.of(context).imageUpdated)),
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Profil güncellenirken hata oluştu')),
+              SnackBar(content: Text(AppLocalizations.of(context).updateFailed)),
             );
           }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Fotoğraf yüklenemedi')),
+            SnackBar(content: Text(AppLocalizations.of(context).imageUpdateFailed)),
           );
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Fotoğraf seçilmedi')),
+          SnackBar(content: Text(AppLocalizations.of(context).selectImage)),
         );
       }
     } catch (e) {
       print('Error in _uploadImage: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hata: $e')),
+        SnackBar(content: Text('${AppLocalizations.of(context).error}: $e')),
       );
     } finally {
       setState(() => isUpdating = false);
@@ -146,7 +151,7 @@ class _ProfileTabState extends State<ProfileTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Profil"),
+        title: Text(AppLocalizations.of(context).profile),
         leading: BackButton(onPressed: () {
           Navigator.pop(context);
         }),
@@ -162,7 +167,7 @@ class _ProfileTabState extends State<ProfileTab> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : currentUser == null
-              ? const Center(child: Text('Kullanıcı bilgileri yüklenemedi'))
+              ? Center(child: Text(AppLocalizations.of(context).userInfoNotLoaded))
               : SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -213,18 +218,18 @@ class _ProfileTabState extends State<ProfileTab> {
                       const SizedBox(height: 24),
 
                       // Kullanıcı Bilgileri
-                      _buildInfoCard('Kullanıcı Adı', currentUser!.username),
-                      _buildInfoCard('Email', currentUser!.email),
-                      _buildInfoCard('Coin', '${currentUser!.coins}'),
+                      _buildInfoCard(AppLocalizations.of(context).username, currentUser!.username),
+                      _buildInfoCard(AppLocalizations.of(context).email, currentUser!.email),
+                      _buildInfoCard(AppLocalizations.of(context).coin, '${currentUser!.coins}'),
 
                       if (currentUser!.age != null)
-                        _buildInfoCard('Yaş', '${currentUser!.age}'),
+                        _buildInfoCard(AppLocalizations.of(context).age, '${currentUser!.age}'),
 
                       if (currentUser!.country != null)
-                        _buildInfoCard('Ülke', currentUser!.country!),
+                        _buildInfoCard(AppLocalizations.of(context).country, currentUser!.country!),
 
                       if (currentUser!.gender != null)
-                        _buildInfoCard('Cinsiyet', currentUser!.gender!),
+                        _buildInfoCard(AppLocalizations.of(context).gender, currentUser!.gender!),
 
                       const SizedBox(height: 24),
 
@@ -235,21 +240,21 @@ class _ProfileTabState extends State<ProfileTab> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                '📱 Premium Bilgiler',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              Text(
+                                '📱 ${AppLocalizations.of(context).premiumFeatures}',
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 12),
-                              const Text(
-                                'Bu bilgileri diğer kullanıcılar coin harcayarak görebilir',
-                                style: TextStyle(fontSize: 12, color: Colors.grey),
+                              Text(
+                                AppLocalizations.of(context).premiumInfoDescription,
+                                style: const TextStyle(fontSize: 12, color: Colors.grey),
                               ),
                               const SizedBox(height: 16),
                               
                               // Instagram Ekleme
                               if (currentUser!.instagramHandle == null)
                                 _buildAddInfoButton(
-                                  'Instagram Hesabı Ekle',
+                                  AppLocalizations.of(context).addInstagram,
                                   Icons.camera_alt,
                                   Colors.pink,
                                   () => _showAddInfoDialog('Instagram', 'instagram'),
@@ -258,7 +263,7 @@ class _ProfileTabState extends State<ProfileTab> {
                               // Meslek Ekleme
                               if (currentUser!.profession == null)
                                 _buildAddInfoButton(
-                                  'Meslek Ekle',
+                                  AppLocalizations.of(context).addProfession,
                                   Icons.work,
                                   Colors.blue,
                                   () => _showAddInfoDialog('Meslek', 'profession'),
@@ -387,6 +392,92 @@ class _ProfileTabState extends State<ProfileTab> {
                                     ],
                                   ),
                                 ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Prediction İstatistikleri
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                '🎯 Tahmin İstatistikleri',
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Column(
+                                    children: [
+                                      Text(
+                                        '${predictionStats['total_predictions'] ?? 0}',
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.purple,
+                                        ),
+                                      ),
+                                      const Text('Toplam Tahmin'),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      Text(
+                                        '${predictionStats['correct_predictions'] ?? 0}',
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                                      const Text('Doğru Tahmin'),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      Text(
+                                        '${(predictionStats['accuracy'] ?? 0.0).toStringAsFixed(1)}%',
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.orange,
+                                        ),
+                                      ),
+                                      const Text('Başarı Oranı'),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.amber[50],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.monetization_on, color: Colors.amber),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Tahminlerden Kazanılan: ${predictionStats['total_coins_earned'] ?? 0} coin',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.amber,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -585,7 +676,7 @@ class _ProfileTabState extends State<ProfileTab> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hata: $e')),
+        SnackBar(content: Text('${AppLocalizations.of(context).error}: $e')),
       );
     }
   }

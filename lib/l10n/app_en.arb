@@ -1,0 +1,241 @@
+{
+  "appTitle": "Chizo",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  
+  "login": "Login",
+  "@login": {
+    "description": "Login button text"
+  },
+  
+  "register": "Register",
+  "@register": {
+    "description": "Register button text"
+  },
+  
+  "email": "Email",
+  "@email": {
+    "description": "Email field label"
+  },
+  
+  "password": "Password",
+  "@password": {
+    "description": "Password field label"
+  },
+  
+  "username": "Username",
+  "@username": {
+    "description": "Username field label"
+  },
+  
+  "confirmPassword": "Confirm Password",
+  "@confirmPassword": {
+    "description": "Confirm password field label"
+  },
+  
+  "age": "Age",
+  "@age": {
+    "description": "Age field label"
+  },
+  
+  "country": "Country",
+  "@country": {
+    "description": "Country field label"
+  },
+  
+  "gender": "Gender",
+  "@gender": {
+    "description": "Gender field label"
+  },
+  
+  "male": "Male",
+  "@male": {
+    "description": "Male gender option"
+  },
+  
+  "female": "Female",
+  "@female": {
+    "description": "Female gender option"
+  },
+  
+  "instagramHandle": "Instagram Handle",
+  "@instagramHandle": {
+    "description": "Instagram handle field label"
+  },
+  
+  "profession": "Profession",
+  "@profession": {
+    "description": "Profession field label"
+  },
+  
+  "voting": "Voting",
+  "@voting": {
+    "description": "Voting tab title"
+  },
+  
+  "whichDoYouPrefer": "Which one do you prefer?",
+  "@whichDoYouPrefer": {
+    "description": "Voting question text"
+  },
+  
+  "predictWinRate": "Predict {username}'s win rate",
+  "@predictWinRate": {
+    "description": "Win rate prediction text",
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "correctPrediction": "Correct prediction = 1 coin",
+  "@correctPrediction": {
+    "description": "Correct prediction reward text"
+  },
+  
+  "submitPrediction": "Submit Prediction",
+  "@submitPrediction": {
+    "description": "Submit prediction button text"
+  },
+  
+  "winRate": "Win Rate",
+  "@winRate": {
+    "description": "Win rate label"
+  },
+  
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile tab title"
+  },
+  
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings tab title"
+  },
+  
+  "leaderboard": "Leaderboard",
+  "@leaderboard": {
+    "description": "Leaderboard tab title"
+  },
+  
+  "tournament": "Tournament",
+  "@tournament": {
+    "description": "Tournament tab title"
+  },
+  
+  "language": "Language",
+  "@language": {
+    "description": "Language setting label"
+  },
+  
+  "turkish": "Turkish",
+  "@turkish": {
+    "description": "Turkish language option"
+  },
+  
+  "english": "English",
+  "@english": {
+    "description": "English language option"
+  },
+  
+  "coins": "Coins",
+  "@coins": {
+    "description": "Coins label"
+  },
+  
+  "totalMatches": "Total Matches",
+  "@totalMatches": {
+    "description": "Total matches label"
+  },
+  
+  "wins": "Wins",
+  "@wins": {
+    "description": "Wins label"
+  },
+  
+  "winRatePercentage": "Win Rate",
+  "@winRatePercentage": {
+    "description": "Win rate percentage label"
+  },
+  
+  "currentStreak": "Current Streak",
+  "@currentStreak": {
+    "description": "Current streak label"
+  },
+  
+  "totalStreakDays": "Total Streak Days",
+  "@totalStreakDays": {
+    "description": "Total streak days label"
+  },
+  
+  "predictionStats": "Prediction Statistics",
+  "@predictionStats": {
+    "description": "Prediction statistics title"
+  },
+  
+  "totalPredictions": "Total Predictions",
+  "@totalPredictions": {
+    "description": "Total predictions label"
+  },
+  
+  "correctPredictions": "Correct Predictions",
+  "@correctPredictions": {
+    "description": "Correct predictions label"
+  },
+  
+  "accuracy": "Accuracy",
+  "@accuracy": {
+    "description": "Accuracy label"
+  },
+  
+  "coinsEarnedFromPredictions": "Coins Earned from Predictions",
+  "@coinsEarnedFromPredictions": {
+    "description": "Coins earned from predictions label"
+  },
+  
+  "congratulations": "Congratulations!",
+  "@congratulations": {
+    "description": "Congratulations text"
+  },
+  
+  "correctPredictionMessage": "You predicted correctly and earned 1 coin!",
+  "@correctPredictionMessage": {
+    "description": "Correct prediction success message"
+  },
+  
+  "wrongPredictionMessage": "Wrong prediction. The actual win rate was {winRate}%",
+  "@wrongPredictionMessage": {
+    "description": "Wrong prediction message",
+    "placeholders": {
+      "winRate": {
+        "type": "double"
+      }
+    }
+  },
+  
+  "error": "Error",
+  "@error": {
+    "description": "Error label"
+  },
+  
+  "success": "Success",
+  "@success": {
+    "description": "Success label"
+  },
+  
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading text"
+  },
+  
+  "noMatchesAvailable": "No matches available for voting",
+  "@noMatchesAvailable": {
+    "description": "No matches available message"
+  },
+  
+  "allMatchesVoted": "All matches voted!\nWaiting for new matches...",
+  "@allMatchesVoted": {
+    "description": "All matches voted message"
+  }
+}

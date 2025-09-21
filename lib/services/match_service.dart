@@ -61,8 +61,8 @@ class MatchService {
           })
           .eq('id', matchId);
 
-      // Kazanan kullanıcıya 1 coin ver
-      await UserService.updateCoins(1, 'earned', 'Match kazandı');
+      // NOT: Kazanan kullanıcıya artık direkt coin verilmiyor
+      // Coin kazanmak için win rate prediction sistemi kullanılıyor
 
       return true;
     } catch (e) {
@@ -338,10 +338,10 @@ class MatchService {
       if (match != null) {
         final loserId = match['user1_id'] == winnerId ? match['user2_id'] : match['user1_id'];
         await _updateUserStats(loserId, false);
-        
       }
 
-      // Oylama yapan kullanıcının istatistiklerini güncelleme - sadece kazanan/kaybeden güncellenir
+      // NOT: Artık oy veren kullanıcıya direkt coin verilmiyor
+      // Coin kazanmak için win rate prediction yapması gerekiyor
 
       return true;
     } catch (e) {
@@ -406,7 +406,7 @@ class MatchService {
     }
   }
 
-  // Match tamamlandığında oyları kontrol et ve coin ver
+  // Match tamamlandığında oyları kontrol et (coin verme kaldırıldı)
   static Future<void> checkVotesAndReward(String matchId, String actualWinnerId) async {
     try {
       // Bu match için verilen oyları getir
@@ -424,10 +424,8 @@ class MatchService {
             .update({'is_correct': isCorrect})
             .eq('id', vote['id']);
 
-        // Doğru tahmin edenlere coin ver
-        if (isCorrect) {
-          await UserService.updateCoins(1, 'earned', 'Doğru tahmin');
-        }
+        // NOT: Artık doğru tahmin edenlere direkt coin verilmiyor
+        // Coin kazanmak için win rate prediction sistemi kullanılıyor
       }
     } catch (e) {
       print('Error checking votes: $e');

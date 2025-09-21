@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'screens/register_screen.dart'; // RegisterScreen path'i doğru olmalı
+import 'screens/login_screen.dart';
+import 'screens/home_screen.dart';
+import 'services/language_service.dart';
+import 'services/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,18 +19,84 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class AuthWrapper extends StatelessWidget {
+  final Function(Locale) onLanguageChanged;
+  
+  const AuthWrapper({super.key, required this.onLanguageChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: Supabase.instance.client.auth.onAuthStateChange,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        
+        final session = snapshot.hasData ? snapshot.data!.session : null;
+        
+        if (session != null) {
+          // User is logged in, go to home screen
+          return HomeScreen(onLanguageChanged: onLanguageChanged);
+        } else {
+          // User is not logged in, go to login screen
+          return const LoginScreen();
+        }
+      },
+    );
+  }
+}
+
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Locale _currentLocale = const Locale('tr', 'TR');
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentLocale();
+  }
+
+  Future<void> _loadCurrentLocale() async {
+    final locale = await LanguageService.getCurrentLocale();
+    setState(() {
+      _currentLocale = locale;
+    });
+  }
+
+  void changeLanguage(Locale locale) {
+    setState(() {
+      _currentLocale = locale;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Match App',
+      title: 'Chizo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       debugShowCheckedModeBanner: false,
-      home: const RegisterScreen(), // Uygulama açılış ekranı
+      home: AuthWrapper(onLanguageChanged: changeLanguage),
+      
+      // Localization configuration
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: LanguageService.supportedLocales,
+      locale: _currentLocale,
     );
   }
 }

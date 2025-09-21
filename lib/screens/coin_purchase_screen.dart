@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/payment_service.dart';
 import '../services/user_service.dart';
 import '../models/user_model.dart';
+import '../services/app_localizations.dart';
 
 class CoinPurchaseScreen extends StatefulWidget {
   const CoinPurchaseScreen({super.key});
@@ -32,7 +33,7 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
     } catch (e) {
       setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hata: $e')),
+        SnackBar(content: Text('${AppLocalizations.of(context).error}: $e')),
       );
     }
   }
@@ -46,16 +47,16 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
       if (success) {
         await loadUserData();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Coin satın alma başarılı!')),
+          SnackBar(content: Text(AppLocalizations.of(context).purchaseSuccessful)),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Coin satın alma başarısız!')),
+          SnackBar(content: Text(AppLocalizations.of(context).purchaseFailed)),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hata: $e')),
+        SnackBar(content: Text('${AppLocalizations.of(context).error}: $e')),
       );
     } finally {
       setState(() => isPurchasing = false);
@@ -72,7 +73,7 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Coin Satın Al'),
+        title: Text(AppLocalizations.of(context).coinPurchase),
         backgroundColor: Colors.amber,
       ),
       body: SingleChildScrollView(
@@ -92,9 +93,9 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Mevcut Coin',
-                          style: TextStyle(
+                        Text(
+                          AppLocalizations.of(context).currentCoins,
+                          style: const TextStyle(
                             fontSize: 14,
                             color: Colors.grey,
                           ),
@@ -116,9 +117,9 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
             
             const SizedBox(height: 24),
             
-            const Text(
-              'Coin Paketleri',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context).coinPackages,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -149,19 +150,19 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Coin Kullanım Alanları',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context).coinUsage,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text('• Instagram hesabı görme: 10 coin'),
-                    const Text('• Meslek bilgisi görme: 5 coin'),
-                    const Text('• Kullanıcı istatistikleri görme: 3 coin'),
-                    const Text('• Turnuva katılım ücretleri'),
-                    const Text('• Premium filtreleme seçenekleri'),
+                    Text('• ${AppLocalizations.of(context).instagramView}'),
+                    Text('• ${AppLocalizations.of(context).professionView}'),
+                    Text('• ${AppLocalizations.of(context).statsView}'),
+                    Text('• ${AppLocalizations.of(context).tournamentFees}'),
+                    Text('• ${AppLocalizations.of(context).premiumFilters}'),
                   ],
                 ),
               ),

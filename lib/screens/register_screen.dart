@@ -22,6 +22,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
 
   void register() async {
+    // Validation
+    if (_usernameController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Kullanıcı adı boş olamaz")),
+      );
+      return;
+    }
+    
+    if (_emailController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("E-posta boş olamaz")),
+      );
+      return;
+    }
+    
+    if (_passwordController.text.trim().length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Şifre en az 6 karakter olmalıdır")),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {

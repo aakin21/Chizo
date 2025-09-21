@@ -5,9 +5,12 @@ import 'settings_tab.dart';
 import 'voting_tab.dart';
 import 'leaderboard_tab.dart';
 import '../services/streak_service.dart';
+import '../services/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final Function(Locale)? onLanguageChanged;
+  
+  const HomeScreen({super.key, this.onLanguageChanged});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -67,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
             
             // Başlık
             Text(
-              'Günlük Streak!',
+              AppLocalizations.of(context).dailyStreak,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -187,11 +190,11 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                  onPressed: () => _openPage(context, ProfileTab(key: ValueKey(_profileRefreshKey), onRefresh: _refreshProfile), "Profilim"),
+                  onPressed: () => _openPage(context, ProfileTab(key: ValueKey(_profileRefreshKey), onRefresh: _refreshProfile), "Profil"),
                   child: const Text('Profil'),
                 ),
                 ElevatedButton(
-                  onPressed: () => _openPage(context, const TurnuvaTab(), "Turnuvalar"),
+                  onPressed: () => _openPage(context, const TurnuvaTab(), "Turnuva"),
                   child: const Text('Turnuva'),
                 ),
                 ElevatedButton(
@@ -199,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: const Text('🏆 Liderlik'),
                 ),
                 ElevatedButton(
-                  onPressed: () => _openPage(context, const SettingsTab(), "Ayarlar"),
+                  onPressed: () => _openPage(context, SettingsTab(onLanguageChanged: widget.onLanguageChanged), "Ayarlar"),
                   child: const Text('Ayarlar'),
                 ),
               ],

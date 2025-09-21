@@ -17,6 +17,21 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
 
   void login() async {
+    // Validation
+    if (_emailController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("E-posta boş olamaz")),
+      );
+      return;
+    }
+    
+    if (_passwordController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Şifre boş olamaz")),
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
@@ -59,6 +74,13 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override

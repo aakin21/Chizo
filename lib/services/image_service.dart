@@ -2,7 +2,6 @@ import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
-import 'package:cross_file/cross_file.dart';
 
 class ImageService {
   static final SupabaseClient _client = Supabase.instance.client;
