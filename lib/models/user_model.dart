@@ -19,6 +19,7 @@ class UserModel {
   final DateTime? lastLoginDate;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final List<Map<String, dynamic>>? matchPhotos; // Çoklu fotoğraflar
 
   UserModel({
     required this.id,
@@ -41,6 +42,7 @@ class UserModel {
     this.lastLoginDate,
     required this.createdAt,
     required this.updatedAt,
+    this.matchPhotos,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -67,6 +69,9 @@ class UserModel {
           : null,
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
+      matchPhotos: json['match_photos'] != null 
+          ? List<Map<String, dynamic>>.from(json['match_photos'])
+          : null,
     );
   }
 
@@ -92,6 +97,7 @@ class UserModel {
       'last_login_date': lastLoginDate?.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
+      'match_photos': matchPhotos,
     };
   }
 

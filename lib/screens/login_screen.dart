@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'home_screen.dart';
 import 'register_screen.dart';
 import '../utils/error_handler.dart';
+import '../l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,17 +18,19 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
 
   void login() async {
+    final l10n = AppLocalizations.of(context)!;
+    
     // Validation
     if (_emailController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("E-posta boş olamaz")),
+        SnackBar(content: Text(l10n.emailCannotBeEmpty)),
       );
       return;
     }
     
     if (_passwordController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Şifre boş olamaz")),
+        SnackBar(content: Text(l10n.passwordCannotBeEmpty)),
       );
       return;
     }
@@ -46,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (user != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Giriş başarılı!")),
+          SnackBar(content: Text(l10n.loginSuccessful)),
         );
 
         // HomeScreen’e yönlendir (username parametresi yok)
@@ -58,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Giriş hatası: Bilinmeyen hata")),
+          SnackBar(content: Text(l10n.loginError)),
         );
       }
     } catch (e) {
@@ -85,19 +88,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
-      appBar: AppBar(title: const Text("Login")),
+      appBar: AppBar(title: Text(l10n.login)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: "Email"),
+              decoration: InputDecoration(labelText: l10n.email),
             ),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: "Password"),
+              decoration: InputDecoration(labelText: l10n.password),
               obscureText: true,
             ),
             const SizedBox(height: 20),
@@ -105,13 +110,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 ? const CircularProgressIndicator()
                 : ElevatedButton(
                     onPressed: login,
-                    child: const Text("Login"),
+                    child: Text(l10n.login),
                   ),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("Hesabın yok mu? "),
+                Text(l10n.dontHaveAccount),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -121,9 +126,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     );
                   },
-                  child: const Text(
-                    "Register ol",
-                    style: TextStyle(
+                  child: Text(
+                    l10n.registerNow,
+                    style: const TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.bold,
                       decoration: TextDecoration.underline,

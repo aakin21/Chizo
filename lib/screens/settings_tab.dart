@@ -5,7 +5,7 @@ import '../models/user_model.dart';
 import '../models/coin_transaction_model.dart';
 import '../services/user_service.dart';
 import '../services/language_service.dart';
-import '../services/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../utils/constants.dart';
 import '../widgets/language_selector.dart';
 import 'coin_purchase_screen.dart';
@@ -86,11 +86,11 @@ class _SettingsTabState extends State<SettingsTab> {
       if (success) {
         await loadUserData();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).profileUpdated)),
+          SnackBar(content: Text(AppLocalizations.of(context)!.profileUpdated)),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).profileUpdateFailed)),
+          SnackBar(content: Text(AppLocalizations.of(context)!.profileUpdateFailed)),
         );
       }
     } catch (e) {
@@ -110,7 +110,7 @@ class _SettingsTabState extends State<SettingsTab> {
 
     if (currentUser == null) {
       return Center(
-        child: Text(AppLocalizations.of(context).userInfoNotLoaded),
+        child: Text(AppLocalizations.of(context)!.userInfoNotLoaded),
       );
     }
 
@@ -120,7 +120,7 @@ class _SettingsTabState extends State<SettingsTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            AppLocalizations.of(context).profileSettings,
+            AppLocalizations.of(context)!.profileSettings,
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 24),
@@ -423,8 +423,8 @@ class _SettingsTabState extends State<SettingsTab> {
                   // Şifre Değiştir
                   ListTile(
                     leading: const Icon(Icons.lock_reset, color: Colors.blue),
-                    title: Text(AppLocalizations.of(context).passwordReset),
-                    subtitle: Text(AppLocalizations.of(context).passwordResetSubtitle),
+                    title: Text(AppLocalizations.of(context)!.passwordReset),
+                    subtitle: Text(AppLocalizations.of(context)!.passwordResetSubtitle),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: _showPasswordResetDialog,
                   ),
@@ -441,7 +441,7 @@ class _SettingsTabState extends State<SettingsTab> {
                       
                       return ListTile(
                         leading: const Icon(Icons.language, color: Colors.green),
-                        title: Text(AppLocalizations.of(context).language),
+                        title: Text(AppLocalizations.of(context)!.language),
                         subtitle: Text('$languageFlag $languageName'),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: _showLanguageDialog,
@@ -454,8 +454,8 @@ class _SettingsTabState extends State<SettingsTab> {
                   // Çıkış Yap
                   ListTile(
                     leading: const Icon(Icons.logout, color: Colors.orange),
-                    title: Text(AppLocalizations.of(context).logout),
-                    subtitle: Text(AppLocalizations.of(context).logoutSubtitle),
+                    title: Text(AppLocalizations.of(context)!.logout),
+                    subtitle: Text(AppLocalizations.of(context)!.logoutSubtitle),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: _showLogoutDialog,
                   ),
@@ -465,8 +465,8 @@ class _SettingsTabState extends State<SettingsTab> {
                   // Hesabı Sil
                   ListTile(
                     leading: const Icon(Icons.delete_forever, color: Colors.red),
-                    title: Text(AppLocalizations.of(context).deleteAccount),
-                    subtitle: Text(AppLocalizations.of(context).deleteAccountSubtitle),
+                    title: Text(AppLocalizations.of(context)!.deleteAccount),
+                    subtitle: Text(AppLocalizations.of(context)!.deleteAccountSubtitle),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: _showDeleteAccountDialog,
                   ),
@@ -484,7 +484,7 @@ class _SettingsTabState extends State<SettingsTab> {
               onPressed: isUpdating ? null : _updateProfile,
               child: isUpdating
                   ? const CircularProgressIndicator(color: Colors.white)
-                  : Text(AppLocalizations.of(context).updateProfile),
+                  : Text(AppLocalizations.of(context)!.updateProfile),
             ),
           ),
         ],
@@ -502,19 +502,19 @@ class _SettingsTabState extends State<SettingsTab> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context).passwordResetTitle),
-          content: Text(AppLocalizations.of(context).passwordResetMessage),
+          title: Text(AppLocalizations.of(context)!.passwordResetTitle),
+          content: Text(AppLocalizations.of(context)!.passwordResetMessage),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizations.of(context).cancel),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               onPressed: () async {
                 Navigator.of(context).pop();
                 await _sendPasswordResetEmail();
               },
-              child: Text(AppLocalizations.of(context).send),
+              child: Text(AppLocalizations.of(context)!.send),
             ),
           ],
         );
@@ -531,14 +531,14 @@ class _SettingsTabState extends State<SettingsTab> {
         );
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context).passwordResetSent),
+            content: Text(AppLocalizations.of(context)!.passwordResetSent),
             backgroundColor: Colors.green,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context).emailNotFound),
+            content: Text(AppLocalizations.of(context)!.emailNotFound),
             backgroundColor: Colors.red,
           ),
         );
@@ -546,7 +546,7 @@ class _SettingsTabState extends State<SettingsTab> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${AppLocalizations.of(context).error}: $e'),
+          content: Text('${AppLocalizations.of(context)!.error}: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -559,7 +559,7 @@ class _SettingsTabState extends State<SettingsTab> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context).language),
+          title: Text(AppLocalizations.of(context)!.language),
           content: SizedBox(
             width: double.maxFinite,
             child: LanguageSelector(
@@ -574,7 +574,7 @@ class _SettingsTabState extends State<SettingsTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizations.of(context).success),
+              child: Text(AppLocalizations.of(context)!.success),
             ),
           ],
         );
@@ -587,7 +587,7 @@ class _SettingsTabState extends State<SettingsTab> {
     // Bu basit bir restart - gerçek uygulamada daha gelişmiş restart mekanizması kullanılabilir
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(AppLocalizations.of(context).success),
+        content: Text(AppLocalizations.of(context)!.success),
         backgroundColor: Colors.green,
       ),
     );
@@ -606,7 +606,7 @@ class _SettingsTabState extends State<SettingsTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizations.of(context).cancel),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -658,7 +658,7 @@ class _SettingsTabState extends State<SettingsTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizations.of(context).cancel),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -706,7 +706,7 @@ class _SettingsTabState extends State<SettingsTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizations.of(context).cancel),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -860,7 +860,7 @@ class _SettingsTabState extends State<SettingsTab> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${AppLocalizations.of(context).error}: $e'),
+          content: Text('${AppLocalizations.of(context)!.error}: $e'),
           backgroundColor: Colors.red,
         ),
       );

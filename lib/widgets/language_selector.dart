@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/language_service.dart';
-import '../services/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 
 class LanguageSelector extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -52,7 +52,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
               const Icon(Icons.language, color: Colors.blue),
               const SizedBox(width: 8),
               Text(
-                AppLocalizations.of(context).language,
+                AppLocalizations.of(context)!.language,
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

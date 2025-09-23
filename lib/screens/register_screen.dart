@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_screen.dart';
 import '../utils/constants.dart';
 import '../utils/error_handler.dart';
+import '../l10n/app_localizations.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -22,24 +23,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
 
   void register() async {
+    final l10n = AppLocalizations.of(context)!;
+    
     // Validation
     if (_usernameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Kullanıcı adı boş olamaz")),
+        SnackBar(content: Text(l10n.usernameCannotBeEmpty)),
       );
       return;
     }
     
     if (_emailController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("E-posta boş olamaz")),
+        SnackBar(content: Text(l10n.emailCannotBeEmpty)),
       );
       return;
     }
     
     if (_passwordController.text.trim().length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Şifre en az 6 karakter olmalıdır")),
+        SnackBar(content: Text(l10n.passwordMinLength)),
       );
       return;
     }
@@ -74,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Kayıt başarılı!")),
+          SnackBar(content: Text(l10n.registrationSuccessful)),
         );
 
         // Login ekranına yönlendir
@@ -84,7 +87,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Bu kullanıcı zaten kayıtlı veya bir hata oluştu")),
+          SnackBar(content: Text(l10n.userAlreadyExists)),
         );
       }
     } catch (e) {
@@ -111,19 +114,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
-      appBar: AppBar(title: const Text("Register")),
+      appBar: AppBar(title: Text(l10n.register)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            TextField(controller: _usernameController, decoration: const InputDecoration(labelText: "Username")),
-            TextField(controller: _emailController, decoration: const InputDecoration(labelText: "Email")),
-            TextField(controller: _passwordController, decoration: const InputDecoration(labelText: "Password"), obscureText: true),
-            TextField(controller: _ageController, decoration: const InputDecoration(labelText: "Yaş"), keyboardType: TextInputType.number),
+            TextField(controller: _usernameController, decoration: InputDecoration(labelText: l10n.username)),
+            TextField(controller: _emailController, decoration: InputDecoration(labelText: l10n.email)),
+            TextField(controller: _passwordController, decoration: InputDecoration(labelText: l10n.password), obscureText: true),
+            TextField(controller: _ageController, decoration: InputDecoration(labelText: l10n.age), keyboardType: TextInputType.number),
             DropdownButtonFormField<String>(
               value: _selectedCountry,
-              decoration: const InputDecoration(labelText: "Ülke"),
+              decoration: InputDecoration(labelText: l10n.country),
               items: AppConstants.countries.map((country) => 
                 DropdownMenuItem(value: country, child: Text(country))
               ).toList(),
@@ -135,7 +140,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             DropdownButtonFormField<String>(
               value: _selectedGender,
-              decoration: const InputDecoration(labelText: "Cinsiyet"),
+              decoration: InputDecoration(labelText: l10n.gender),
               items: AppConstants.genders.map((gender) => 
                 DropdownMenuItem(value: gender, child: Text(gender))
               ).toList(),
@@ -148,18 +153,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(height: 20),
             _isLoading
                 ? const CircularProgressIndicator()
-                : ElevatedButton(onPressed: register, child: const Text("Register")),
+                : ElevatedButton(onPressed: register, child: Text(l10n.register)),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("Zaten hesabın var mı? "),
+                Text(l10n.alreadyHaveAccount),
                 TextButton(
                   onPressed: () => Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => LoginScreen()),
                   ),
-                  child: const Text("Giriş yap"),
+                  child: Text(l10n.loginNow),
                 ),
               ],
             ),

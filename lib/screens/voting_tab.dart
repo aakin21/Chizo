@@ -5,7 +5,7 @@ import '../models/user_model.dart';
 import '../services/match_service.dart';
 import '../services/user_service.dart';
 import '../services/prediction_service.dart';
-import '../services/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 
 class VotingTab extends StatefulWidget {
   final VoidCallback? onVoteCompleted;
@@ -52,7 +52,7 @@ class _VotingTabState extends State<VotingTab> {
         setState(() => isLoading = false);
       }
       ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${AppLocalizations.of(context).error}: $e')),
+            SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
     }
   }
@@ -79,7 +79,7 @@ class _VotingTabState extends State<VotingTab> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).votingError)),
+        SnackBar(content: Text(AppLocalizations.of(context)!.votingError)),
       );
     }
   }
@@ -151,7 +151,7 @@ class _VotingTabState extends State<VotingTab> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${AppLocalizations.of(context).error}: $e')),
+            SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
     }
   }
@@ -183,7 +183,7 @@ class _VotingTabState extends State<VotingTab> {
       child: Column(
         children: [
           Text(
-            AppLocalizations.of(context).voting,
+            AppLocalizations.of(context)!.voting,
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           
@@ -197,7 +197,7 @@ class _VotingTabState extends State<VotingTab> {
             Expanded(
               child: Center(
                 child: Text(
-                  AppLocalizations.of(context).noMatchesAvailable,
+                  AppLocalizations.of(context)!.noMatchesAvailable,
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 16),
                 ),
@@ -207,7 +207,7 @@ class _VotingTabState extends State<VotingTab> {
             Expanded(
               child: Center(
                 child: Text(
-                  AppLocalizations.of(context).allMatchesVoted,
+                  AppLocalizations.of(context)!.allMatchesVoted,
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 16),
                 ),
@@ -244,7 +244,7 @@ class _VotingTabState extends State<VotingTab> {
           children: [
             if (!showPredictionSlider) ...[
               Text(
-                AppLocalizations.of(context).whichDoYouPrefer,
+                AppLocalizations.of(context)!.whichDoYouPrefer,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
@@ -279,25 +279,7 @@ class _VotingTabState extends State<VotingTab> {
                                         top: Radius.circular(8),
                                       ),
                                     ),
-                                    child: user1.profileImageUrl != null
-                                        ? CachedNetworkImage(
-                                            imageUrl: user1.profileImageUrl!,
-                                            fit: BoxFit.cover,
-                                            placeholder: (context, url) => Container(
-                                              color: Colors.grey[300],
-                                              child: const Center(
-                                                child: CircularProgressIndicator(),
-                                              ),
-                                            ),
-                                            errorWidget: (context, url, error) => Container(
-                                              color: Colors.grey[300],
-                                              child: const Icon(Icons.person, size: 80),
-                                            ),
-                                          )
-                                        : Container(
-                                            color: Colors.grey[300],
-                                            child: const Icon(Icons.person, size: 50),
-                                          ),
+                                    child: _buildUserPhotoDisplay(user1),
                                   ),
                                   // Premium bilgi butonları
                                   Positioned(
@@ -374,25 +356,7 @@ class _VotingTabState extends State<VotingTab> {
                                         top: Radius.circular(8),
                                       ),
                                     ),
-                                    child: user2.profileImageUrl != null
-                                        ? CachedNetworkImage(
-                                            imageUrl: user2.profileImageUrl!,
-                                            fit: BoxFit.cover,
-                                            placeholder: (context, url) => Container(
-                                              color: Colors.grey[300],
-                                              child: const Center(
-                                                child: CircularProgressIndicator(),
-                                              ),
-                                            ),
-                                            errorWidget: (context, url, error) => Container(
-                                              color: Colors.grey[300],
-                                              child: const Icon(Icons.person, size: 80),
-                                            ),
-                                          )
-                                        : Container(
-                                            color: Colors.grey[300],
-                                            child: const Icon(Icons.person, size: 50),
-                                          ),
+                                    child: _buildUserPhotoDisplay(user2),
                                   ),
                                   // Premium bilgi butonları
                                   Positioned(
@@ -465,6 +429,56 @@ class _VotingTabState extends State<VotingTab> {
     } catch (e) {
       return [];
     }
+  }
+
+  Widget _buildUserPhotoDisplay(UserModel user) {
+    // Çoklu fotoğraf varsa carousel göster, yoksa profil fotoğrafını göster
+    if (user.matchPhotos != null && user.matchPhotos!.isNotEmpty) {
+      return _buildPhotoCarousel(user.matchPhotos!);
+    } else if (user.profileImageUrl != null) {
+      return CachedNetworkImage(
+        imageUrl: user.profileImageUrl!,
+        fit: BoxFit.cover,
+        placeholder: (context, url) => Container(
+          color: Colors.grey[300],
+          child: const Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+        errorWidget: (context, url, error) => Container(
+          color: Colors.grey[300],
+          child: const Icon(Icons.person, size: 80),
+        ),
+      );
+    } else {
+      return Container(
+        color: Colors.grey[300],
+        child: const Icon(Icons.person, size: 50),
+      );
+    }
+  }
+
+  Widget _buildPhotoCarousel(List<Map<String, dynamic>> photos) {
+    return PageView.builder(
+      itemCount: photos.length,
+      itemBuilder: (context, index) {
+        final photo = photos[index];
+        return CachedNetworkImage(
+          imageUrl: photo['photo_url'],
+          fit: BoxFit.cover,
+          placeholder: (context, url) => Container(
+            color: Colors.grey[300],
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+          errorWidget: (context, url, error) => Container(
+            color: Colors.grey[300],
+            child: const Icon(Icons.person, size: 80),
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildOverlayButton(IconData icon, Color color, VoidCallback onTap) {
@@ -545,7 +559,7 @@ class _VotingTabState extends State<VotingTab> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${AppLocalizations.of(context).error}: $e')),
+            SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
     }
   }
@@ -622,14 +636,14 @@ class _VotingTabState extends State<VotingTab> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      AppLocalizations.of(context).predictWinRate(selectedWinner!.username),
+                      AppLocalizations.of(context)!.predictWinRate(selectedWinner!.username),
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      AppLocalizations.of(context).correctPrediction,
+                      AppLocalizations.of(context)!.correctPrediction,
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[600],
@@ -646,7 +660,7 @@ class _VotingTabState extends State<VotingTab> {
           Column(
             children: [
               Text(
-                '${AppLocalizations.of(context).winRate}: ${_getRangeLabel(sliderValue)}',
+                '${AppLocalizations.of(context)!.winRate}: ${_getRangeLabel(sliderValue)}',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -712,7 +726,7 @@ class _VotingTabState extends State<VotingTab> {
                 ),
               ),
               child: Text(
-                AppLocalizations.of(context).submitPrediction,
+                AppLocalizations.of(context)!.submitPrediction,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

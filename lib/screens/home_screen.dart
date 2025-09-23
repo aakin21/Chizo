@@ -5,7 +5,7 @@ import 'settings_tab.dart';
 import 'voting_tab.dart';
 import 'leaderboard_tab.dart';
 import '../services/streak_service.dart';
-import '../services/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(Locale)? onLanguageChanged;
@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
             
             // Başlık
             Text(
-              AppLocalizations.of(context).dailyStreak,
+              AppLocalizations.of(context)!.dailyStreak,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
             
             // Streak bilgisi
             Text(
-              '$streak günlük streak!',
+              AppLocalizations.of(context)!.streakMessage(streak),
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[600],
@@ -133,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text('Harika!'),
+            child: Text(AppLocalizations.of(context)!.great),
           ),
         ],
       ),
@@ -178,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Ana Sayfa"),
+        title: Text(AppLocalizations.of(context)!.homePage),
       ),
       body: Column(
         children: [
@@ -190,20 +190,20 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                  onPressed: () => _openPage(context, ProfileTab(key: ValueKey(_profileRefreshKey), onRefresh: _refreshProfile), "Profil"),
-                  child: const Text('Profil'),
+                  onPressed: () => _openPage(context, ProfileTab(key: ValueKey(_profileRefreshKey), onRefresh: _refreshProfile), AppLocalizations.of(context)!.profile),
+                  child: Text(AppLocalizations.of(context)!.profile),
                 ),
                 ElevatedButton(
-                  onPressed: () => _openPage(context, const TurnuvaTab(), "Turnuva"),
-                  child: const Text('Turnuva'),
+                  onPressed: () => _openPage(context, const TurnuvaTab(), AppLocalizations.of(context)!.tournament),
+                  child: Text(AppLocalizations.of(context)!.tournament),
                 ),
                 ElevatedButton(
-                  onPressed: () => _openPage(context, const LeaderboardTab(), "Liderlik Tablosu"),
-                  child: const Text('🏆 Liderlik'),
+                  onPressed: () => _openPage(context, const LeaderboardTab(), AppLocalizations.of(context)!.leaderboard),
+                  child: Text(AppLocalizations.of(context)!.leaderboard),
                 ),
                 ElevatedButton(
-                  onPressed: () => _openPage(context, SettingsTab(onLanguageChanged: widget.onLanguageChanged), "Ayarlar"),
-                  child: const Text('Ayarlar'),
+                  onPressed: () => _openPage(context, SettingsTab(onLanguageChanged: widget.onLanguageChanged), AppLocalizations.of(context)!.settings),
+                  child: Text(AppLocalizations.of(context)!.settings),
                 ),
               ],
             ),

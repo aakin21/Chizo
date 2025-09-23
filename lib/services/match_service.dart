@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/match_model.dart';
 import '../models/user_model.dart';
 import 'user_service.dart';
+import 'photo_upload_service.dart';
 
 class MatchService {
   static final SupabaseClient _client = Supabase.instance.client;
@@ -24,7 +25,7 @@ class MatchService {
     }
   }
 
-  // Random iki kullanıcı seç (aynı cinsiyet)
+  // Random iki kullanıcı seç (aynı cinsiyet) - çoklu fotoğraf desteği ile
   static Future<List<UserModel>> getRandomUsersForMatch(String currentUserId, {int limit = 2}) async {
     try {
       final currentUser = await UserService.getCurrentUser();
@@ -40,9 +41,54 @@ class MatchService {
           .not('profile_image_url', 'is', null)
           .limit(limit);
 
-      return (response as List)
+      final users = (response as List)
           .map((json) => UserModel.fromJson(json))
           .toList();
+
+      // Her kullanıcı için çoklu fotoğrafları yükle
+      for (int i = 0; i < users.length; i++) {
+        final user = users[i];
+        final photos = await PhotoUploadService.getUserPhotos(user.id);
+        
+        // Profil fotoğrafını da dahil et (slot 1 olarak)
+        final allPhotos = <Map<String, dynamic>>[];
+        if (user.profileImageUrl != null) {
+          allPhotos.add({
+            'photo_url': user.profileImageUrl!,
+            'photo_order': 1,
+            'is_active': true,
+          });
+        }
+        // Ek fotoğrafları ekle
+        allPhotos.addAll(photos);
+        
+        // UserModel'e çoklu fotoğrafları ekle
+        users[i] = UserModel(
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          coins: user.coins,
+          profileImageUrl: user.profileImageUrl,
+          age: user.age,
+          country: user.country,
+          gender: user.gender,
+          instagramHandle: user.instagramHandle,
+          profession: user.profession,
+          isVisible: user.isVisible,
+          showInstagram: user.showInstagram,
+          showProfession: user.showProfession,
+          totalMatches: user.totalMatches,
+          wins: user.wins,
+          currentStreak: user.currentStreak,
+          totalStreakDays: user.totalStreakDays,
+          lastLoginDate: user.lastLoginDate,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+          matchPhotos: allPhotos,
+        );
+      }
+
+      return users;
     } catch (e) {
       print('Error getting random users: $e');
       return [];

@@ -139,6 +139,11 @@
     "description": "English language option"
   },
   
+  "german": "German",
+  "@german": {
+    "description": "German language option"
+  },
+  
   "coins": "Coins",
   "@coins": {
     "description": "Coins label"
@@ -237,5 +242,810 @@
   "allMatchesVoted": "All matches voted!\nWaiting for new matches...",
   "@allMatchesVoted": {
     "description": "All matches voted message"
-  }
+  },
+  
+  "usernameCannotBeEmpty": "Username cannot be empty",
+  "@usernameCannotBeEmpty": {
+    "description": "Username validation error message"
+  },
+  
+  "emailCannotBeEmpty": "Email cannot be empty",
+  "@emailCannotBeEmpty": {
+    "description": "Email validation error message"
+  },
+  
+  "passwordCannotBeEmpty": "Password cannot be empty",
+  "@passwordCannotBeEmpty": {
+    "description": "Password validation error message"
+  },
+  
+  "passwordMinLength": "Password must be at least 6 characters",
+  "@passwordMinLength": {
+    "description": "Password minimum length validation message"
+  },
+  
+  "registrationSuccessful": "Registration successful!",
+  "@registrationSuccessful": {
+    "description": "Registration success message"
+  },
+  
+  "userAlreadyExists": "This user is already registered or an error occurred",
+  "@userAlreadyExists": {
+    "description": "User already exists error message"
+  },
+  
+  "loginSuccessful": "Login successful!",
+  "@loginSuccessful": {
+    "description": "Login success message"
+  },
+  
+  "loginError": "Login error: Unknown error",
+  "@loginError": {
+    "description": "Login error message"
+  },
+  
+  "dontHaveAccount": "Don't have an account? ",
+  "@dontHaveAccount": {
+    "description": "Don't have account text"
+  },
+  
+  "registerNow": "Register now",
+  "@registerNow": {
+    "description": "Register now button text"
+  },
+  
+  "alreadyHaveAccount": "Already have an account? ",
+  "@alreadyHaveAccount": {
+    "description": "Already have account text"
+  },
+  
+  "loginNow": "Login now",
+  "@loginNow": {
+    "description": "Login now button text"
+  },
+  
+  "confirmPassword": "Confirm Password",
+  "@confirmPassword": {
+    "description": "Confirm password field label"
+  },
+  
+  "instagramHandle": "Instagram Handle",
+  "@instagramHandle": {
+    "description": "Instagram handle field label"
+  },
+  
+  "profession": "Profession",
+  "@profession": {
+    "description": "Profession field label"
+  },
+  
+  "male": "Male",
+  "@male": {
+    "description": "Male gender option"
+  },
+  
+  "female": "Female",
+  "@female": {
+    "description": "Female gender option"
+  },
+  
+  "allPhotoSlotsFull": "All additional photo slots are full!",
+  "@allPhotoSlotsFull": {
+    "description": "All photo slots full message"
+  },
+  
+  "photoUploadSlot": "Photo Upload - Slot {slot}",
+  "@photoUploadSlot": {
+    "description": "Photo upload dialog title",
+    "placeholders": {
+      "slot": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "coinsRequiredForSlot": "This slot requires {coins} coins.",
+  "@coinsRequiredForSlot": {
+    "description": "Coins required for slot message",
+    "placeholders": {
+      "coins": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "currentCoins": "Current coins: {coins}",
+  "@currentCoins": {
+    "description": "Current coins display",
+    "placeholders": {
+      "coins": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "insufficientCoinsForUpload": "Insufficient coins! Use the coin button on the profile page to purchase coins.",
+  "@insufficientCoinsForUpload": {
+    "description": "Insufficient coins for photo upload message"
+  },
+  
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  
+  "upload": "Upload ({coins} coins)",
+  "@upload": {
+    "description": "Upload button text",
+    "placeholders": {
+      "coins": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "photoUploaded": "✅ Photo uploaded! {coins} coins spent.",
+  "@photoUploaded": {
+    "description": "Photo upload success message",
+    "placeholders": {
+      "coins": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "deletePhoto": "Delete Photo",
+  "@deletePhoto": {
+    "description": "Delete photo dialog title"
+  },
+  
+  "confirmDeletePhoto": "Are you sure you want to delete this photo?",
+  "@confirmDeletePhoto": {
+    "description": "Confirm photo deletion message"
+  },
+  
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button text"
+  },
+  
+  "photoDeleted": "✅ Photo deleted!",
+  "@photoDeleted": {
+    "description": "Photo deletion success message"
+  },
+  
+  "selectFromGallery": "Select from Gallery",
+  "@selectFromGallery": {
+    "description": "Select from gallery option"
+  },
+  
+  "takeFromCamera": "Take from Camera",
+  "@takeFromCamera": {
+    "description": "Take from camera option"
+  },
+  
+  "additionalMatchPhotos": "📸 Additional Match Photos",
+  "@additionalMatchPhotos": {
+    "description": "Additional match photos section title"
+  },
+  
+  "addPhoto": "Add Photo",
+  "@addPhoto": {
+    "description": "Add photo button text"
+  },
+  
+  "additionalPhotosDescription": "Additional photos that will appear in matches ({count}/4)",
+  "@additionalPhotosDescription": {
+    "description": "Additional photos description",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "noAdditionalPhotos": "No additional photos yet",
+  "@noAdditionalPhotos": {
+    "description": "No additional photos message"
+  },
+  
+  "secondPhotoCost": "2nd photo costs 50 coins!",
+  "@secondPhotoCost": {
+    "description": "Second photo cost message"
+  },
+  
+  "premiumInfoAdded": "Your premium information has been added! You can adjust visibility settings below.",
+  "@premiumInfoAdded": {
+    "description": "Premium info added message"
+  },
+  
+  "premiumInfoVisibility": "💎 Premium Info Visibility",
+  "@premiumInfoVisibility": {
+    "description": "Premium info visibility section title"
+  },
+  
+  "premiumInfoDescription": "Other users can view this information by spending coins",
+  "@premiumInfoDescription": {
+    "description": "Premium info description"
+  },
+  
+  "instagramAccount": "Instagram Account",
+  "@instagramAccount": {
+    "description": "Instagram account label"
+  },
+  
+  "statistics": "Statistics",
+  "@statistics": {
+    "description": "Statistics section title"
+  },
+  
+  "totalMatches": "Total Matches",
+  "@totalMatches": {
+    "description": "Total matches label"
+  },
+  
+  "wins": "Wins",
+  "@wins": {
+    "description": "Wins label"
+  },
+  
+  "winRatePercentage": "Win Rate",
+  "@winRatePercentage": {
+    "description": "Win rate percentage label"
+  },
+  
+  "predictionStatistics": "🎯 Prediction Statistics",
+  "@predictionStatistics": {
+    "description": "Prediction statistics section title"
+  },
+  
+  "totalPredictions": "Total Predictions",
+  "@totalPredictions": {
+    "description": "Total predictions label"
+  },
+  
+  "correctPredictions": "Correct Predictions",
+  "@correctPredictions": {
+    "description": "Correct predictions label"
+  },
+  
+  "accuracy": "Accuracy",
+  "@accuracy": {
+    "description": "Accuracy label"
+  },
+  
+  "coinsEarnedFromPredictions": "Coins earned from predictions: {coins}",
+  "@coinsEarnedFromPredictions": {
+    "description": "Coins earned from predictions",
+    "placeholders": {
+      "coins": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "matchHistory": "📊 Match History",
+  "@matchHistory": {
+    "description": "Match history section title"
+  },
+  
+  "viewLastFiveMatches": "View your last 5 matches and opponents (5 coins)",
+  "@viewLastFiveMatches": {
+    "description": "View match history message"
+  },
+  
+  "visibleInMatches": "Visible in Matches",
+  "@visibleInMatches": {
+    "description": "Visible in matches toggle label"
+  },
+  
+  "nowVisibleInMatches": "You will now appear in matches!",
+  "@nowVisibleInMatches": {
+    "description": "Now visible in matches message"
+  },
+  
+  "removedFromMatches": "You have been removed from matches!",
+  "@removedFromMatches": {
+    "description": "Removed from matches message"
+  },
+  
+  "addInfo": "Add {type}",
+  "@addInfo": {
+    "description": "Add info dialog title",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "enterInfo": "Enter your {type} information:",
+  "@enterInfo": {
+    "description": "Enter info dialog message",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "add": "Add",
+  "@add": {
+    "description": "Add button text"
+  },
+  
+  "infoAdded": "✅ {type} information added!",
+  "@infoAdded": {
+    "description": "Info added success message",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "errorAddingInfo": "❌ Error occurred while adding information!",
+  "@errorAddingInfo": {
+    "description": "Error adding info message"
+  },
+  
+  "matchInfoNotLoaded": "Match information could not be loaded",
+  "@matchInfoNotLoaded": {
+    "description": "Match info not loaded error message"
+  },
+  
+  "premiumInfo": "💎 {type} Information",
+  "@premiumInfo": {
+    "description": "Premium info dialog title",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "spendFiveCoins": "Spend 5 Coins",
+  "@spendFiveCoins": {
+    "description": "Spend 5 coins button text"
+  },
+  
+  "insufficientCoins": "❌ Insufficient coins!",
+  "@insufficientCoins": {
+    "description": "Insufficient coins error message"
+  },
+  
+  "fiveCoinsSpent": "✅ 5 coins spent",
+  "@fiveCoinsSpent": {
+    "description": "5 coins spent message"
+  },
+  
+  "ok": "OK",
+  "@ok": {
+    "description": "OK button text"
+  },
+  
+  "matchCounter": "{current} / {total}",
+  "@matchCounter": {
+    "description": "Match counter text",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "spendFiveCoinsToView": "You will spend 5 coins to view this information",
+  "@spendFiveCoinsToView": {
+    "description": "Spend coins to view message"
+  },
+  
+  "great": "Great!",
+  "@great": {
+    "description": "Great exclamation"
+  },
+  
+  "homePage": "Home Page",
+  "@homePage": {
+    "description": "Home page title"
+  },
+  
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile tab title"
+  },
+  
+  "tournament": "Tournament",
+  "@tournament": {
+    "description": "Tournament tab title"
+  },
+  
+  "leaderboard": "🏆 Leaderboard",
+  "@leaderboard": {
+    "description": "Leaderboard tab title"
+  },
+  
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings tab title"
+  },
+  
+  "streakMessage": "{days} day streak!",
+  "@streakMessage": {
+    "description": "Streak message",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "purchaseCoins": "Purchase Coins",
+  "@purchaseCoins": {
+    "description": "Purchase coins button text"
+  },
+  
+  "watchAd": "Watch Ad",
+  "@watchAd": {
+    "description": "Watch ad button text"
+  },
+  
+  "dailyAdLimit": "You can watch a maximum of 5 ads per day",
+  "@dailyAdLimit": {
+    "description": "Daily ad limit message"
+  },
+  
+  "coinsPerAd": "Coins per ad: 20",
+  "@coinsPerAd": {
+    "description": "Coins per ad message"
+  },
+  
+  "watchAdButton": "Watch Ad",
+  "@watchAdButton": {
+    "description": "Watch ad button label"
+  },
+  
+  "dailyLimitReached": "Daily limit reached",
+  "@dailyLimitReached": {
+    "description": "Daily limit reached message"
+  },
+  
+  "recentTransactions": "Recent Transactions:",
+  "@recentTransactions": {
+    "description": "Recent transactions title"
+  },
+  
+  "noTransactionHistory": "No transaction history yet",
+  "@noTransactionHistory": {
+    "description": "No transaction history message"
+  },
+  
+  "accountSettings": "Account Settings",
+  "@accountSettings": {
+    "description": "Account settings section title"
+  },
+  
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button text"
+  },
+  
+  "logoutConfirmation": "Are you sure you want to logout from your account?",
+  "@logoutConfirmation": {
+    "description": "Logout confirmation message"
+  },
+  
+  "logoutError": "Error occurred while logging out: {error}",
+  "@logoutError": {
+    "description": "Logout error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "deleteAccount": "Delete Account",
+  "@deleteAccount": {
+    "description": "Delete account button text"
+  },
+  
+  "deleteAccountConfirmation": "Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.",
+  "@deleteAccountConfirmation": {
+    "description": "Delete account confirmation message"
+  },
+  
+  "finalConfirmation": "Final Confirmation",
+  "@finalConfirmation": {
+    "description": "Final confirmation dialog title"
+  },
+  
+  "typeDeleteToConfirm": "To delete your account, type \"DELETE\":",
+  "@typeDeleteToConfirm": {
+    "description": "Type delete to confirm message"
+  },
+  
+  "pleaseTypeDelete": "Please type \"DELETE\"!",
+  "@pleaseTypeDelete": {
+    "description": "Please type delete message"
+  },
+  
+  "accountDeletedSuccessfully": "Your account has been successfully deleted!",
+  "@accountDeletedSuccessfully": {
+    "description": "Account deleted successfully message"
+  },
+  
+  "errorDeletingAccount": "Error occurred while deleting account: {error}",
+  "@errorDeletingAccount": {
+    "description": "Error deleting account message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "errorWatchingAd": "Error occurred while watching ad: {error}",
+  "@errorWatchingAd": {
+    "description": "Error watching ad message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "watchingAd": "Watching Ad",
+  "@watchingAd": {
+    "description": "Watching ad dialog title"
+  },
+  
+  "adLoading": "Ad loading...",
+  "@adLoading": {
+    "description": "Ad loading message"
+  },
+  
+  "adSimulation": "This is a simulated ad. In the real app, an actual ad would be shown here.",
+  "@adSimulation": {
+    "description": "Ad simulation message"
+  },
+  
+  "adWatched": "Ad watched! +20 coins earned!",
+  "@adWatched": {
+    "description": "Ad watched success message"
+  },
+  
+  "errorAddingCoins": "Error occurred while adding coins",
+  "@errorAddingCoins": {
+    "description": "Error adding coins message"
+  },
+  
+  "buy": "Buy",
+  "@buy": {
+    "description": "Buy button text"
+  },
+  
+  "predict": "Predict",
+  "@predict": {
+    "description": "Predict button text"
+  },
+  
+  "fiveCoinsSpentForHistory": "✅ 5 coins spent! Your match history is being displayed.",
+  "@fiveCoinsSpentForHistory": {
+    "description": "5 coins spent for history message"
+  },
+  
+  "insufficientCoinsForHistory": "❌ Insufficient coins!",
+  "@insufficientCoinsForHistory": {
+    "description": "Insufficient coins for history message"
+  },
+  
+  "spendFiveCoinsForHistory": "Spend 5 Coins",
+  "@spendFiveCoinsForHistory": {
+    "description": "Spend 5 coins for history button text"
+  },
+  
+  "winsAndMatches": "{wins} wins • {matches} matches",
+  "@winsAndMatches": {
+    "description": "Wins and matches display",
+    "placeholders": {
+      "wins": {
+        "type": "int"
+      },
+      "matches": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "insufficientCoinsForTournament": "Insufficient coins!",
+  "@insufficientCoinsForTournament": {
+    "description": "Insufficient coins for tournament message"
+  },
+  
+  "joinedTournament": "Joined tournament!",
+  "@joinedTournament": {
+    "description": "Joined tournament success message"
+  },
+  
+  "tournamentJoinFailed": "Failed to join tournament!",
+  "@tournamentJoinFailed": {
+    "description": "Tournament join failed message"
+  },
+  
+  "dailyStreak": "Daily Streak!",
+  "@dailyStreak": {
+    "description": "Daily streak message"
+  },
+  
+  "imageUpdated": "Image updated!",
+  "@imageUpdated": {
+    "description": "Image update success message"
+  },
+  
+  "updateFailed": "Update failed!",
+  "@updateFailed": {
+    "description": "Update failed message"
+  },
+  
+  "imageUpdateFailed": "Image update failed!",
+  "@imageUpdateFailed": {
+    "description": "Image update failed message"
+  },
+  
+  "selectImage": "Select Image",
+  "@selectImage": {
+    "description": "Select image message"
+  },
+  
+  "userInfoNotLoaded": "User information could not be loaded",
+  "@userInfoNotLoaded": {
+    "description": "User info not loaded message"
+  },
+  
+  "coin": "Coin",
+  "@coin": {
+    "description": "Coin label"
+  },
+  
+  "premiumFeatures": "Premium Features",
+  "@premiumFeatures": {
+    "description": "Premium features label"
+  },
+  
+  "addInstagram": "Add Instagram Account",
+  "@addInstagram": {
+    "description": "Add Instagram account button text"
+  },
+  
+  "addProfession": "Add Profession",
+  "@addProfession": {
+    "description": "Add profession button text"
+  },
+  
+  "profileUpdated": "Profile updated!",
+  "@profileUpdated": {
+    "description": "Profile update success message"
+  },
+  
+  "profileUpdateFailed": "Profile update failed!",
+  "@profileUpdateFailed": {
+    "description": "Profile update failed message"
+  },
+  
+  "profileSettings": "Profile Settings",
+  "@profileSettings": {
+    "description": "Profile settings title"
+  },
+  
+  "passwordReset": "Reset Password",
+  "@passwordReset": {
+    "description": "Password reset button text"
+  },
+  
+  "passwordResetSubtitle": "Reset password via email",
+  "@passwordResetSubtitle": {
+    "description": "Password reset subtitle"
+  },
+  
+  "logoutSubtitle": "Secure logout from your account",
+  "@logoutSubtitle": {
+    "description": "Logout subtitle"
+  },
+  
+  "deleteAccountSubtitle": "Permanently delete your account",
+  "@deleteAccountSubtitle": {
+    "description": "Delete account subtitle"
+  },
+  
+  "updateProfile": "Update Profile",
+  "@updateProfile": {
+    "description": "Update profile button text"
+  },
+  
+  "passwordResetTitle": "Password Reset",
+  "@passwordResetTitle": {
+    "description": "Password reset dialog title"
+  },
+  
+  "passwordResetMessage": "A password reset link will be sent to your email address. Do you want to continue?",
+  "@passwordResetMessage": {
+    "description": "Password reset dialog message"
+  },
+  
+  "send": "Send",
+  "@send": {
+    "description": "Send button text"
+  },
+  
+  "passwordResetSent": "Password reset email sent!",
+  "@passwordResetSent": {
+    "description": "Password reset email sent message"
+  },
+  
+  "emailNotFound": "Email address not found!",
+  "@emailNotFound": {
+    "description": "Email not found message"
+  },
+  
+  "votingError": "Error occurred during voting",
+  "@votingError": {
+    "description": "Voting error message"
+  },
+  
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "photoUploaded": "Photo uploaded! {coinsSpent} coins spent.",
+  "@photoUploaded": {
+    "placeholders": {
+      "coinsSpent": {
+        "type": "int"
+      }
+    }
+  },
+  "photoDeleted": "Photo deleted!",
+  "selectFromGallery": "Select from Gallery",
+  "takeFromCamera": "Take from Camera",
+  "additionalMatchPhotos": "Additional Match Photos",
+  "addPhoto": "Add Photo",
+  "additionalPhotosDescription": "Additional photos that will appear in matches ({count}/4)",
+  "noAdditionalPhotos": "No additional photos yet",
+  "secondPhotoCost": "2nd photo costs 50 coins!",
+  "slot": "Slot {slot}",
+  "photoUploadSlot": "Photo Upload - Slot {slot}",
+  "coinsRequiredForSlot": "This slot requires {coins} coins.",
+  "currentCoins": "Current coins: {coins}",
+  "insufficientCoinsForUpload": "Insufficient coins! Use the coin button on profile page to purchase coins.",
+  "upload": "Upload ({coins} coins)",
+  "deletePhoto": "Delete Photo",
+  "confirmDeletePhoto": "Are you sure you want to delete this photo?",
+  "premiumInfoVisibility": "Premium Info Visibility",
+  "premiumInfoDescription": "Other users can view this information by spending coins",
+  "instagramAccount": "Instagram Account",
+  "profession": "Profession",
+  "totalMatches": "Total Matches",
+  "wins": "Wins",
+  "winRate": "Win Rate",
+  "predictionStatistics": "Prediction Statistics",
+  "totalPredictions": "Total Predictions",
+  "correctPredictions": "Correct Predictions",
+  "accuracy": "Accuracy",
+  "coinsEarnedFromPredictions": "Coins earned from predictions: {coins}",
+  "matchHistory": "Match History",
+  "viewLastFiveMatches": "View your last 5 matches and opponents (5 coins)",
+  "visibleInMatches": "Visible in Matches",
+  "nowVisibleInMatches": "You will now appear in matches!",
+  "removedFromMatches": "You have been removed from matches!",
+  "addInfo": "Add {type}",
+  "enterInfo": "Enter your {type} information:",
+  "add": "Add",
+  "infoAdded": "✅ {type} information added!",
+  "errorAddingInfo": "❌ Error occurred while adding information!",
+  "premiumInfo": "Premium Information",
+  "premiumInfoAdded": "Your premium information has been added! You can adjust visibility settings below.",
+  "instagramAdded": "Instagram information added!",
+  "professionAdded": "Profession information added!",
+  "addInstagramFromSettings": "You can use this feature by adding Instagram and profession information from settings"
 }

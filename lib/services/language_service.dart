@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'app_localizations.dart';
+import '../l10n/app_localizations.dart';
 
 class LanguageService {
   static const String _languageKey = 'selected_language';
@@ -9,6 +9,7 @@ class LanguageService {
   static final List<Locale> supportedLocales = [
     const Locale('tr', 'TR'), // Turkish
     const Locale('en', 'US'), // English
+    const Locale('de', 'DE'), // German
   ];
 
   // Mevcut dili al
@@ -44,6 +45,12 @@ class LanguageService {
         'flag': '🇺🇸',
         'locale': const Locale('en', 'US'),
       },
+      {
+        'code': 'de',
+        'name': 'Deutsch',
+        'flag': '🇩🇪',
+        'locale': const Locale('de', 'DE'),
+      },
     ];
   }
 
@@ -54,6 +61,8 @@ class LanguageService {
         return 'Türkçe';
       case 'en':
         return 'English';
+      case 'de':
+        return 'Deutsch';
       default:
         return 'Türkçe';
     }
@@ -61,12 +70,14 @@ class LanguageService {
 
   // Dil adını context'e göre al
   static String getLanguageNameWithContext(BuildContext context, String languageCode) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     switch (languageCode) {
       case 'tr':
         return l10n.turkish;
       case 'en':
         return l10n.english;
+      case 'de':
+        return l10n.german;
       default:
         return l10n.turkish;
     }
@@ -79,6 +90,8 @@ class LanguageService {
         return '🇹🇷';
       case 'en':
         return '🇺🇸';
+      case 'de':
+        return '🇩🇪';
       default:
         return '🇹🇷';
     }
