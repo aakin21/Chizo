@@ -24,6 +24,16 @@ class _ProfileTabState extends State<ProfileTab> {
   bool isUpdating = false;
   Map<String, dynamic> predictionStats = {};
   List<Map<String, dynamic>> userPhotos = [];
+  
+  // Ülke listesi
+  static const List<String> countries = [
+    'Türkiye', 'Almanya', 'Fransa', 'İngiltere', 'İtalya', 'İspanya', 
+    'Hollanda', 'Belçika', 'Avusturya', 'İsviçre', 'Amerika', 'Kanada',
+    'Avustralya', 'Japonya', 'Güney Kore', 'Çin', 'Hindistan', 'Brezilya',
+    'Arjantin', 'Meksika', 'Rusya', 'Polonya', 'Çek Cumhuriyeti', 'Macaristan',
+    'Romanya', 'Bulgaristan', 'Yunanistan', 'Portekiz', 'İsveç', 'Norveç',
+    'Danimarka', 'Finlandiya', 'İzlanda', 'İrlanda', 'Yeni Zelanda', 'Güney Afrika'
+  ];
 
   @override
   void initState() {
@@ -846,6 +856,34 @@ class _ProfileTabState extends State<ProfileTab> {
                         ),
                       ),
 
+                      const SizedBox(height: 16),
+
+                      // Ülke Seçimi Butonu
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.public,
+                            color: Colors.blue,
+                            size: 28,
+                          ),
+                          title: const Text(
+                            'Ülke Seçimi',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text(
+                            currentUser!.countryPreferences != null 
+                                ? '${currentUser!.countryPreferences!.length} ülke seçili'
+                                : 'Tüm ülkeler seçili',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios),
+                          onTap: isUpdating ? null : _showCountrySelectionDialog,
+                        ),
+                      ),
+
                       const SizedBox(height: 24),
 
                       // Matchlere Açık Toggle
@@ -1008,6 +1046,104 @@ class _ProfileTabState extends State<ProfileTab> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
+    }
+  }
+
+  // Ülke seçimi dialog'u
+  Future<void> _showCountrySelectionDialog() async {
+    if (currentUser == null) return;
+    
+    // Mevcut seçili ülkeleri al (eğer yoksa tüm ülkeler seçili olsun)
+    List<String> selectedCountries = currentUser!.countryPreferences ?? countries;
+    
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Ülke Seçimi'),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 400,
+            child: Column(
+              children: [
+                const Text(
+                  'Hangi ülkelerden insanların sizin fotoğraflarınızı oylamasını istediğinizi seçin:',
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: countries.length,
+                    itemBuilder: (context, index) {
+                      final country = countries[index];
+                      final isSelected = selectedCountries.contains(country);
+                      
+                      return CheckboxListTile(
+                        title: Text(country),
+                        value: isSelected,
+                        onChanged: (value) {
+                          setDialogState(() {
+                            if (value == true) {
+                              selectedCountries.add(country);
+                            } else {
+                              selectedCountries.remove(country);
+                            }
+                          });
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('İptal'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                await _updateCountryPreferences(selectedCountries);
+              },
+              child: const Text('Kaydet'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Ülke tercihlerini güncelle
+  Future<void> _updateCountryPreferences(List<String> countries) async {
+    setState(() => isUpdating = true);
+    
+    try {
+      final success = await UserService.updateCountryPreferences(countries);
+      
+      if (success) {
+        await loadUserData();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ Ülke tercihleri güncellendi'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('❌ Ülke tercihleri güncellenemedi'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
+      );
+    } finally {
+      setState(() => isUpdating = false);
     }
   }
 }

@@ -39,6 +39,14 @@ class UserService {
           'show_profession': false,
           'total_matches': 0,
           'wins': 0,
+          'country_preferences': [
+            'Türkiye', 'Almanya', 'Fransa', 'İngiltere', 'İtalya', 'İspanya', 
+            'Hollanda', 'Belçika', 'Avusturya', 'İsviçre', 'Amerika', 'Kanada',
+            'Avustralya', 'Japonya', 'Güney Kore', 'Çin', 'Hindistan', 'Brezilya',
+            'Arjantin', 'Meksika', 'Rusya', 'Polonya', 'Çek Cumhuriyeti', 'Macaristan',
+            'Romanya', 'Bulgaristan', 'Yunanistan', 'Portekiz', 'İsveç', 'Norveç',
+            'Danimarka', 'Finlandiya', 'İzlanda', 'İrlanda', 'Yeni Zelanda', 'Güney Afrika'
+          ],
           'created_at': DateTime.now().toIso8601String(),
           'updated_at': DateTime.now().toIso8601String(),
         };
@@ -182,6 +190,27 @@ class UserService {
     } catch (e) {
       print('Error getting coin transactions: $e');
       return [];
+    }
+  }
+
+  // Ülke tercihlerini güncelle
+  static Future<bool> updateCountryPreferences(List<String> countries) async {
+    try {
+      final authUser = _client.auth.currentUser;
+      if (authUser == null) return false;
+
+      await _client
+          .from('users')
+          .update({
+            'country_preferences': countries,
+            'updated_at': DateTime.now().toIso8601String(),
+          })
+          .eq('auth_id', authUser.id);
+
+      return true;
+    } catch (e) {
+      print('Error updating country preferences: $e');
+      return false;
     }
   }
 
