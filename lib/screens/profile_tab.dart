@@ -35,6 +35,9 @@ class _ProfileTabState extends State<ProfileTab> {
     'Danimarka', 'Finlandiya', 'İzlanda', 'İrlanda', 'Yeni Zelanda', 'Güney Afrika'
   ];
 
+  // Yaş aralığı listesi
+  static const List<String> ageRanges = ['18-24', '24-32', '32-40', '40+'];
+
   @override
   void initState() {
     super.initState();
@@ -884,6 +887,34 @@ class _ProfileTabState extends State<ProfileTab> {
                         ),
                       ),
 
+                      const SizedBox(height: 16),
+
+                      // Yaş Aralığı Seçimi Butonu
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.cake,
+                            color: Colors.orange,
+                            size: 28,
+                          ),
+                          title: const Text(
+                            'Yaş Aralığı Seçimi',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text(
+                            currentUser!.ageRangePreferences != null 
+                                ? '${currentUser!.ageRangePreferences!.length} yaş aralığı seçili'
+                                : 'Tüm yaş aralıkları seçili',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios),
+                          onTap: isUpdating ? null : _showAgeRangeSelectionDialog,
+                        ),
+                      ),
+
                       const SizedBox(height: 24),
 
                       // Matchlere Açık Toggle
@@ -1134,6 +1165,104 @@ class _ProfileTabState extends State<ProfileTab> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('❌ Ülke tercihleri güncellenemedi'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
+      );
+    } finally {
+      setState(() => isUpdating = false);
+    }
+  }
+
+  // Yaş aralığı seçimi dialog'u
+  Future<void> _showAgeRangeSelectionDialog() async {
+    if (currentUser == null) return;
+    
+    // Mevcut seçili yaş aralıklarını al (eğer yoksa tüm yaş aralıkları seçili olsun)
+    List<String> selectedAgeRanges = currentUser!.ageRangePreferences ?? ageRanges;
+    
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Yaş Aralığı Seçimi'),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 300,
+            child: Column(
+              children: [
+                const Text(
+                  'Hangi yaş aralığındaki insanların sizin fotoğraflarınızı oylamasını istediğinizi seçin:',
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: ageRanges.length,
+                    itemBuilder: (context, index) {
+                      final ageRange = ageRanges[index];
+                      final isSelected = selectedAgeRanges.contains(ageRange);
+                      
+                      return CheckboxListTile(
+                        title: Text(ageRange),
+                        value: isSelected,
+                        onChanged: (value) {
+                          setDialogState(() {
+                            if (value == true) {
+                              selectedAgeRanges.add(ageRange);
+                            } else {
+                              selectedAgeRanges.remove(ageRange);
+                            }
+                          });
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('İptal'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                await _updateAgeRangePreferences(selectedAgeRanges);
+              },
+              child: const Text('Kaydet'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Yaş aralığı tercihlerini güncelle
+  Future<void> _updateAgeRangePreferences(List<String> ageRanges) async {
+    setState(() => isUpdating = true);
+    
+    try {
+      final success = await UserService.updateAgeRangePreferences(ageRanges);
+      
+      if (success) {
+        await loadUserData();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ Yaş aralığı tercihleri güncellendi'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('❌ Yaş aralığı tercihleri güncellenemedi'),
             backgroundColor: Colors.red,
           ),
         );

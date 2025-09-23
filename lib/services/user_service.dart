@@ -47,6 +47,7 @@ class UserService {
             'Romanya', 'Bulgaristan', 'Yunanistan', 'Portekiz', 'İsveç', 'Norveç',
             'Danimarka', 'Finlandiya', 'İzlanda', 'İrlanda', 'Yeni Zelanda', 'Güney Afrika'
           ],
+          'age_range_preferences': ['18-24', '24-32', '32-40', '40+'],
           'created_at': DateTime.now().toIso8601String(),
           'updated_at': DateTime.now().toIso8601String(),
         };
@@ -210,6 +211,27 @@ class UserService {
       return true;
     } catch (e) {
       print('Error updating country preferences: $e');
+      return false;
+    }
+  }
+
+  // Yaş aralığı tercihlerini güncelle
+  static Future<bool> updateAgeRangePreferences(List<String> ageRanges) async {
+    try {
+      final authUser = _client.auth.currentUser;
+      if (authUser == null) return false;
+
+      await _client
+          .from('users')
+          .update({
+            'age_range_preferences': ageRanges,
+            'updated_at': DateTime.now().toIso8601String(),
+          })
+          .eq('auth_id', authUser.id);
+
+      return true;
+    } catch (e) {
+      print('Error updating age range preferences: $e');
       return false;
     }
   }
