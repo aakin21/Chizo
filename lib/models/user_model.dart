@@ -20,6 +20,8 @@ class UserModel {
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<Map<String, dynamic>>? matchPhotos; // Çoklu fotoğraflar
+  final List<String>? countryPreferences; // Hangi ülkelerden oylanmak istediği
+  final List<String>? ageRangePreferences; // Hangi yaş aralıklarından oylanmak istediği
 
   UserModel({
     required this.id,
@@ -43,6 +45,8 @@ class UserModel {
     required this.createdAt,
     required this.updatedAt,
     this.matchPhotos,
+    this.countryPreferences,
+    this.ageRangePreferences,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -72,6 +76,12 @@ class UserModel {
       matchPhotos: json['match_photos'] != null 
           ? List<Map<String, dynamic>>.from(json['match_photos'])
           : null,
+      countryPreferences: json['country_preferences'] != null 
+          ? List<String>.from(json['country_preferences'])
+          : null,
+      ageRangePreferences: json['age_range_preferences'] != null 
+          ? List<String>.from(json['age_range_preferences'])
+          : null,
     );
   }
 
@@ -98,6 +108,8 @@ class UserModel {
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
       'match_photos': matchPhotos,
+      'country_preferences': countryPreferences,
+      'age_range_preferences': ageRangePreferences,
     };
   }
 

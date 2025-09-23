@@ -32,6 +32,7 @@ class MatchService {
       if (currentUser == null || currentUser.gender == null) return [];
 
       // Aynı cinsiyetten, görünür olan, kendisi olmayan kullanıcıları getir
+      // Ülke filtreleme burada yapılmaz - bu fonksiyon sadece match oluşturmak için kullanılır
       final response = await _client
           .from('users')
           .select()
@@ -126,7 +127,7 @@ class MatchService {
       // Önce kullanıcının users tablosundaki ID'sini al
       final currentUserRecord = await _client
           .from('users')
-          .select('id')
+          .select('id, country')
           .eq('auth_id', user.id)
           .maybeSingle();
       
@@ -136,6 +137,7 @@ class MatchService {
       }
       
       final currentUserId = currentUserRecord['id'];
+      final currentUserCountry = currentUserRecord['country'];
 
       // Tüm tamamlanmamış match'leri getir (kendisi dahil değil)
       final response = await _client
@@ -157,7 +159,7 @@ class MatchService {
         print('User2: ${match['user2']?['username'] ?? 'NULL'}');
       }
 
-      // Sadece her iki kullanıcısı da mevcut olan match'leri filtrele
+      // Sadece her iki kullanıcısı da mevcut olan VE ülke tercihlerine uygun match'leri filtrele
       final validMatches = <MatchModel>[];
       final invalidMatchIds = <String>[];
       
@@ -168,7 +170,31 @@ class MatchService {
             matchData['user2']['is_visible'] == true &&
             matchData['user1']['profile_image_url'] != null &&
             matchData['user2']['profile_image_url'] != null) {
-          validMatches.add(MatchModel.fromJson(matchData));
+          
+          // Ülke filtreleme kontrolü
+          // Match'teki kullanıcıların ülke tercihleri, mevcut kullanıcının ülkesini içeriyorsa match'i dahil et
+          List<String>? user1CountryPreferences = matchData['user1']['country_preferences'] != null 
+              ? List<String>.from(matchData['user1']['country_preferences'])
+              : null;
+          List<String>? user2CountryPreferences = matchData['user2']['country_preferences'] != null 
+              ? List<String>.from(matchData['user2']['country_preferences'])
+              : null;
+          
+          // Eğer kullanıcıların ülke tercihi yoksa, tüm ülkelerden oylanabilir
+          bool user1AllowsCurrentUser = user1CountryPreferences == null || 
+              user1CountryPreferences.isEmpty || 
+              currentUserCountry == null ||
+              user1CountryPreferences.contains(currentUserCountry);
+          bool user2AllowsCurrentUser = user2CountryPreferences == null || 
+              user2CountryPreferences.isEmpty || 
+              currentUserCountry == null ||
+              user2CountryPreferences.contains(currentUserCountry);
+          
+          if (user1AllowsCurrentUser && user2AllowsCurrentUser) {
+            validMatches.add(MatchModel.fromJson(matchData));
+          } else {
+            print('Match filtered out due to country preferences: User1 allows: $user1AllowsCurrentUser, User2 allows: $user2AllowsCurrentUser, Current user country: $currentUserCountry');
+          }
         } else {
           // Geçersiz match'i işaretle
           invalidMatchIds.add(matchData['id']);
@@ -520,6 +546,7 @@ class MatchService {
       final currentUserId = currentUserRecord['id'];
 
       // Get all visible users with profile pictures, grouped by gender (excluding current user)
+      // Ülke filtreleme burada yapılmaz - match oluştururken tüm kullanıcılar kullanılır
       final maleUsers = await _client
           .from('users')
           .select()
@@ -543,7 +570,7 @@ class MatchService {
       final allUsers = await _client.from('users').select();
       print('Total users in database: ${allUsers.length}');
       for (var user in allUsers) {
-        print('User: ${user['username']}, is_visible: ${user['is_visible']}, gender: ${user['gender']}, has_image: ${user['profile_image_url'] != null}');
+        print('User: ${user['username']}, is_visible: ${user['is_visible']}, gender: ${user['gender']}, country: ${user['country']}, has_image: ${user['profile_image_url'] != null}');
       }
 
 
@@ -622,6 +649,7 @@ class MatchService {
           if (femaleUserModels.length < 2) break;
         }
       }
+
 
       print('Generated ${createdMatches.length} random matches');
       return createdMatches;
