@@ -209,7 +209,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String currentCoins(int coins) {
-    return 'Current coins: $coins';
+    return 'Current Coins';
   }
 
   @override
@@ -331,7 +331,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get spendFiveCoins => 'Spend 5 Coins';
+  String get spendFiveCoins => 'Spend 5 coins to view this information';
 
   @override
   String get insufficientCoins => '❌ Insufficient coins!';
@@ -369,7 +369,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get watchAd => 'Watch Ad';
 
   @override
-  String get dailyAdLimit => 'You can watch a maximum of 5 ads per day';
+  String get dailyAdLimit => 'You can watch maximum 5 ads per day';
 
   @override
   String get coinsPerAd => 'Coins per ad: 20';
@@ -398,7 +398,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String logoutError(String error) {
-    return 'Error occurred while logging out: $error';
+    return 'Error occurred while logging out';
   }
 
   @override
@@ -423,12 +423,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String errorDeletingAccount(String error) {
-    return 'Error occurred while deleting account: $error';
+    return 'Error occurred while deleting account';
   }
 
   @override
   String errorWatchingAd(String error) {
-    return 'Error occurred while watching ad: $error';
+    return 'Error occurred while watching ad';
   }
 
   @override
@@ -439,7 +439,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adSimulation =>
-      'This is a simulated ad. In the real app, an actual ad would be shown here.';
+      'This is a simulation ad. In the real app, an actual ad will be shown here.';
 
   @override
   String get adWatched => 'Ad watched! +20 coins earned!';
@@ -564,4 +564,69 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get addInstagramFromSettings =>
       'You can use this feature by adding Instagram and profession information from settings';
+
+  @override
+  String get basicInfo => 'Basic Information';
+
+  @override
+  String get premiumInfoSettings => 'Premium Information';
+
+  @override
+  String get premiumInfoDescriptionSettings =>
+      'Other users can view this information by spending coins';
+
+  @override
+  String get coinInfo => 'Coin Information';
+
+  @override
+  String get remaining => 'Remaining';
+
+  @override
+  String get vs => 'VS';
+
+  @override
+  String get coinPurchase => 'Coin Purchase';
+
+  @override
+  String get purchaseSuccessful => 'Purchase successful!';
+
+  @override
+  String get purchaseFailed => 'Purchase failed!';
+
+  @override
+  String get coinPackages => 'Coin Packages';
+
+  @override
+  String get coinUsage => 'Coin Usage';
+
+  @override
+  String get instagramView => 'View Instagram accounts';
+
+  @override
+  String get professionView => 'View profession information';
+
+  @override
+  String get statsView => 'View detailed statistics';
+
+  @override
+  String get tournamentFees => 'Tournament participation fees';
+
+  @override
+  String get premiumFilters => 'Premium filters';
+
+  @override
+  String get viewStats => 'View Stats';
+
+  @override
+  String get photoStats => 'Photo Statistics';
+
+  @override
+  String get photoStatsCost => 'View photo statistics costs 50 coins';
+
+  @override
+  String get insufficientCoinsForStats =>
+      'Insufficient coins to view photo statistics. Required: 50 coins';
+
+  @override
+  String get pay => 'Pay';
 }

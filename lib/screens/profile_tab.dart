@@ -41,14 +41,12 @@ class _ProfileTabState extends State<ProfileTab> {
   }
 
   Future<void> loadUserData() async {
-    print('ProfileTab: Loading user data...');
     setState(() => isLoading = true);
     
     try {
       final user = await UserService.getCurrentUser();
       final stats = await PredictionService.getUserPredictionStats();
       final photos = user != null ? await PhotoUploadService.getUserPhotos(user.id) : [];
-      print('ProfileTab: User loaded - totalMatches: ${user?.totalMatches}, wins: ${user?.wins}');
       
       if (mounted) {
         setState(() {
@@ -256,9 +254,7 @@ class _ProfileTabState extends State<ProfileTab> {
       }
 
       if (imageFile != null) {
-        print('Image file selected: ${imageFile.path}');
         final imageUrl = await ImageService.uploadImage(imageFile, 'profile.jpg');
-        print('Image URL received: $imageUrl');
         
         if (imageUrl != null) {
           final success = await UserService.updateProfile(profileImageUrl: imageUrl);
@@ -515,6 +511,29 @@ class _ProfileTabState extends State<ProfileTab> {
                                               ),
                                             ),
                                           ),
+                                          // İstatistik Gör butonu
+                                          Positioned(
+                                            bottom: 4,
+                                            right: 4,
+                                            child: GestureDetector(
+                                              onTap: () => _showPhotoStats(photo['id']),
+                                              child: Container(
+                                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blue.withOpacity(0.8),
+                                                  borderRadius: BorderRadius.circular(12),
+                                                ),
+                                                child: Text(
+                                                  AppLocalizations.of(context)!.viewStats,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 8,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                           Positioned(
                                             bottom: 4,
                                             left: 4,
@@ -586,7 +605,7 @@ class _ProfileTabState extends State<ProfileTab> {
                                   AppLocalizations.of(context)!.addInstagram,
                                   Icons.camera_alt,
                                   Colors.pink,
-                                  () => _showAddInfoDialog('Instagram', 'instagram'),
+                                  () => _showAddInfoDialog(AppLocalizations.of(context)!.instagramAccount, 'instagram'),
                                 ),
                               
                               // Meslek Ekleme
@@ -595,7 +614,7 @@ class _ProfileTabState extends State<ProfileTab> {
                                   AppLocalizations.of(context)!.addProfession,
                                   Icons.work,
                                   Colors.blue,
-                                  () => _showAddInfoDialog('Meslek', 'profession'),
+                                  () => _showAddInfoDialog(AppLocalizations.of(context)!.profession, 'profession'),
                                 ),
                               
                               if (currentUser!.instagramHandle != null || currentUser!.profession != null)
@@ -992,7 +1011,7 @@ class _ProfileTabState extends State<ProfileTab> {
         await loadUserData();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.infoAdded(field == 'instagram' ? 'Instagram' : 'Meslek')),
+            content: Text(AppLocalizations.of(context)!.infoAdded(field == 'instagram' ? AppLocalizations.of(context)!.instagramAccount : AppLocalizations.of(context)!.profession)),
             backgroundColor: Colors.green,
           ),
         );
@@ -1009,5 +1028,103 @@ class _ProfileTabState extends State<ProfileTab> {
         SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
     }
+  }
+
+  /// Show photo statistics modal
+  Future<void> _showPhotoStats(String photoId) async {
+    final l10n = AppLocalizations.of(context)!;
+    
+    // Check if user has enough coins
+    final canView = await PhotoUploadService.canViewPhotoStats();
+    if (!canView) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.insufficientCoinsForStats),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Show confirmation dialog
+    final shouldProceed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.photoStats),
+        content: Text(l10n.photoStatsCost),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text('${l10n.pay} 50 ${l10n.coins}'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldProceed != true) return;
+
+    // Pay for viewing stats
+    final paymentSuccess = await PhotoUploadService.payForPhotoStatsView();
+    if (!paymentSuccess) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.error),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Get photo statistics
+    final photoStats = await PhotoUploadService.getPhotoStats(photoId);
+    if (photoStats == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${l10n.error}: Could not load photo statistics'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Show statistics modal
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.photoStats),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '${l10n.wins}: ${photoStats['wins']}',
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${l10n.totalMatches}: ${photoStats['total_matches']}',
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${l10n.winRate}: ${photoStats['total_matches'] > 0 ? ((photoStats['wins'] as int) / (photoStats['total_matches'] as int) * 100).toStringAsFixed(1) : '0.0'}%',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.ok),
+          ),
+        ],
+      ),
+    );
+
+    // Refresh user data to update coin balance
+    await loadUserData();
   }
 }

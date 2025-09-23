@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/payment_service.dart';
 import '../services/user_service.dart';
 import '../models/user_model.dart';
-import '../services/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 
 class CoinPurchaseScreen extends StatefulWidget {
   const CoinPurchaseScreen({super.key});
@@ -33,7 +33,7 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
     } catch (e) {
       setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppLocalizations.of(context).error}: $e')),
+        SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
     }
   }
@@ -47,16 +47,16 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
       if (success) {
         await loadUserData();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).purchaseSuccessful)),
+          SnackBar(content: Text(AppLocalizations.of(context)!.purchaseSuccessful)),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).purchaseFailed)),
+          SnackBar(content: Text(AppLocalizations.of(context)!.purchaseFailed)),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppLocalizations.of(context).error}: $e')),
+        SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
     } finally {
       setState(() => isPurchasing = false);
@@ -73,7 +73,7 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context).coinPurchase),
+        title: Text(AppLocalizations.of(context)!.coinPurchase),
         backgroundColor: Colors.amber,
       ),
       body: SingleChildScrollView(
@@ -94,7 +94,7 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          AppLocalizations.of(context).currentCoins,
+                          AppLocalizations.of(context)!.currentCoins(currentUser!.coins),
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.grey,
@@ -118,7 +118,7 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
             const SizedBox(height: 24),
             
             Text(
-              AppLocalizations.of(context).coinPackages,
+              AppLocalizations.of(context)!.coinPackages,
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -151,18 +151,18 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      AppLocalizations.of(context).coinUsage,
+                      AppLocalizations.of(context)!.coinUsage,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text('• ${AppLocalizations.of(context).instagramView}'),
-                    Text('• ${AppLocalizations.of(context).professionView}'),
-                    Text('• ${AppLocalizations.of(context).statsView}'),
-                    Text('• ${AppLocalizations.of(context).tournamentFees}'),
-                    Text('• ${AppLocalizations.of(context).premiumFilters}'),
+                    Text('• ${AppLocalizations.of(context)!.instagramView}'),
+                    Text('• ${AppLocalizations.of(context)!.professionView}'),
+                    Text('• ${AppLocalizations.of(context)!.statsView}'),
+                    Text('• ${AppLocalizations.of(context)!.tournamentFees}'),
+                    Text('• ${AppLocalizations.of(context)!.premiumFilters}'),
                   ],
                 ),
               ),
@@ -234,7 +234,7 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
-                  : const Text('Satın Al'),
+                  : Text(AppLocalizations.of(context)!.buy),
             ),
           ],
         ),

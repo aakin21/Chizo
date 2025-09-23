@@ -63,7 +63,7 @@ class _SettingsTabState extends State<SettingsTab> {
     } catch (e) {
       setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hata: $e')),
+        SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
     }
   }
@@ -95,7 +95,7 @@ class _SettingsTabState extends State<SettingsTab> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hata: $e')),
+        SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
     } finally {
       setState(() => isUpdating = false);
@@ -132,17 +132,17 @@ class _SettingsTabState extends State<SettingsTab> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Temel Bilgiler',
+                  Text(
+                    AppLocalizations.of(context)!.basicInfo,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
                   
                   TextField(
                     controller: _usernameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Kullanıcı Adı',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.username,
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                   
@@ -150,9 +150,9 @@ class _SettingsTabState extends State<SettingsTab> {
                   
                   TextField(
                     controller: _ageController,
-                    decoration: const InputDecoration(
-                      labelText: 'Yaş',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.age,
+                      border: const OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.number,
                   ),
@@ -163,9 +163,9 @@ class _SettingsTabState extends State<SettingsTab> {
                     value: _selectedCountry != null && AppConstants.countries.contains(_selectedCountry) 
                         ? _selectedCountry 
                         : null,
-                    decoration: const InputDecoration(
-                      labelText: 'Ülke',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.country,
+                      border: const OutlineInputBorder(),
                     ),
                     items: AppConstants.countries.map((country) => 
                       DropdownMenuItem(value: country, child: Text(country))
@@ -181,9 +181,9 @@ class _SettingsTabState extends State<SettingsTab> {
                   
                   DropdownButtonFormField<String>(
                     value: _genderController.text.isNotEmpty ? _genderController.text : null,
-                    decoration: const InputDecoration(
-                      labelText: 'Cinsiyet',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.gender,
+                      border: const OutlineInputBorder(),
                     ),
                     items: AppConstants.genders.map((gender) => 
                       DropdownMenuItem(value: gender, child: Text(gender))
@@ -206,13 +206,13 @@ class _SettingsTabState extends State<SettingsTab> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Premium Bilgiler',
+                  Text(
+                    AppLocalizations.of(context)!.premiumInfoSettings,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Bu bilgileri diğer kullanıcılar coin harcayarak görebilir',
+                    AppLocalizations.of(context)!.premiumInfoDescriptionSettings,
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 12,
@@ -234,8 +234,8 @@ class _SettingsTabState extends State<SettingsTab> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Coin Bilgileri',
+                  Text(
+                    AppLocalizations.of(context)!.coinInfo,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
@@ -245,7 +245,7 @@ class _SettingsTabState extends State<SettingsTab> {
                       const Icon(Icons.monetization_on, color: Colors.amber),
                       const SizedBox(width: 8),
                       Text(
-                        'Mevcut Coin: ${currentUser!.coins}',
+                        '${AppLocalizations.of(context)!.currentCoins}: ${currentUser!.coins}',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -262,7 +262,7 @@ class _SettingsTabState extends State<SettingsTab> {
                           );
                         },
                         icon: const Icon(Icons.add_shopping_cart),
-                        label: const Text('Coin Satın Al'),
+                        label: Text(AppLocalizations.of(context)!.purchaseCoins),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.amber,
                           foregroundColor: Colors.white,
@@ -285,8 +285,8 @@ class _SettingsTabState extends State<SettingsTab> {
                             children: [
                               const Icon(Icons.play_circle, color: Colors.purple),
                               const SizedBox(width: 8),
-                              const Text(
-                                'Reklam İzle',
+                              Text(
+                                AppLocalizations.of(context)!.watchAd,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -296,7 +296,7 @@ class _SettingsTabState extends State<SettingsTab> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Günde maksimum 5 reklam izleyebilirsiniz',
+                            AppLocalizations.of(context)!.dailyAdLimit,
                             style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 12,
@@ -307,7 +307,7 @@ class _SettingsTabState extends State<SettingsTab> {
                             children: [
                               const Icon(Icons.monetization_on, color: Colors.amber, size: 20),
                               const SizedBox(width: 4),
-                              const Text('Reklam başına: 20 coin'),
+                              Text(AppLocalizations.of(context)!.coinsPerAd),
                               const Spacer(),
                               FutureBuilder<int>(
                                 future: _getTodayAdCount(),
@@ -315,7 +315,7 @@ class _SettingsTabState extends State<SettingsTab> {
                                   final adCount = snapshot.data ?? 0;
                                   final remainingAds = 5 - adCount;
                                   return Text(
-                                    'Kalan: $remainingAds/5',
+                                    '${AppLocalizations.of(context)!.remaining}: $remainingAds/5',
                                     style: TextStyle(
                                       color: remainingAds > 0 ? Colors.green : Colors.red,
                                       fontWeight: FontWeight.bold,
@@ -337,7 +337,7 @@ class _SettingsTabState extends State<SettingsTab> {
                                 return ElevatedButton.icon(
                                   onPressed: canWatchAd ? _watchAd : null,
                                   icon: const Icon(Icons.play_arrow),
-                                  label: Text(canWatchAd ? 'Reklam İzle' : 'Günlük limit doldu'),
+                                  label: Text(canWatchAd ? AppLocalizations.of(context)!.watchAdButton : AppLocalizations.of(context)!.dailyLimitReached),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: canWatchAd ? Colors.purple : Colors.grey,
                                     foregroundColor: Colors.white,
@@ -360,8 +360,8 @@ class _SettingsTabState extends State<SettingsTab> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Son İşlemler:',
+                            Text(
+                              AppLocalizations.of(context)!.recentTransactions,
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 8),
@@ -397,7 +397,7 @@ class _SettingsTabState extends State<SettingsTab> {
                           ],
                         );
                       }
-                      return const Text('Henüz işlem geçmişi yok');
+                      return Text(AppLocalizations.of(context)!.noTransactionHistory);
                     },
                   ),
                 ],
@@ -414,8 +414,8 @@ class _SettingsTabState extends State<SettingsTab> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Hesap Ayarları',
+                  Text(
+                    AppLocalizations.of(context)!.accountSettings,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
@@ -599,9 +599,9 @@ class _SettingsTabState extends State<SettingsTab> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Çıkış Yap'),
-          content: const Text(
-            'Hesabınızdan çıkış yapmak istediğinizden emin misiniz?',
+          title: Text(AppLocalizations.of(context)!.logout),
+          content: Text(
+            AppLocalizations.of(context)!.logoutConfirmation,
           ),
           actions: [
             TextButton(
@@ -617,7 +617,7 @@ class _SettingsTabState extends State<SettingsTab> {
                 backgroundColor: Colors.orange,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Çıkış Yap'),
+              child: Text(AppLocalizations.of(context)!.logout),
             ),
           ],
         );
@@ -638,7 +638,7 @@ class _SettingsTabState extends State<SettingsTab> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Çıkış yapılırken hata oluştu: $e'),
+          content: Text('${AppLocalizations.of(context)!.logoutError}: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -651,9 +651,9 @@ class _SettingsTabState extends State<SettingsTab> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Hesabı Sil'),
-          content: const Text(
-            'Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm verileriniz kalıcı olarak silinecektir.',
+          title: Text(AppLocalizations.of(context)!.deleteAccount),
+          content: Text(
+            AppLocalizations.of(context)!.deleteAccountConfirmation,
           ),
           actions: [
             TextButton(
@@ -669,7 +669,7 @@ class _SettingsTabState extends State<SettingsTab> {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Hesabı Sil'),
+              child: Text(AppLocalizations.of(context)!.deleteAccount),
             ),
           ],
         );
@@ -685,20 +685,20 @@ class _SettingsTabState extends State<SettingsTab> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Son Onay'),
+          title: Text(AppLocalizations.of(context)!.finalConfirmation),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Hesabınızı silmek için "SİL" yazın:',
+              Text(
+                AppLocalizations.of(context)!.typeDeleteToConfirm,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: confirmController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'SİL yazın',
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: AppLocalizations.of(context)!.typeDeleteToConfirm,
                 ),
               ),
             ],
@@ -715,8 +715,8 @@ class _SettingsTabState extends State<SettingsTab> {
                   await _deleteAccount();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Lütfen "SİL" yazın!'),
+                    SnackBar(
+                      content: Text(AppLocalizations.of(context)!.pleaseTypeDelete),
                       backgroundColor: Colors.red,
                     ),
                   );
@@ -726,7 +726,7 @@ class _SettingsTabState extends State<SettingsTab> {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Hesabı Sil'),
+              child: Text(AppLocalizations.of(context)!.deleteAccount),
             ),
           ],
         );
@@ -744,8 +744,8 @@ class _SettingsTabState extends State<SettingsTab> {
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Hesabınız başarıyla silindi!'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.accountDeletedSuccessfully),
             backgroundColor: Colors.green,
           ),
         );
@@ -759,7 +759,7 @@ class _SettingsTabState extends State<SettingsTab> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Hesap silinirken hata oluştu: $e'),
+          content: Text('${AppLocalizations.of(context)!.errorDeletingAccount}: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -799,7 +799,7 @@ class _SettingsTabState extends State<SettingsTab> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Reklam izlenirken hata oluştu: $e'),
+          content: Text('${AppLocalizations.of(context)!.errorWatchingAd}: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -813,16 +813,16 @@ class _SettingsTabState extends State<SettingsTab> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Reklam İzleniyor'),
+          title: Text(AppLocalizations.of(context)!.watchingAd),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const CircularProgressIndicator(),
               const SizedBox(height: 16),
-              const Text('Reklam yükleniyor...'),
+              Text(AppLocalizations.of(context)!.adLoading),
               const SizedBox(height: 16),
-              const Text(
-                'Bu simülasyon reklamıdır. Gerçek uygulamada burada reklam gösterilecektir.',
+              Text(
+                AppLocalizations.of(context)!.adSimulation,
                 style: TextStyle(fontSize: 12, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
@@ -844,15 +844,15 @@ class _SettingsTabState extends State<SettingsTab> {
         await loadUserData();
         
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Reklam izlendi! +20 coin kazandınız!'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.adWatched),
             backgroundColor: Colors.green,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Coin eklenirken hata oluştu'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.errorAddingCoins),
             backgroundColor: Colors.red,
           ),
         );

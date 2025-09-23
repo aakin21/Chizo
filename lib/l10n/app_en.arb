@@ -1047,5 +1047,92 @@
   "premiumInfoAdded": "Your premium information has been added! You can adjust visibility settings below.",
   "instagramAdded": "Instagram information added!",
   "professionAdded": "Profession information added!",
-  "addInstagramFromSettings": "You can use this feature by adding Instagram and profession information from settings"
+  "addInstagramFromSettings": "You can use this feature by adding Instagram and profession information from settings",
+  
+  "basicInfo": "Basic Information",
+  "premiumInfoSettings": "Premium Information",
+  "premiumInfoDescriptionSettings": "Other users can view this information by spending coins",
+  "coinInfo": "Coin Information",
+  "currentCoins": "Current Coins",
+  "purchaseCoins": "Purchase Coins",
+  "watchAd": "Watch Ad",
+  "dailyAdLimit": "You can watch maximum 5 ads per day",
+  "coinsPerAd": "Coins per ad: 20",
+  "remaining": "Remaining",
+  "watchAdButton": "Watch Ad",
+  "dailyLimitReached": "Daily limit reached",
+  "recentTransactions": "Recent Transactions:",
+  "noTransactionHistory": "No transaction history yet",
+  "accountSettings": "Account Settings",
+  "logout": "Logout",
+  "logoutConfirmation": "Are you sure you want to logout from your account?",
+  "logoutError": "Error occurred while logging out",
+  "deleteAccount": "Delete Account",
+  "deleteAccountConfirmation": "Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.",
+  "finalConfirmation": "Final Confirmation",
+  "typeDeleteToConfirm": "To delete your account, type \"DELETE\":",
+  "pleaseTypeDelete": "Please type \"DELETE\"!",
+  "accountDeletedSuccessfully": "Your account has been successfully deleted!",
+  "errorDeletingAccount": "Error occurred while deleting account",
+  "errorWatchingAd": "Error occurred while watching ad",
+  "watchingAd": "Watching Ad",
+  "adLoading": "Ad loading...",
+  "adSimulation": "This is a simulation ad. In the real app, an actual ad will be shown here.",
+  "adWatched": "Ad watched! +20 coins earned!",
+  "errorAddingCoins": "Error occurred while adding coins",
+  "matchInfoNotLoaded": "Match information could not be loaded",
+  "spendFiveCoins": "Spend 5 coins to view this information",
+  "ok": "OK",
+  "vs": "VS",
+  
+  "coinPurchase": "Coin Purchase",
+  "purchaseSuccessful": "Purchase successful!",
+  "purchaseFailed": "Purchase failed!",
+  "coinPackages": "Coin Packages",
+  "coinUsage": "Coin Usage",
+  "instagramView": "View Instagram accounts",
+  "professionView": "View profession information",
+  "statsView": "View detailed statistics",
+  "tournamentFees": "Tournament participation fees",
+  "premiumFilters": "Premium filters",
+
+  "viewStats": "View Stats",
+  "@viewStats": {
+    "description": "Button text to view photo statistics"
+  },
+
+  "photoStats": "Photo Statistics",
+  "@photoStats": {
+    "description": "Title for photo statistics modal"
+  },
+
+  "photoStatsCost": "View photo statistics costs 50 coins",
+  "@photoStatsCost": {
+    "description": "Message about photo stats cost"
+  },
+
+  "wins": "Wins",
+  "@wins": {
+    "description": "Wins label in statistics"
+  },
+
+  "totalMatches": "Total Matches",
+  "@totalMatches": {
+    "description": "Total matches label in statistics"
+  },
+
+  "winRate": "Win Rate",
+  "@winRate": {
+    "description": "Win rate label in statistics"
+  },
+
+  "insufficientCoinsForStats": "Insufficient coins to view photo statistics. Required: 50 coins",
+  "@insufficientCoinsForStats": {
+    "description": "Error message when user doesn't have enough coins for photo stats"
+  },
+
+  "pay": "Pay",
+  "@pay": {
+    "description": "Pay button text"
+  }
 }

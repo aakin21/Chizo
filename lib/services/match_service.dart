@@ -549,33 +549,77 @@ class MatchService {
 
       List<MatchModel> createdMatches = [];
 
-      // Create matches for male users
+      // Create matches for male users - COMPLETELY NEW ALGORITHM
       if (maleUsers.length >= 2) {
-        final maleMatches = _createMatchesFromUsers(maleUsers, (maleUsers.length / 2).floor());
-        for (var match in maleMatches) {
-          final user1Id = match['user1_id'];
-          final user2Id = match['user2_id'];
-          if (user1Id != null && user2Id != null) {
-            final createdMatch = await createMatch(user1Id, user2Id);
-            if (createdMatch != null) {
-              createdMatches.add(createdMatch);
-            }
+        // Convert to UserModel list for better handling
+        final maleUserModels = maleUsers.map((user) => UserModel.fromJson(user)).toList();
+        
+        // Create matches with maximum diversity
+        for (int i = 0; i < matchCount && maleUserModels.length >= 2; i++) {
+          // Create a completely new random seed each time
+          final random = Random(DateTime.now().millisecondsSinceEpoch + i * 1000 + Random().nextInt(10000));
+          
+          // Shuffle the entire list
+          maleUserModels.shuffle(random);
+          
+          // Pick two random users from the shuffled list
+          final randomIndex1 = random.nextInt(maleUserModels.length);
+          final user1 = maleUserModels[randomIndex1];
+          
+          // Remove user1 temporarily to avoid self-match
+          final tempUser1 = maleUserModels.removeAt(randomIndex1);
+          
+          // Pick second user from remaining list
+          final randomIndex2 = random.nextInt(maleUserModels.length);
+          final user2 = maleUserModels[randomIndex2];
+          
+          // Add user1 back to the list
+          maleUserModels.insert(randomIndex1, tempUser1);
+          
+          final createdMatch = await createMatch(user1.id, user2.id);
+          if (createdMatch != null) {
+            createdMatches.add(createdMatch);
           }
+          
+          // If we have less than 2 users left, break
+          if (maleUserModels.length < 2) break;
         }
       }
 
-      // Create matches for female users
+      // Create matches for female users - COMPLETELY NEW ALGORITHM
       if (femaleUsers.length >= 2) {
-        final femaleMatches = _createMatchesFromUsers(femaleUsers, (femaleUsers.length / 2).floor());
-        for (var match in femaleMatches) {
-          final user1Id = match['user1_id'];
-          final user2Id = match['user2_id'];
-          if (user1Id != null && user2Id != null) {
-            final createdMatch = await createMatch(user1Id, user2Id);
-            if (createdMatch != null) {
-              createdMatches.add(createdMatch);
-            }
+        // Convert to UserModel list for better handling
+        final femaleUserModels = femaleUsers.map((user) => UserModel.fromJson(user)).toList();
+        
+        // Create matches with maximum diversity
+        for (int i = 0; i < matchCount && femaleUserModels.length >= 2; i++) {
+          // Create a completely new random seed each time
+          final random = Random(DateTime.now().millisecondsSinceEpoch + i * 2000 + Random().nextInt(10000));
+          
+          // Shuffle the entire list
+          femaleUserModels.shuffle(random);
+          
+          // Pick two random users from the shuffled list
+          final randomIndex1 = random.nextInt(femaleUserModels.length);
+          final user1 = femaleUserModels[randomIndex1];
+          
+          // Remove user1 temporarily to avoid self-match
+          final tempUser1 = femaleUserModels.removeAt(randomIndex1);
+          
+          // Pick second user from remaining list
+          final randomIndex2 = random.nextInt(femaleUserModels.length);
+          final user2 = femaleUserModels[randomIndex2];
+          
+          // Add user1 back to the list
+          femaleUserModels.insert(randomIndex1, tempUser1);
+          
+          final createdMatch = await createMatch(user1.id, user2.id);
+          if (createdMatch != null) {
+            createdMatches.add(createdMatch);
           }
+          
+          // If we have less than 2 users left, break
+          if (femaleUserModels.length < 2) break;
         }
       }
 
@@ -592,15 +636,17 @@ class MatchService {
         List<Map<String, String>> matches = [];
         List availableUsers = List.from(users);
         
+        // Better randomness with time-based seed
+        final random = Random(DateTime.now().millisecondsSinceEpoch);
+        
         // Multiple shuffle for better randomness
         for (int i = 0; i < 3; i++) {
-          availableUsers.shuffle();
+          availableUsers.shuffle(random);
         }
         
         int matchesCreated = 0;
         while (availableUsers.length >= 2 && matchesCreated < maxMatches) {
           // Randomly select two users
-          final random = Random();
           final index1 = random.nextInt(availableUsers.length);
           final user1 = availableUsers.removeAt(index1);
           

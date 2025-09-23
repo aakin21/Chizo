@@ -304,4 +304,135 @@ class PhotoUploadService {
       return 0;
     }
   }
+
+  /// Get photo statistics for a specific photo
+  static Future<Map<String, dynamic>?> getPhotoStats(String photoId) async {
+    try {
+      final response = await _client
+          .from('photo_stats')
+          .select('*')
+          .eq('photo_id', photoId)
+          .maybeSingle();
+
+      if (response == null) {
+        // Create initial stats if not exists
+        return await _createInitialPhotoStats(photoId);
+      }
+
+      return response;
+    } catch (e) {
+      print('Error getting photo stats: $e');
+      return null;
+    }
+  }
+
+  /// Create initial photo statistics
+  static Future<Map<String, dynamic>?> _createInitialPhotoStats(String photoId) async {
+    try {
+      final response = await _client
+          .from('photo_stats')
+          .insert({
+            'photo_id': photoId,
+            'wins': 0,
+            'total_matches': 0,
+          })
+          .select()
+          .single();
+
+      return response;
+    } catch (e) {
+      print('Error creating initial photo stats: $e');
+      return null;
+    }
+  }
+
+  /// Update photo statistics (increment win or total matches)
+  static Future<bool> updatePhotoStats(String photoId, {bool isWin = false}) async {
+    try {
+      // Get current stats
+      final currentStats = await getPhotoStats(photoId);
+      if (currentStats == null) return false;
+
+      final newWins = isWin 
+          ? (currentStats['wins'] as int) + 1 
+          : (currentStats['wins'] as int);
+      final newTotalMatches = (currentStats['total_matches'] as int) + 1;
+
+      // Update stats
+      await _client
+          .from('photo_stats')
+          .update({
+            'wins': newWins,
+            'total_matches': newTotalMatches,
+          })
+          .eq('photo_id', photoId);
+
+      return true;
+    } catch (e) {
+      print('Error updating photo stats: $e');
+      return false;
+    }
+  }
+
+  /// Check if user has enough coins to view photo stats (50 coins)
+  static Future<bool> canViewPhotoStats() async {
+    try {
+      final currentUser = await UserService.getCurrentUser();
+      if (currentUser == null) return false;
+
+      return currentUser.coins >= 50;
+    } catch (e) {
+      print('Error checking photo stats view permission: $e');
+      return false;
+    }
+  }
+
+  /// Pay for photo stats view (50 coins)
+  static Future<bool> payForPhotoStatsView() async {
+    try {
+      final currentUser = await UserService.getCurrentUser();
+      if (currentUser == null) return false;
+
+      if (currentUser.coins < 50) return false;
+
+      return await UserService.updateCoins(
+        -50, 
+        'spent', 
+        'Photo statistics view'
+      );
+    } catch (e) {
+      print('Error paying for photo stats view: $e');
+      return false;
+    }
+  }
+
+  /// Get all photo statistics for user's photos
+  static Future<List<Map<String, dynamic>>> getUserPhotoStats(String userId) async {
+    try {
+      // Get user's photos
+      final photos = await getUserPhotos(userId);
+      final List<Map<String, dynamic>> photoStats = [];
+
+      for (final photo in photos) {
+        final stats = await getPhotoStats(photo['id']);
+        if (stats != null) {
+          photoStats.add({
+            'photo_id': photo['id'],
+            'photo_url': photo['photo_url'],
+            'photo_order': photo['photo_order'],
+            'wins': stats['wins'],
+            'total_matches': stats['total_matches'],
+            'win_rate': stats['total_matches'] > 0 
+                ? ((stats['wins'] as int) / (stats['total_matches'] as int) * 100).toStringAsFixed(1)
+                : '0.0',
+          });
+        }
+      }
+
+      return photoStats;
+    } catch (e) {
+      print('Error getting user photo stats: $e');
+      return [];
+    }
+  }
 }

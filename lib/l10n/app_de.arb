@@ -231,5 +231,92 @@
   "premiumInfoAdded": "Ihre Premium-Informationen wurden hinzugefügt! Sie können die Sichtbarkeitseinstellungen unten anpassen.",
   "instagramAdded": "Instagram-Information hinzugefügt!",
   "professionAdded": "Berufsinformation hinzugefügt!",
-  "addInstagramFromSettings": "Sie können diese Funktion nutzen, indem Sie Instagram- und Berufsinformationen aus den Einstellungen hinzufügen"
+  "addInstagramFromSettings": "Sie können diese Funktion nutzen, indem Sie Instagram- und Berufsinformationen aus den Einstellungen hinzufügen",
+  
+  "basicInfo": "Grundinformationen",
+  "premiumInfoSettings": "Premium-Informationen",
+  "premiumInfoDescriptionSettings": "Andere Benutzer können diese Informationen durch Ausgeben von Coins einsehen",
+  "coinInfo": "Coin-Informationen",
+  "currentCoins": "Aktuelle Coins",
+  "purchaseCoins": "Coins kaufen",
+  "watchAd": "Werbung ansehen",
+  "dailyAdLimit": "Sie können maximal 5 Werbungen pro Tag ansehen",
+  "coinsPerAd": "Coins pro Werbung: 20",
+  "remaining": "Verbleibend",
+  "watchAdButton": "Werbung ansehen",
+  "dailyLimitReached": "Tageslimit erreicht",
+  "recentTransactions": "Letzte Transaktionen:",
+  "noTransactionHistory": "Noch keine Transaktionshistorie",
+  "accountSettings": "Konto-Einstellungen",
+  "logout": "Abmelden",
+  "logoutConfirmation": "Sind Sie sicher, dass Sie sich von Ihrem Konto abmelden möchten?",
+  "logoutError": "Fehler beim Abmelden",
+  "deleteAccount": "Konto löschen",
+  "deleteAccountConfirmation": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden und alle Ihre Daten werden dauerhaft gelöscht.",
+  "finalConfirmation": "Letzte Bestätigung",
+  "typeDeleteToConfirm": "Um Ihr Konto zu löschen, geben Sie \"LÖSCHEN\" ein:",
+  "pleaseTypeDelete": "Bitte geben Sie \"LÖSCHEN\" ein!",
+  "accountDeletedSuccessfully": "Ihr Konto wurde erfolgreich gelöscht!",
+  "errorDeletingAccount": "Fehler beim Löschen des Kontos",
+  "errorWatchingAd": "Fehler beim Ansehen der Werbung",
+  "watchingAd": "Werbung wird angesehen",
+  "adLoading": "Werbung wird geladen...",
+  "adSimulation": "Dies ist eine simulierte Werbung. In der echten App wird hier eine echte Werbung angezeigt.",
+  "adWatched": "Werbung angesehen! +20 Coins verdient!",
+  "errorAddingCoins": "Fehler beim Hinzufügen von Coins",
+  "matchInfoNotLoaded": "Match-Informationen konnten nicht geladen werden",
+  "spendFiveCoins": "Geben Sie 5 Coins aus, um diese Informationen anzuzeigen",
+  "ok": "OK",
+  "vs": "VS",
+  
+  "coinPurchase": "Coins kaufen",
+  "purchaseSuccessful": "Kauf erfolgreich!",
+  "purchaseFailed": "Kauf fehlgeschlagen!",
+  "coinPackages": "Coin-Pakete",
+  "coinUsage": "Coin-Verwendung",
+  "instagramView": "Instagram-Konten anzeigen",
+  "professionView": "Berufsinformationen anzeigen",
+  "statsView": "Detaillierte Statistiken anzeigen",
+  "tournamentFees": "Turnier-Teilnahmegebühren",
+  "premiumFilters": "Premium-Filter",
+
+  "viewStats": "Statistiken anzeigen",
+  "@viewStats": {
+    "description": "Button-Text zum Anzeigen von Fotostatistiken"
+  },
+
+  "photoStats": "Foto-Statistiken",
+  "@photoStats": {
+    "description": "Titel für Foto-Statistik-Modal"
+  },
+
+  "photoStatsCost": "Das Anzeigen von Foto-Statistiken kostet 50 Coins",
+  "@photoStatsCost": {
+    "description": "Nachricht über die Kosten für Foto-Statistiken"
+  },
+
+  "wins": "Siege",
+  "@wins": {
+    "description": "Siege-Label in Statistiken"
+  },
+
+  "totalMatches": "Gesamtspiele",
+  "@totalMatches": {
+    "description": "Gesamtspiele-Label in Statistiken"
+  },
+
+  "winRate": "Siegesrate",
+  "@winRate": {
+    "description": "Siegesrate-Label in Statistiken"
+  },
+
+  "insufficientCoinsForStats": "Unzureichende Coins zum Anzeigen von Foto-Statistiken. Erforderlich: 50 Coins",
+  "@insufficientCoinsForStats": {
+    "description": "Fehlermeldung, wenn Benutzer nicht genügend Coins für Foto-Statistiken hat"
+  },
+
+  "pay": "Bezahlen",
+  "@pay": {
+    "description": "Bezahlen-Button-Text"
+  }
 }

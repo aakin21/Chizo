@@ -5,6 +5,7 @@ import '../models/user_model.dart';
 import '../services/match_service.dart';
 import '../services/user_service.dart';
 import '../services/prediction_service.dart';
+import '../services/photo_upload_service.dart';
 import '../l10n/app_localizations.dart';
 
 class VotingTab extends StatefulWidget {
@@ -64,7 +65,8 @@ class _VotingTabState extends State<VotingTab> {
     final success = await MatchService.voteForMatch(currentMatch.id, winnerId);
     
     if (success) {
-      print('VotingTab: Vote successful, showing prediction slider');
+      // Update photo statistics for both users
+      await _updatePhotoStatsForMatch(currentMatch, winnerId);
       
       // Kazanan kullanıcıyı bul ve slider'ı göster
       final winner = await _getWinnerUser(winnerId);
@@ -231,8 +233,8 @@ class _VotingTabState extends State<VotingTab> {
         }
         
         if (!snapshot.hasData || snapshot.data!.length < 2) {
-          return const Center(
-            child: Text('Maç bilgileri yüklenemedi'),
+          return Center(
+            child: Text(AppLocalizations.of(context)!.matchInfoNotLoaded),
           );
         }
         
@@ -279,7 +281,7 @@ class _VotingTabState extends State<VotingTab> {
                                         top: Radius.circular(8),
                                       ),
                                     ),
-                                    child: _buildUserPhotoDisplay(user1),
+                                    child: _buildUserPhotoDisplay(user1, match.id),
                                   ),
                                   // Premium bilgi butonları
                                   Positioned(
@@ -291,13 +293,13 @@ class _VotingTabState extends State<VotingTab> {
                                           _buildOverlayButton(
                                             Icons.camera_alt,
                                             Colors.pink,
-                                            () => _showPremiumInfo(user1.instagramHandle!, 'Instagram'),
+                                            () => _showPremiumInfo(user1.instagramHandle!, AppLocalizations.of(context)!.instagramAccount),
                                           ),
                                         if (user1.showProfession && user1.profession != null)
                                           _buildOverlayButton(
                                             Icons.work,
                                             Colors.blue,
-                                            () => _showPremiumInfo(user1.profession!, 'Meslek'),
+                                            () => _showPremiumInfo(user1.profession!, AppLocalizations.of(context)!.profession),
                                           ),
                                       ],
                                     ),
@@ -325,10 +327,10 @@ class _VotingTabState extends State<VotingTab> {
                   const SizedBox(width: 16),
                   
                   // VS yazısı
-                  const Center(
+                  Center(
                     child: Text(
-                      'VS',
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.vs,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.red,
@@ -356,7 +358,7 @@ class _VotingTabState extends State<VotingTab> {
                                         top: Radius.circular(8),
                                       ),
                                     ),
-                                    child: _buildUserPhotoDisplay(user2),
+                                    child: _buildUserPhotoDisplay(user2, match.id),
                                   ),
                                   // Premium bilgi butonları
                                   Positioned(
@@ -368,13 +370,13 @@ class _VotingTabState extends State<VotingTab> {
                                           _buildOverlayButton(
                                             Icons.camera_alt,
                                             Colors.pink,
-                                            () => _showPremiumInfo(user2.instagramHandle!, 'Instagram'),
+                                            () => _showPremiumInfo(user2.instagramHandle!, AppLocalizations.of(context)!.instagramAccount),
                                           ),
                                         if (user2.showProfession && user2.profession != null)
                                           _buildOverlayButton(
                                             Icons.work,
                                             Colors.blue,
-                                            () => _showPremiumInfo(user2.profession!, 'Meslek'),
+                                            () => _showPremiumInfo(user2.profession!, AppLocalizations.of(context)!.profession),
                                           ),
                                       ],
                                     ),
@@ -421,20 +423,67 @@ class _VotingTabState extends State<VotingTab> {
   }
 
   Future<List<UserModel>> _getMatchUsers(MatchModel match) async {
-    // Bu fonksiyon match'teki kullanıcıları getirmek için kullanılacak
-    // Şimdilik basit bir implementasyon yapıyoruz
+    // Match'teki kullanıcıları çoklu fotoğraflarla birlikte getir
     try {
-      final response = await MatchService.getMatchUsers(match.user1Id, match.user2Id);
-      return response;
+      final users = await MatchService.getMatchUsers(match.user1Id, match.user2Id);
+      
+      // Her kullanıcı için çoklu fotoğrafları yükle
+      final usersWithPhotos = <UserModel>[];
+      for (var user in users) {
+        final photos = await PhotoUploadService.getUserPhotos(user.id);
+        
+        // Profil fotoğrafını da dahil et (slot 1 olarak)
+        final allPhotos = <Map<String, dynamic>>[];
+        if (user.profileImageUrl != null) {
+          allPhotos.add({
+            'id': 'profile_${user.id}', // Profil fotoğrafı için unique ID
+            'photo_url': user.profileImageUrl!,
+            'photo_order': 1,
+            'is_active': true,
+          });
+        }
+        // Ek fotoğrafları ekle
+        allPhotos.addAll(photos);
+        
+        // UserModel'e çoklu fotoğrafları ekle
+        final userWithPhotos = UserModel(
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          coins: user.coins,
+          profileImageUrl: user.profileImageUrl,
+          age: user.age,
+          country: user.country,
+          gender: user.gender,
+          instagramHandle: user.instagramHandle,
+          profession: user.profession,
+          isVisible: user.isVisible,
+          showInstagram: user.showInstagram,
+          showProfession: user.showProfession,
+          totalMatches: user.totalMatches,
+          wins: user.wins,
+          currentStreak: user.currentStreak,
+          totalStreakDays: user.totalStreakDays,
+          lastLoginDate: user.lastLoginDate,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+          matchPhotos: allPhotos,
+        );
+        
+        usersWithPhotos.add(userWithPhotos);
+      }
+      
+      return usersWithPhotos;
     } catch (e) {
+      print('Error getting match users with photos: $e');
       return [];
     }
   }
 
-  Widget _buildUserPhotoDisplay(UserModel user) {
+  Widget _buildUserPhotoDisplay(UserModel user, String matchId) {
     // Çoklu fotoğraf varsa carousel göster, yoksa profil fotoğrafını göster
     if (user.matchPhotos != null && user.matchPhotos!.isNotEmpty) {
-      return _buildPhotoCarousel(user.matchPhotos!);
+      return _buildPhotoCarousel(user.matchPhotos!, user.id, matchId);
     } else if (user.profileImageUrl != null) {
       return CachedNetworkImage(
         imageUrl: user.profileImageUrl!,
@@ -458,26 +507,27 @@ class _VotingTabState extends State<VotingTab> {
     }
   }
 
-  Widget _buildPhotoCarousel(List<Map<String, dynamic>> photos) {
-    return PageView.builder(
-      itemCount: photos.length,
-      itemBuilder: (context, index) {
-        final photo = photos[index];
-        return CachedNetworkImage(
-          imageUrl: photo['photo_url'],
-          fit: BoxFit.cover,
-          placeholder: (context, url) => Container(
-            color: Colors.grey[300],
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          ),
-          errorWidget: (context, url, error) => Container(
-            color: Colors.grey[300],
-            child: const Icon(Icons.person, size: 80),
-          ),
-        );
-      },
+  Widget _buildPhotoCarousel(List<Map<String, dynamic>> photos, String userId, String matchId) {
+    // Her match için farklı fotoğraf seç ama aynı match içinde sabit kalsın
+    // User ID + Match ID + fotoğraf sayısı kullanarak daha iyi dağıtım
+    final combinedHash = (userId.hashCode.abs() + matchId.hashCode.abs() + photos.length * 23) % photos.length;
+    final photoIndex = photos.length > 1 ? combinedHash : 0;
+    
+    final selectedPhoto = photos[photoIndex];
+    
+    return CachedNetworkImage(
+      imageUrl: selectedPhoto['photo_url'],
+      fit: BoxFit.cover,
+      placeholder: (context, url) => Container(
+        color: Colors.grey[300],
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      errorWidget: (context, url, error) => Container(
+        color: Colors.grey[300],
+        child: const Icon(Icons.person, size: 80),
+      ),
     );
   }
 
@@ -519,7 +569,7 @@ class _VotingTabState extends State<VotingTab> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Bu bilgiyi görmek için 5 coin harcayacaksın',
+              AppLocalizations.of(context)!.spendFiveCoins,
               style: TextStyle(color: Colors.grey[600]),
             ),
           ],
@@ -527,7 +577,7 @@ class _VotingTabState extends State<VotingTab> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('İptal'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -600,7 +650,7 @@ class _VotingTabState extends State<VotingTab> {
         actions: [
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Tamam'),
+            child: Text(AppLocalizations.of(context)!.ok),
           ),
         ],
       ),
@@ -750,5 +800,63 @@ class _VotingTabState extends State<VotingTab> {
     if (value <= 80) return '71-80%';
     if (value <= 90) return '81-90%';
     return '91-100%';
+  }
+
+  /// Update photo statistics for both users in a match
+  Future<void> _updatePhotoStatsForMatch(MatchModel match, String winnerId) async {
+    try {
+      // Get match users with their photos
+      final users = await _getMatchUsers(match);
+      if (users.length != 2) return;
+
+      final user1 = users[0];
+      final user2 = users[1];
+
+      // Determine which user won
+      final winner = user1.id == winnerId ? user1 : user2;
+      final loser = user1.id == winnerId ? user2 : user1;
+
+      // Update photo statistics for winner's displayed photo
+      if (winner.matchPhotos != null && winner.matchPhotos!.isNotEmpty) {
+        // Find the photo that was displayed in this match
+        final displayedPhoto = _getDisplayedPhotoForUser(winner, match.id);
+        if (displayedPhoto != null && displayedPhoto['id'] != null) {
+          await PhotoUploadService.updatePhotoStats(displayedPhoto['id'], isWin: true);
+        }
+      }
+
+      // Update photo statistics for loser's displayed photo
+      if (loser.matchPhotos != null && loser.matchPhotos!.isNotEmpty) {
+        // Find the photo that was displayed in this match
+        final displayedPhoto = _getDisplayedPhotoForUser(loser, match.id);
+        if (displayedPhoto != null && displayedPhoto['id'] != null) {
+          await PhotoUploadService.updatePhotoStats(displayedPhoto['id'], isWin: false);
+        }
+      }
+    } catch (e) {
+      print('Error updating photo stats for match: $e');
+    }
+  }
+
+  /// Get the photo that was displayed for a user in a specific match
+  Map<String, dynamic>? _getDisplayedPhotoForUser(UserModel user, String matchId) {
+    if (user.matchPhotos == null || user.matchPhotos!.isEmpty) {
+      print('Warning: No match photos for user ${user.id}');
+      return null;
+    }
+
+    // Use the same algorithm as _buildPhotoCarousel to determine which photo was shown
+    final photos = user.matchPhotos!;
+    final combinedHash = (user.id.hashCode.abs() + matchId.hashCode.abs() + photos.length * 23) % photos.length;
+    final photoIndex = photos.length > 1 ? combinedHash : 0;
+    
+    final selectedPhoto = photos[photoIndex];
+    
+    // Debug için fotoğraf bilgilerini yazdır
+    print('Selected photo for user ${user.id}: ${selectedPhoto['photo_url']}');
+    print('Photo ID: ${selectedPhoto['id']}');
+    print('Photo order: ${selectedPhoto['photo_order']}');
+    
+    return selectedPhoto;
   }
 }

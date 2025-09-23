@@ -68,7 +68,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get submitPrediction => 'Vorhersage absenden';
 
   @override
-  String get winRate => 'Gewinnrate';
+  String get winRate => 'Siegesrate';
 
   @override
   String get profile => 'Profil';
@@ -98,10 +98,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coins => 'Münzen';
 
   @override
-  String get totalMatches => 'Gesamt-Matches';
+  String get totalMatches => 'Gesamtspiele';
 
   @override
-  String get wins => 'Gewinne';
+  String get wins => 'Siege';
 
   @override
   String get winRatePercentage => 'Gewinnrate';
@@ -209,7 +209,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String currentCoins(int coins) {
-    return 'Aktuelle Coins: $coins';
+    return 'Aktuelle Coins';
   }
 
   @override
@@ -332,7 +332,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get spendFiveCoins => '5 Münzen ausgeben';
+  String get spendFiveCoins =>
+      'Geben Sie 5 Coins aus, um diese Informationen anzuzeigen';
 
   @override
   String get insufficientCoins => '❌ Unzureichende Münzen!';
@@ -364,16 +365,16 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get purchaseCoins => 'Münzen kaufen';
+  String get purchaseCoins => 'Coins kaufen';
 
   @override
   String get watchAd => 'Werbung ansehen';
 
   @override
-  String get dailyAdLimit => 'Sie können maximal 5 Werbespots pro Tag ansehen';
+  String get dailyAdLimit => 'Sie können maximal 5 Werbungen pro Tag ansehen';
 
   @override
-  String get coinsPerAd => 'Münzen pro Werbung: 20';
+  String get coinsPerAd => 'Coins pro Werbung: 20';
 
   @override
   String get watchAdButton => 'Werbung ansehen';
@@ -388,7 +389,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get noTransactionHistory => 'Noch keine Transaktionshistorie';
 
   @override
-  String get accountSettings => 'Kontoeinstellungen';
+  String get accountSettings => 'Konto-Einstellungen';
 
   @override
   String get logout => 'Abmelden';
@@ -399,7 +400,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String logoutError(String error) {
-    return 'Fehler beim Abmelden aufgetreten: $error';
+    return 'Fehler beim Abmelden';
   }
 
   @override
@@ -410,7 +411,7 @@ class AppLocalizationsDe extends AppLocalizations {
       'Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden und alle Ihre Daten werden dauerhaft gelöscht.';
 
   @override
-  String get finalConfirmation => 'Endgültige Bestätigung';
+  String get finalConfirmation => 'Letzte Bestätigung';
 
   @override
   String get typeDeleteToConfirm =>
@@ -425,12 +426,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String errorDeletingAccount(String error) {
-    return 'Fehler beim Löschen des Kontos aufgetreten: $error';
+    return 'Fehler beim Löschen des Kontos';
   }
 
   @override
   String errorWatchingAd(String error) {
-    return 'Fehler beim Ansehen der Werbung aufgetreten: $error';
+    return 'Fehler beim Ansehen der Werbung';
   }
 
   @override
@@ -441,14 +442,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get adSimulation =>
-      'Dies ist eine simulierte Werbung. In der echten App würde hier eine echte Werbung angezeigt werden.';
+      'Dies ist eine simulierte Werbung. In der echten App wird hier eine echte Werbung angezeigt.';
 
   @override
-  String get adWatched => 'Werbung angesehen! +20 Münzen verdient!';
+  String get adWatched => 'Werbung angesehen! +20 Coins verdient!';
 
   @override
-  String get errorAddingCoins =>
-      'Fehler beim Hinzufügen von Münzen aufgetreten';
+  String get errorAddingCoins => 'Fehler beim Hinzufügen von Coins';
 
   @override
   String get buy => 'Kaufen';
@@ -568,4 +568,70 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get addInstagramFromSettings =>
       'Sie können diese Funktion nutzen, indem Sie Instagram- und Berufsinformationen aus den Einstellungen hinzufügen';
+
+  @override
+  String get basicInfo => 'Grundinformationen';
+
+  @override
+  String get premiumInfoSettings => 'Premium-Informationen';
+
+  @override
+  String get premiumInfoDescriptionSettings =>
+      'Andere Benutzer können diese Informationen durch Ausgeben von Coins einsehen';
+
+  @override
+  String get coinInfo => 'Coin-Informationen';
+
+  @override
+  String get remaining => 'Verbleibend';
+
+  @override
+  String get vs => 'VS';
+
+  @override
+  String get coinPurchase => 'Coins kaufen';
+
+  @override
+  String get purchaseSuccessful => 'Kauf erfolgreich!';
+
+  @override
+  String get purchaseFailed => 'Kauf fehlgeschlagen!';
+
+  @override
+  String get coinPackages => 'Coin-Pakete';
+
+  @override
+  String get coinUsage => 'Coin-Verwendung';
+
+  @override
+  String get instagramView => 'Instagram-Konten anzeigen';
+
+  @override
+  String get professionView => 'Berufsinformationen anzeigen';
+
+  @override
+  String get statsView => 'Detaillierte Statistiken anzeigen';
+
+  @override
+  String get tournamentFees => 'Turnier-Teilnahmegebühren';
+
+  @override
+  String get premiumFilters => 'Premium-Filter';
+
+  @override
+  String get viewStats => 'Statistiken anzeigen';
+
+  @override
+  String get photoStats => 'Foto-Statistiken';
+
+  @override
+  String get photoStatsCost =>
+      'Das Anzeigen von Foto-Statistiken kostet 50 Coins';
+
+  @override
+  String get insufficientCoinsForStats =>
+      'Unzureichende Coins zum Anzeigen von Foto-Statistiken. Erforderlich: 50 Coins';
+
+  @override
+  String get pay => 'Bezahlen';
 }

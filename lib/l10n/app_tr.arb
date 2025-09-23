@@ -231,5 +231,92 @@
   "premiumInfoAdded": "Premium bilgileriniz eklendi! Görünürlük ayarlarını aşağıdan yapabilirsiniz.",
   "instagramAdded": "Instagram bilgisi eklendi!",
   "professionAdded": "Meslek bilgisi eklendi!",
-  "addInstagramFromSettings": "Instagram ve meslek bilgilerini ayarlardan ekleyerek bu özelliği kullanabilirsin"
+  "addInstagramFromSettings": "Instagram ve meslek bilgilerini ayarlardan ekleyerek bu özelliği kullanabilirsin",
+  
+  "basicInfo": "Temel Bilgiler",
+  "premiumInfoSettings": "Premium Bilgiler",
+  "premiumInfoDescriptionSettings": "Bu bilgileri diğer kullanıcılar coin harcayarak görebilir",
+  "coinInfo": "Coin Bilgileri",
+  "currentCoins": "Mevcut Coin",
+  "purchaseCoins": "Coin Satın Al",
+  "watchAd": "Reklam İzle",
+  "dailyAdLimit": "Günde maksimum 5 reklam izleyebilirsiniz",
+  "coinsPerAd": "Reklam başına: 20 coin",
+  "remaining": "Kalan",
+  "watchAdButton": "Reklam İzle",
+  "dailyLimitReached": "Günlük limit doldu",
+  "recentTransactions": "Son İşlemler:",
+  "noTransactionHistory": "Henüz işlem geçmişi yok",
+  "accountSettings": "Hesap Ayarları",
+  "logout": "Çıkış Yap",
+  "logoutConfirmation": "Hesabınızdan çıkış yapmak istediğinizden emin misiniz?",
+  "logoutError": "Çıkış yapılırken hata oluştu",
+  "deleteAccount": "Hesabı Sil",
+  "deleteAccountConfirmation": "Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm verileriniz kalıcı olarak silinecektir.",
+  "finalConfirmation": "Son Onay",
+  "typeDeleteToConfirm": "Hesabınızı silmek için \"SİL\" yazın:",
+  "pleaseTypeDelete": "Lütfen \"SİL\" yazın!",
+  "accountDeletedSuccessfully": "Hesabınız başarıyla silindi!",
+  "errorDeletingAccount": "Hesap silinirken hata oluştu",
+  "errorWatchingAd": "Reklam izlenirken hata oluştu",
+  "watchingAd": "Reklam İzleniyor",
+  "adLoading": "Reklam yükleniyor...",
+  "adSimulation": "Bu simülasyon reklamıdır. Gerçek uygulamada burada reklam gösterilecektir.",
+  "adWatched": "Reklam izlendi! +20 coin kazandınız!",
+  "errorAddingCoins": "Coin eklenirken hata oluştu",
+  "matchInfoNotLoaded": "Maç bilgileri yüklenemedi",
+  "spendFiveCoins": "Bu bilgiyi görmek için 5 coin harcayacaksın",
+  "ok": "Tamam",
+  "vs": "VS",
+  
+  "coinPurchase": "Coin Satın Al",
+  "purchaseSuccessful": "Satın alma başarılı!",
+  "purchaseFailed": "Satın alma başarısız!",
+  "coinPackages": "Coin Paketleri",
+  "coinUsage": "Coin Kullanımı",
+  "instagramView": "Instagram hesaplarını görüntüle",
+  "professionView": "Meslek bilgilerini görüntüle",
+  "statsView": "Detaylı istatistikleri görüntüle",
+  "tournamentFees": "Turnuva katılım ücretleri",
+  "premiumFilters": "Premium filtreler",
+
+  "viewStats": "İstatistik Gör",
+  "@viewStats": {
+    "description": "Fotoğraf istatistiklerini görüntüleme butonu metni"
+  },
+
+  "photoStats": "Fotoğraf İstatistikleri",
+  "@photoStats": {
+    "description": "Fotoğraf istatistikleri modal başlığı"
+  },
+
+  "photoStatsCost": "Fotoğraf istatistiklerini görüntülemek 50 coin tutar",
+  "@photoStatsCost": {
+    "description": "Fotoğraf istatistikleri maliyeti hakkında mesaj"
+  },
+
+  "wins": "Galibiyetler",
+  "@wins": {
+    "description": "İstatistiklerde galibiyet etiketi"
+  },
+
+  "totalMatches": "Toplam Maçlar",
+  "@totalMatches": {
+    "description": "İstatistiklerde toplam maç etiketi"
+  },
+
+  "winRate": "Galibiyet Oranı",
+  "@winRate": {
+    "description": "İstatistiklerde galibiyet oranı etiketi"
+  },
+
+  "insufficientCoinsForStats": "Fotoğraf istatistiklerini görüntülemek için yetersiz coin. Gerekli: 50 coin",
+  "@insufficientCoinsForStats": {
+    "description": "Kullanıcının fotoğraf istatistikleri için yeterli coini olmadığında hata mesajı"
+  },
+
+  "pay": "Öde",
+  "@pay": {
+    "description": "Ödeme butonu metni"
+  }
 }

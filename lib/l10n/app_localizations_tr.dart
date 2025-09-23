@@ -68,7 +68,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get submitPrediction => 'Tahmini Gönder';
 
   @override
-  String get winRate => 'Kazanma Oranı';
+  String get winRate => 'Galibiyet Oranı';
 
   @override
   String get profile => 'Profil';
@@ -98,10 +98,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get coins => 'Coin';
 
   @override
-  String get totalMatches => 'Toplam Match';
+  String get totalMatches => 'Toplam Maçlar';
 
   @override
-  String get wins => 'Kazanma';
+  String get wins => 'Galibiyetler';
 
   @override
   String get winRatePercentage => 'Kazanma Oranı';
@@ -209,7 +209,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String currentCoins(int coins) {
-    return 'Mevcut coin: $coins';
+    return 'Mevcut Coin';
   }
 
   @override
@@ -331,7 +331,7 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get spendFiveCoins => '5 Coin Harca';
+  String get spendFiveCoins => 'Bu bilgiyi görmek için 5 coin harcayacaksın';
 
   @override
   String get insufficientCoins => '❌ Yeterli coin yok!';
@@ -398,7 +398,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String logoutError(String error) {
-    return 'Çıkış yapılırken hata oluştu: $error';
+    return 'Çıkış yapılırken hata oluştu';
   }
 
   @override
@@ -422,12 +422,12 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String errorDeletingAccount(String error) {
-    return 'Hesap silinirken hata oluştu: $error';
+    return 'Hesap silinirken hata oluştu';
   }
 
   @override
   String errorWatchingAd(String error) {
-    return 'Reklam izlenirken hata oluştu: $error';
+    return 'Reklam izlenirken hata oluştu';
   }
 
   @override
@@ -563,4 +563,70 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get addInstagramFromSettings =>
       'Instagram ve meslek bilgilerini ayarlardan ekleyerek bu özelliği kullanabilirsin';
+
+  @override
+  String get basicInfo => 'Temel Bilgiler';
+
+  @override
+  String get premiumInfoSettings => 'Premium Bilgiler';
+
+  @override
+  String get premiumInfoDescriptionSettings =>
+      'Bu bilgileri diğer kullanıcılar coin harcayarak görebilir';
+
+  @override
+  String get coinInfo => 'Coin Bilgileri';
+
+  @override
+  String get remaining => 'Kalan';
+
+  @override
+  String get vs => 'VS';
+
+  @override
+  String get coinPurchase => 'Coin Satın Al';
+
+  @override
+  String get purchaseSuccessful => 'Satın alma başarılı!';
+
+  @override
+  String get purchaseFailed => 'Satın alma başarısız!';
+
+  @override
+  String get coinPackages => 'Coin Paketleri';
+
+  @override
+  String get coinUsage => 'Coin Kullanımı';
+
+  @override
+  String get instagramView => 'Instagram hesaplarını görüntüle';
+
+  @override
+  String get professionView => 'Meslek bilgilerini görüntüle';
+
+  @override
+  String get statsView => 'Detaylı istatistikleri görüntüle';
+
+  @override
+  String get tournamentFees => 'Turnuva katılım ücretleri';
+
+  @override
+  String get premiumFilters => 'Premium filtreler';
+
+  @override
+  String get viewStats => 'İstatistik Gör';
+
+  @override
+  String get photoStats => 'Fotoğraf İstatistikleri';
+
+  @override
+  String get photoStatsCost =>
+      'Fotoğraf istatistiklerini görüntülemek 50 coin tutar';
+
+  @override
+  String get insufficientCoinsForStats =>
+      'Fotoğraf istatistiklerini görüntülemek için yetersiz coin. Gerekli: 50 coin';
+
+  @override
+  String get pay => 'Öde';
 }

@@ -214,7 +214,7 @@ abstract class AppLocalizations {
   /// **'Submit Prediction'**
   String get submitPrediction;
 
-  /// Win rate label
+  /// Win rate label in statistics
   ///
   /// In en, this message translates to:
   /// **'Win Rate'**
@@ -274,13 +274,13 @@ abstract class AppLocalizations {
   /// **'Coins'**
   String get coins;
 
-  /// Total matches label
+  /// Total matches label in statistics
   ///
   /// In en, this message translates to:
   /// **'Total Matches'**
   String get totalMatches;
 
-  /// Wins label
+  /// Wins label in statistics
   ///
   /// In en, this message translates to:
   /// **'Wins'**
@@ -475,7 +475,7 @@ abstract class AppLocalizations {
   /// Current coins display
   ///
   /// In en, this message translates to:
-  /// **'Current coins: {coins}'**
+  /// **'Current Coins'**
   String currentCoins(int coins);
 
   /// Insufficient coins for photo upload message
@@ -679,7 +679,7 @@ abstract class AppLocalizations {
   /// Spend 5 coins button text
   ///
   /// In en, this message translates to:
-  /// **'Spend 5 Coins'**
+  /// **'Spend 5 coins to view this information'**
   String get spendFiveCoins;
 
   /// Insufficient coins error message
@@ -745,7 +745,7 @@ abstract class AppLocalizations {
   /// Daily ad limit message
   ///
   /// In en, this message translates to:
-  /// **'You can watch a maximum of 5 ads per day'**
+  /// **'You can watch maximum 5 ads per day'**
   String get dailyAdLimit;
 
   /// Coins per ad message
@@ -799,7 +799,7 @@ abstract class AppLocalizations {
   /// Logout error message
   ///
   /// In en, this message translates to:
-  /// **'Error occurred while logging out: {error}'**
+  /// **'Error occurred while logging out'**
   String logoutError(String error);
 
   /// Delete account button text
@@ -841,13 +841,13 @@ abstract class AppLocalizations {
   /// Error deleting account message
   ///
   /// In en, this message translates to:
-  /// **'Error occurred while deleting account: {error}'**
+  /// **'Error occurred while deleting account'**
   String errorDeletingAccount(String error);
 
   /// Error watching ad message
   ///
   /// In en, this message translates to:
-  /// **'Error occurred while watching ad: {error}'**
+  /// **'Error occurred while watching ad'**
   String errorWatchingAd(String error);
 
   /// Watching ad dialog title
@@ -865,7 +865,7 @@ abstract class AppLocalizations {
   /// Ad simulation message
   ///
   /// In en, this message translates to:
-  /// **'This is a simulated ad. In the real app, an actual ad would be shown here.'**
+  /// **'This is a simulation ad. In the real app, an actual ad will be shown here.'**
   String get adSimulation;
 
   /// Ad watched success message
@@ -1101,6 +1101,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You can use this feature by adding Instagram and profession information from settings'**
   String get addInstagramFromSettings;
+
+  /// No description provided for @basicInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Information'**
+  String get basicInfo;
+
+  /// No description provided for @premiumInfoSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium Information'**
+  String get premiumInfoSettings;
+
+  /// No description provided for @premiumInfoDescriptionSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Other users can view this information by spending coins'**
+  String get premiumInfoDescriptionSettings;
+
+  /// No description provided for @coinInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Coin Information'**
+  String get coinInfo;
+
+  /// No description provided for @remaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get remaining;
+
+  /// No description provided for @vs.
+  ///
+  /// In en, this message translates to:
+  /// **'VS'**
+  String get vs;
+
+  /// No description provided for @coinPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Coin Purchase'**
+  String get coinPurchase;
+
+  /// No description provided for @purchaseSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase successful!'**
+  String get purchaseSuccessful;
+
+  /// No description provided for @purchaseFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase failed!'**
+  String get purchaseFailed;
+
+  /// No description provided for @coinPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Coin Packages'**
+  String get coinPackages;
+
+  /// No description provided for @coinUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Coin Usage'**
+  String get coinUsage;
+
+  /// No description provided for @instagramView.
+  ///
+  /// In en, this message translates to:
+  /// **'View Instagram accounts'**
+  String get instagramView;
+
+  /// No description provided for @professionView.
+  ///
+  /// In en, this message translates to:
+  /// **'View profession information'**
+  String get professionView;
+
+  /// No description provided for @statsView.
+  ///
+  /// In en, this message translates to:
+  /// **'View detailed statistics'**
+  String get statsView;
+
+  /// No description provided for @tournamentFees.
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament participation fees'**
+  String get tournamentFees;
+
+  /// No description provided for @premiumFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium filters'**
+  String get premiumFilters;
+
+  /// Button text to view photo statistics
+  ///
+  /// In en, this message translates to:
+  /// **'View Stats'**
+  String get viewStats;
+
+  /// Title for photo statistics modal
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Statistics'**
+  String get photoStats;
+
+  /// Message about photo stats cost
+  ///
+  /// In en, this message translates to:
+  /// **'View photo statistics costs 50 coins'**
+  String get photoStatsCost;
+
+  /// Error message when user doesn't have enough coins for photo stats
+  ///
+  /// In en, this message translates to:
+  /// **'Insufficient coins to view photo statistics. Required: 50 coins'**
+  String get insufficientCoinsForStats;
+
+  /// Pay button text
+  ///
+  /// In en, this message translates to:
+  /// **'Pay'**
+  String get pay;
 }
 
 class _AppLocalizationsDelegate

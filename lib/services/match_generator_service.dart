@@ -82,9 +82,31 @@ class MatchGeneratorService {
 
       if (users.length == 0) return;
 
-      // Rastgele bir kullanıcı seç
-      final randomUser = users[DateTime.now().millisecondsSinceEpoch % users.length];
-      final selectedUser = UserModel.fromJson(randomUser);
+      // Son 10 match'te kullanılan kullanıcıları al (tekrar etmemek için)
+      final recentMatches = await _client
+          .from('matches')
+          .select('user1_id, user2_id')
+          .or('user1_id.eq.$userId,user2_id.eq.$userId')
+          .eq('is_completed', false)
+          .order('created_at', ascending: false)
+          .limit(10);
+
+      final recentUserIds = <String>{};
+      for (var match in recentMatches) {
+        if (match['user1_id'] != userId) recentUserIds.add(match['user1_id']);
+        if (match['user2_id'] != userId) recentUserIds.add(match['user2_id']);
+      }
+
+      // Son match'lerde kullanılmayan kullanıcıları filtrele
+      final availableUsers = users.where((user) => !recentUserIds.contains(user['id'])).toList();
+      
+      // Eğer tüm kullanıcılar son match'lerde kullanılmışsa, tüm kullanıcıları kullan
+      final candidates = availableUsers.isNotEmpty ? availableUsers : users;
+
+      // Daha iyi random seçim için seed kullan
+      final random = DateTime.now().millisecondsSinceEpoch;
+      final randomIndex = random % candidates.length;
+      final selectedUser = UserModel.fromJson(candidates[randomIndex]);
 
       // Bu iki kullanıcı arasında zaten match var mı kontrol et
       final existingMatch = await _client
