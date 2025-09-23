@@ -25,14 +25,14 @@ class _ProfileTabState extends State<ProfileTab> {
   Map<String, dynamic> predictionStats = {};
   List<Map<String, dynamic>> userPhotos = [];
   
-  // Ülke listesi
+  // Ülke listesi (register ile aynı)
   static const List<String> countries = [
-    'Türkiye', 'Almanya', 'Fransa', 'İngiltere', 'İtalya', 'İspanya', 
-    'Hollanda', 'Belçika', 'Avusturya', 'İsviçre', 'Amerika', 'Kanada',
-    'Avustralya', 'Japonya', 'Güney Kore', 'Çin', 'Hindistan', 'Brezilya',
-    'Arjantin', 'Meksika', 'Rusya', 'Polonya', 'Çek Cumhuriyeti', 'Macaristan',
-    'Romanya', 'Bulgaristan', 'Yunanistan', 'Portekiz', 'İsveç', 'Norveç',
-    'Danimarka', 'Finlandiya', 'İzlanda', 'İrlanda', 'Yeni Zelanda', 'Güney Afrika'
+    'turkiye', 'Almanya', 'Fransa', 'İtalya', 'İspanya', 'Hollanda', 
+    'Belçika', 'Avusturya', 'İsviçre', 'Polonya', 'Çek Cumhuriyeti', 
+    'Macaristan', 'Romanya', 'Bulgaristan', 'Hırvatistan', 'Slovenya', 
+    'Slovakya', 'Estonya', 'Letonya', 'Litvanya', 'Finlandiya', 
+    'İsveç', 'Norveç', 'Danimarka', 'Portekiz', 'Yunanistan', 
+    'Kıbrıs', 'Malta', 'Lüksemburg', 'İrlanda', 'İngiltere', 'İzlanda'
   ];
 
   // Yaş aralığı listesi

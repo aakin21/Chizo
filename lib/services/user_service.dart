@@ -40,12 +40,12 @@ class UserService {
           'total_matches': 0,
           'wins': 0,
           'country_preferences': [
-            'Türkiye', 'Almanya', 'Fransa', 'İngiltere', 'İtalya', 'İspanya', 
-            'Hollanda', 'Belçika', 'Avusturya', 'İsviçre', 'Amerika', 'Kanada',
-            'Avustralya', 'Japonya', 'Güney Kore', 'Çin', 'Hindistan', 'Brezilya',
-            'Arjantin', 'Meksika', 'Rusya', 'Polonya', 'Çek Cumhuriyeti', 'Macaristan',
-            'Romanya', 'Bulgaristan', 'Yunanistan', 'Portekiz', 'İsveç', 'Norveç',
-            'Danimarka', 'Finlandiya', 'İzlanda', 'İrlanda', 'Yeni Zelanda', 'Güney Afrika'
+            'turkiye', 'Almanya', 'Fransa', 'İtalya', 'İspanya', 'Hollanda', 
+            'Belçika', 'Avusturya', 'İsviçre', 'Polonya', 'Çek Cumhuriyeti', 
+            'Macaristan', 'Romanya', 'Bulgaristan', 'Hırvatistan', 'Slovenya', 
+            'Slovakya', 'Estonya', 'Letonya', 'Litvanya', 'Finlandiya', 
+            'İsveç', 'Norveç', 'Danimarka', 'Portekiz', 'Yunanistan', 
+            'Kıbrıs', 'Malta', 'Lüksemburg', 'İrlanda', 'İngiltere', 'İzlanda'
           ],
           'age_range_preferences': ['18-24', '24-32', '32-40', '40+'],
           'created_at': DateTime.now().toIso8601String(),
