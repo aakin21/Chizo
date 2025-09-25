@@ -47,6 +47,9 @@ dependencies:
   # Local storage
   shared_preferences: ^2.2.2
   
+  # URL launcher for opening external links
+  url_launcher: ^6.2.5
+  
   # Internationalization
   flutter_localizations:
     sdk: flutter

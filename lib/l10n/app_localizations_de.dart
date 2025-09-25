@@ -208,11 +208,6 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String currentCoins(int coins) {
-    return 'Aktuelle Coins';
-  }
-
-  @override
   String get insufficientCoinsForUpload =>
       'Unzureichende Coins! Verwenden Sie die Coin-Schaltfläche auf der Profilseite, um Coins zu kaufen.';
 
@@ -472,13 +467,14 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get insufficientCoinsForTournament => 'Unzureichende Münzen!';
+  String get insufficientCoinsForTournament =>
+      'Nicht genügend Coins für Turnier!';
 
   @override
-  String get joinedTournament => 'Turnier beigetreten!';
+  String get joinedTournament => 'Sie sind dem Turnier beigetreten!';
 
   @override
-  String get tournamentJoinFailed => 'Beitritt zum Turnier fehlgeschlagen!';
+  String get tournamentJoinFailed => 'Turnier-Beitritt fehlgeschlagen!';
 
   @override
   String get dailyStreak => 'Tägliche Serie!';
@@ -581,6 +577,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get coinInfo => 'Coin-Informationen';
+
+  @override
+  String currentCoins(int coins) {
+    return 'Aktuelle Coins';
+  }
 
   @override
   String get remaining => 'Verbleibend';

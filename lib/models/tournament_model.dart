@@ -8,9 +8,16 @@ class TournamentModel {
   final int currentParticipants;
   final DateTime startDate;
   final DateTime endDate;
-  final String status; // 'upcoming', 'active', 'completed'
+  final String status; // 'registration', 'active', 'completed'
   final String? winnerId;
+  final String? secondPlaceId; // İkinci sıra
+  final String? thirdPlaceId; // Üçüncü sıra
   final DateTime createdAt;
+  final String gender; // 'Erkek' or 'Kadın'
+  final String currentPhase; // 'registration', 'qualifying', 'quarter_final', 'semi_final', 'final', 'completed'
+  final int? currentRound; // Hangi turda olduğu (1, 2, 3, 4)
+  final DateTime? phaseStartDate; // Mevcut fazın başlangıç tarihi
+  final DateTime? registrationStartDate; // Kayıt başlangıç tarihi
 
   TournamentModel({
     required this.id,
@@ -24,7 +31,14 @@ class TournamentModel {
     required this.endDate,
     required this.status,
     this.winnerId,
+    this.secondPlaceId,
+    this.thirdPlaceId,
     required this.createdAt,
+    required this.gender,
+    required this.currentPhase,
+    this.currentRound,
+    this.phaseStartDate,
+    this.registrationStartDate,
   });
 
   factory TournamentModel.fromJson(Map<String, dynamic> json) {
@@ -40,7 +54,14 @@ class TournamentModel {
       endDate: DateTime.parse(json['end_date']),
       status: json['status'],
       winnerId: json['winner_id'],
+      secondPlaceId: json['second_place_id'],
+      thirdPlaceId: json['third_place_id'],
       createdAt: DateTime.parse(json['created_at']),
+      gender: json['gender'],
+      currentPhase: json['current_phase'],
+      currentRound: json['current_round'],
+      phaseStartDate: json['phase_start_date'] != null ? DateTime.parse(json['phase_start_date']) : null,
+      registrationStartDate: json['registration_start_date'] != null ? DateTime.parse(json['registration_start_date']) : null,
     );
   }
 
@@ -57,7 +78,14 @@ class TournamentModel {
       'end_date': endDate.toIso8601String(),
       'status': status,
       'winner_id': winnerId,
+      'second_place_id': secondPlaceId,
+      'third_place_id': thirdPlaceId,
       'created_at': createdAt.toIso8601String(),
+      'gender': gender,
+      'current_phase': currentPhase,
+      'current_round': currentRound,
+      'phase_start_date': phaseStartDate?.toIso8601String(),
+      'registration_start_date': registrationStartDate?.toIso8601String(),
     };
   }
 }

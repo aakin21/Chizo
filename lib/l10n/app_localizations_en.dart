@@ -208,11 +208,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String currentCoins(int coins) {
-    return 'Current Coins';
-  }
-
-  @override
   String get insufficientCoinsForUpload =>
       'Insufficient coins! Use the coin button on profile page to purchase coins.';
 
@@ -469,10 +464,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get insufficientCoinsForTournament => 'Insufficient coins!';
+  String get insufficientCoinsForTournament =>
+      'Insufficient coins for tournament!';
 
   @override
-  String get joinedTournament => 'Joined tournament!';
+  String get joinedTournament => 'You joined the tournament!';
 
   @override
   String get tournamentJoinFailed => 'Failed to join tournament!';
@@ -577,6 +573,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get coinInfo => 'Coin Information';
+
+  @override
+  String currentCoins(int coins) {
+    return 'Current Coins';
+  }
 
   @override
   String get remaining => 'Remaining';

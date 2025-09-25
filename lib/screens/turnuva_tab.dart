@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../models/tournament_model.dart';
+import '../models/user_model.dart';
 import '../services/tournament_service.dart';
 import '../services/user_service.dart';
+import '../services/photo_upload_service.dart';
+import '../l10n/app_localizations.dart';
 
 class TurnuvaTab extends StatefulWidget {
   const TurnuvaTab({super.key});
@@ -13,6 +17,7 @@ class TurnuvaTab extends StatefulWidget {
 class _TurnuvaTabState extends State<TurnuvaTab> {
   List<TournamentModel> tournaments = [];
   bool isLoading = true;
+  UserModel? currentUser;
 
   @override
   void initState() {
@@ -24,8 +29,10 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     setState(() => isLoading = true);
     try {
       final activeTournaments = await TournamentService.getActiveTournaments();
+      final user = await UserService.getCurrentUser();
       setState(() {
         tournaments = activeTournaments;
+        currentUser = user;
         isLoading = false;
       });
     } catch (e) {
@@ -37,25 +44,298 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   }
 
   Future<void> _joinTournament(TournamentModel tournament) async {
-    final currentUser = await UserService.getCurrentUser();
     if (currentUser == null) return;
 
-    if (currentUser.coins < tournament.entryFee) {
+    if (currentUser!.coins < tournament.entryFee) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Yetersiz coin!')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.insufficientCoinsForTournament)),
       );
       return;
     }
 
+    // Cinsiyet kontrolü kaldırıldı - herkes tüm turnuvalara katılabilir
+
     final success = await TournamentService.joinTournament(tournament.id);
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Turnuvaya katıldınız!')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.joinedTournament)),
       );
       await loadTournaments();
+      
+      // Turnuva fotoğrafı yükleme dialog'unu göster
+      _showTournamentPhotoDialog(tournament.id);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Turnuvaya katılım başarısız!')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.tournamentJoinFailed)),
+      );
+    }
+  }
+
+  // Turnuva fotoğrafı yükleme dialog'u
+  Future<void> _showTournamentPhotoDialog(String tournamentId) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('🏆 Turnuva Fotoğrafı'),
+        content: const Text('Turnuvaya katıldınız! Şimdi turnuva fotoğrafınızı yükleyin.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Sonra Yükle'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _uploadTournamentPhoto(tournamentId);
+            },
+            child: const Text('Fotoğraf Yükle'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Turnuva fotoğrafı yükle
+  Future<void> _uploadTournamentPhoto(String tournamentId) async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        // Fotoğrafı Supabase'e yükle
+        final photoUrl = await PhotoUploadService.uploadTournamentPhoto(image);
+        
+        if (photoUrl != null) {
+          // Turnuva fotoğrafını kaydet
+          final success = await TournamentService.uploadTournamentPhoto(tournamentId, photoUrl);
+          
+          if (success) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('✅ Turnuva fotoğrafı yüklendi!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('❌ Fotoğraf yüklenirken hata oluştu!'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Hata: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // Belirli turnuva için oylama
+  Future<void> _voteForSpecificTournament(String tournamentId) async {
+    try {
+      // Belirli turnuva için oylama ekranını aç
+      final tournamentMatches = await TournamentService.getTournamentMatchesForVoting();
+      
+      // Bu turnuva ID'sine sahip match'i bul
+      Map<String, dynamic>? specificMatch;
+      try {
+        specificMatch = tournamentMatches.firstWhere(
+          (match) => match['tournament_id'] == tournamentId,
+        );
+      } catch (e) {
+        specificMatch = null;
+      }
+      
+      if (specificMatch == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Bu turnuva için oylama bulunamadı')),
+        );
+        return;
+      }
+
+      // Oylama ekranını aç
+      await _showTournamentVotingDialog(specificMatch);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Oylama yüklenirken hata: $e')),
+      );
+    }
+  }
+
+
+
+  Future<void> _showTournamentVotingDialog(Map<String, dynamic> tournamentMatch) async {
+    final user1 = tournamentMatch['user1'];
+    final user2 = tournamentMatch['user2'];
+    String? selectedWinner;
+
+    await showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.how_to_vote, color: Colors.purple),
+              SizedBox(width: 8),
+              Text('Turnuva Oylaması'),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Hangi katılımcıyı tercih ediyorsunuz?',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 20),
+              
+              // Kullanıcı 1
+              GestureDetector(
+                onTap: () {
+                  setDialogState(() {
+                    selectedWinner = user1['id'];
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: selectedWinner == user1['id'] ? Colors.purple : Colors.grey,
+                      width: selectedWinner == user1['id'] ? 3 : 1,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    color: selectedWinner == user1['id'] ? Colors.purple.withOpacity(0.1) : null,
+                  ),
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage: user1['photo_url'] != null 
+                            ? NetworkImage(user1['photo_url']) 
+                            : null,
+                        child: user1['photo_url'] == null 
+                            ? const Icon(Icons.person, size: 30) 
+                            : null,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        user1['username'] ?? 'Bilinmeyen',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 16),
+              const Text('VS', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 16),
+              
+              // Kullanıcı 2
+              GestureDetector(
+                onTap: () {
+                  setDialogState(() {
+                    selectedWinner = user2['id'];
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: selectedWinner == user2['id'] ? Colors.purple : Colors.grey,
+                      width: selectedWinner == user2['id'] ? 3 : 1,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    color: selectedWinner == user2['id'] ? Colors.purple.withOpacity(0.1) : null,
+                  ),
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage: user2['photo_url'] != null 
+                            ? NetworkImage(user2['photo_url']) 
+                            : null,
+                        child: user2['photo_url'] == null 
+                            ? const Icon(Icons.person, size: 30) 
+                            : null,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        user2['username'] ?? 'Bilinmeyen',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('İptal'),
+            ),
+            ElevatedButton(
+              onPressed: selectedWinner != null 
+                  ? () async {
+                      await _submitTournamentVote(tournamentMatch, selectedWinner!);
+                      Navigator.of(context).pop();
+                    }
+                  : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purple,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Oyla'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submitTournamentVote(Map<String, dynamic> tournamentMatch, String winnerId) async {
+    try {
+      final user1 = tournamentMatch['user1'];
+      final user2 = tournamentMatch['user2'];
+      
+      final loserId = winnerId == user1['id'] ? user2['id'] : user1['id'];
+      
+      await TournamentService.voteForTournamentMatch(
+        tournamentMatch['tournament_id'],
+        winnerId,
+        loserId,
+      );
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Oyunuz başarıyla kaydedildi!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Oylama sırasında hata: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -68,7 +348,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Turnuvalar',
+            '🏆 Turnuvalar',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
@@ -109,6 +389,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   }
 
   Widget _buildTournamentCard(TournamentModel tournament) {
+    // Cinsiyet filtrelemesi kaldırıldı - herkes tüm turnuvaları görebilir
+
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       child: Padding(
@@ -134,11 +416,17 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                   decoration: BoxDecoration(
                     color: tournament.status == 'active' 
                         ? Colors.green 
+                        : tournament.status == 'registration'
+                        ? Colors.blue
                         : Colors.orange,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    tournament.status == 'active' ? 'Aktif' : 'Yaklaşıyor',
+                    tournament.status == 'active' 
+                        ? 'Aktif' 
+                        : tournament.status == 'registration'
+                        ? 'Kayıt'
+                        : 'Yaklaşıyor',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -198,18 +486,48 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
             
             const SizedBox(height: 16),
             
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: tournament.currentParticipants >= tournament.maxParticipants
-                    ? null
-                    : () => _joinTournament(tournament),
-                child: Text(
-                  tournament.currentParticipants >= tournament.maxParticipants
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: tournament.status == 'registration' && tournament.currentParticipants < tournament.maxParticipants
+                        ? () => _joinTournament(tournament)
+                        : null,
+                    child: Text(
+                      tournament.status == 'completed'
+                          ? 'Tamamlandı'
+                          : tournament.status == 'active'
+                          ? 'Devam Ediyor'
+                          : tournament.currentParticipants >= tournament.maxParticipants
                       ? 'Turnuva Dolu'
                       : 'Katıl',
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 8),
+                if (tournament.status == 'registration' && tournament.currentParticipants < tournament.maxParticipants)
+                  ElevatedButton.icon(
+                    onPressed: () => _showTournamentPhotoDialog(tournament.id),
+                    icon: const Icon(Icons.photo_camera),
+                    label: const Text('Fotoğraf'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                const SizedBox(width: 8),
+                // Turnuva oyla butonu - sadece aktif turnuvalar için
+                if (tournament.status == 'active')
+                  ElevatedButton.icon(
+                    onPressed: () => _voteForSpecificTournament(tournament.id),
+                    icon: const Icon(Icons.how_to_vote),
+                    label: const Text('Oyla'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.purple,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+              ],
             ),
           ],
         ),

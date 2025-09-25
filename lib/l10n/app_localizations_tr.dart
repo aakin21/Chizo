@@ -208,11 +208,6 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String currentCoins(int coins) {
-    return 'Mevcut Coin';
-  }
-
-  @override
   String get insufficientCoinsForUpload =>
       'Yetersiz coin! Coin satın almak için profil sayfasındaki coin butonunu kullanın.';
 
@@ -468,7 +463,7 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get insufficientCoinsForTournament => 'Yetersiz coin!';
+  String get insufficientCoinsForTournament => 'Turnuva için yeterli coin yok!';
 
   @override
   String get joinedTournament => 'Turnuvaya katıldınız!';
@@ -576,6 +571,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get coinInfo => 'Coin Bilgileri';
+
+  @override
+  String currentCoins(int coins) {
+    return 'Mevcut Coin';
+  }
 
   @override
   String get remaining => 'Kalan';

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:math';
 import '../models/match_model.dart';
 import '../models/user_model.dart';
 import '../services/match_service.dart';
 import '../services/user_service.dart';
 import '../services/prediction_service.dart';
 import '../services/photo_upload_service.dart';
+import '../services/tournament_service.dart';
 import '../l10n/app_localizations.dart';
 
 class VotingTab extends StatefulWidget {
@@ -19,11 +22,13 @@ class VotingTab extends StatefulWidget {
 
 class _VotingTabState extends State<VotingTab> {
   List<MatchModel> matches = [];
+  List<Map<String, dynamic>> votableItems = []; // Normal match'ler + turnuva match'leri
   bool isLoading = true;
   int currentMatchIndex = 0;
   bool showPredictionSlider = false;
   UserModel? selectedWinner;
   double sliderValue = 50.0;
+  bool isCurrentTournamentMatch = false; // Mevcut oylama turnuva oylaması mı?
 
   @override
   void initState() {
@@ -41,10 +46,34 @@ class _VotingTabState extends State<VotingTab> {
       
       // Oluşturulan match'leri yükle (otomatik temizlik dahil)
       final votableMatches = await MatchService.getVotableMatches();
+      
+      // Turnuva entegrasyonu için votableItems oluştur
+      final items = <Map<String, dynamic>>[];
+      for (var match in votableMatches) {
+        items.add({
+          'match': match,
+          'is_tournament': false,
+        });
+      }
+      
+      // Her 4 oylamadan 1'ini turnuva oylaması yap
+      if (items.length >= 4) {
+        final tournamentMatches = await TournamentService.getTournamentMatchesForVoting();
+        if (tournamentMatches.isNotEmpty) {
+          // Random pozisyonda turnuva match'i ekle
+          final insertIndex = Random().nextInt(items.length);
+          final tournamentMatch = tournamentMatches.first;
+          items.insert(insertIndex, {
+            'tournament_match': tournamentMatch,
+            'is_tournament': true,
+          });
+        }
+      }
     
       if (mounted) {
         setState(() {
           matches = votableMatches;
+          votableItems = items;
           isLoading = false;
         });
       }
@@ -59,9 +88,45 @@ class _VotingTabState extends State<VotingTab> {
   }
 
   Future<void> _voteForUser(String winnerId) async {
-    if (currentMatchIndex >= matches.length) return;
+    if (currentMatchIndex >= votableItems.length) return;
 
-    final currentMatch = matches[currentMatchIndex];
+    final currentItem = votableItems[currentMatchIndex];
+    final isTournament = currentItem['is_tournament'] as bool;
+    
+    if (isTournament) {
+      // Turnuva oylaması
+      final tournamentMatch = currentItem['tournament_match'] as Map<String, dynamic>;
+      final user1 = tournamentMatch['user1'];
+      final user2 = tournamentMatch['user2'];
+      final loserId = winnerId == user1['id'] ? user2['id'] : user1['id'];
+      
+      final success = await TournamentService.voteForTournamentMatch(
+        tournamentMatch['tournament_id'],
+        winnerId,
+        loserId,
+      );
+      
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('🏆 Turnuva oylaması kaydedildi!'),
+            backgroundColor: Colors.purple,
+          ),
+        );
+        _nextMatch();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('❌ Turnuva oylaması kaydedilemedi!'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
+
+    // Normal oylama
+    final currentMatch = currentItem['match'] as MatchModel;
     final success = await MatchService.voteForMatch(currentMatch.id, winnerId);
     
     if (success) {
@@ -195,7 +260,7 @@ class _VotingTabState extends State<VotingTab> {
             const Expanded(
               child: Center(child: CircularProgressIndicator()),
             )
-          else if (matches.isEmpty)
+          else if (votableItems.isEmpty)
             Expanded(
               child: Center(
                 child: Text(
@@ -205,7 +270,7 @@ class _VotingTabState extends State<VotingTab> {
                 ),
               ),
             )
-          else if (currentMatchIndex >= matches.length)
+          else if (currentMatchIndex >= votableItems.length)
             Expanded(
               child: Center(
                 child: Text(
@@ -217,10 +282,210 @@ class _VotingTabState extends State<VotingTab> {
             )
           else
             Expanded(
-              child: _buildMatchCard(matches[currentMatchIndex]),
+              child: _buildVotableItemCard(votableItems[currentMatchIndex]),
             ),
         ],
       ),
+    );
+  }
+
+  void _nextMatch() {
+    setState(() {
+      currentMatchIndex++;
+      showPredictionSlider = false;
+      selectedWinner = null;
+      sliderValue = 50.0;
+    });
+    
+    // Eğer tüm oylamalar bittiyse yeni match'ler yükle
+    if (currentMatchIndex >= votableItems.length) {
+      loadMatches();
+    }
+  }
+
+  Widget _buildVotableItemCard(Map<String, dynamic> item) {
+    final isTournament = item['is_tournament'] as bool;
+    
+    if (isTournament) {
+      return _buildTournamentMatchCard(item['tournament_match']);
+    } else {
+      return _buildMatchCard(item['match'] as MatchModel);
+    }
+  }
+
+  Widget _buildTournamentMatchCard(Map<String, dynamic> tournamentMatch) {
+    final user1 = tournamentMatch['user1'];
+    final user2 = tournamentMatch['user2'];
+    
+    return Column(
+      children: [
+        // Turnuva başlığı
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.purple,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: const Text(
+            '🏆 TURNUVA OYLAMASI',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        
+        Text(
+          'Hangi turnuva katılımcısını tercih ediyorsunuz?',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey[700],
+          ),
+        ),
+        const SizedBox(height: 20),
+        
+        Expanded(
+          child: Row(
+            children: [
+              // İlk kullanıcı
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => _voteForUser(user1['id']),
+                  child: Card(
+                    elevation: 4,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                              image: user1['profile_image_url'] != null
+                                  ? DecorationImage(
+                                      image: NetworkImage(user1['profile_image_url']),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : null,
+                              color: user1['profile_image_url'] == null ? Colors.grey[300] : null,
+                            ),
+                            child: user1['profile_image_url'] == null
+                                ? const Icon(Icons.person, size: 80, color: Colors.grey)
+                                : null,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            children: [
+                              Text(
+                                user1['username'],
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${user1['age']} yaş • ${user1['country']}',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 12,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              
+              const SizedBox(width: 16),
+              
+              // İkinci kullanıcı
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => _voteForUser(user2['id']),
+                  child: Card(
+                    elevation: 4,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                              image: user2['profile_image_url'] != null
+                                  ? DecorationImage(
+                                      image: NetworkImage(user2['profile_image_url']),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : null,
+                              color: user2['profile_image_url'] == null ? Colors.grey[300] : null,
+                            ),
+                            child: user2['profile_image_url'] == null
+                                ? const Icon(Icons.person, size: 80, color: Colors.grey)
+                                : null,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            children: [
+                              Text(
+                                user2['username'],
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${user2['age']} yaş • ${user2['country']}',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 12,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        
+        const SizedBox(height: 20),
+        
+        // İlerleme göstergesi
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            for (int i = 0; i < votableItems.length; i++)
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 2),
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: i == currentMatchIndex ? Colors.purple : Colors.grey[300],
+                  shape: BoxShape.circle,
+                ),
+              ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -628,14 +893,28 @@ class _VotingTabState extends State<VotingTab> {
                 color: Colors.grey[100],
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Text(
-                info,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
+              child: type == AppLocalizations.of(context)!.instagramAccount
+                  ? GestureDetector(
+                      onTap: () => _openInstagramProfile(info),
+                      child: Text(
+                        '@$info',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  : Text(
+                      info,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
             ),
             const SizedBox(height: 16),
             Text(
@@ -645,9 +924,29 @@ class _VotingTabState extends State<VotingTab> {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            if (type == AppLocalizations.of(context)!.instagramAccount) ...[
+              const SizedBox(height: 8),
+              Text(
+                '📱 Instagram\'ı açmak için tıklayın',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 12,
+                ),
+              ),
+            ],
           ],
         ),
         actions: [
+          if (type == AppLocalizations.of(context)!.instagramAccount)
+            ElevatedButton.icon(
+              onPressed: () => _openInstagramProfile(info),
+              icon: const Icon(Icons.camera_alt),
+              label: const Text('Instagram\'ı Aç'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.pink,
+                foregroundColor: Colors.white,
+              ),
+            ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
             child: Text(AppLocalizations.of(context)!.ok),
@@ -655,6 +954,53 @@ class _VotingTabState extends State<VotingTab> {
         ],
       ),
     );
+  }
+
+  // Instagram profilini aç
+  Future<void> _openInstagramProfile(String username) async {
+    try {
+      // @ işaretini kaldır
+      final cleanUsername = username.replaceAll('@', '');
+      
+      // Instagram URL'lerini dene (hem app hem web)
+      final instagramUrls = [
+        'instagram://user?username=$cleanUsername', // Instagram app
+        'https://www.instagram.com/$cleanUsername/', // Web browser
+      ];
+
+      bool launched = false;
+      
+      for (String url in instagramUrls) {
+        final uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+          launched = true;
+          break;
+        }
+      }
+
+      if (!launched) {
+        // Eğer hiçbir URL açılamazsa, web browser ile dene
+        final webUrl = Uri.parse('https://www.instagram.com/$cleanUsername/');
+        if (await canLaunchUrl(webUrl)) {
+          await launchUrl(webUrl, mode: LaunchMode.externalApplication);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('❌ Instagram açılamadı. Lütfen Instagram uygulamasını kontrol edin.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('❌ Instagram açılırken hata oluştu: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   Widget _buildPredictionSlider() {

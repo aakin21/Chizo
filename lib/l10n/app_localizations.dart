@@ -472,12 +472,6 @@ abstract class AppLocalizations {
   /// **'This slot requires {coins} coins.'**
   String coinsRequiredForSlot(int coins);
 
-  /// Current coins display
-  ///
-  /// In en, this message translates to:
-  /// **'Current Coins'**
-  String currentCoins(int coins);
-
   /// Insufficient coins for photo upload message
   ///
   /// In en, this message translates to:
@@ -919,13 +913,13 @@ abstract class AppLocalizations {
   /// Insufficient coins for tournament message
   ///
   /// In en, this message translates to:
-  /// **'Insufficient coins!'**
+  /// **'Insufficient coins for tournament!'**
   String get insufficientCoinsForTournament;
 
   /// Joined tournament success message
   ///
   /// In en, this message translates to:
-  /// **'Joined tournament!'**
+  /// **'You joined the tournament!'**
   String get joinedTournament;
 
   /// Tournament join failed message
@@ -1125,6 +1119,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Coin Information'**
   String get coinInfo;
+
+  /// Current coins display
+  ///
+  /// In en, this message translates to:
+  /// **'Current Coins'**
+  String currentCoins(int coins);
 
   /// No description provided for @remaining.
   ///

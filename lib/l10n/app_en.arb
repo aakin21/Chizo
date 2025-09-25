@@ -354,7 +354,6 @@
     }
   },
   
-  "currentCoins": "Current coins: {coins}",
   "@currentCoins": {
     "description": "Current coins display",
     "placeholders": {
@@ -1016,7 +1015,6 @@
   "slot": "Slot {slot}",
   "photoUploadSlot": "Photo Upload - Slot {slot}",
   "coinsRequiredForSlot": "This slot requires {coins} coins.",
-  "currentCoins": "Current coins: {coins}",
   "insufficientCoinsForUpload": "Insufficient coins! Use the coin button on profile page to purchase coins.",
   "upload": "Upload ({coins} coins)",
   "deletePhoto": "Delete Photo",
@@ -1054,6 +1052,9 @@
   "premiumInfoDescriptionSettings": "Other users can view this information by spending coins",
   "coinInfo": "Coin Information",
   "currentCoins": "Current Coins",
+  "insufficientCoinsForTournament": "Insufficient coins for tournament!",
+  "joinedTournament": "You joined the tournament!",
+  "tournamentJoinFailed": "Failed to join tournament!",
   "purchaseCoins": "Purchase Coins",
   "watchAd": "Watch Ad",
   "dailyAdLimit": "You can watch maximum 5 ads per day",

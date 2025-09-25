@@ -33,6 +33,32 @@ class PhotoUploadService {
     }
   }
 
+  /// Upload tournament photo
+  static Future<String?> uploadTournamentPhoto(XFile image) async {
+    try {
+      final file = File(image.path);
+      final fileName = 'tournament_${DateTime.now().millisecondsSinceEpoch}_${image.name}';
+      
+      // Upload to Supabase Storage
+      final response = await _client.storage
+          .from('tournament-photos')
+          .upload(fileName, file);
+
+      if (response.isNotEmpty) {
+        final photoUrl = _client.storage
+            .from('tournament-photos')
+            .getPublicUrl(fileName);
+        
+        return photoUrl;
+      }
+      
+      return null;
+    } catch (e) {
+      print('Error uploading tournament photo: $e');
+      return null;
+    }
+  }
+
   /// Get next available photo slot
   static Future<int?> getNextAvailableSlot(String userId) async {
     try {
