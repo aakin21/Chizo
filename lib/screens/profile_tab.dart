@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:image_picker/image_picker.dart';
 import '../models/user_model.dart';
 import '../services/user_service.dart';
-import '../services/image_service.dart';
 import '../services/prediction_service.dart';
 import '../services/photo_upload_service.dart';
 import '../l10n/app_localizations.dart';
+import '../utils/constants.dart';
 import 'match_history_screen.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -25,18 +24,7 @@ class _ProfileTabState extends State<ProfileTab> {
   Map<String, dynamic> predictionStats = {};
   List<Map<String, dynamic>> userPhotos = [];
   
-  // Ülke listesi (register ile aynı)
-  static const List<String> countries = [
-    'turkiye', 'Almanya', 'Fransa', 'İtalya', 'İspanya', 'Hollanda', 
-    'Belçika', 'Avusturya', 'İsviçre', 'Polonya', 'Çek Cumhuriyeti', 
-    'Macaristan', 'Romanya', 'Bulgaristan', 'Hırvatistan', 'Slovenya', 
-    'Slovakya', 'Estonya', 'Letonya', 'Litvanya', 'Finlandiya', 
-    'İsveç', 'Norveç', 'Danimarka', 'Portekiz', 'Yunanistan', 
-    'Kıbrıs', 'Malta', 'Lüksemburg', 'İrlanda', 'İngiltere', 'İzlanda'
-  ];
 
-  // Yaş aralığı listesi
-  static const List<String> ageRanges = ['18-24', '24-32', '32-40', '40+'];
 
   @override
   void initState() {
@@ -226,80 +214,6 @@ class _ProfileTabState extends State<ProfileTab> {
     );
   }
 
-  Future<void> _pickAndUploadImage() async {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: Text(AppLocalizations.of(context)!.selectFromGallery),
-              onTap: () async {
-                Navigator.pop(context);
-                await _uploadImage(ImageSource.gallery);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: Text(AppLocalizations.of(context)!.takeFromCamera),
-              onTap: () async {
-                Navigator.pop(context);
-                await _uploadImage(ImageSource.camera);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _uploadImage(ImageSource source) async {
-    setState(() => isUpdating = true);
-
-    try {
-      XFile? imageFile;
-      if (source == ImageSource.gallery) {
-        imageFile = await ImageService.pickImageFromGallery();
-      } else {
-        imageFile = await ImageService.pickImageFromCamera();
-      }
-
-      if (imageFile != null) {
-        final imageUrl = await ImageService.uploadImage(imageFile, 'profile.jpg');
-        
-        if (imageUrl != null) {
-          final success = await UserService.updateProfile(profileImageUrl: imageUrl);
-          if (success) {
-            await loadUserData();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(AppLocalizations.of(context)!.imageUpdated)),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(AppLocalizations.of(context)!.updateFailed)),
-            );
-          }
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(AppLocalizations.of(context)!.imageUpdateFailed)),
-          );
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.selectImage)),
-        );
-      }
-    } catch (e) {
-      print('Error in _uploadImage: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
-      );
-    } finally {
-      setState(() => isUpdating = false);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -327,51 +241,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Profil Fotoğrafı
-                      Center(
-                        child: Stack(
-                          children: [
-                            CircleAvatar(
-                              radius: 60,
-                              backgroundColor: Colors.grey[300],
-                              backgroundImage: currentUser!.profileImageUrl != null
-                                  ? CachedNetworkImageProvider(currentUser!.profileImageUrl!)
-                                  : null,
-                              child: currentUser!.profileImageUrl == null
-                                  ? const Icon(Icons.person, size: 60, color: Colors.grey)
-                                  : null,
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: GestureDetector(
-                                onTap: isUpdating ? null : _pickAndUploadImage,
-                                child: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.blue,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: isUpdating
-                                      ? const SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                          ),
-                                        )
-                                      : const Icon(Icons.camera_alt, color: Colors.white, size: 20),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // Çoklu Fotoğraf Yönetimi
+                      // Fotoğraf Yönetimi (5 Slot)
                       Card(
                         child: Padding(
                           padding: const EdgeInsets.all(16),
@@ -382,10 +252,10 @@ class _ProfileTabState extends State<ProfileTab> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    AppLocalizations.of(context)!.additionalMatchPhotos,
+                                    'Fotoğraflarım (${userPhotos.length}/5)',
                                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                   ),
-                                  if (userPhotos.length < 4)
+                                  if (userPhotos.length < 5)
                                     ElevatedButton.icon(
                                       onPressed: isUpdating ? null : _showPhotoUploadDialog,
                                       icon: const Icon(Icons.add, size: 16),
@@ -400,7 +270,7 @@ class _ProfileTabState extends State<ProfileTab> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                AppLocalizations.of(context)!.additionalPhotosDescription(userPhotos.length),
+                                'İlk fotoğraf ücretsiz, diğerleri coin ile alınır. Tüm fotoğrafların istatistiklerini görebilirsiniz.',
                                 style: const TextStyle(fontSize: 12, color: Colors.grey),
                               ),
                               const SizedBox(height: 16),
@@ -443,9 +313,9 @@ class _ProfileTabState extends State<ProfileTab> {
                                     mainAxisSpacing: 8,
                                     childAspectRatio: 1,
                                   ),
-                                  itemCount: 4, // Always show 4 slots (2-5)
+                                  itemCount: 5, // Always show 5 slots (1-5)
                                   itemBuilder: (context, index) {
-                                    final slot = index + 2; // Slots 2-5
+                                    final slot = index + 1; // Slots 1-5
                                     final photo = userPhotos.firstWhere(
                                       (p) => p['photo_order'] == slot,
                                       orElse: () => {},
@@ -579,122 +449,40 @@ class _ProfileTabState extends State<ProfileTab> {
                       const SizedBox(height: 24),
 
                       // Kullanıcı Bilgileri
-                      _buildInfoCard(AppLocalizations.of(context)!.username, currentUser!.username),
-                      _buildInfoCard(AppLocalizations.of(context)!.email, currentUser!.email),
+                      _buildEditableInfoCard(AppLocalizations.of(context)!.username, currentUser!.username, 'username'),
+                      _buildEditableInfoCard(AppLocalizations.of(context)!.email, currentUser!.email, 'email'),
                       _buildInfoCard(AppLocalizations.of(context)!.coin, '${currentUser!.coins}'),
 
                       if (currentUser!.age != null)
-                        _buildInfoCard(AppLocalizations.of(context)!.age, '${currentUser!.age}'),
+                        _buildEditableInfoCard(AppLocalizations.of(context)!.age, '${currentUser!.age}', 'age'),
+                      if (currentUser!.age == null)
+                        _buildAddInfoButton('Yaş Ekle', Icons.cake, Colors.orange, () => _showEditDialog('age', '')),
 
                       if (currentUser!.country != null)
-                        _buildInfoCard(AppLocalizations.of(context)!.country, currentUser!.country!),
+                        _buildEditableInfoCard(AppLocalizations.of(context)!.country, currentUser!.country!, 'country'),
+                      if (currentUser!.country == null)
+                        _buildAddInfoButton('Ülke Ekle', Icons.public, Colors.blue, () => _showEditDialog('country', '')),
 
                       if (currentUser!.gender != null)
-                        _buildInfoCard(AppLocalizations.of(context)!.gender, currentUser!.gender!),
+                        _buildEditableInfoCard(AppLocalizations.of(context)!.gender, currentUser!.gender!, 'gender'),
+                      if (currentUser!.gender == null)
+                        _buildAddInfoButton('Cinsiyet Ekle', Icons.person, Colors.purple, () => _showEditDialog('gender', '')),
 
                       const SizedBox(height: 24),
 
-                      // Instagram ve Meslek Ekleme
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '📱 ${AppLocalizations.of(context)!.premiumFeatures}',
-                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                AppLocalizations.of(context)!.premiumInfoDescription,
-                                style: const TextStyle(fontSize: 12, color: Colors.grey),
-                              ),
-                              const SizedBox(height: 16),
-                              
-                              // Instagram Ekleme
-                              if (currentUser!.instagramHandle == null)
-                                _buildAddInfoButton(
-                                  AppLocalizations.of(context)!.addInstagram,
-                                  Icons.camera_alt,
-                                  Colors.pink,
-                                  () => _showAddInfoDialog(AppLocalizations.of(context)!.instagramAccount, 'instagram'),
-                                ),
-                              
-                              // Meslek Ekleme
-                              if (currentUser!.profession == null)
-                                _buildAddInfoButton(
-                                  AppLocalizations.of(context)!.addProfession,
-                                  Icons.work,
-                                  Colors.blue,
-                                  () => _showAddInfoDialog(AppLocalizations.of(context)!.profession, 'profession'),
-                                ),
-                              
-                              if (currentUser!.instagramHandle != null || currentUser!.profession != null)
-                                Text(
-                                  AppLocalizations.of(context)!.premiumInfoAdded,
-                                  style: TextStyle(fontSize: 12, color: Colors.green),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      // Instagram ve Meslek Bilgileri
+                      if (currentUser!.instagramHandle != null)
+                        _buildEditableInfoCard(AppLocalizations.of(context)!.instagramAccount, '@${currentUser!.instagramHandle!}', 'instagram'),
+                      if (currentUser!.instagramHandle == null)
+                        _buildAddInfoButton(AppLocalizations.of(context)!.addInstagram, Icons.camera_alt, Colors.pink, () => _showEditDialog('instagram', '')),
+
+                      if (currentUser!.profession != null)
+                        _buildEditableInfoCard(AppLocalizations.of(context)!.profession, currentUser!.profession!, 'profession'),
+                      if (currentUser!.profession == null)
+                        _buildAddInfoButton(AppLocalizations.of(context)!.addProfession, Icons.work, Colors.blue, () => _showEditDialog('profession', '')),
 
                       const SizedBox(height: 24),
 
-                      // Premium Bilgi Görünürlük Ayarları
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.premiumInfoVisibility,
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                AppLocalizations.of(context)!.premiumInfoDescription,
-                                style: TextStyle(fontSize: 12, color: Colors.grey),
-                              ),
-                              const SizedBox(height: 16),
-                              
-                              // Instagram Görünürlük
-                              if (currentUser!.instagramHandle != null)
-                                SwitchListTile(
-                                  title: Text(AppLocalizations.of(context)!.instagramAccount),
-                                  subtitle: Text('@${currentUser!.instagramHandle}'),
-                                  value: currentUser!.showInstagram,
-                                  onChanged: (value) async {
-                                    await UserService.updatePremiumVisibility(showInstagram: value);
-                                    await loadUserData();
-                                  },
-                                  secondary: const Icon(Icons.camera_alt, color: Colors.pink),
-                                ),
-                              
-                              // Meslek Görünürlük
-                              if (currentUser!.profession != null)
-                                SwitchListTile(
-                                  title: Text(AppLocalizations.of(context)!.profession),
-                                  subtitle: Text(currentUser!.profession!),
-                                  value: currentUser!.showProfession,
-                                  onChanged: (value) async {
-                                    await UserService.updatePremiumVisibility(showProfession: value);
-                                    await loadUserData();
-                                  },
-                                  secondary: const Icon(Icons.work, color: Colors.blue),
-                                ),
-                              
-                              if (currentUser!.instagramHandle == null && currentUser!.profession == null)
-                                Text(
-                                  AppLocalizations.of(context)!.addInstagramFromSettings,
-                                  style: TextStyle(fontSize: 12, color: Colors.grey),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
 
                       const SizedBox(height: 24),
 
@@ -972,27 +760,6 @@ class _ProfileTabState extends State<ProfileTab> {
 
                       const SizedBox(height: 24),
 
-                      // Premium Bilgiler
-                      if (currentUser!.instagramHandle != null || currentUser!.profession != null)
-                        Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '💎 ${AppLocalizations.of(context)!.premiumInfo}',
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 12),
-                                if (currentUser!.instagramHandle != null)
-                                  _buildInfoCard(AppLocalizations.of(context)!.instagramAccount, currentUser!.instagramHandle!),
-                                if (currentUser!.profession != null)
-                                  _buildInfoCard(AppLocalizations.of(context)!.profession, currentUser!.profession!),
-                              ],
-                            ),
-                          ),
-                        ),
                     ],
                   ),
                 ),
@@ -1005,6 +772,20 @@ class _ProfileTabState extends State<ProfileTab> {
       child: ListTile(
         title: Text(label),
         subtitle: Text(value),
+      ),
+    );
+  }
+
+  Widget _buildEditableInfoCard(String label, String value, String field) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        title: Text(label),
+        subtitle: Text(value),
+        trailing: IconButton(
+          icon: const Icon(Icons.edit, size: 20),
+          onPressed: () => _showEditDialog(field, value),
+        ),
       ),
     );
   }
@@ -1025,27 +806,96 @@ class _ProfileTabState extends State<ProfileTab> {
     );
   }
 
-  void _showAddInfoDialog(String type, String field) {
-    final controller = TextEditingController();
+  void _showEditDialog(String field, String currentValue) {
+    final controller = TextEditingController(text: currentValue);
     final l10n = AppLocalizations.of(context)!;
+    
+    String title = '';
+    String hint = '';
+    IconData icon = Icons.edit;
+    TextInputType keyboardType = TextInputType.text;
+    
+    switch (field) {
+      case 'username':
+        title = 'Kullanıcı Adı Düzenle';
+        hint = 'Kullanıcı adınızı girin';
+        icon = Icons.person;
+        break;
+      case 'age':
+        title = 'Yaş Düzenle';
+        hint = 'Yaşınızı girin';
+        icon = Icons.cake;
+        keyboardType = TextInputType.number;
+        break;
+      case 'country':
+        title = 'Ülke Seç';
+        hint = 'Ülkenizi seçin';
+        icon = Icons.public;
+        break;
+      case 'gender':
+        title = 'Cinsiyet Seç';
+        hint = 'Cinsiyetinizi seçin';
+        icon = Icons.person;
+        break;
+      case 'instagram':
+        title = 'Instagram Hesabı Düzenle';
+        hint = 'Instagram kullanıcı adınızı girin (@ olmadan)';
+        icon = Icons.camera_alt;
+        break;
+      case 'profession':
+        title = 'Meslek Düzenle';
+        hint = 'Mesleğinizi girin';
+        icon = Icons.work;
+        break;
+    }
     
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.addInfo(type)),
+        title: Text(title),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(l10n.enterInfo(type)),
-            const SizedBox(height: 16),
-            TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                labelText: type,
-                border: const OutlineInputBorder(),
-                prefixIcon: Icon(field == 'instagram' ? Icons.camera_alt : Icons.work),
+            if (field == 'country')
+              DropdownButtonFormField<String>(
+                value: currentValue.isNotEmpty ? currentValue : null,
+                decoration: InputDecoration(
+                  labelText: hint,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: Icon(icon),
+                ),
+                items: AppConstants.countries.map((country) => 
+                  DropdownMenuItem(value: country, child: Text(country))
+                ).toList(),
+                onChanged: (value) {
+                  controller.text = value ?? '';
+                },
+              )
+            else if (field == 'gender')
+              DropdownButtonFormField<String>(
+                value: currentValue.isNotEmpty ? currentValue : null,
+                decoration: InputDecoration(
+                  labelText: hint,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: Icon(icon),
+                ),
+                items: AppConstants.genders.map((gender) => 
+                  DropdownMenuItem(value: gender, child: Text(gender))
+                ).toList(),
+                onChanged: (value) {
+                  controller.text = value ?? '';
+                },
+              )
+            else
+              TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  labelText: hint,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: Icon(icon),
+                ),
+                keyboardType: keyboardType,
               ),
-            ),
           ],
         ),
         actions: [
@@ -1057,37 +907,56 @@ class _ProfileTabState extends State<ProfileTab> {
             onPressed: () async {
               if (controller.text.trim().isNotEmpty) {
                 Navigator.pop(context);
-                await _addPremiumInfo(field, controller.text.trim());
+                await _updateUserInfo(field, controller.text.trim());
               }
             },
-            child: Text(l10n.add),
+            child: Text('Kaydet'),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _addPremiumInfo(String field, String value) async {
+  Future<void> _updateUserInfo(String field, String value) async {
     try {
-      bool success;
-      if (field == 'instagram') {
-        success = await UserService.updateProfile(instagramHandle: value);
-      } else {
-        success = await UserService.updateProfile(profession: value);
+      bool success = false;
+      
+      switch (field) {
+        case 'username':
+          success = await UserService.updateProfile(username: value);
+          break;
+        case 'age':
+          final age = int.tryParse(value);
+          if (age != null) {
+            success = await UserService.updateProfile(age: age);
+          }
+          break;
+        case 'country':
+          success = await UserService.updateProfile(country: value);
+          break;
+        case 'gender':
+          success = await UserService.updateProfile(gender: value);
+          break;
+        case 'instagram':
+          success = await UserService.updateProfile(instagramHandle: value);
+          break;
+        case 'profession':
+          success = await UserService.updateProfile(profession: value);
+          break;
       }
       
       if (success) {
         await loadUserData();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.infoAdded(field == 'instagram' ? AppLocalizations.of(context)!.instagramAccount : AppLocalizations.of(context)!.profession)),
+            content: Text('Bilgi güncellendi'),
             backgroundColor: Colors.green,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.errorAddingInfo),
+            content: Text('Güncelleme başarısız'),
             backgroundColor: Colors.red,
           ),
         );
@@ -1098,6 +967,7 @@ class _ProfileTabState extends State<ProfileTab> {
       );
     }
   }
+
 
   /// Show photo statistics modal
   Future<void> _showPhotoStats(String photoId) async {
@@ -1202,7 +1072,7 @@ class _ProfileTabState extends State<ProfileTab> {
     if (currentUser == null) return;
     
     // Mevcut seçili ülkeleri al (eğer yoksa tüm ülkeler seçili olsun)
-    List<String> selectedCountries = currentUser!.countryPreferences ?? countries;
+    List<String> selectedCountries = currentUser!.countryPreferences ?? AppConstants.countries;
     
     showDialog(
       context: context,
@@ -1221,9 +1091,9 @@ class _ProfileTabState extends State<ProfileTab> {
                 const SizedBox(height: 16),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: countries.length,
+                    itemCount: AppConstants.countries.length,
                     itemBuilder: (context, index) {
-                      final country = countries[index];
+                      final country = AppConstants.countries[index];
                       final isSelected = selectedCountries.contains(country);
                       
                       return CheckboxListTile(
@@ -1300,7 +1170,7 @@ class _ProfileTabState extends State<ProfileTab> {
     if (currentUser == null) return;
     
     // Mevcut seçili yaş aralıklarını al (eğer yoksa tüm yaş aralıkları seçili olsun)
-    List<String> selectedAgeRanges = currentUser!.ageRangePreferences ?? ageRanges;
+    List<String> selectedAgeRanges = currentUser!.ageRangePreferences ?? AppConstants.ageRanges;
     
     showDialog(
       context: context,
@@ -1319,9 +1189,9 @@ class _ProfileTabState extends State<ProfileTab> {
                 const SizedBox(height: 16),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: ageRanges.length,
+                    itemCount: AppConstants.ageRanges.length,
                     itemBuilder: (context, index) {
-                      final ageRange = ageRanges[index];
+                      final ageRange = AppConstants.ageRanges[index];
                       final isSelected = selectedAgeRanges.contains(ageRange);
                       
                       return CheckboxListTile(

@@ -36,4 +36,6 @@ class AppConstants {
   ];
 
   static const List<String> genders = ['Erkek', 'Kadın'];
+  
+  static const List<String> ageRanges = ['18-24', '24-32', '32-40', '40+'];
 }

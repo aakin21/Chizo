@@ -92,9 +92,9 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                   maxWidth: MediaQuery.of(context).size.width * 0.9,
                   maxHeight: MediaQuery.of(context).size.height * 0.8,
                 ),
-                child: opponent.profileImageUrl != null
+                child: opponent.matchPhotos != null && opponent.matchPhotos!.isNotEmpty
                     ? Image.network(
-                        opponent.profileImageUrl!,
+                        opponent.matchPhotos!.first['photo_url'],
                         fit: BoxFit.contain,
                         loadingBuilder: (context, child, loadingProgress) {
                           if (loadingProgress == null) return child;
@@ -227,10 +227,10 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
               onTap: () => _showImageDialog(opponent),
               child: CircleAvatar(
                 radius: 30,
-                backgroundImage: opponent.profileImageUrl != null
-                    ? NetworkImage(opponent.profileImageUrl!)
+                backgroundImage: opponent.matchPhotos != null && opponent.matchPhotos!.isNotEmpty
+                    ? NetworkImage(opponent.matchPhotos!.first['photo_url'])
                     : null,
-                child: opponent.profileImageUrl == null
+                child: opponent.matchPhotos == null || opponent.matchPhotos!.isEmpty
                     ? const Icon(Icons.person, size: 30)
                     : null,
               ),

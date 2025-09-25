@@ -3,7 +3,6 @@ class UserModel {
   final String username;
   final String email;
   final int coins;
-  final String? profileImageUrl;
   final int? age;
   final String? country;
   final String? gender;
@@ -28,7 +27,6 @@ class UserModel {
     required this.username,
     required this.email,
     required this.coins,
-    this.profileImageUrl,
     this.age,
     this.country,
     this.gender,
@@ -55,7 +53,6 @@ class UserModel {
       username: json['username'],
       email: json['email'],
       coins: json['coins'] ?? 0,
-      profileImageUrl: json['profile_image_url'],
       age: json['age'],
       country: json['country'],
       gender: json['gender'],
@@ -91,7 +88,6 @@ class UserModel {
       'username': username,
       'email': email,
       'coins': coins,
-      'profile_image_url': profileImageUrl,
       'age': age,
       'country': country,
       'gender': gender,

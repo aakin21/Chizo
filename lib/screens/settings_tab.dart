@@ -6,7 +6,6 @@ import '../models/coin_transaction_model.dart';
 import '../services/user_service.dart';
 import '../services/language_service.dart';
 import '../l10n/app_localizations.dart';
-import '../utils/constants.dart';
 import '../widgets/language_selector.dart';
 import 'coin_purchase_screen.dart';
 import 'login_screen.dart';
@@ -23,26 +22,11 @@ class SettingsTab extends StatefulWidget {
 class _SettingsTabState extends State<SettingsTab> {
   UserModel? currentUser;
   bool isLoading = true;
-  bool isUpdating = false;
-
-  final _usernameController = TextEditingController();
-  final _ageController = TextEditingController();
-  final _genderController = TextEditingController();
-  String? _selectedCountry;
-
 
   @override
   void initState() {
     super.initState();
     loadUserData();
-  }
-
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _ageController.dispose();
-    _genderController.dispose();
-    super.dispose();
   }
 
   Future<void> loadUserData() async {
@@ -53,52 +37,11 @@ class _SettingsTabState extends State<SettingsTab> {
         currentUser = user;
         isLoading = false;
       });
-      
-      if (user != null) {
-        _usernameController.text = user.username;
-        _ageController.text = user.age?.toString() ?? '';
-        _selectedCountry = user.country;
-        _genderController.text = user.gender ?? '';
-      }
     } catch (e) {
       setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
-    }
-  }
-
-  Future<void> _updateProfile() async {
-    setState(() => isUpdating = true);
-    
-    try {
-      final success = await UserService.updateProfile(
-        username: _usernameController.text.trim(),
-        age: _ageController.text.trim().isNotEmpty 
-            ? int.tryParse(_ageController.text.trim()) 
-            : null,
-        country: _selectedCountry,
-        gender: _genderController.text.trim().isNotEmpty 
-            ? _genderController.text.trim() 
-            : null,
-      );
-      
-      if (success) {
-        await loadUserData();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.profileUpdated)),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.profileUpdateFailed)),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
-      );
-    } finally {
-      setState(() => isUpdating = false);
     }
   }
 
@@ -120,380 +63,246 @@ class _SettingsTabState extends State<SettingsTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            AppLocalizations.of(context)!.profileSettings,
+            'Ayarlar',
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 24),
           
-          // Temel Bilgiler
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.basicInfo,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  TextField(
-                    controller: _usernameController,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.username,
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  TextField(
-                    controller: _ageController,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.age,
-                      border: const OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  DropdownButtonFormField<String>(
-                    value: _selectedCountry != null && AppConstants.countries.contains(_selectedCountry) 
-                        ? _selectedCountry 
-                        : null,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.country,
-                      border: const OutlineInputBorder(),
-                    ),
-                    items: AppConstants.countries.map((country) => 
-                      DropdownMenuItem(value: country, child: Text(country))
-                    ).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedCountry = value;
-                      });
-                    },
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  DropdownButtonFormField<String>(
-                    value: _genderController.text.isNotEmpty ? _genderController.text : null,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.gender,
-                      border: const OutlineInputBorder(),
-                    ),
-                    items: AppConstants.genders.map((gender) => 
-                      DropdownMenuItem(value: gender, child: Text(gender))
-                    ).toList(),
-                    onChanged: (value) {
-                      _genderController.text = value ?? '';
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-          
-          const SizedBox(height: 16),
-          
-          // Premium Bilgiler
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.premiumInfoSettings,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    AppLocalizations.of(context)!.premiumInfoDescriptionSettings,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                ],
-              ),
-            ),
-          ),
-          
-          const SizedBox(height: 16),
-          
-          // Coin Bilgileri
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.coinInfo,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  Row(
-                    children: [
-                      const Icon(Icons.monetization_on, color: Colors.amber),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${AppLocalizations.of(context)!.currentCoins}: ${currentUser!.coins}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Spacer(),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const CoinPurchaseScreen(),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.add_shopping_cart),
-                        label: Text(AppLocalizations.of(context)!.purchaseCoins),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.amber,
-                          foregroundColor: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  // Reklam İzle
-                  Card(
-                    color: Colors.purple.shade50,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(Icons.play_circle, color: Colors.purple),
-                              const SizedBox(width: 8),
-                              Text(
-                                AppLocalizations.of(context)!.watchAd,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            AppLocalizations.of(context)!.dailyAdLimit,
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              const Icon(Icons.monetization_on, color: Colors.amber, size: 20),
-                              const SizedBox(width: 4),
-                              Text(AppLocalizations.of(context)!.coinsPerAd),
-                              const Spacer(),
-                              FutureBuilder<int>(
-                                future: _getTodayAdCount(),
-                                builder: (context, snapshot) {
-                                  final adCount = snapshot.data ?? 0;
-                                  final remainingAds = 5 - adCount;
-                                  return Text(
-                                    '${AppLocalizations.of(context)!.remaining}: $remainingAds/5',
-                                    style: TextStyle(
-                                      color: remainingAds > 0 ? Colors.green : Colors.red,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          SizedBox(
-                            width: double.infinity,
-                            child: FutureBuilder<int>(
-                              future: _getTodayAdCount(),
-                              builder: (context, snapshot) {
-                                final adCount = snapshot.data ?? 0;
-                                final canWatchAd = adCount < 5;
-                                
-                                return ElevatedButton.icon(
-                                  onPressed: canWatchAd ? _watchAd : null,
-                                  icon: const Icon(Icons.play_arrow),
-                                  label: Text(canWatchAd ? AppLocalizations.of(context)!.watchAdButton : AppLocalizations.of(context)!.dailyLimitReached),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: canWatchAd ? Colors.purple : Colors.grey,
-                                    foregroundColor: Colors.white,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  FutureBuilder<List<CoinTransactionModel>>(
-                    future: UserService.getCoinTransactions(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!.recentTransactions,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 8),
-                            ...snapshot.data!.take(3).map((transaction) => 
-                              ListTile(
-                                leading: Icon(
-                                  transaction.type == 'earned' 
-                                      ? Icons.add_circle 
-                                      : Icons.remove_circle,
-                                  color: transaction.type == 'earned' 
-                                      ? Colors.green 
-                                      : Colors.red,
-                                ),
-                                title: Text(transaction.description),
-                                subtitle: Text(
-                                  '${transaction.amount > 0 ? '+' : ''}${transaction.amount} coin',
-                                  style: TextStyle(
-                                    color: transaction.amount > 0 
-                                        ? Colors.green 
-                                        : Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                trailing: Text(
-                                  _formatDate(transaction.createdAt),
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-                      return Text(AppLocalizations.of(context)!.noTransactionHistory);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-          
-          const SizedBox(height: 16),
-          
           // Hesap Ayarları
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.accountSettings,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Şifre Değiştir
-                  ListTile(
-                    leading: const Icon(Icons.lock_reset, color: Colors.blue),
-                    title: Text(AppLocalizations.of(context)!.passwordReset),
-                    subtitle: Text(AppLocalizations.of(context)!.passwordResetSubtitle),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: _showPasswordResetDialog,
-                  ),
-                  
-                  const Divider(),
-                  
-                  // Dil Seçimi
-                  FutureBuilder<Locale>(
-                    future: LanguageService.getCurrentLocale(),
-                    builder: (context, snapshot) {
-                      final currentLocale = snapshot.data ?? const Locale('tr', 'TR');
-                      final languageName = LanguageService.getLanguageNameWithContext(context, currentLocale.languageCode);
-                      final languageFlag = LanguageService.getLanguageFlag(currentLocale.languageCode);
-                      
-                      return ListTile(
-                        leading: const Icon(Icons.language, color: Colors.green),
-                        title: Text(AppLocalizations.of(context)!.language),
-                        subtitle: Text('$languageFlag $languageName'),
-                        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                        onTap: _showLanguageDialog,
-                      );
-                    },
-                  ),
-                  
-                  const Divider(),
-                  
-                  // Çıkış Yap
-                  ListTile(
-                    leading: const Icon(Icons.logout, color: Colors.orange),
-                    title: Text(AppLocalizations.of(context)!.logout),
-                    subtitle: Text(AppLocalizations.of(context)!.logoutSubtitle),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: _showLogoutDialog,
-                  ),
-                  
-                  const Divider(),
-                  
-                  // Hesabı Sil
-                  ListTile(
-                    leading: const Icon(Icons.delete_forever, color: Colors.red),
-                    title: Text(AppLocalizations.of(context)!.deleteAccount),
-                    subtitle: Text(AppLocalizations.of(context)!.deleteAccountSubtitle),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: _showDeleteAccountDialog,
-                  ),
-                ],
+          _buildSettingsSection(
+            'Hesap',
+            [
+              _buildSettingsTile(
+                icon: Icons.lock_reset,
+                title: 'Şifre Değiştir',
+                subtitle: 'Hesap güvenliğinizi artırın',
+                onTap: _showPasswordResetDialog,
               ),
-            ),
+              _buildSettingsTile(
+                icon: Icons.notifications,
+                title: 'Bildirimler',
+                subtitle: 'Bildirim ayarlarınızı yönetin',
+                onTap: () {
+                  // Bildirim ayarları
+                },
+              ),
+            ],
           ),
           
           const SizedBox(height: 24),
           
-          // Güncelle Butonu
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: isUpdating ? null : _updateProfile,
-              child: isUpdating
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : Text(AppLocalizations.of(context)!.updateProfile),
-            ),
+          // Uygulama Ayarları
+          _buildSettingsSection(
+            'Uygulama',
+            [
+              _buildSettingsTile(
+                icon: Icons.language,
+                title: 'Dil',
+                subtitle: 'Uygulama dilini değiştirin',
+                onTap: _showLanguageDialog,
+                trailing: FutureBuilder<Locale>(
+                  future: LanguageService.getCurrentLocale(),
+                  builder: (context, snapshot) {
+                    final currentLocale = snapshot.data ?? const Locale('tr', 'TR');
+                    final languageName = LanguageService.getLanguageNameWithContext(context, currentLocale.languageCode);
+                    final languageFlag = LanguageService.getLanguageFlag(currentLocale.languageCode);
+                    return Text('$languageFlag $languageName');
+                  },
+                ),
+              ),
+              _buildSettingsTile(
+                icon: Icons.dark_mode,
+                title: 'Tema',
+                subtitle: 'Açık/Koyu tema seçimi',
+                onTap: () {
+                  // Tema ayarları
+                },
+                trailing: const Text('Sistem'),
+              ),
+              _buildSettingsTile(
+                icon: Icons.storage,
+                title: 'Önbellek',
+                subtitle: 'Uygulama verilerini temizle',
+                onTap: _showClearCacheDialog,
+              ),
+            ],
           ),
+          
+          const SizedBox(height: 24),
+          
+          // Coin ve Ödeme
+          _buildSettingsSection(
+            'Coin ve Ödeme',
+            [
+              _buildSettingsTile(
+                icon: Icons.monetization_on,
+                title: 'Coin Satın Al',
+                subtitle: '${currentUser!.coins} coin',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CoinPurchaseScreen(),
+                    ),
+                  );
+                },
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              ),
+              _buildSettingsTile(
+                icon: Icons.play_circle,
+                title: 'Reklam İzle',
+                subtitle: 'Ücretsiz coin kazanın',
+                onTap: _showWatchAdDialog,
+              ),
+              _buildSettingsTile(
+                icon: Icons.history,
+                title: 'İşlem Geçmişi',
+                subtitle: 'Coin işlemlerinizi görün',
+                onTap: _showTransactionHistory,
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 24),
+          
+          // Gizlilik ve Güvenlik
+          _buildSettingsSection(
+            'Gizlilik ve Güvenlik',
+            [
+              _buildSettingsTile(
+                icon: Icons.visibility,
+                title: 'Görünürlük',
+                subtitle: 'Match\'lerde görünürlük ayarları',
+                onTap: () {
+                  // Görünürlük ayarları
+                },
+                trailing: Switch(
+                  value: currentUser!.isVisible,
+                  onChanged: (value) async {
+                    final success = await UserService.updateProfile(isVisible: value);
+                    if (success) {
+                      await loadUserData();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(value ? 'Artık match\'lerde görünürsünüz' : 'Match\'lerden gizlendiniz'),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+              _buildSettingsTile(
+                icon: Icons.report,
+                title: 'Rapor Et',
+                subtitle: 'Sorun bildirin veya öneride bulunun',
+                onTap: _showReportDialog,
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 24),
+          
+          // Hakkında
+          _buildSettingsSection(
+            'Hakkında',
+            [
+              _buildSettingsTile(
+                icon: Icons.info,
+                title: 'Uygulama Hakkında',
+                subtitle: 'Sürüm 1.0.0',
+                onTap: _showAboutDialog,
+              ),
+              _buildSettingsTile(
+                icon: Icons.help,
+                title: 'Yardım ve Destek',
+                subtitle: 'SSS ve iletişim',
+                onTap: _showHelpDialog,
+              ),
+              _buildSettingsTile(
+                icon: Icons.privacy_tip,
+                title: 'Gizlilik Politikası',
+                subtitle: 'Veri kullanımı ve gizlilik',
+                onTap: _showPrivacyPolicy,
+              ),
+              _buildSettingsTile(
+                icon: Icons.description,
+                title: 'Kullanım Koşulları',
+                subtitle: 'Hizmet şartları ve kurallar',
+                onTap: _showTermsOfService,
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 24),
+          
+          // Hesap İşlemleri
+          _buildSettingsSection(
+            'Hesap İşlemleri',
+            [
+              _buildSettingsTile(
+                icon: Icons.logout,
+                title: 'Çıkış Yap',
+                subtitle: 'Hesabınızdan güvenli çıkış',
+                onTap: _showLogoutDialog,
+                textColor: Colors.orange,
+              ),
+              _buildSettingsTile(
+                icon: Icons.delete_forever,
+                title: 'Hesabı Sil',
+                subtitle: 'Hesabınızı kalıcı olarak silin',
+                onTap: _showDeleteAccountDialog,
+                textColor: Colors.red,
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 32),
         ],
       ),
     );
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
+  Widget _buildSettingsSection(String title, List<Widget> children) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: Column(children: children),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSettingsTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    Widget? trailing,
+    Color? textColor,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: textColor ?? Colors.blue),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: textColor,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      subtitle: Text(subtitle),
+      trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: onTap,
+    );
   }
 
   // Şifre sıfırlama dialog'u
@@ -502,19 +311,19 @@ class _SettingsTabState extends State<SettingsTab> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.passwordResetTitle),
-          content: Text(AppLocalizations.of(context)!.passwordResetMessage),
+          title: const Text('Şifre Sıfırlama'),
+          content: const Text('Şifre sıfırlama bağlantısı e-posta adresinize gönderilecek.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizations.of(context)!.cancel),
+              child: const Text('İptal'),
             ),
             ElevatedButton(
               onPressed: () async {
                 Navigator.of(context).pop();
                 await _sendPasswordResetEmail();
               },
-              child: Text(AppLocalizations.of(context)!.send),
+              child: const Text('Gönder'),
             ),
           ],
         );
@@ -530,15 +339,15 @@ class _SettingsTabState extends State<SettingsTab> {
           currentUser!.email,
         );
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.passwordResetSent),
+          const SnackBar(
+            content: Text('Şifre sıfırlama bağlantısı e-posta adresinize gönderildi'),
             backgroundColor: Colors.green,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.emailNotFound),
+          const SnackBar(
+            content: Text('E-posta adresi bulunamadı'),
             backgroundColor: Colors.red,
           ),
         );
@@ -546,7 +355,7 @@ class _SettingsTabState extends State<SettingsTab> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${AppLocalizations.of(context)!.error}: $e'),
+          content: Text('Hata: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -559,22 +368,20 @@ class _SettingsTabState extends State<SettingsTab> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.language),
+          title: const Text('Dil Seçimi'),
           content: SizedBox(
             width: double.maxFinite,
             child: LanguageSelector(
               onLanguageChanged: (locale) {
                 Navigator.of(context).pop();
-                // Dil değişikliğini uygula
                 widget.onLanguageChanged?.call(locale);
-                _restartApp();
               },
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizations.of(context)!.success),
+              child: const Text('Tamam'),
             ),
           ],
         );
@@ -582,14 +389,301 @@ class _SettingsTabState extends State<SettingsTab> {
     );
   }
 
-  // Uygulamayı yeniden başlat
-  void _restartApp() {
-    // Bu basit bir restart - gerçek uygulamada daha gelişmiş restart mekanizması kullanılabilir
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context)!.success),
-        backgroundColor: Colors.green,
-      ),
+  // Önbellek temizleme dialog'u
+  void _showClearCacheDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Önbellek Temizle'),
+          content: const Text('Uygulama önbelleği temizlenecek. Bu işlem geri alınamaz.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('İptal'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await _clearCache();
+              },
+              child: const Text('Temizle'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Önbellek temizle
+  Future<void> _clearCache() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Önbellek temizlendi'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Hata: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // Reklam izleme dialog'u
+  void _showWatchAdDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Reklam İzle'),
+          content: const Text('Reklam izleyerek 20 coin kazanabilirsiniz.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('İptal'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await _watchAd();
+              },
+              child: const Text('İzle'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Reklam izle
+  Future<void> _watchAd() async {
+    try {
+      // Reklam simülasyonu
+      await Future.delayed(const Duration(seconds: 3));
+      
+      // Coin ekle
+      final success = await UserService.updateCoins(20, 'earned', 'Reklam izleme');
+      
+      if (success) {
+        await loadUserData();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Reklam izlendi! 20 coin kazandınız'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Hata: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // İşlem geçmişi
+  void _showTransactionHistory() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('İşlem Geçmişi'),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 400,
+            child: FutureBuilder<List<CoinTransactionModel>>(
+              future: UserService.getCoinTransactions(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                  return ListView.builder(
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      final transaction = snapshot.data![index];
+                      return ListTile(
+                        leading: Icon(
+                          transaction.type == 'earned' 
+                              ? Icons.add_circle 
+                              : Icons.remove_circle,
+                          color: transaction.type == 'earned' 
+                              ? Colors.green 
+                              : Colors.red,
+                        ),
+                        title: Text(transaction.description),
+                        subtitle: Text(
+                          '${transaction.amount > 0 ? '+' : ''}${transaction.amount} coin',
+                          style: TextStyle(
+                            color: transaction.amount > 0 
+                                ? Colors.green 
+                                : Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        trailing: Text(
+                          _formatDate(transaction.createdAt),
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      );
+                    },
+                  );
+                }
+                return const Text('İşlem geçmişi bulunamadı');
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Kapat'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Rapor dialog'u
+  void _showReportDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Rapor Et'),
+          content: const Text('Sorun bildirmek veya öneride bulunmak için e-posta gönderebilirsiniz.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('İptal'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // E-posta gönderme işlemi
+              },
+              child: const Text('E-posta Gönder'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Hakkında dialog'u
+  void _showAboutDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Uygulama Hakkında'),
+          content: const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Chizo v1.0.0'),
+              SizedBox(height: 8),
+              Text('Turnuva ve oylama uygulaması'),
+              SizedBox(height: 8),
+              Text('© 2024 Chizo Team'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Tamam'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Yardım dialog'u
+  void _showHelpDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Yardım ve Destek'),
+          content: const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Sıkça Sorulan Sorular:'),
+              SizedBox(height: 8),
+              Text('• Nasıl coin kazanırım?'),
+              Text('• Match nasıl oluşturulur?'),
+              Text('• Fotoğraf nasıl yüklenir?'),
+              SizedBox(height: 8),
+              Text('Daha fazla yardım için:'),
+              Text('support@chizo.com'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Tamam'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Gizlilik politikası
+  void _showPrivacyPolicy() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Gizlilik Politikası'),
+          content: const SingleChildScrollView(
+            child: Text(
+              'Bu uygulama kullanıcı verilerini güvenli bir şekilde saklar. '
+              'Kişisel bilgileriniz sadece uygulama işlevselliği için kullanılır. '
+              'Verileriniz üçüncü taraflarla paylaşılmaz.',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Tamam'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Kullanım koşulları
+  void _showTermsOfService() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Kullanım Koşulları'),
+          content: const SingleChildScrollView(
+            child: Text(
+              'Bu uygulamayı kullanarak aşağıdaki koşulları kabul etmiş olursunuz:\n\n'
+              '• Uygulamayı yasal amaçlarla kullanacaksınız\n'
+              '• Diğer kullanıcılara saygılı davranacaksınız\n'
+              '• Spam veya zararlı içerik paylaşmayacaksınız\n'
+              '• Uygulama kurallarına uyacaksınız',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Tamam'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -599,14 +693,12 @@ class _SettingsTabState extends State<SettingsTab> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.logout),
-          content: Text(
-            AppLocalizations.of(context)!.logoutConfirmation,
-          ),
+          title: const Text('Çıkış Yap'),
+          content: const Text('Hesabınızdan çıkış yapmak istediğinizden emin misiniz?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizations.of(context)!.cancel),
+              child: const Text('İptal'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -617,7 +709,7 @@ class _SettingsTabState extends State<SettingsTab> {
                 backgroundColor: Colors.orange,
                 foregroundColor: Colors.white,
               ),
-              child: Text(AppLocalizations.of(context)!.logout),
+              child: const Text('Çıkış Yap'),
             ),
           ],
         );
@@ -638,7 +730,7 @@ class _SettingsTabState extends State<SettingsTab> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${AppLocalizations.of(context)!.logoutError}: $e'),
+          content: Text('Çıkış yapılırken hata oluştu: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -651,14 +743,15 @@ class _SettingsTabState extends State<SettingsTab> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.deleteAccount),
-          content: Text(
-            AppLocalizations.of(context)!.deleteAccountConfirmation,
+          title: const Text('Hesabı Sil'),
+          content: const Text(
+            'Hesabınızı silmek istediğinizden emin misiniz? '
+            'Bu işlem geri alınamaz ve tüm verileriniz silinecektir.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizations.of(context)!.cancel),
+              child: const Text('İptal'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -669,7 +762,7 @@ class _SettingsTabState extends State<SettingsTab> {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-              child: Text(AppLocalizations.of(context)!.deleteAccount),
+              child: const Text('Hesabı Sil'),
             ),
           ],
         );
@@ -685,20 +778,20 @@ class _SettingsTabState extends State<SettingsTab> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.finalConfirmation),
+          title: const Text('Son Onay'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                AppLocalizations.of(context)!.typeDeleteToConfirm,
+              const Text(
+                'Hesabınızı silmek için "SİL" yazın:',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: confirmController,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  hintText: AppLocalizations.of(context)!.typeDeleteToConfirm,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'SİL yazın',
                 ),
               ),
             ],
@@ -706,7 +799,7 @@ class _SettingsTabState extends State<SettingsTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizations.of(context)!.cancel),
+              child: const Text('İptal'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -715,8 +808,8 @@ class _SettingsTabState extends State<SettingsTab> {
                   await _deleteAccount();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(AppLocalizations.of(context)!.pleaseTypeDelete),
+                    const SnackBar(
+                      content: Text('Lütfen "SİL" yazın'),
                       backgroundColor: Colors.red,
                     ),
                   );
@@ -726,7 +819,7 @@ class _SettingsTabState extends State<SettingsTab> {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-              child: Text(AppLocalizations.of(context)!.deleteAccount),
+              child: const Text('Hesabı Sil'),
             ),
           ],
         );
@@ -744,8 +837,8 @@ class _SettingsTabState extends State<SettingsTab> {
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.accountDeletedSuccessfully),
+          const SnackBar(
+            content: Text('Hesabınız başarıyla silindi'),
             backgroundColor: Colors.green,
           ),
         );
@@ -759,111 +852,14 @@ class _SettingsTabState extends State<SettingsTab> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${AppLocalizations.of(context)!.errorDeletingAccount}: $e'),
+          content: Text('Hesap silinirken hata oluştu: $e'),
           backgroundColor: Colors.red,
         ),
       );
     }
   }
 
-  // Bugünkü reklam sayısını al
-  Future<int> _getTodayAdCount() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final today = DateTime.now().toIso8601String().split('T')[0]; // YYYY-MM-DD formatında
-      final adCount = prefs.getInt('ad_count_$today') ?? 0;
-      return adCount;
-    } catch (e) {
-      return 0;
-    }
-  }
-
-  // Reklam izle
-  Future<void> _watchAd() async {
-    try {
-      // Reklam izleme simülasyonu (gerçek reklam entegrasyonu için buraya reklam SDK'sı eklenebilir)
-      await _showAdDialog();
-      
-      // Reklam sayısını artır
-      final prefs = await SharedPreferences.getInstance();
-      final today = DateTime.now().toIso8601String().split('T')[0];
-      final currentCount = prefs.getInt('ad_count_$today') ?? 0;
-      await prefs.setInt('ad_count_$today', currentCount + 1);
-      
-      // Coin ekle
-      await _addCoinsFromAd();
-      
-      // UI'yi güncelle
-      setState(() {});
-      
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${AppLocalizations.of(context)!.errorWatchingAd}: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
-
-  // Reklam dialog'u göster
-  Future<void> _showAdDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.watchingAd),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircularProgressIndicator(),
-              const SizedBox(height: 16),
-              Text(AppLocalizations.of(context)!.adLoading),
-              const SizedBox(height: 16),
-              Text(
-                AppLocalizations.of(context)!.adSimulation,
-                style: TextStyle(fontSize: 12, color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  // Reklamdan coin ekle
-  Future<void> _addCoinsFromAd() async {
-    try {
-      // UserService'e coin ekleme fonksiyonu çağır
-      final success = await UserService.updateCoins(20, 'earned', 'Reklam izleme');
-      
-      if (success) {
-        // Kullanıcı verilerini yenile
-        await loadUserData();
-        
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.adWatched),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.errorAddingCoins),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${AppLocalizations.of(context)!.error}: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
   }
 }
