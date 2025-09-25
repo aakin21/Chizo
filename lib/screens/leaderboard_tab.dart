@@ -76,10 +76,10 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
         subtitle: subtitle != null 
           ? Text(subtitle)
           : Text('${user.wins} galibiyet • ${user.totalMatches} maç'),
-        trailing: user.profileImageUrl != null
+        trailing: user.matchPhotos != null && user.matchPhotos!.isNotEmpty
           ? CircleAvatar(
               radius: 20,
-              backgroundImage: NetworkImage(user.profileImageUrl!),
+              backgroundImage: NetworkImage(user.matchPhotos!.first['photo_url']),
             )
           : const CircleAvatar(
               radius: 20,

@@ -50,10 +50,10 @@ class _WinRatePredictionDialogState extends State<WinRatePredictionDialog> {
               children: [
                 CircleAvatar(
                   radius: 25,
-                  backgroundImage: widget.winner.profileImageUrl != null
-                      ? NetworkImage(widget.winner.profileImageUrl!)
+                  backgroundImage: widget.winner.matchPhotos != null && widget.winner.matchPhotos!.isNotEmpty
+                      ? NetworkImage(widget.winner.matchPhotos!.first['photo_url'])
                       : null,
-                  child: widget.winner.profileImageUrl == null
+                  child: widget.winner.matchPhotos == null || widget.winner.matchPhotos!.isEmpty
                       ? const Icon(Icons.person, size: 25)
                       : null,
                 ),

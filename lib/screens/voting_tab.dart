@@ -432,18 +432,8 @@ class _VotingTabState extends State<VotingTab> {
       for (var user in users) {
         final photos = await PhotoUploadService.getUserPhotos(user.id);
         
-        // Profil fotoğrafını da dahil et (slot 1 olarak)
-        final allPhotos = <Map<String, dynamic>>[];
-        if (user.profileImageUrl != null) {
-          allPhotos.add({
-            'id': 'profile_${user.id}', // Profil fotoğrafı için unique ID
-            'photo_url': user.profileImageUrl!,
-            'photo_order': 1,
-            'is_active': true,
-          });
-        }
-        // Ek fotoğrafları ekle
-        allPhotos.addAll(photos);
+        // Tüm fotoğrafları kullan (artık profil fotoğrafı yok)
+        final allPhotos = List<Map<String, dynamic>>.from(photos);
         
         // UserModel'e çoklu fotoğrafları ekle
         final userWithPhotos = UserModel(
@@ -451,7 +441,6 @@ class _VotingTabState extends State<VotingTab> {
           username: user.username,
           email: user.email,
           coins: user.coins,
-          profileImageUrl: user.profileImageUrl,
           age: user.age,
           country: user.country,
           gender: user.gender,
@@ -484,9 +473,9 @@ class _VotingTabState extends State<VotingTab> {
     // Çoklu fotoğraf varsa carousel göster, yoksa profil fotoğrafını göster
     if (user.matchPhotos != null && user.matchPhotos!.isNotEmpty) {
       return _buildPhotoCarousel(user.matchPhotos!, user.id, matchId);
-    } else if (user.profileImageUrl != null) {
+    } else if (user.matchPhotos != null && user.matchPhotos!.isNotEmpty) {
       return CachedNetworkImage(
-        imageUrl: user.profileImageUrl!,
+        imageUrl: user.matchPhotos!.first['photo_url'],
         fit: BoxFit.cover,
         placeholder: (context, url) => Container(
           color: Colors.grey[300],
@@ -673,10 +662,10 @@ class _VotingTabState extends State<VotingTab> {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundImage: selectedWinner!.profileImageUrl != null
-                    ? CachedNetworkImageProvider(selectedWinner!.profileImageUrl!)
+                backgroundImage: selectedWinner!.matchPhotos != null && selectedWinner!.matchPhotos!.isNotEmpty
+                    ? CachedNetworkImageProvider(selectedWinner!.matchPhotos!.first['photo_url'])
                     : null,
-                child: selectedWinner!.profileImageUrl == null
+                child: selectedWinner!.matchPhotos == null || selectedWinner!.matchPhotos!.isEmpty
                     ? const Icon(Icons.person)
                     : null,
               ),

@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
 import '../models/coin_transaction_model.dart';
+import '../utils/constants.dart';
 
 class UserService {
   static final SupabaseClient _client = Supabase.instance.client;
@@ -39,15 +40,8 @@ class UserService {
           'show_profession': false,
           'total_matches': 0,
           'wins': 0,
-          'country_preferences': [
-            'turkiye', 'Almanya', 'Fransa', 'İtalya', 'İspanya', 'Hollanda', 
-            'Belçika', 'Avusturya', 'İsviçre', 'Polonya', 'Çek Cumhuriyeti', 
-            'Macaristan', 'Romanya', 'Bulgaristan', 'Hırvatistan', 'Slovenya', 
-            'Slovakya', 'Estonya', 'Letonya', 'Litvanya', 'Finlandiya', 
-            'İsveç', 'Norveç', 'Danimarka', 'Portekiz', 'Yunanistan', 
-            'Kıbrıs', 'Malta', 'Lüksemburg', 'İrlanda', 'İngiltere', 'İzlanda'
-          ],
-          'age_range_preferences': ['18-24', '24-32', '32-40', '40+'],
+          'country_preferences': AppConstants.countries,
+          'age_range_preferences': AppConstants.ageRanges,
           'created_at': DateTime.now().toIso8601String(),
           'updated_at': DateTime.now().toIso8601String(),
         };
@@ -78,7 +72,6 @@ class UserService {
     String? gender,
     String? instagramHandle,
     String? profession,
-    String? profileImageUrl,
     bool? isVisible,
   }) async {
     try {
@@ -95,7 +88,6 @@ class UserService {
       if (gender != null) updateData['gender'] = gender;
       if (instagramHandle != null) updateData['instagram_handle'] = instagramHandle;
       if (profession != null) updateData['profession'] = profession;
-      if (profileImageUrl != null) updateData['profile_image_url'] = profileImageUrl;
       if (isVisible != null) updateData['is_visible'] = isVisible;
 
       await _client

@@ -8,8 +8,9 @@ class PhotoUploadService {
   static final SupabaseClient _client = Supabase.instance.client;
   static final ImagePicker _picker = ImagePicker();
 
-  // Photo upload costs (2-5 slots, first photo is profile photo)
+  // Photo upload costs (1-5 slots, first photo is free)
   static const Map<int, int> photoUploadCosts = {
+    1: 0,   // First photo is free
     2: 50,  // Second photo costs 50 coins
     3: 100, // Third photo costs 100 coins
     4: 150, // Fourth photo costs 150 coins
@@ -39,7 +40,7 @@ class PhotoUploadService {
       final photos = await getUserPhotos(userId);
       final usedSlots = photos.map((photo) => photo['photo_order'] as int).toSet();
       
-      for (int i = 2; i <= 5; i++) {
+      for (int i = 1; i <= 5; i++) {
         if (!usedSlots.contains(i)) {
           return i;
         }
@@ -68,8 +69,8 @@ class PhotoUploadService {
         return {'canUpload': false, 'message': 'This photo slot is already used'};
       }
 
-      // Check if slot is valid (2-5 only, 1 is profile photo)
-      if (slot < 2 || slot > 5) {
+      // Check if slot is valid (1-5)
+      if (slot < 1 || slot > 5) {
         return {'canUpload': false, 'message': 'Invalid photo slot'};
       }
 

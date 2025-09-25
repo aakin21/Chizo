@@ -39,7 +39,6 @@ class MatchService {
           .eq('gender', currentUser.gender!)
           .eq('is_visible', true)
           .neq('id', currentUserId)
-          .not('profile_image_url', 'is', null)
           .limit(limit);
 
       final users = (response as List)
@@ -51,17 +50,8 @@ class MatchService {
         final user = users[i];
         final photos = await PhotoUploadService.getUserPhotos(user.id);
         
-        // Profil fotoğrafını da dahil et (slot 1 olarak)
-        final allPhotos = <Map<String, dynamic>>[];
-        if (user.profileImageUrl != null) {
-          allPhotos.add({
-            'photo_url': user.profileImageUrl!,
-            'photo_order': 1,
-            'is_active': true,
-          });
-        }
-        // Ek fotoğrafları ekle
-        allPhotos.addAll(photos);
+        // Tüm fotoğrafları kullan (artık profil fotoğrafı yok)
+        final allPhotos = List<Map<String, dynamic>>.from(photos);
         
         // UserModel'e çoklu fotoğrafları ekle
         users[i] = UserModel(
@@ -69,7 +59,6 @@ class MatchService {
           username: user.username,
           email: user.email,
           coins: user.coins,
-          profileImageUrl: user.profileImageUrl,
           age: user.age,
           country: user.country,
           gender: user.gender,
@@ -167,9 +156,7 @@ class MatchService {
         if (matchData['user1'] != null && 
             matchData['user2'] != null &&
             matchData['user1']['is_visible'] == true &&
-            matchData['user2']['is_visible'] == true &&
-            matchData['user1']['profile_image_url'] != null &&
-            matchData['user2']['profile_image_url'] != null) {
+            matchData['user2']['is_visible'] == true) {
           
           // Ülke filtreleme kontrolü
           // Match'teki kullanıcıların ülke tercihleri, mevcut kullanıcının ülkesini içeriyorsa match'i dahil et
@@ -545,14 +532,13 @@ class MatchService {
       
       final currentUserId = currentUserRecord['id'];
 
-      // Get all visible users with profile pictures, grouped by gender (excluding current user)
+      // Get all visible users with photos, grouped by gender (excluding current user)
       // Ülke filtreleme burada yapılmaz - match oluştururken tüm kullanıcılar kullanılır
       final maleUsers = await _client
           .from('users')
           .select()
           .eq('is_visible', true)
           .eq('gender', 'Erkek')
-          .not('profile_image_url', 'is', null)
           .neq('id', currentUserId); // Exclude current user
 
       final femaleUsers = await _client
@@ -560,7 +546,6 @@ class MatchService {
           .select()
           .eq('is_visible', true)
           .eq('gender', 'Kadın')
-          .not('profile_image_url', 'is', null)
           .neq('id', currentUserId); // Exclude current user
 
       print('Male users with is_visible=true: ${maleUsers.length}');
@@ -570,7 +555,7 @@ class MatchService {
       final allUsers = await _client.from('users').select();
       print('Total users in database: ${allUsers.length}');
       for (var user in allUsers) {
-        print('User: ${user['username']}, is_visible: ${user['is_visible']}, gender: ${user['gender']}, country: ${user['country']}, has_image: ${user['profile_image_url'] != null}');
+        print('User: ${user['username']}, is_visible: ${user['is_visible']}, gender: ${user['gender']}, country: ${user['country']}');
       }
 
 
@@ -578,8 +563,20 @@ class MatchService {
 
       // Create matches for male users - COMPLETELY NEW ALGORITHM
       if (maleUsers.length >= 2) {
-        // Convert to UserModel list for better handling
-        final maleUserModels = maleUsers.map((user) => UserModel.fromJson(user)).toList();
+        // Filter users who have photos
+        final maleUsersWithPhotos = <Map<String, dynamic>>[];
+        for (var user in maleUsers) {
+          final photos = await PhotoUploadService.getUserPhotos(user['id']);
+          if (photos.isNotEmpty) {
+            maleUsersWithPhotos.add(user);
+          }
+        }
+        
+        print('Male users with photos: ${maleUsersWithPhotos.length}');
+        
+        if (maleUsersWithPhotos.length >= 2) {
+          // Convert to UserModel list for better handling
+          final maleUserModels = maleUsersWithPhotos.map((user) => UserModel.fromJson(user)).toList();
         
         // Create matches with maximum diversity
         for (int i = 0; i < matchCount && maleUserModels.length >= 2; i++) {
@@ -611,12 +608,25 @@ class MatchService {
           // If we have less than 2 users left, break
           if (maleUserModels.length < 2) break;
         }
+        }
       }
 
       // Create matches for female users - COMPLETELY NEW ALGORITHM
       if (femaleUsers.length >= 2) {
-        // Convert to UserModel list for better handling
-        final femaleUserModels = femaleUsers.map((user) => UserModel.fromJson(user)).toList();
+        // Filter users who have photos
+        final femaleUsersWithPhotos = <Map<String, dynamic>>[];
+        for (var user in femaleUsers) {
+          final photos = await PhotoUploadService.getUserPhotos(user['id']);
+          if (photos.isNotEmpty) {
+            femaleUsersWithPhotos.add(user);
+          }
+        }
+        
+        print('Female users with photos: ${femaleUsersWithPhotos.length}');
+        
+        if (femaleUsersWithPhotos.length >= 2) {
+          // Convert to UserModel list for better handling
+          final femaleUserModels = femaleUsersWithPhotos.map((user) => UserModel.fromJson(user)).toList();
         
         // Create matches with maximum diversity
         for (int i = 0; i < matchCount && femaleUserModels.length >= 2; i++) {
@@ -648,6 +658,7 @@ class MatchService {
           // If we have less than 2 users left, break
           if (femaleUserModels.length < 2) break;
         }
+        }
       }
 
 
@@ -659,37 +670,5 @@ class MatchService {
     }
   }
 
-      // Helper function to create matches from a list of users
-      static List<Map<String, String>> _createMatchesFromUsers(List users, int maxMatches) {
-        List<Map<String, String>> matches = [];
-        List availableUsers = List.from(users);
-        
-        // Better randomness with time-based seed
-        final random = Random(DateTime.now().millisecondsSinceEpoch);
-        
-        // Multiple shuffle for better randomness
-        for (int i = 0; i < 3; i++) {
-          availableUsers.shuffle(random);
-        }
-        
-        int matchesCreated = 0;
-        while (availableUsers.length >= 2 && matchesCreated < maxMatches) {
-          // Randomly select two users
-          final index1 = random.nextInt(availableUsers.length);
-          final user1 = availableUsers.removeAt(index1);
-          
-          final index2 = random.nextInt(availableUsers.length);
-          final user2 = availableUsers.removeAt(index2);
-          
-          matches.add({
-            'user1_id': user1['id'],
-            'user2_id': user2['id'],
-          });
-          
-          matchesCreated++;
-        }
-        
-        return matches;
-      }
 
 }
