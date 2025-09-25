@@ -154,8 +154,26 @@ class _VotingTabState extends State<VotingTab> {
   Future<UserModel?> _getWinnerUser(String winnerId) async {
     try {
       // Match'teki kullanıcıları getir
-      final users = await _getMatchUsers(matches[currentMatchIndex]);
-      return users.firstWhere((user) => user.id == winnerId);
+      final currentItem = votableItems[currentMatchIndex];
+      final isTournament = currentItem['is_tournament'] as bool;
+      
+      if (isTournament) {
+        // Turnuva match'i için kullanıcıları getir
+        final tournamentMatch = currentItem['tournament_match'] as Map<String, dynamic>;
+        final user1Data = tournamentMatch['user1'] as Map<String, dynamic>;
+        final user2Data = tournamentMatch['user2'] as Map<String, dynamic>;
+        
+        // UserModel oluştur
+        final user1 = UserModel.fromJson(user1Data);
+        final user2 = UserModel.fromJson(user2Data);
+        
+        return winnerId == user1.id ? user1 : user2;
+      } else {
+        // Normal match için
+        final match = currentItem['match'] as MatchModel;
+        final users = await _getMatchUsers(match);
+        return users.firstWhere((user) => user.id == winnerId);
+      }
     } catch (e) {
       print('Error getting winner user: $e');
       return null;
@@ -228,15 +246,15 @@ class _VotingTabState extends State<VotingTab> {
       setState(() {
         showPredictionSlider = false;
         selectedWinner = null;
-        matches.removeAt(currentMatchIndex);
-        if (currentMatchIndex >= matches.length) {
+        votableItems.removeAt(currentMatchIndex);
+        if (currentMatchIndex >= votableItems.length) {
           currentMatchIndex = 0;
         }
       });
     }
 
     // Eğer match kalmadıysa yeni match'ler oluştur
-    if (matches.isEmpty) {
+    if (votableItems.isEmpty) {
       loadMatches();
     }
   }
