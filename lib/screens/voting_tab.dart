@@ -544,7 +544,7 @@ class _VotingTabState extends State<VotingTab> {
             ],
             
             Expanded(
-              child: Row(
+              child: Column(
                 children: [
                   // İlk kullanıcı
                   Expanded(
@@ -607,21 +607,34 @@ class _VotingTabState extends State<VotingTab> {
                     ),
                   ),
                   
-                  const SizedBox(width: 16),
+                  const SizedBox(height: 16),
                   
                   // VS yazısı
-                  Center(
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(color: Colors.red, width: 2),
+                    ),
                     child: Text(
                       AppLocalizations.of(context)!.vs,
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.red,
+                        shadows: [
+                          Shadow(
+                            offset: Offset(1, 1),
+                            blurRadius: 3,
+                            color: Colors.black26,
+                          ),
+                        ],
                       ),
                     ),
                   ),
                   
-                  const SizedBox(width: 16),
+                  const SizedBox(height: 16),
                   
                   // İkinci kullanıcı
                   Expanded(
@@ -1013,126 +1026,137 @@ class _VotingTabState extends State<VotingTab> {
   Widget _buildPredictionSlider() {
     if (selectedWinner == null) return const SizedBox.shrink();
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.blue[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.blue[200]!),
-      ),
-      child: Column(
+    return Expanded(
+      child: Stack(
         children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundImage: selectedWinner!.matchPhotos != null && selectedWinner!.matchPhotos!.isNotEmpty
-                    ? CachedNetworkImageProvider(selectedWinner!.matchPhotos!.first['photo_url'])
-                    : null,
-                child: selectedWinner!.matchPhotos == null || selectedWinner!.matchPhotos!.isEmpty
-                    ? const Icon(Icons.person)
-                    : null,
+          // Seçilen kullanıcının büyük fotoğrafı
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: _buildUserPhotoDisplay(selectedWinner!, 'prediction'),
+            ),
+          ),
+          
+          // Smooth prediction overlay - fotoğrafın altında
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.8),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
+                    // Kullanıcı adı
                     Text(
-                      AppLocalizations.of(context)!.predictWinRate(selectedWinner!.username),
+                      selectedWinner!.username,
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
+                    const SizedBox(height: 8),
+                    
+                    // Win rate başlığı
                     Text(
-                      AppLocalizations.of(context)!.correctPrediction,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
+                      '${AppLocalizations.of(context)!.winRate}: ${_getRangeLabel(sliderValue)}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    
+                    // Modern slider
+                    SliderTheme(
+                      data: SliderTheme.of(context).copyWith(
+                        trackHeight: 6,
+                        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 16),
+                        overlayShape: const RoundSliderOverlayShape(overlayRadius: 24),
+                        activeTrackColor: Colors.blue,
+                        inactiveTrackColor: Colors.grey[600],
+                        thumbColor: Colors.blue,
+                        overlayColor: Colors.blue.withOpacity(0.2),
+                      ),
+                      child: Slider(
+                        value: sliderValue,
+                        min: 0,
+                        max: 100,
+                        divisions: 10,
+                        label: _getRangeLabel(sliderValue),
+                        onChanged: (value) {
+                          setState(() {
+                            sliderValue = value;
+                          });
+                        },
+                      ),
+                    ),
+                    
+                    // Smooth percentage labels
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          for (int i = 0; i <= 4; i++) 
+                            Text(
+                              '${i * 25}%',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: i * 25 <= sliderValue ? Colors.blue : Colors.grey[400],
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    
+                    // Submit button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _submitPrediction,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)!.submitPrediction,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          
-          // Slider
-          Column(
-            children: [
-              Text(
-                '${AppLocalizations.of(context)!.winRate}: ${_getRangeLabel(sliderValue)}',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Slider(
-                value: sliderValue,
-                min: 0,
-                max: 100,
-                divisions: 10,
-                label: _getRangeLabel(sliderValue),
-                onChanged: (value) {
-                  setState(() {
-                    sliderValue = value;
-                  });
-                },
-              ),
-              const SizedBox(height: 8),
-              
-              // Aralık göstergeleri
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  for (int i = 0; i <= 10; i++)
-                    Container(
-                      width: 2,
-                      height: 8,
-                      color: Colors.grey[400],
-                    ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  for (int i = 0; i <= 10; i++)
-                    Text(
-                      '${i * 10}',
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
-          
-          const SizedBox(height: 16),
-          
-          // Tahmin gönder butonu
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _submitPrediction,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: Text(
-                AppLocalizations.of(context)!.submitPrediction,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),

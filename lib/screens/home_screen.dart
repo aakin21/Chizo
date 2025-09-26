@@ -178,39 +178,68 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.homePage),
-      ),
-      body: Column(
-        children: [
-          const SizedBox(height: 16),
-          // Üstte 4 buton
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+        title: Row(
+          children: [
+            Text(
+              AppLocalizations.of(context)!.homePage,
+              style: const TextStyle(fontSize: 18), // Küçültülmüş font size
+            ),
+            const Spacer(),
+            // Yan yana 4 icon buton
+            Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                ElevatedButton(
+                // Profil
+                IconButton(
                   onPressed: () => _openPage(context, ProfileTab(key: ValueKey(_profileRefreshKey), onRefresh: _refreshProfile), AppLocalizations.of(context)!.profile),
-                  child: Text(AppLocalizations.of(context)!.profile),
+                  icon: const Icon(Icons.person, size: 20),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.blue.withOpacity(0.1),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                    minimumSize: const Size(32, 32),
+                    padding: const EdgeInsets.all(4),
+                  ),
                 ),
-                ElevatedButton(
+                // Turnuva
+                IconButton(
                   onPressed: () => _openPage(context, const TurnuvaTab(), AppLocalizations.of(context)!.tournament),
-                  child: Text(AppLocalizations.of(context)!.tournament),
+                  icon: const Icon(Icons.emoji_events, size: 20),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.purple.withOpacity(0.1),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                    minimumSize: const Size(32, 32),
+                    padding: const EdgeInsets.all(4),
+                  ),
                 ),
-                ElevatedButton(
+                // Liderlik
+                IconButton(
                   onPressed: () => _openPage(context, const LeaderboardTab(), AppLocalizations.of(context)!.leaderboard),
-                  child: Text(AppLocalizations.of(context)!.leaderboard),
+                  icon: const Icon(Icons.leaderboard, size: 20),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.orange.withOpacity(0.1),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                    minimumSize: const Size(32, 32),
+                    padding: const EdgeInsets.all(4),
+                  ),
                 ),
-                ElevatedButton(
-                  onPressed: () => _openPage(context, SettingsTab(onLanguageChanged: widget.onLanguageChanged), AppLocalizations.of(context)!.settings),
-                  child: Text(AppLocalizations.of(context)!.settings),
+                // Ayarlar
+                IconButton(
+                  onPressed: () => _openPage(context, const SettingsTab(), AppLocalizations.of(context)!.settings),
+                  icon: const Icon(Icons.settings, size: 20),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.green.withOpacity(0.1),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                    minimumSize: const Size(32, 32),
+                    padding: const EdgeInsets.all(4),
+                  ),
                 ),
               ],
             ),
-          ),
-
-          const SizedBox(height: 16),
-          const Divider(),
+          ],
+        ),
+      ),
+      body: Column(
+        children: [
 
           // Altta tam ekran Voting
           Expanded(

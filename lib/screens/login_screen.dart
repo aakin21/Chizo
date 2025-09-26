@@ -98,11 +98,21 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: l10n.email),
+              decoration: InputDecoration(
+                labelText: l10n.email,
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email),
+              ),
+              keyboardType: TextInputType.emailAddress,
             ),
+            const SizedBox(height: 16),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: l10n.password),
+              decoration: InputDecoration(
+                labelText: l10n.password,
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.lock),
+              ),
               obscureText: true,
             ),
             const SizedBox(height: 20),

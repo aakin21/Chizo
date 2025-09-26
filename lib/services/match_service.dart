@@ -4,7 +4,6 @@ import '../models/match_model.dart';
 import '../models/user_model.dart';
 import 'user_service.dart';
 import 'photo_upload_service.dart';
-import 'tournament_service.dart';
 
 class MatchService {
   static final SupabaseClient _client = Supabase.instance.client;

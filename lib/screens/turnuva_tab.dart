@@ -516,8 +516,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                     ),
                   ),
                 const SizedBox(width: 8),
-                // Turnuva oyla butonu - sadece aktif turnuvalar için
-                if (tournament.status == 'active')
+                if (tournament.status == 'active') ...[
+                  // Turnuva oyla butonu - sadece aktif turnuvalar için
                   ElevatedButton.icon(
                     onPressed: () => _voteForSpecificTournament(tournament.id),
                     icon: const Icon(Icons.how_to_vote),
@@ -527,6 +527,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                       foregroundColor: Colors.white,
                     ),
                   ),
+                ]
               ],
             ),
           ],
@@ -562,4 +563,5 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
   }
+
 }

@@ -1,4 +1,8 @@
 class AppConstants {
+  // App name and version info
+  static const String appName = 'Chizo';
+  static const String appVersion = '1.0.0';
+  
   // Avrupa ülkeleri + Türkiye listesi
   static const List<String> countries = [
     'turkiye',
@@ -38,4 +42,15 @@ class AppConstants {
   static const List<String> genders = ['Erkek', 'Kadın'];
   
   static const List<String> ageRanges = ['18-24', '24-32', '32-40', '40+'];
+  
+  // UI Constants for consistent spacing
+  static const double defaultPadding = 16.0;
+  static const double smallPadding = 8.0;
+  static const double largePadding = 24.0;
+  
+  // Color constants
+  static const int primaryColorValue = 0xFF673AB7; // deepPurple
+  static const int successColor = 0xFF4CAF50;
+  static const int errorColor = 0xFFF44336;
+  static const int warningColor = 0xFFFF9800;
 }

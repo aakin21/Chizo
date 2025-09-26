@@ -67,7 +67,22 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('Yükleniyor...'),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (currentUser == null) {
+      return const Scaffold(
+        body: Center(child: Text('Kullanıcı bilgisi yüklenemedi')),
       );
     }
 

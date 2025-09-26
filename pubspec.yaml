@@ -50,7 +50,7 @@ dependencies:
   # URL launcher for opening external links
   url_launcher: ^6.2.5
   
-  # Internationalization
+  # Internationalization  
   flutter_localizations:
     sdk: flutter
   intl: ^0.20.2

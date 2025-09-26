@@ -122,13 +122,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            TextField(controller: _usernameController, decoration: InputDecoration(labelText: l10n.username)),
-            TextField(controller: _emailController, decoration: InputDecoration(labelText: l10n.email)),
-            TextField(controller: _passwordController, decoration: InputDecoration(labelText: l10n.password), obscureText: true),
-            TextField(controller: _ageController, decoration: InputDecoration(labelText: l10n.age), keyboardType: TextInputType.number),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _usernameController, 
+              decoration: InputDecoration(
+                labelText: l10n.username,
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.person),
+              )
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _emailController, 
+              decoration: InputDecoration(
+                labelText: l10n.email,
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email),
+              ),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _passwordController, 
+              decoration: InputDecoration(
+                labelText: l10n.password,
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.lock),
+              ),
+              obscureText: true,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _ageController, 
+              decoration: InputDecoration(
+                labelText: l10n.age,
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.cake),
+              ), 
+              keyboardType: TextInputType.number
+            ),
+            const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               value: _selectedCountry,
-              decoration: InputDecoration(labelText: l10n.country),
+              decoration: InputDecoration(
+                labelText: l10n.country,
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.public),
+              ),
               items: AppConstants.countries.map((country) => 
                 DropdownMenuItem(value: country, child: Text(country))
               ).toList(),
@@ -138,9 +178,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 });
               },
             ),
+            const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               value: _selectedGender,
-              decoration: InputDecoration(labelText: l10n.gender),
+              decoration: InputDecoration(
+                labelText: l10n.gender,
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.people),
+              ),
               items: AppConstants.genders.map((gender) => 
                 DropdownMenuItem(value: gender, child: Text(gender))
               ).toList(),

@@ -9,11 +9,12 @@ import 'l10n/app_localizations.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Supabase başlat
+  // Supabase başlat - Environment variables should be used in production
   await Supabase.initialize(
-    url: 'https://rsuptwsgnpgsvlqigitq.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdXB0d3NnbnBnc3ZscWlnaXRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5NjMzODUsImV4cCI6MjA3MzUzOTM4NX0.KiLkHJ22FhJkc8BnkLrTZpk-_gM81bTiCfe0gh3-DfM',
+    url: const String.fromEnvironment('SUPABASE_URL', 
+        defaultValue: 'https://rsuptwsgnpgsvlqigitq.supabase.co'),
+    anonKey: const String.fromEnvironment('SUPABASE_ANON_KEY',
+        defaultValue: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdXB0d3NnbnBnc3ZscWlnaXRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5NjMzODUsImV4cCI6MjA3MzUzOTM4NX0.KiLkHJ22FhJkc8BnkLrTZpk-_gM81bTiCfe0gh3-DfM'),
   );
 
   runApp(const MyApp());
@@ -31,7 +32,16 @@ class AuthWrapper extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Yükleniyor...', style: TextStyle(fontSize: 16)),
+                ],
+              ),
+            ),
           );
         }
         
@@ -41,7 +51,7 @@ class AuthWrapper extends StatelessWidget {
           // User is logged in, go to home screen
           return HomeScreen(onLanguageChanged: onLanguageChanged);
         } else {
-          // User is not logged in, go to login screen
+          // User is not logged in, go to login screen  
           return const LoginScreen();
         }
       },
@@ -83,7 +93,24 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Chizo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.light,
+        ),
+        useMaterial3: true,
+        cardTheme: CardThemeData(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
       ),
       debugShowCheckedModeBanner: false,
       home: AuthWrapper(onLanguageChanged: changeLanguage),
