@@ -27,8 +27,41 @@ class _VotingTabState extends State<VotingTab> {
   int currentMatchIndex = 0;
   bool showPredictionSlider = false;
   UserModel? selectedWinner;
+  UserModel? selectedUserForPrediction; // Prediciton için seçilen kullanıcı
+  UserModel? previewUser; // Sadece önizleme için seçilen kullanıcı
+  bool showSinglePhotoPreview = false; // Tek fotoğraf preview durumu
   double sliderValue = 50.0;
+  double _tempSliderValue = 50.0; // Slider kaydırma için local variable
+  // bool _sliderIsDragging = false; // Drag durumunu track et - DRAFT USAGE
   bool isCurrentTournamentMatch = false; // Mevcut oylama turnuva oylaması mı?
+  DateTime? lastTapTime; // Son tık zamanını takip et
+  bool _isSliderDragging = false; // Tutulma durumu
+
+  // Yüzdeye göre renk hesaplama - Advanced Spectrum Transparent->Solid
+  Color _getSliderColorFromPercentage(double percentage) {
+    // Glacial interpolasyon coefficients  
+    final t = percentage / 100.0; // normalized 0..1
+    
+    // RGB lerp intermediate calculations 
+    Color baseColor;
+    if (t <= 0.33) {
+      // %0-%33: Yeşil -> Sarı
+      final factor = t / 0.33; 
+      baseColor = Color.fromRGBO(255, (factor * 255 + (1-factor) * 34).round(), 0, 1.0);
+    } else if (t <= 0.66) {  
+      // %33-%66: Sarı -> Turuncu
+      final factor = (t - 0.33) / 0.33;
+      baseColor = Color.fromRGBO(255, (255 - factor * 90).round(), 0, 1.0); 
+    } else { 
+      // %66-%100: Turuncu -> Kırmızı
+      final factor = (t - 0.66) / 0.34; 
+      baseColor = Color.fromRGBO(255, (165 - factor * 165).round(), 0, 1.0);
+    }
+    
+    // Dragging durumuna göre transparency
+    final alpha = _isSliderDragging ? 0.85 : 0.35; 
+    return baseColor.withOpacity(alpha);
+  }
 
   @override
   void initState() {
@@ -125,24 +158,39 @@ class _VotingTabState extends State<VotingTab> {
       return;
     }
 
-    // Normal oylama
-    final currentMatch = currentItem['match'] as MatchModel;
-    final success = await MatchService.voteForMatch(currentMatch.id, winnerId);
+    // Tek tık - direkt oy verme + slider
+    await _performActualVote(winnerId, currentItem);
+  }
+
+  Future<void> _showSinglePhotoPreview(String userId) async {
+    final selectedUser = await _getWinnerUser(userId);
+    if (selectedUser != null && mounted) {
+      setState(() {
+        previewUser = selectedUser;
+        showSinglePhotoPreview = true;
+      });
+    }
+  }
+
+  Future<void> _performActualVote(String winnerId, Map<String, dynamic> currentItem) async {
+    final match = currentItem['match'] as MatchModel;
+    final success = await MatchService.voteForMatch(match.id, winnerId);
     
     if (success) {
       // Update photo statistics for both users
-      await _updatePhotoStatsForMatch(currentMatch, winnerId);
+      await _updatePhotoStatsForMatch(match, winnerId);
       
       // Kazanan kullanıcıyı bul ve slider'ı göster
       final winner = await _getWinnerUser(winnerId);
-      if (winner != null) {
-        if (mounted) {
-          setState(() {
-            selectedWinner = winner;
-            showPredictionSlider = true;
-            sliderValue = 50.0; // Başlangıç değeri
-          });
-        }
+      if (winner != null && mounted) {
+        setState(() {
+          selectedWinner = winner;
+          selectedUserForPrediction = null;
+          previewUser = null;
+          showSinglePhotoPreview = false;
+          showPredictionSlider = true;
+          sliderValue = 50.0;
+        });
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -181,27 +229,34 @@ class _VotingTabState extends State<VotingTab> {
   }
 
   Future<void> _submitPrediction() async {
-    if (selectedWinner == null) return;
+    final targetUser = selectedUserForPrediction ?? selectedWinner;
+    if (targetUser == null) return;
 
-    // Slider değerini aralığa çevir
+    // Final değer al ve commit
+    final finalValue = _tempSliderValue;
+    setState(() {
+      sliderValue = _tempSliderValue;
+    });
+    
+    // Kullanıcının seçtiği hassas değeri %10'luk aralığa dönüştür
     int minRange, maxRange;
-    if (sliderValue <= 10) {
+    if (finalValue <= 10) {
       minRange = 0; maxRange = 10;
-    } else if (sliderValue <= 20) {
+    } else if (finalValue <= 20) {
       minRange = 11; maxRange = 20;
-    } else if (sliderValue <= 30) {
+    } else if (finalValue <= 30) {
       minRange = 21; maxRange = 30;
-    } else if (sliderValue <= 40) {
+    } else if (finalValue <= 40) {
       minRange = 31; maxRange = 40;
-    } else if (sliderValue <= 50) {
+    } else if (finalValue <= 50) {
       minRange = 41; maxRange = 50;
-    } else if (sliderValue <= 60) {
+    } else if (finalValue <= 60) {
       minRange = 51; maxRange = 60;
-    } else if (sliderValue <= 70) {
+    } else if (finalValue <= 70) {
       minRange = 61; maxRange = 70;
-    } else if (sliderValue <= 80) {
+    } else if (finalValue <= 80) {
       minRange = 71; maxRange = 80;
-    } else if (sliderValue <= 90) {
+    } else if (finalValue <= 90) {
       minRange = 81; maxRange = 90;
     } else {
       minRange = 91; maxRange = 100;
@@ -209,10 +264,10 @@ class _VotingTabState extends State<VotingTab> {
 
     try {
       final result = await PredictionService.submitPrediction(
-        winnerId: selectedWinner!.id,
+        winnerId: targetUser.id,
         minRange: minRange,
         maxRange: maxRange,
-        actualWinRate: selectedWinner!.winRate,
+        actualWinRate: targetUser.winRate,
       );
 
       if (result['success']) {
@@ -246,6 +301,9 @@ class _VotingTabState extends State<VotingTab> {
       setState(() {
         showPredictionSlider = false;
         selectedWinner = null;
+        selectedUserForPrediction = null;
+        previewUser = null;
+        showSinglePhotoPreview = false;
         votableItems.removeAt(currentMatchIndex);
         if (currentMatchIndex >= votableItems.length) {
           currentMatchIndex = 0;
@@ -264,15 +322,9 @@ class _VotingTabState extends State<VotingTab> {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       child: Column(
         children: [
-          Text(
-            AppLocalizations.of(context)!.voting,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          
-          const SizedBox(height: 20),
           
           if (isLoading)
             const Expanded(
@@ -312,6 +364,9 @@ class _VotingTabState extends State<VotingTab> {
       currentMatchIndex++;
       showPredictionSlider = false;
       selectedWinner = null;
+      selectedUserForPrediction = null;
+      previewUser = null;
+      showSinglePhotoPreview = false;
       sliderValue = 50.0;
     });
     
@@ -525,24 +580,18 @@ class _VotingTabState extends State<VotingTab> {
         final user1 = users[0];
         final user2 = users[1];
         
+        // Eğer prediction slider aktifse, sadece seçilen fotoğrafı tek olarak göster
+        if (showPredictionSlider && (selectedUserForPrediction != null || selectedWinner != null)) {
+          return _buildPredictionSlider();
+        }
+
+        // Eğer single photo preview aktifse, sadece onu göster
+        if (showSinglePhotoPreview && previewUser != null) {
+          return _buildSinglePhotoPreview();
+        }
+
         return Column(
           children: [
-            if (!showPredictionSlider) ...[
-              Text(
-                AppLocalizations.of(context)!.whichDoYouPrefer,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[700],
-                ),
-              ),
-              const SizedBox(height: 20),
-            ] else ...[
-              // Prediction slider
-              _buildPredictionSlider(),
-              const SizedBox(height: 20),
-            ],
-            
             Expanded(
               child: Column(
                 children: [
@@ -550,83 +599,100 @@ class _VotingTabState extends State<VotingTab> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () => _voteForUser(user1.id),
-                      child: Card(
-                        elevation: 4,
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: Stack(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Stack(
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                height: double.infinity,
+                                child: _buildUserPhotoDisplay(user1, match.id),
+                              ),
+                            // Zoom butonu ve premium bilgi butonları
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: Column(
                                 children: [
-                                  Container(
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.vertical(
-                                        top: Radius.circular(8),
-                                      ),
-                                    ),
-                                    child: _buildUserPhotoDisplay(user1, match.id),
+                                  // Zoom butonu
+                                  _buildOverlayButton(
+                                    Icons.zoom_in,
+                                    Colors.black,
+                                    () => _showSinglePhotoPreview(user1.id)
                                   ),
-                                  // Premium bilgi butonları
-                                  Positioned(
-                                    top: 8,
-                                    right: 8,
-                                    child: Column(
-                                      children: [
-                                        if (user1.showInstagram && user1.instagramHandle != null)
-                                          _buildOverlayButton(
-                                            Icons.camera_alt,
-                                            Colors.pink,
-                                            () => _showPremiumInfo(user1.instagramHandle!, AppLocalizations.of(context)!.instagramAccount),
-                                          ),
-                                        if (user1.showProfession && user1.profession != null)
-                                          _buildOverlayButton(
-                                            Icons.work,
-                                            Colors.blue,
-                                            () => _showPremiumInfo(user1.profession!, AppLocalizations.of(context)!.profession),
-                                          ),
-                                      ],
+                                  if (user1.showInstagram && user1.instagramHandle != null)
+                                    _buildOverlayButton(
+                                      Icons.camera_alt,
+                                      Colors.pink,
+                                      () => _showPremiumInfo(user1.instagramHandle!, AppLocalizations.of(context)!.instagramAccount),
                                     ),
-                                  ),
+                                  if (user1.showProfession && user1.profession != null)
+                                    _buildOverlayButton(
+                                      Icons.work,
+                                      Colors.blue,
+                                      () => _showPremiumInfo(user1.profession!, AppLocalizations.of(context)!.profession),
+                                    ),
                                 ],
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Text(
-                                user1.username,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                            // Kullanıcı ismi sağ alt köşede
+                            Positioned(
+                              bottom: 8,
+                              right: 8,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                textAlign: TextAlign.center,
+                                child: Text(
+                                  user1.username,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
+                          ),
                         ),
                       ),
                     ),
                   ),
                   
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   
                   // VS yazısı
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.red.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(25),
-                      border: Border.all(color: Colors.red, width: 2),
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.red, width: 1),
                     ),
                     child: Text(
                       AppLocalizations.of(context)!.vs,
                       style: const TextStyle(
-                        fontSize: 24,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.red,
                         shadows: [
                           Shadow(
                             offset: Offset(1, 1),
-                            blurRadius: 3,
+                            blurRadius: 2,
                             color: Colors.black26,
                           ),
                         ],
@@ -634,64 +700,81 @@ class _VotingTabState extends State<VotingTab> {
                     ),
                   ),
                   
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   
                   // İkinci kullanıcı
                   Expanded(
                     child: GestureDetector(
                       onTap: () => _voteForUser(user2.id),
-                      child: Card(
-                        elevation: 6,
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: Stack(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Stack(
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                height: double.infinity,
+                                child: _buildUserPhotoDisplay(user2, match.id),
+                              ),
+                            // Zoom butonu ve premium bilgi butonları
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: Column(
                                 children: [
-                                  Container(
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.vertical(
-                                        top: Radius.circular(8),
-                                      ),
-                                    ),
-                                    child: _buildUserPhotoDisplay(user2, match.id),
+                                  // Zoom butonu
+                                  _buildOverlayButton(
+                                    Icons.zoom_in,
+                                    Colors.black,
+                                    () => _showSinglePhotoPreview(user2.id)
                                   ),
-                                  // Premium bilgi butonları
-                                  Positioned(
-                                    top: 8,
-                                    right: 8,
-                                    child: Column(
-                                      children: [
-                                        if (user2.showInstagram && user2.instagramHandle != null)
-                                          _buildOverlayButton(
-                                            Icons.camera_alt,
-                                            Colors.pink,
-                                            () => _showPremiumInfo(user2.instagramHandle!, AppLocalizations.of(context)!.instagramAccount),
-                                          ),
-                                        if (user2.showProfession && user2.profession != null)
-                                          _buildOverlayButton(
-                                            Icons.work,
-                                            Colors.blue,
-                                            () => _showPremiumInfo(user2.profession!, AppLocalizations.of(context)!.profession),
-                                          ),
-                                      ],
+                                  if (user2.showInstagram && user2.instagramHandle != null)
+                                    _buildOverlayButton(
+                                      Icons.camera_alt,
+                                      Colors.pink,
+                                      () => _showPremiumInfo(user2.instagramHandle!, AppLocalizations.of(context)!.instagramAccount),
                                     ),
-                                  ),
+                                  if (user2.showProfession && user2.profession != null)
+                                    _buildOverlayButton(
+                                      Icons.work,
+                                      Colors.blue,
+                                      () => _showPremiumInfo(user2.profession!, AppLocalizations.of(context)!.profession),
+                                    ),
                                 ],
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Text(
-                                user2.username,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                            // Kullanıcı ismi sağ alt köşede
+                            Positioned(
+                              bottom: 8,
+                              right: 8,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                textAlign: TextAlign.center,
+                                child: Text(
+                                  user2.username,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
+                          ),
                         ),
                       ),
                     ),
@@ -700,14 +783,12 @@ class _VotingTabState extends State<VotingTab> {
               ),
             ),
             
-            const SizedBox(height: 20),
-            
-            const SizedBox(height: 20),
+            const SizedBox(height: 8),
             
             Text(
               '${currentMatchIndex + 1} / ${matches.length}',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 12,
                 color: Colors.grey[600],
                 fontWeight: FontWeight.w500,
               ),
@@ -1023,13 +1104,13 @@ class _VotingTabState extends State<VotingTab> {
     }
   }
 
-  Widget _buildPredictionSlider() {
-    if (selectedWinner == null) return const SizedBox.shrink();
+  Widget _buildSinglePhotoPreview() {
+    if (previewUser == null) return const SizedBox.shrink();
 
     return Expanded(
       child: Stack(
         children: [
-          // Seçilen kullanıcının büyük fotoğrafı
+          // Seçilen kullanıcının tam ekran fotoğrafı
           Container(
             width: double.infinity,
             height: double.infinity,
@@ -1045,113 +1126,201 @@ class _VotingTabState extends State<VotingTab> {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: _buildUserPhotoDisplay(selectedWinner!, 'prediction'),
+              child: _buildUserPhotoDisplay(previewUser!, 'preview'),
             ),
           ),
           
-          // Smooth prediction overlay - fotoğrafın altında
+          // Exit / Çarpı butonu - Sol üstte
           Positioned(
-            bottom: 0,
-            left: 0,
+            top: 16,
+            left: 16,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  showSinglePhotoPreview = false;
+                  previewUser = null;
+                });
+              },
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.6),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPredictionSlider() {
+    final targetUser = selectedUserForPrediction ?? selectedWinner;
+    if (targetUser == null) return const SizedBox.shrink();
+
+    return Expanded(
+      child: Stack(
+        children: [
+          // Seçilen kullanıcının tam ekran fotoğrafı
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: _buildUserPhotoDisplay(targetUser, 'prediction'),
+            ),
+          ),
+          
+          // Sağ tarafta dikey slider ve kullanıcı bilgileri
+          Positioned(
             right: 0,
+            top: 0,
+            bottom: 0,
             child: Container(
+              width: 100,
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.8),
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.4),
+                    Colors.black.withOpacity(0.7),
+                  ],
+                ),
                 borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
+                  topRight: Radius.circular(16),
+                  bottomRight: Radius.circular(16),
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(16),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Kullanıcı adı
-                    Text(
-                      selectedWinner!.username,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    
-                    // Win rate başlığı
-                    Text(
-                      '${AppLocalizations.of(context)!.winRate}: ${_getRangeLabel(sliderValue)}',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.blue,
+                    RotatedBox(
+                      quarterTurns: 0,
+                      child: Text(
+                        targetUser.username,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),
                     
-                    // Modern slider
-                    SliderTheme(
-                      data: SliderTheme.of(context).copyWith(
-                        trackHeight: 6,
-                        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 16),
-                        overlayShape: const RoundSliderOverlayShape(overlayRadius: 24),
-                        activeTrackColor: Colors.blue,
-                        inactiveTrackColor: Colors.grey[600],
-                        thumbColor: Colors.blue,
-                        overlayColor: Colors.blue.withOpacity(0.2),
-                      ),
-                      child: Slider(
-                        value: sliderValue,
-                        min: 0,
-                        max: 100,
-                        divisions: 10,
-                        label: _getRangeLabel(sliderValue),
-                        onChanged: (value) {
-                          setState(() {
-                            sliderValue = value;
-                          });
+                    // YENİ: Büyütülmüş Dikey Slider - Uzunluğu artırıldı
+                    Expanded(
+                      flex: 3, // Daha çok alan kullan
+                      child: StatefulBuilder(
+                        builder: (context, setLocalState) {
+                          return Column(
+                            children: [
+                              Expanded( // Bu slider containerı full height kullanır
+                                child: Container(
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  child: RotatedBox(
+                                    quarterTurns: -1,
+                                    child: SliderTheme(
+                                      data: SliderTheme.of(context).copyWith(
+                                        trackHeight: 8, // Thicker track
+                                        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 15),
+                                        overlayShape: const RoundSliderOverlayShape(overlayRadius: 24),
+                                        activeTrackColor: _getSliderColorFromPercentage(_tempSliderValue),
+                                        inactiveTrackColor: Colors.grey.withOpacity(_isSliderDragging ? 0.8 : 0.3),
+                                        thumbColor: _getSliderColorFromPercentage(_tempSliderValue),
+                                        overlayColor: _getSliderColorFromPercentage(_tempSliderValue).withOpacity(0.3),
+                                      ),
+                                      child: Slider(
+                                        value: _tempSliderValue,
+                                        min: 0,
+                                        max: 100,
+                                        divisions: null,
+                                        label: '${_tempSliderValue.round()}%',
+                                        onChangeStart: (_) {
+                                          setLocalState(() {
+                                            _isSliderDragging = true;
+                                          });
+                                        },
+                                        onChanged: (value) {
+                                          // Sadece local islate update - NO GLOBAL setState!
+                                          setLocalState(() {
+                                            _tempSliderValue = value.clamp(0.0, 100.0);
+                                          });
+                                        },
+                                        onChangeEnd: (_) {
+                                          setLocalState(() {
+                                            _isSliderDragging = false;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              // Live percentage display - Dynamic Color
+                              Container(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  '${_tempSliderValue.round()}%',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: _getSliderColorFromPercentage(_tempSliderValue),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
                         },
                       ),
                     ),
                     
-                    // Smooth percentage labels
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          for (int i = 0; i <= 4; i++) 
-                            Text(
-                              '${i * 25}%',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: i * 25 <= sliderValue ? Colors.blue : Colors.grey[400],
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
+                    // Alt kısım - Referenced for id dragon
+                    const SizedBox(height: 10),
                     
-                    // Submit button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _submitPrediction,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                    // Submit butonu
+                    Container(
+                      constraints: const BoxConstraints(maxWidth: 80),
+                      child: RotatedBox(
+                        quarterTurns: 0,
+                        child: ElevatedButton(
+                          onPressed: _submitPrediction,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
-                        ),
-                        child: Text(
-                          AppLocalizations.of(context)!.submitPrediction,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                          child: const Text(
+                            'TAMAM',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -1166,18 +1335,6 @@ class _VotingTabState extends State<VotingTab> {
     );
   }
 
-  String _getRangeLabel(double value) {
-    if (value <= 10) return '0-10%';
-    if (value <= 20) return '11-20%';
-    if (value <= 30) return '21-30%';
-    if (value <= 40) return '31-40%';
-    if (value <= 50) return '41-50%';
-    if (value <= 60) return '51-60%';
-    if (value <= 70) return '61-70%';
-    if (value <= 80) return '71-80%';
-    if (value <= 90) return '81-90%';
-    return '91-100%';
-  }
 
   /// Update photo statistics for both users in a match
   Future<void> _updatePhotoStatsForMatch(MatchModel match, String winnerId) async {

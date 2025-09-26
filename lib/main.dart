@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'services/language_service.dart';
@@ -66,13 +67,42 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Locale _currentLocale = const Locale('tr', 'TR');
+  String _selectedTheme = 'Beyaz';
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadCurrentLocale();
+    _initialThemeLoad();
+  }
+
+  Future<void> _initialThemeLoad() async {
+    print('🚀 APP STARTING - Loading theme...');
+    await _loadTheme();
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // Refresh theme when app becomes active
+    if (state == AppLifecycleState.resumed) {
+      _loadTheme();
+    }
+  }
+
+  // Public method to refresh theme from other pages
+  void refreshTheme() async {
+    await _loadTheme();
   }
 
   Future<void> _loadCurrentLocale() async {
@@ -82,10 +112,47 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Future<void> _loadTheme() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final theme = prefs.getString('selected_theme') ?? 'Beyaz';
+      print('🔍 THEME LOADING: Reading from storage -> $theme');
+      
+      // Force update state always to ensure fresh theme
+      setState(() {
+        _selectedTheme = theme;
+      });
+      print('✅ THEME APPLIED: $_selectedTheme set successfully');
+    } catch (e) {
+      print('❌ THEME ERROR: Failed to load theme - $e');
+      setState(() {
+        _selectedTheme = 'Beyaz'; // fallback
+      });
+    }
+  }
+
   void changeLanguage(Locale locale) {
     setState(() {
       _currentLocale = locale;
     });
+  }
+
+  ColorScheme _getThemeColorScheme() {
+    print('🎨 THEME SYSTEM: $_selectedTheme');
+    switch (_selectedTheme) {
+      case 'Beyaz':
+        print('  ↳ BEYAZ light theme active');
+        return ColorScheme.fromSeed(seedColor: Colors.white, brightness: Brightness.light);
+      case 'Koyu':
+        print('  ↳ KOYU dark theme active');
+        return ColorScheme.fromSeed(seedColor: Colors.grey.shade900, brightness: Brightness.dark);
+      case 'Pembemsi':
+        print('  ↳ PEMBE light theme active');
+        return ColorScheme.fromSeed(seedColor: const Color(0xFFC2185B), brightness: Brightness.light);
+      default:
+        print('  ↳ DEFAULT beyaz theme');
+        return ColorScheme.fromSeed(seedColor: Colors.white, brightness: Brightness.light);
+    }
   }
 
   @override
@@ -93,10 +160,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Chizo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-          brightness: Brightness.light,
-        ),
+        colorScheme: _getThemeColorScheme(),
         useMaterial3: true,
         cardTheme: CardThemeData(
           elevation: 2,
