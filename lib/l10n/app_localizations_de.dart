@@ -57,8 +57,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get whichDoYouPrefer => 'Welches bevorzugen Sie?';
 
   @override
-  String predictWinRate(String username) {
-    return '${username}s Gewinnrate vorhersagen';
+  String predictUserWinRate(String username) {
+    return 'Predict $username\'s win rate';
   }
 
   @override
@@ -133,12 +133,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get congratulations => 'Glückwunsch!';
 
   @override
-  String get correctPredictionMessage =>
-      'Sie haben richtig vorhergesagt und 1 Münze verdient!';
+  String get correctPredictionWithReward =>
+      'You predicted correctly and earned 1 coin!';
 
   @override
-  String wrongPredictionMessage(double winRate) {
-    return 'Falsche Vorhersage. Die tatsächliche Gewinnrate war $winRate%';
+  String wrongPredictionWithRate(double winRate) {
+    return 'Wrong prediction. The actual win rate was $winRate%';
   }
 
   @override
@@ -281,7 +281,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get predictionStatistics => 'Vorhersage-Statistiken';
 
   @override
-  String get matchHistory => 'Match-Verlauf';
+  String get matchHistory => '📊 Match-Verlauf';
 
   @override
   String get viewLastFiveMatches =>
@@ -327,14 +327,13 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get spendFiveCoins =>
-      'Geben Sie 5 Coins aus, um diese Informationen anzuzeigen';
+  String get spendFiveCoins => '5 Münzen ausgeben';
 
   @override
-  String get insufficientCoins => '❌ Unzureichende Münzen!';
+  String get insufficientCoins => '❌ Nicht genügend Münzen!';
 
   @override
-  String get fiveCoinsSpent => '✅ 5 Münzen ausgegeben';
+  String get fiveCoinsSpent => '✅ 5 Coins ausgegeben';
 
   @override
   String get ok => 'OK';
@@ -453,13 +452,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get fiveCoinsSpentForHistory =>
-      '✅ 5 Münzen ausgegeben! Ihr Match-Verlauf wird angezeigt.';
+      '✅ 5 Coins ausgegeben! Ihr Match-Verlauf wird angezeigt.';
 
   @override
   String get insufficientCoinsForHistory => '❌ Unzureichende Münzen!';
 
   @override
-  String get spendFiveCoinsForHistory => '5 Münzen ausgeben';
+  String get spendFiveCoinsForHistory =>
+      'Geben Sie 5 Coins aus, um Ihre letzten 5 Matches und Gegner zu sehen';
 
   @override
   String winsAndMatches(int wins, int matches) {
@@ -483,7 +483,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get imageUpdated => 'Bild aktualisiert!';
 
   @override
-  String get updateFailed => 'Aktualisierung fehlgeschlagen!';
+  String get updateFailed => 'Aktualisierung fehlgeschlagen';
 
   @override
   String get imageUpdateFailed => 'Bildaktualisierung fehlgeschlagen!';
@@ -548,7 +548,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get emailNotFound => 'E-Mail-Adresse nicht gefunden!';
 
   @override
-  String get votingError => 'Fehler beim Abstimmungsvorgang';
+  String votingError(Object error) {
+    return 'Fehler während der Abstimmung: $error';
+  }
 
   @override
   String slot(Object slot) {
@@ -635,4 +637,391 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get pay => 'Bezahlen';
+
+  @override
+  String get tournamentVotingSaved => '🏆 Turnier-Abstimmung gespeichert!';
+
+  @override
+  String get tournamentVotingFailed => '❌ Turnier-Abstimmung fehlgeschlagen!';
+
+  @override
+  String get tournamentVoting => '🏆 TURNIER-ABSTIMMUNG';
+
+  @override
+  String get whichTournamentParticipant =>
+      'Welchen Turnier-Teilnehmer bevorzugen Sie?';
+
+  @override
+  String ageYears(Object age, Object country) {
+    return '$age Jahre • $country';
+  }
+
+  @override
+  String get clickToOpenInstagram => '📱 Klicken Sie, um Instagram zu öffnen';
+
+  @override
+  String get openInstagram => 'Instagram öffnen';
+
+  @override
+  String get instagramCannotBeOpened =>
+      '❌ Instagram konnte nicht geöffnet werden. Bitte überprüfen Sie Ihre Instagram-App.';
+
+  @override
+  String instagramOpenError(Object error) {
+    return '❌ Fehler beim Öffnen von Instagram: $error';
+  }
+
+  @override
+  String get tournamentPhoto => '🏆 Turnier-Foto';
+
+  @override
+  String get tournamentJoinedUploadPhoto =>
+      'Sie sind dem Turnier beigetreten! Laden Sie jetzt Ihr Turnier-Foto hoch.';
+
+  @override
+  String get uploadLater => 'Später hochladen';
+
+  @override
+  String get uploadPhoto => 'Foto hochladen';
+
+  @override
+  String get tournamentPhotoUploaded => '✅ Turnier-Foto hochgeladen!';
+
+  @override
+  String get photoUploadError => '❌ Fehler beim Hochladen des Fotos!';
+
+  @override
+  String get noVotingForTournament =>
+      'Keine Abstimmung für dieses Turnier gefunden';
+
+  @override
+  String votingLoadError(Object error) {
+    return 'Fehler beim Laden der Abstimmung: $error';
+  }
+
+  @override
+  String get tournamentVotingTitle => 'Turnier-Abstimmung';
+
+  @override
+  String get whichParticipantPrefer => 'Welchen Teilnehmer bevorzugen Sie?';
+
+  @override
+  String get voteSavedSuccessfully =>
+      'Ihre Stimme wurde erfolgreich gespeichert!';
+
+  @override
+  String get noActiveTournament => 'Derzeit kein aktives Turnier';
+
+  @override
+  String get registration => 'Anmeldung';
+
+  @override
+  String get upcoming => 'Bevorstehend';
+
+  @override
+  String coinPrize(Object prize) {
+    return '$prize Coin-Preis';
+  }
+
+  @override
+  String startDate(Object date) {
+    return 'Start: $date';
+  }
+
+  @override
+  String get completed => 'Abgeschlossen';
+
+  @override
+  String get join => 'Beitreten';
+
+  @override
+  String get photo => 'Foto';
+
+  @override
+  String get languageChanged => 'Sprache geändert. Seite wird aktualisiert...';
+
+  @override
+  String get lightWhiteTheme => 'Helles weißes Theme';
+
+  @override
+  String get neutralDarkGrayTheme => 'Neutrales dunkelgraues Theme';
+
+  @override
+  String themeChanged(Object theme) {
+    return 'Theme geändert: $theme';
+  }
+
+  @override
+  String get deleteAccountWarning =>
+      'Diese Aktion kann nicht rückgängig gemacht werden! Alle Ihre Daten werden dauerhaft gelöscht.\nSind Sie sicher, dass Sie Ihr Konto löschen möchten?';
+
+  @override
+  String get accountDeleted => 'Ihr Konto wurde gelöscht';
+
+  @override
+  String get logoutButton => 'Abmelden';
+
+  @override
+  String get themeSelection => '🎨 Theme-Auswahl';
+
+  @override
+  String get notificationSettings => '🔔 Benachrichtigungseinstellungen';
+
+  @override
+  String get allNotifications => 'Alle Benachrichtigungen';
+
+  @override
+  String get allNotificationsSubtitle =>
+      'Hauptbenachrichtigungen ein/ausschalten';
+
+  @override
+  String get voteReminder => 'Abstimmungserinnerung';
+
+  @override
+  String get winCelebration => 'Gewinn-Feier';
+
+  @override
+  String get streakReminder => 'Serien-Erinnerung';
+
+  @override
+  String get streakReminderSubtitle => 'Tägliche Serien-Belohnungserinnerungen';
+
+  @override
+  String get moneyAndCoins => '💰 Geld & Coin-Transaktionen';
+
+  @override
+  String get purchaseCoinPackage => 'Coin-Paket kaufen';
+
+  @override
+  String get purchaseCoinPackageSubtitle =>
+      'Coins kaufen und Belohnungen verdienen';
+
+  @override
+  String get appSettings => '⚙️ App-Einstellungen';
+
+  @override
+  String get dailyRewards => 'Tägliche Belohnungen';
+
+  @override
+  String get dailyRewardsSubtitle => 'Serien-Belohnungen und Boosts anzeigen';
+
+  @override
+  String get aboutApp => 'Über die App';
+
+  @override
+  String get accountOperations => '👤 Konto-Operationen';
+
+  @override
+  String get dailyStreakRewards => 'Tägliche Serien-Belohnungen';
+
+  @override
+  String get dailyStreakDescription =>
+      '🎯 Melden Sie sich jeden Tag in der App an und verdienen Sie Boni!';
+
+  @override
+  String get appDescription => 'Abstimmungs- und Turnier-App in Chaträumen.';
+
+  @override
+  String get predictWinRateTitle => 'Gewinnrate vorhersagen!';
+
+  @override
+  String get correctPredictionReward =>
+      'Sie verdienen 1 Coin für eine richtige Vorhersage!';
+
+  @override
+  String get wrongPredictionNoCoin => 'Falsche Vorhersage = 0 Coins';
+
+  @override
+  String get selectWinRateRange => 'Gewinnrate-Bereich wählen:';
+
+  @override
+  String get wrongPrediction => 'Falsche Vorhersage';
+
+  @override
+  String get correctPredictionMessage => 'Sie haben richtig vorhergesagt!';
+
+  @override
+  String get wrongPredictionMessage => 'Leider haben Sie falsch vorhergesagt.';
+
+  @override
+  String actualRate(Object rate) {
+    return 'Tatsächliche Rate: $rate%';
+  }
+
+  @override
+  String get earnedOneCoin => '+1 Coin verdient!';
+
+  @override
+  String myPhotos(Object count) {
+    return 'Meine Fotos ($count/5)';
+  }
+
+  @override
+  String get photoCostInfo =>
+      'Das erste Foto ist kostenlos, andere kosten Coins. Sie können Statistiken für alle Fotos anzeigen.';
+
+  @override
+  String get addAge => 'Alter hinzufügen';
+
+  @override
+  String get addCountry => 'Land hinzufügen';
+
+  @override
+  String get addGender => 'Geschlecht hinzufügen';
+
+  @override
+  String get countrySelection => 'Länderauswahl';
+
+  @override
+  String countriesSelected(Object count) {
+    return '$count Länder ausgewählt';
+  }
+
+  @override
+  String get allCountriesSelected => 'Alle Länder ausgewählt';
+
+  @override
+  String get ageRangeSelection => 'Altersbereich-Auswahl';
+
+  @override
+  String ageRangesSelected(Object count) {
+    return '$count Altersbereiche ausgewählt';
+  }
+
+  @override
+  String get allAgeRangesSelected => 'Alle Altersbereiche ausgewählt';
+
+  @override
+  String get editUsername => 'Benutzername bearbeiten';
+
+  @override
+  String get enterUsername => 'Geben Sie Ihren Benutzernamen ein';
+
+  @override
+  String get editAge => 'Alter bearbeiten';
+
+  @override
+  String get enterAge => 'Geben Sie Ihr Alter ein';
+
+  @override
+  String get selectCountry => 'Land wählen';
+
+  @override
+  String get selectYourCountry => 'Wählen Sie Ihr Land';
+
+  @override
+  String get selectGender => 'Geschlecht wählen';
+
+  @override
+  String get selectYourGender => 'Wählen Sie Ihr Geschlecht';
+
+  @override
+  String get editInstagram => 'Instagram-Konto bearbeiten';
+
+  @override
+  String get enterInstagram =>
+      'Geben Sie Ihren Instagram-Benutzernamen ein (ohne @)';
+
+  @override
+  String get editProfession => 'Beruf bearbeiten';
+
+  @override
+  String get enterProfession => 'Geben Sie Ihren Beruf ein';
+
+  @override
+  String get infoUpdated => 'Informationen aktualisiert';
+
+  @override
+  String get countryPreferencesUpdated => '✅ Länderpräferenzen aktualisiert';
+
+  @override
+  String get countryPreferencesUpdateFailed =>
+      '❌ Länderpräferenzen konnten nicht aktualisiert werden';
+
+  @override
+  String get ageRangePreferencesUpdated =>
+      '✅ Altersbereich-Präferenzen aktualisiert';
+
+  @override
+  String get ageRangePreferencesUpdateFailed =>
+      '❌ Altersbereich-Präferenzen konnten nicht aktualisiert werden';
+
+  @override
+  String winRateAndMatches(Object matches, Object winRate) {
+    return '$winRate Gewinnrate • $matches Matches';
+  }
+
+  @override
+  String get mostWins => 'Meiste Siege';
+
+  @override
+  String get highestWinRate => 'Höchste Gewinnrate';
+
+  @override
+  String get noWinsYet =>
+      'Noch keine Siege!\nSpielen Sie Ihr erstes Match und treten Sie der Bestenliste bei!';
+
+  @override
+  String get noWinRateYet =>
+      'Noch keine Gewinnrate!\nSpielen Sie Matches, um Ihre Gewinnrate zu erhöhen!';
+
+  @override
+  String get matchHistoryViewing => 'Match-Verlauf anzeigen';
+
+  @override
+  String winRateColon(Object winRate) {
+    return 'Gewinnrate: $winRate';
+  }
+
+  @override
+  String matchesAndWins(Object matches, Object wins) {
+    return '$matches Matches • $wins Siege';
+  }
+
+  @override
+  String get youWon => 'Sie haben gewonnen';
+
+  @override
+  String get youLost => 'Sie haben verloren';
+
+  @override
+  String get lastFiveMatchStats => '📊 Letzte 5 Match-Statistiken';
+
+  @override
+  String get noMatchHistoryYet =>
+      'Noch kein Match-Verlauf!\nSpielen Sie Ihr erstes Match!';
+
+  @override
+  String get premiumFeature => '🔒 Premium-Feature';
+
+  @override
+  String get save => 'Speichern';
+
+  @override
+  String get leaderboardTitle => '🏆 Bestenliste';
+
+  @override
+  String get day1_2Reward => 'Tag 1-2: 10-25 Coin';
+
+  @override
+  String get day3_6Reward => 'Tag 3-6: 50-100 Coin';
+
+  @override
+  String get day7PlusReward => 'Tag 7+: 200+ Coin & Boost';
+
+  @override
+  String get photoStatsLoadError =>
+      'Fotostatistiken konnten nicht geladen werden';
+
+  @override
+  String get tournamentNotifications => 'Turnier-Benachrichtigungen';
+
+  @override
+  String get newTournamentInvitations => 'Neue Turnier-Einladungen';
+
+  @override
+  String get victoryNotifications => 'Sieges-Benachrichtigungen';
+
+  @override
+  String get vote => 'Abstimmen';
 }

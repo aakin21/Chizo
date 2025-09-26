@@ -30,6 +30,12 @@ class LanguageService {
     await prefs.setString(_languageKey, locale.languageCode);
   }
 
+  // Kullanıcı girişi sırasında dili kaydet
+  static Future<void> saveUserLanguagePreference(Locale locale) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_languageKey, locale.languageCode);
+  }
+
   // Desteklenen dillerin listesi
   static List<Map<String, dynamic>> getLanguageOptions() {
     return [

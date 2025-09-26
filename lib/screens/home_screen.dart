@@ -202,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 // Turnuva
                 IconButton(
-                  onPressed: () => _openPage(context, const TurnuvaTab(), AppLocalizations.of(context)!.tournament),
+                  onPressed: () => _openPage(context, TurnuvaTab(), AppLocalizations.of(context)!.tournament),
                   icon: const Icon(Icons.emoji_events, size: 20),
                   style: IconButton.styleFrom(
                     backgroundColor: Colors.purple.withOpacity(0.1),
@@ -213,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 // Liderlik
                 IconButton(
-                  onPressed: () => _openPage(context, const LeaderboardTab(), AppLocalizations.of(context)!.leaderboard),
+                  onPressed: () => _openPage(context, LeaderboardTab(), AppLocalizations.of(context)!.leaderboard),
                   icon: const Icon(Icons.leaderboard, size: 20),
                   style: IconButton.styleFrom(
                     backgroundColor: Colors.orange.withOpacity(0.1),
@@ -224,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 // Ayarlar
                 IconButton(
-                  onPressed: () => _openPage(context, const SettingsTab(), AppLocalizations.of(context)!.settings),
+                  onPressed: () => _openPage(context, SettingsTab(), AppLocalizations.of(context)!.settings),
                   icon: const Icon(Icons.settings, size: 20),
                   style: IconButton.styleFrom(
                     backgroundColor: Colors.green.withOpacity(0.1),

@@ -5,6 +5,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../screens/coin_purchase_screen.dart';
 import '../widgets/language_selector.dart';
 import '../utils/constants.dart';
+import '../l10n/app_localizations.dart';
+import '../services/language_service.dart';
 
 class SettingsTab extends StatefulWidget {
   const SettingsTab({super.key});
@@ -42,7 +44,9 @@ class _SettingsTabState extends State<SettingsTab> {
     }
   }
 
-  void _onLanguageChanged(Locale locale) {
+  void _onLanguageChanged(Locale locale) async {
+    // Save user language preference
+    await LanguageService.saveUserLanguagePreference(locale);
     // Full app refresh after language change
     setState(() {});
     // Force app rebuild with new locale
@@ -51,7 +55,7 @@ class _SettingsTabState extends State<SettingsTab> {
         setState(() {});
         ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Dil değiştirildi. Sayfa yenileniyor...'),
+        content: Text(AppLocalizations.of(context)!.languageChanged),
         duration: const Duration(seconds: 1),
       ),
         );
@@ -62,9 +66,9 @@ class _SettingsTabState extends State<SettingsTab> {
   String _getThemeDescription(String theme) {
     switch (theme) {
       case 'Beyaz':
-        return 'Açık beyaz tema';
+        return AppLocalizations.of(context)!.lightWhiteTheme;
       case 'Koyu Gri':
-        return 'Nötr koyu gri tema';
+        return AppLocalizations.of(context)!.neutralDarkGrayTheme;
       case 'Koyu':
         return 'Siyah koyu tema';
       default:
@@ -76,7 +80,7 @@ class _SettingsTabState extends State<SettingsTab> {
     // TODO: Implement actual theme application using Provider/Singleton
     // Bu notification sistemi de eklenebilir 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Tema değiştirildi: $theme')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.themeChanged(theme))),
     );
   }
 
@@ -84,15 +88,12 @@ class _SettingsTabState extends State<SettingsTab> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Hesabı Sil'),
-        content: const Text(
-          'Bu işlem geri alınamaz! Tüm verileriniz kalıcı olarak silinecek.\n'
-          'Hesabınızı silmek istediğinizden emin misiniz?',
-        ),
+        title: Text(AppLocalizations.of(context)!.deleteAccount),
+        content: Text(AppLocalizations.of(context)!.deleteAccountWarning),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('İptal'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -106,18 +107,18 @@ class _SettingsTabState extends State<SettingsTab> {
                   await Supabase.instance.client.auth.signOut();
                   
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Hesabınız silindi')),
+                    SnackBar(content: Text(AppLocalizations.of(context)!.accountDeleted)),
                   );
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Hata: $e')),
+                    SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
                   );
                 }
               }
             },
-            child: const Text(
-              'Sil',
-              style: TextStyle(color: Colors.red),
+            child: Text(
+              AppLocalizations.of(context)!.delete,
+              style: const TextStyle(color: Colors.red),
             ),
           ),
         ],
@@ -129,21 +130,21 @@ class _SettingsTabState extends State<SettingsTab> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Çıkış Yap'),
-        content: const Text('Hesabınızdan çıkmak istediğinizden emin misiniz?'),
+        title: Text(AppLocalizations.of(context)!.logout),
+        content: Text(AppLocalizations.of(context)!.logoutConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('İptal'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
               await Supabase.instance.client.auth.signOut();
             },
-            child: const Text(
-              'Çıkış',
-              style: TextStyle(color: Colors.red),
+            child: Text(
+              AppLocalizations.of(context)!.logoutButton,
+              style: const TextStyle(color: Colors.red),
             ),
           ),
         ],
@@ -169,7 +170,7 @@ class _SettingsTabState extends State<SettingsTab> {
           
           // Tema ve Görünüm
           _buildSectionCard(
-            title: '🎨 Tema Seçimi',
+            title: AppLocalizations.of(context)!.themeSelection,
             children: [
               ..._themeOptions.map((theme) => RadioListTile<String>(
                 title: Text(theme),
@@ -191,11 +192,11 @@ class _SettingsTabState extends State<SettingsTab> {
 
           // Bildirimler
           _buildSectionCard(
-            title: '🔔 Bildirim Ayarları',
+            title: AppLocalizations.of(context)!.notificationSettings,
             children: [
               SwitchListTile(
-                title: const Text('Tüm Bildirimler'),
-                subtitle: const Text('Ana bildirimleri aç/kapat'),
+                title: Text(AppLocalizations.of(context)!.allNotifications),
+                subtitle: Text(AppLocalizations.of(context)!.allNotificationsSubtitle),
                 value: _notificationsEnabled,
                 onChanged: (value) {
                   setState(() {
@@ -206,8 +207,8 @@ class _SettingsTabState extends State<SettingsTab> {
               ),
               const Divider(),
               SwitchListTile(
-                title: const Text('Turnuva Bildirimleri'),
-                subtitle: const Text('Yeni turnuva davetleri'),
+                title: Text(AppLocalizations.of(context)!.tournamentNotifications),
+                subtitle: Text(AppLocalizations.of(context)!.newTournamentInvitations),
                 value: _tournamentNotifications,
                 onChanged: !_notificationsEnabled ? null : (value) {
                   setState(() {
@@ -217,8 +218,8 @@ class _SettingsTabState extends State<SettingsTab> {
                 secondary: const Icon(Icons.emoji_events),
               ),
               SwitchListTile(
-                title: const Text('Oylama Hatırlatması'),
-                subtitle: const Text('Hatırlatma bildirimleri'),
+                title: Text(AppLocalizations.of(context)!.voteReminder),
+                subtitle: Text(AppLocalizations.of(context)!.voteReminder),
                 value: _voteReminderNotifications,
                 onChanged: !_notificationsEnabled ? null : (value) {
                   setState(() {
@@ -228,8 +229,8 @@ class _SettingsTabState extends State<SettingsTab> {
                 secondary: const Icon(Icons.how_to_vote),
               ),
               SwitchListTile(
-                title: const Text('Kazanç Kutlaması'),
-                subtitle: const Text('Zafer bildirimleri'),
+                title: Text(AppLocalizations.of(context)!.winCelebration),
+                subtitle: Text(AppLocalizations.of(context)!.victoryNotifications),
                 value: _winCelebrationNotifications,
                 onChanged: !_notificationsEnabled ? null : (value) {
                   setState(() {
@@ -239,8 +240,8 @@ class _SettingsTabState extends State<SettingsTab> {
                 secondary: const Icon(Icons.celebration),
               ),
               SwitchListTile(
-                title: const Text('Seri Hatırlatması'),
-                subtitle: const Text('Günlük seri ödülleri hatırlatması'),
+                title: Text(AppLocalizations.of(context)!.streakReminder),
+                subtitle: Text(AppLocalizations.of(context)!.streakReminderSubtitle),
                 value: _streakReminderNotifications,
                 onChanged: !_notificationsEnabled ? null : (value) {
                   setState(() {
@@ -256,12 +257,12 @@ class _SettingsTabState extends State<SettingsTab> {
           
           // Coin İşlemleri
           _buildSectionCard(
-            title: '💰 Para & Coin İşlemleri',
+            title: AppLocalizations.of(context)!.moneyAndCoins,
             children: [
               ListTile(
                 leading: const Icon(Icons.local_activity, color: Colors.amber),
-                title: const Text('Coin Paketi Satın Al'),
-                subtitle: const Text('Coin satın alın ve ödüller kazanın'),
+                title: Text(AppLocalizations.of(context)!.purchaseCoinPackage),
+                subtitle: Text(AppLocalizations.of(context)!.purchaseCoinPackageSubtitle),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
                   Navigator.push(
@@ -279,18 +280,18 @@ class _SettingsTabState extends State<SettingsTab> {
           
           // Uygulama Ayarları
           _buildSectionCard(
-            title: '⚙️ Uygulama Ayarları',
+            title: AppLocalizations.of(context)!.appSettings,
             children: [
               ListTile(
                 leading: const Icon(Icons.emoji_events, color: Colors.purple),
-                title: const Text('Günlük Ödüller'),
-                subtitle: const Text('Seri ödülleri ve boost\'ları görün'),
+                title: Text(AppLocalizations.of(context)!.dailyRewards),
+                subtitle: Text(AppLocalizations.of(context)!.dailyRewardsSubtitle),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: _showDailyStreakDialog,
               ),
               ListTile(
                 leading: const Icon(Icons.info_outline, color: Colors.blue),
-                title: const Text('Uygulama Hakkında'),
+                title: Text(AppLocalizations.of(context)!.aboutApp),
                 subtitle: const Text('${AppConstants.appName} v${AppConstants.appVersion}'),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
@@ -304,19 +305,19 @@ class _SettingsTabState extends State<SettingsTab> {
 
           // Hesap İşlemleri
           _buildSectionCard(
-            title: '👤 Hesap İşlemleri',
+            title: AppLocalizations.of(context)!.accountOperations,
             children: [
               ListTile(
                 leading: const Icon(Icons.logout, color: Colors.orange),
-                title: const Text('Çıkış Yap'),
-                subtitle: const Text('Oturumu kapat'),
+                title: Text(AppLocalizations.of(context)!.logout),
+                subtitle: Text(AppLocalizations.of(context)!.logout),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: _logout,
               ),
               ListTile(
                 leading: const Icon(Icons.delete_forever, color: Colors.red),
-                title: const Text('Hesabı Sil'),
-                subtitle: const Text('Hesabınızı kalıcı olarak sil'),
+                title: Text(AppLocalizations.of(context)!.deleteAccount),
+                subtitle: Text(AppLocalizations.of(context)!.deleteAccountSubtitle),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: _deleteAccount,
               ),
@@ -361,23 +362,23 @@ class _SettingsTabState extends State<SettingsTab> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Günlük Seri Ödülleri'),
-          content: const SingleChildScrollView(
+          title: Text(AppLocalizations.of(context)!.dailyStreakRewards),
+          content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('🎯 Her gün uygulamaya girin ve bonuslar kazanın!'),
-                SizedBox(height: 12),
-                Text('Day 1-2: 10-25 Coin'),
-                Text('Day 3-6: 50-100 Coin'),
-                Text('Day 7+: 200+ Coin & Boost'),
+                Text(AppLocalizations.of(context)!.dailyStreakDescription),
+                const SizedBox(height: 12),
+                Text(AppLocalizations.of(context)!.day1_2Reward),
+                Text(AppLocalizations.of(context)!.day3_6Reward),
+                Text(AppLocalizations.of(context)!.day7PlusReward),
               ],
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Tamam'),
+              child: Text(AppLocalizations.of(context)!.ok),
             ),
           ],
         );
@@ -396,7 +397,7 @@ class _SettingsTabState extends State<SettingsTab> {
         color: Colors.deepPurple,
       ),
       children: [
-        const Text('Sohbet odalarında oylama ve turnuva uygulaması.'),
+        Text(AppLocalizations.of(context)!.appDescription),
       ],
     );
   }

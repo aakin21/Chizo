@@ -149,7 +149,7 @@ class _ProfileTabState extends State<ProfileTab> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('❌ ${result['message']}'),
+            content: Text('${AppLocalizations.of(context)!.error}: ${result['message']}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -193,7 +193,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('❌ ${result['message']}'),
+                      content: Text('${AppLocalizations.of(context)!.error}: ${result['message']}'),
                       backgroundColor: Colors.red,
                     ),
                   );
@@ -252,7 +252,7 @@ class _ProfileTabState extends State<ProfileTab> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Fotoğraflarım (${userPhotos.length}/5)',
+                                    AppLocalizations.of(context)!.myPhotos(userPhotos.length),
                                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                   ),
                                   if (userPhotos.length < 5)
@@ -270,7 +270,7 @@ class _ProfileTabState extends State<ProfileTab> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'İlk fotoğraf ücretsiz, diğerleri coin ile alınır. Tüm fotoğrafların istatistiklerini görebilirsiniz.',
+                                AppLocalizations.of(context)!.photoCostInfo,
                                 style: const TextStyle(fontSize: 12, color: Colors.grey),
                               ),
                               const SizedBox(height: 16),
@@ -456,17 +456,17 @@ class _ProfileTabState extends State<ProfileTab> {
                       if (currentUser!.age != null)
                         _buildEditableInfoCard(AppLocalizations.of(context)!.age, '${currentUser!.age}', 'age'),
                       if (currentUser!.age == null)
-                        _buildAddInfoButton('Yaş Ekle', Icons.cake, Colors.orange, () => _showEditDialog('age', '')),
+                        _buildAddInfoButton(AppLocalizations.of(context)!.addAge, Icons.cake, Colors.orange, () => _showEditDialog('age', '')),
 
                       if (currentUser!.country != null)
                         _buildEditableInfoCard(AppLocalizations.of(context)!.country, currentUser!.country!, 'country'),
                       if (currentUser!.country == null)
-                        _buildAddInfoButton('Ülke Ekle', Icons.public, Colors.blue, () => _showEditDialog('country', '')),
+                        _buildAddInfoButton(AppLocalizations.of(context)!.addCountry, Icons.public, Colors.blue, () => _showEditDialog('country', '')),
 
                       if (currentUser!.gender != null)
                         _buildEditableInfoCard(AppLocalizations.of(context)!.gender, currentUser!.gender!, 'gender'),
                       if (currentUser!.gender == null)
-                        _buildAddInfoButton('Cinsiyet Ekle', Icons.person, Colors.purple, () => _showEditDialog('gender', '')),
+                        _buildAddInfoButton(AppLocalizations.of(context)!.addGender, Icons.person, Colors.purple, () => _showEditDialog('gender', '')),
 
                       const SizedBox(height: 24),
 
@@ -676,17 +676,17 @@ class _ProfileTabState extends State<ProfileTab> {
                             color: Colors.blue,
                             size: 28,
                           ),
-                          title: const Text(
-                            'Ülke Seçimi',
-                            style: TextStyle(
+                          title: Text(
+                            AppLocalizations.of(context)!.countrySelection,
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           subtitle: Text(
                             currentUser!.countryPreferences != null 
-                                ? '${currentUser!.countryPreferences!.length} ülke seçili'
-                                : 'Tüm ülkeler seçili',
+                                ? AppLocalizations.of(context)!.countriesSelected(currentUser!.countryPreferences!.length)
+                                : AppLocalizations.of(context)!.allCountriesSelected,
                             style: const TextStyle(fontSize: 14),
                           ),
                           trailing: const Icon(Icons.arrow_forward_ios),
@@ -704,17 +704,17 @@ class _ProfileTabState extends State<ProfileTab> {
                             color: Colors.orange,
                             size: 28,
                           ),
-                          title: const Text(
-                            'Yaş Aralığı Seçimi',
-                            style: TextStyle(
+                          title: Text(
+                            AppLocalizations.of(context)!.ageRangeSelection,
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           subtitle: Text(
                             currentUser!.ageRangePreferences != null 
-                                ? '${currentUser!.ageRangePreferences!.length} yaş aralığı seçili'
-                                : 'Tüm yaş aralıkları seçili',
+                                ? AppLocalizations.of(context)!.ageRangesSelected(currentUser!.ageRangePreferences!.length)
+                                : AppLocalizations.of(context)!.allAgeRangesSelected,
                             style: const TextStyle(fontSize: 14),
                           ),
                           trailing: const Icon(Icons.arrow_forward_ios),
@@ -817,34 +817,34 @@ class _ProfileTabState extends State<ProfileTab> {
     
     switch (field) {
       case 'username':
-        title = 'Kullanıcı Adı Düzenle';
-        hint = 'Kullanıcı adınızı girin';
+        title = AppLocalizations.of(context)!.editUsername;
+        hint = AppLocalizations.of(context)!.enterUsername;
         icon = Icons.person;
         break;
       case 'age':
-        title = 'Yaş Düzenle';
-        hint = 'Yaşınızı girin';
+        title = AppLocalizations.of(context)!.editAge;
+        hint = AppLocalizations.of(context)!.enterAge;
         icon = Icons.cake;
         keyboardType = TextInputType.number;
         break;
       case 'country':
-        title = 'Ülke Seç';
-        hint = 'Ülkenizi seçin';
+        title = AppLocalizations.of(context)!.selectCountry;
+        hint = AppLocalizations.of(context)!.selectYourCountry;
         icon = Icons.public;
         break;
       case 'gender':
-        title = 'Cinsiyet Seç';
-        hint = 'Cinsiyetinizi seçin';
+        title = AppLocalizations.of(context)!.selectGender;
+        hint = AppLocalizations.of(context)!.selectYourGender;
         icon = Icons.person;
         break;
       case 'instagram':
-        title = 'Instagram Hesabı Düzenle';
-        hint = 'Instagram kullanıcı adınızı girin (@ olmadan)';
+        title = AppLocalizations.of(context)!.editInstagram;
+        hint = AppLocalizations.of(context)!.enterInstagram;
         icon = Icons.camera_alt;
         break;
       case 'profession':
-        title = 'Meslek Düzenle';
-        hint = 'Mesleğinizi girin';
+        title = AppLocalizations.of(context)!.editProfession;
+        hint = AppLocalizations.of(context)!.enterProfession;
         icon = Icons.work;
         break;
     }
@@ -910,7 +910,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 await _updateUserInfo(field, controller.text.trim());
               }
             },
-            child: Text('Kaydet'),
+            child: Text(AppLocalizations.of(context)!.save),
           ),
         ],
       ),
@@ -949,14 +949,14 @@ class _ProfileTabState extends State<ProfileTab> {
         await loadUserData();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Bilgi güncellendi'),
+            content: Text(AppLocalizations.of(context)!.infoUpdated),
             backgroundColor: Colors.green,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Güncelleme başarısız'),
+            content: Text(AppLocalizations.of(context)!.updateFailed),
             backgroundColor: Colors.red,
           ),
         );
@@ -1023,7 +1023,7 @@ class _ProfileTabState extends State<ProfileTab> {
     if (photoStats == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${l10n.error}: Could not load photo statistics'),
+          content: Text(l10n.photoStatsLoadError),
           backgroundColor: Colors.red,
         ),
       );
@@ -1078,15 +1078,15 @@ class _ProfileTabState extends State<ProfileTab> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Ülke Seçimi'),
+          title: Text(AppLocalizations.of(context)!.countrySelection),
           content: SizedBox(
             width: double.maxFinite,
             height: 400,
             child: Column(
               children: [
-                const Text(
-                  'Hangi ülkelerden insanların sizin fotoğraflarınızı oylamasını istediğinizi seçin:',
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                Text(
+                  AppLocalizations.of(context)!.countrySelection,
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
                 const SizedBox(height: 16),
                 Expanded(
@@ -1118,14 +1118,14 @@ class _ProfileTabState extends State<ProfileTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('İptal'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               onPressed: () async {
                 Navigator.pop(context);
                 await _updateCountryPreferences(selectedCountries);
               },
-              child: const Text('Kaydet'),
+              child: Text(AppLocalizations.of(context)!.save),
             ),
           ],
         ),
@@ -1143,15 +1143,15 @@ class _ProfileTabState extends State<ProfileTab> {
       if (success) {
         await loadUserData();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('✅ Ülke tercihleri güncellendi'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.countryPreferencesUpdated),
             backgroundColor: Colors.green,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('❌ Ülke tercihleri güncellenemedi'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.countryPreferencesUpdateFailed),
             backgroundColor: Colors.red,
           ),
         );
@@ -1176,15 +1176,15 @@ class _ProfileTabState extends State<ProfileTab> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Yaş Aralığı Seçimi'),
+          title: Text(AppLocalizations.of(context)!.ageRangeSelection),
           content: SizedBox(
             width: double.maxFinite,
             height: 300,
             child: Column(
               children: [
-                const Text(
-                  'Hangi yaş aralığındaki insanların sizin fotoğraflarınızı oylamasını istediğinizi seçin:',
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                Text(
+                  AppLocalizations.of(context)!.ageRangeSelection,
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
                 const SizedBox(height: 16),
                 Expanded(
@@ -1213,19 +1213,19 @@ class _ProfileTabState extends State<ProfileTab> {
               ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('İptal'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.pop(context);
-                await _updateAgeRangePreferences(selectedAgeRanges);
-              },
-              child: const Text('Kaydet'),
-            ),
-          ],
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(AppLocalizations.of(context)!.cancel),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  await _updateAgeRangePreferences(selectedAgeRanges);
+                },
+                child: Text(AppLocalizations.of(context)!.save),
+              ),
+            ],
         ),
       ),
     );
@@ -1241,15 +1241,15 @@ class _ProfileTabState extends State<ProfileTab> {
       if (success) {
         await loadUserData();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('✅ Yaş aralığı tercihleri güncellendi'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.ageRangePreferencesUpdated),
             backgroundColor: Colors.green,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('❌ Yaş aralığı tercihleri güncellenemedi'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.ageRangePreferencesUpdateFailed),
             backgroundColor: Colors.red,
           ),
         );

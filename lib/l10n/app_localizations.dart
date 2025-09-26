@@ -200,7 +200,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Predict {username}\'s win rate'**
-  String predictWinRate(String username);
+  String predictUserWinRate(String username);
 
   /// Correct prediction reward text
   ///
@@ -344,13 +344,13 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'You predicted correctly and earned 1 coin!'**
-  String get correctPredictionMessage;
+  String get correctPredictionWithReward;
 
   /// Wrong prediction message
   ///
   /// In en, this message translates to:
   /// **'Wrong prediction. The actual win rate was {winRate}%'**
-  String wrongPredictionMessage(double winRate);
+  String wrongPredictionWithRate(double winRate);
 
   /// Error label
   ///
@@ -601,7 +601,7 @@ abstract class AppLocalizations {
   /// Match history section title
   ///
   /// In en, this message translates to:
-  /// **'Match History'**
+  /// **'📊 Match History'**
   String get matchHistory;
 
   /// View match history message
@@ -673,7 +673,7 @@ abstract class AppLocalizations {
   /// Spend 5 coins button text
   ///
   /// In en, this message translates to:
-  /// **'Spend 5 coins to view this information'**
+  /// **'Spend 5 Coins'**
   String get spendFiveCoins;
 
   /// Insufficient coins error message
@@ -901,7 +901,7 @@ abstract class AppLocalizations {
   /// Spend 5 coins for history button text
   ///
   /// In en, this message translates to:
-  /// **'Spend 5 Coins'**
+  /// **'Spend 5 coins to see your last 5 matches and opponents'**
   String get spendFiveCoinsForHistory;
 
   /// Wins and matches display
@@ -943,7 +943,7 @@ abstract class AppLocalizations {
   /// Update failed message
   ///
   /// In en, this message translates to:
-  /// **'Update failed!'**
+  /// **'Update failed'**
   String get updateFailed;
 
   /// Image update failed message
@@ -1069,8 +1069,8 @@ abstract class AppLocalizations {
   /// Voting error message
   ///
   /// In en, this message translates to:
-  /// **'Error occurred during voting'**
-  String get votingError;
+  /// **'Error during voting: {error}'**
+  String votingError(Object error);
 
   /// No description provided for @slot.
   ///
@@ -1227,6 +1227,690 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pay'**
   String get pay;
+
+  /// No description provided for @tournamentVotingSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament voting saved!'**
+  String get tournamentVotingSaved;
+
+  /// No description provided for @tournamentVotingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament voting failed!'**
+  String get tournamentVotingFailed;
+
+  /// No description provided for @tournamentVoting.
+  ///
+  /// In en, this message translates to:
+  /// **'TOURNAMENT VOTING'**
+  String get tournamentVoting;
+
+  /// No description provided for @whichTournamentParticipant.
+  ///
+  /// In en, this message translates to:
+  /// **'Which tournament participant do you prefer?'**
+  String get whichTournamentParticipant;
+
+  /// No description provided for @ageYears.
+  ///
+  /// In en, this message translates to:
+  /// **'{age} years • {country}'**
+  String ageYears(Object age, Object country);
+
+  /// No description provided for @clickToOpenInstagram.
+  ///
+  /// In en, this message translates to:
+  /// **'📱 Click to open Instagram'**
+  String get clickToOpenInstagram;
+
+  /// No description provided for @openInstagram.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Instagram'**
+  String get openInstagram;
+
+  /// No description provided for @instagramCannotBeOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Instagram could not be opened. Please check your Instagram app.'**
+  String get instagramCannotBeOpened;
+
+  /// No description provided for @instagramOpenError.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Error opening Instagram: {error}'**
+  String instagramOpenError(Object error);
+
+  /// No description provided for @tournamentPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'🏆 Tournament Photo'**
+  String get tournamentPhoto;
+
+  /// No description provided for @tournamentJoinedUploadPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'You joined the tournament! Now upload your tournament photo.'**
+  String get tournamentJoinedUploadPhoto;
+
+  /// No description provided for @uploadLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Later'**
+  String get uploadLater;
+
+  /// No description provided for @uploadPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Photo'**
+  String get uploadPhoto;
+
+  /// No description provided for @tournamentPhotoUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Tournament photo uploaded!'**
+  String get tournamentPhotoUploaded;
+
+  /// No description provided for @photoUploadError.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Error occurred while uploading photo!'**
+  String get photoUploadError;
+
+  /// No description provided for @noVotingForTournament.
+  ///
+  /// In en, this message translates to:
+  /// **'No voting found for this tournament'**
+  String get noVotingForTournament;
+
+  /// No description provided for @votingLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading voting: {error}'**
+  String votingLoadError(Object error);
+
+  /// No description provided for @tournamentVotingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament Voting'**
+  String get tournamentVotingTitle;
+
+  /// No description provided for @whichParticipantPrefer.
+  ///
+  /// In en, this message translates to:
+  /// **'Which participant do you prefer?'**
+  String get whichParticipantPrefer;
+
+  /// No description provided for @voteSavedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Your vote has been saved successfully!'**
+  String get voteSavedSuccessfully;
+
+  /// No description provided for @noActiveTournament.
+  ///
+  /// In en, this message translates to:
+  /// **'No active tournament currently'**
+  String get noActiveTournament;
+
+  /// No description provided for @registration.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration'**
+  String get registration;
+
+  /// No description provided for @upcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get upcoming;
+
+  /// No description provided for @coinPrize.
+  ///
+  /// In en, this message translates to:
+  /// **'{prize} coin prize'**
+  String coinPrize(Object prize);
+
+  /// No description provided for @startDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Start: {date}'**
+  String startDate(Object date);
+
+  /// No description provided for @completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completed;
+
+  /// No description provided for @join.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get join;
+
+  /// No description provided for @photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get photo;
+
+  /// No description provided for @languageChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Language changed. Refreshing page...'**
+  String get languageChanged;
+
+  /// No description provided for @lightWhiteTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Light white theme'**
+  String get lightWhiteTheme;
+
+  /// No description provided for @neutralDarkGrayTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Neutral dark gray theme'**
+  String get neutralDarkGrayTheme;
+
+  /// No description provided for @themeChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme changed: {theme}'**
+  String themeChanged(Object theme);
+
+  /// No description provided for @deleteAccountWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone! All your data will be permanently deleted.\nAre you sure you want to delete your account?'**
+  String get deleteAccountWarning;
+
+  /// No description provided for @accountDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been deleted'**
+  String get accountDeleted;
+
+  /// No description provided for @logoutButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logoutButton;
+
+  /// No description provided for @themeSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'🎨 Theme Selection'**
+  String get themeSelection;
+
+  /// No description provided for @notificationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'🔔 Notification Settings'**
+  String get notificationSettings;
+
+  /// No description provided for @allNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'All Notifications'**
+  String get allNotifications;
+
+  /// No description provided for @allNotificationsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on/off main notifications'**
+  String get allNotificationsSubtitle;
+
+  /// No description provided for @voteReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Vote Reminder'**
+  String get voteReminder;
+
+  /// No description provided for @winCelebration.
+  ///
+  /// In en, this message translates to:
+  /// **'Win Celebration'**
+  String get winCelebration;
+
+  /// No description provided for @streakReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak Reminder'**
+  String get streakReminder;
+
+  /// No description provided for @streakReminderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily streak reward reminders'**
+  String get streakReminderSubtitle;
+
+  /// No description provided for @moneyAndCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'💰 Money & Coin Transactions'**
+  String get moneyAndCoins;
+
+  /// No description provided for @purchaseCoinPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase Coin Package'**
+  String get purchaseCoinPackage;
+
+  /// No description provided for @purchaseCoinPackageSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy coins and earn rewards'**
+  String get purchaseCoinPackageSubtitle;
+
+  /// No description provided for @appSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'⚙️ App Settings'**
+  String get appSettings;
+
+  /// No description provided for @dailyRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Rewards'**
+  String get dailyRewards;
+
+  /// No description provided for @dailyRewardsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'View streak rewards and boosts'**
+  String get dailyRewardsSubtitle;
+
+  /// No description provided for @aboutApp.
+  ///
+  /// In en, this message translates to:
+  /// **'About App'**
+  String get aboutApp;
+
+  /// No description provided for @accountOperations.
+  ///
+  /// In en, this message translates to:
+  /// **'👤 Account Operations'**
+  String get accountOperations;
+
+  /// No description provided for @dailyStreakRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Streak Rewards'**
+  String get dailyStreakRewards;
+
+  /// No description provided for @dailyStreakDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'🎯 Log in to the app every day and earn bonuses!'**
+  String get dailyStreakDescription;
+
+  /// No description provided for @appDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Voting and tournament app in chat rooms.'**
+  String get appDescription;
+
+  /// No description provided for @predictWinRateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Predict win rate!'**
+  String get predictWinRateTitle;
+
+  /// No description provided for @correctPredictionReward.
+  ///
+  /// In en, this message translates to:
+  /// **'You will earn 1 coin for correct prediction!'**
+  String get correctPredictionReward;
+
+  /// No description provided for @wrongPredictionNoCoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong prediction = 0 coins'**
+  String get wrongPredictionNoCoin;
+
+  /// No description provided for @selectWinRateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Win Rate Range:'**
+  String get selectWinRateRange;
+
+  /// No description provided for @wrongPrediction.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong Prediction'**
+  String get wrongPrediction;
+
+  /// No description provided for @correctPredictionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You predicted correctly!'**
+  String get correctPredictionMessage;
+
+  /// No description provided for @wrongPredictionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfortunately, you predicted incorrectly.'**
+  String get wrongPredictionMessage;
+
+  /// No description provided for @actualRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Actual rate: {rate}%'**
+  String actualRate(Object rate);
+
+  /// No description provided for @earnedOneCoin.
+  ///
+  /// In en, this message translates to:
+  /// **'+1 coin earned!'**
+  String get earnedOneCoin;
+
+  /// No description provided for @myPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'My Photos ({count}/5)'**
+  String myPhotos(Object count);
+
+  /// No description provided for @photoCostInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'First photo is free, others cost coins. You can view statistics for all photos.'**
+  String get photoCostInfo;
+
+  /// No description provided for @addAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Age'**
+  String get addAge;
+
+  /// No description provided for @addCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Country'**
+  String get addCountry;
+
+  /// No description provided for @addGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Gender'**
+  String get addGender;
+
+  /// No description provided for @countrySelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Country Selection'**
+  String get countrySelection;
+
+  /// No description provided for @countriesSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} countries selected'**
+  String countriesSelected(Object count);
+
+  /// No description provided for @allCountriesSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'All countries selected'**
+  String get allCountriesSelected;
+
+  /// No description provided for @ageRangeSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Age Range Selection'**
+  String get ageRangeSelection;
+
+  /// No description provided for @ageRangesSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} age ranges selected'**
+  String ageRangesSelected(Object count);
+
+  /// No description provided for @allAgeRangesSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'All age ranges selected'**
+  String get allAgeRangesSelected;
+
+  /// No description provided for @editUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Username'**
+  String get editUsername;
+
+  /// No description provided for @enterUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your username'**
+  String get enterUsername;
+
+  /// No description provided for @editAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Age'**
+  String get editAge;
+
+  /// No description provided for @enterAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your age'**
+  String get enterAge;
+
+  /// No description provided for @selectCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Country'**
+  String get selectCountry;
+
+  /// No description provided for @selectYourCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your country'**
+  String get selectYourCountry;
+
+  /// No description provided for @selectGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Gender'**
+  String get selectGender;
+
+  /// No description provided for @selectYourGender.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your gender'**
+  String get selectYourGender;
+
+  /// No description provided for @editInstagram.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Instagram Account'**
+  String get editInstagram;
+
+  /// No description provided for @enterInstagram.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your Instagram username (without @)'**
+  String get enterInstagram;
+
+  /// No description provided for @editProfession.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profession'**
+  String get editProfession;
+
+  /// No description provided for @enterProfession.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your profession'**
+  String get enterProfession;
+
+  /// No description provided for @infoUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Information updated'**
+  String get infoUpdated;
+
+  /// No description provided for @countryPreferencesUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Country preferences updated'**
+  String get countryPreferencesUpdated;
+
+  /// No description provided for @countryPreferencesUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Country preferences could not be updated'**
+  String get countryPreferencesUpdateFailed;
+
+  /// No description provided for @ageRangePreferencesUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Age range preferences updated'**
+  String get ageRangePreferencesUpdated;
+
+  /// No description provided for @ageRangePreferencesUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Age range preferences could not be updated'**
+  String get ageRangePreferencesUpdateFailed;
+
+  /// No description provided for @winRateAndMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'{winRate} win rate • {matches} matches'**
+  String winRateAndMatches(Object matches, Object winRate);
+
+  /// No description provided for @mostWins.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Wins'**
+  String get mostWins;
+
+  /// No description provided for @highestWinRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest Win Rate'**
+  String get highestWinRate;
+
+  /// No description provided for @noWinsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No wins yet!\nPlay your first match and enter the leaderboard!'**
+  String get noWinsYet;
+
+  /// No description provided for @noWinRateYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No win rate yet!\nPlay matches to increase your win rate!'**
+  String get noWinRateYet;
+
+  /// No description provided for @matchHistoryViewing.
+  ///
+  /// In en, this message translates to:
+  /// **'Match history viewing'**
+  String get matchHistoryViewing;
+
+  /// No description provided for @winRateColon.
+  ///
+  /// In en, this message translates to:
+  /// **'Win Rate: {winRate}'**
+  String winRateColon(Object winRate);
+
+  /// No description provided for @matchesAndWins.
+  ///
+  /// In en, this message translates to:
+  /// **'{matches} matches • {wins} wins'**
+  String matchesAndWins(Object matches, Object wins);
+
+  /// No description provided for @youWon.
+  ///
+  /// In en, this message translates to:
+  /// **'You Won'**
+  String get youWon;
+
+  /// No description provided for @youLost.
+  ///
+  /// In en, this message translates to:
+  /// **'You Lost'**
+  String get youLost;
+
+  /// No description provided for @lastFiveMatchStats.
+  ///
+  /// In en, this message translates to:
+  /// **'📊 Last 5 Match Statistics'**
+  String get lastFiveMatchStats;
+
+  /// No description provided for @noMatchHistoryYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No match history yet!\nPlay your first match!'**
+  String get noMatchHistoryYet;
+
+  /// No description provided for @premiumFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'🔒 Premium Feature'**
+  String get premiumFeature;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @leaderboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'🏆 Leaderboard'**
+  String get leaderboardTitle;
+
+  /// No description provided for @day1_2Reward.
+  ///
+  /// In en, this message translates to:
+  /// **'Day 1-2: 10-25 Coin'**
+  String get day1_2Reward;
+
+  /// No description provided for @day3_6Reward.
+  ///
+  /// In en, this message translates to:
+  /// **'Day 3-6: 50-100 Coin'**
+  String get day3_6Reward;
+
+  /// No description provided for @day7PlusReward.
+  ///
+  /// In en, this message translates to:
+  /// **'Day 7+: 200+ Coin & Boost'**
+  String get day7PlusReward;
+
+  /// No description provided for @photoStatsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load photo statistics'**
+  String get photoStatsLoadError;
+
+  /// No description provided for @tournamentNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament Notifications'**
+  String get tournamentNotifications;
+
+  /// No description provided for @newTournamentInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'New tournament invitations'**
+  String get newTournamentInvitations;
+
+  /// No description provided for @victoryNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Victory notifications'**
+  String get victoryNotifications;
+
+  /// No description provided for @vote.
+  ///
+  /// In en, this message translates to:
+  /// **'Vote'**
+  String get vote;
 }
 
 class _AppLocalizationsDelegate

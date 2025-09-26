@@ -4,6 +4,8 @@ import 'login_screen.dart';
 import '../utils/constants.dart';
 import '../utils/error_handler.dart';
 import '../l10n/app_localizations.dart';
+import '../widgets/compact_language_selector.dart';
+import '../services/language_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -117,7 +119,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final l10n = AppLocalizations.of(context)!;
     
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.register)),
+      appBar: AppBar(
+        title: Text(l10n.register),
+        actions: [
+          CompactLanguageSelector(
+            onLanguageChanged: (locale) async {
+              await LanguageService.saveUserLanguagePreference(locale);
+              setState(() {});
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

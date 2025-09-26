@@ -57,8 +57,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get whichDoYouPrefer => 'Hangisini daha çok beğeniyorsunuz?';
 
   @override
-  String predictWinRate(String username) {
-    return '$username kazanma oranını tahmin et';
+  String predictUserWinRate(String username) {
+    return 'Predict $username\'s win rate';
   }
 
   @override
@@ -133,12 +133,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get congratulations => 'Tebrikler!';
 
   @override
-  String get correctPredictionMessage =>
-      'Doğru tahmin ettin ve 1 coin kazandın!';
+  String get correctPredictionWithReward =>
+      'You predicted correctly and earned 1 coin!';
 
   @override
-  String wrongPredictionMessage(double winRate) {
-    return 'Yanlış tahmin. Gerçek kazanma oranı %$winRate idi';
+  String wrongPredictionWithRate(double winRate) {
+    return 'Wrong prediction. The actual win rate was $winRate%';
   }
 
   @override
@@ -281,7 +281,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get predictionStatistics => 'Tahmin İstatistikleri';
 
   @override
-  String get matchHistory => 'Match Geçmişi';
+  String get matchHistory => '📊 Match Geçmişi';
 
   @override
   String get viewLastFiveMatches =>
@@ -326,7 +326,7 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get spendFiveCoins => 'Bu bilgiyi görmek için 5 coin harcayacaksın';
+  String get spendFiveCoins => '5 Coin Harca';
 
   @override
   String get insufficientCoins => '❌ Yeterli coin yok!';
@@ -389,7 +389,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get logoutConfirmation =>
-      'Hesabınızdan çıkış yapmak istediğinizden emin misiniz?';
+      'Hesabınızdan çıkmak istediğinizden emin misiniz?';
 
   @override
   String logoutError(String error) {
@@ -455,7 +455,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get insufficientCoinsForHistory => '❌ Yeterli coin yok!';
 
   @override
-  String get spendFiveCoinsForHistory => '5 Coin Harca';
+  String get spendFiveCoinsForHistory =>
+      'Son 5 matchinizi ve rakiplerinizi görmek için 5 coin harcayın';
 
   @override
   String winsAndMatches(int wins, int matches) {
@@ -478,7 +479,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get imageUpdated => 'Resim güncellendi!';
 
   @override
-  String get updateFailed => 'Güncelleme başarısız!';
+  String get updateFailed => 'Güncelleme başarısız';
 
   @override
   String get imageUpdateFailed => 'Resim güncellenemedi!';
@@ -520,7 +521,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get logoutSubtitle => 'Hesabınızdan güvenli çıkış';
 
   @override
-  String get deleteAccountSubtitle => 'Hesabınızı kalıcı olarak silin';
+  String get deleteAccountSubtitle => 'Hesabınızı kalıcı olarak sil';
 
   @override
   String get updateProfile => 'Profili Güncelle';
@@ -542,7 +543,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get emailNotFound => 'E-posta adresi bulunamadı!';
 
   @override
-  String get votingError => 'Oylama sırasında hata oluştu';
+  String votingError(Object error) {
+    return 'Oylama sırasında hata: $error';
+  }
 
   @override
   String slot(Object slot) {
@@ -629,4 +632,387 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get pay => 'Öde';
+
+  @override
+  String get tournamentVotingSaved => '🏆 Turnuva oylaması kaydedildi!';
+
+  @override
+  String get tournamentVotingFailed => '❌ Turnuva oylaması kaydedilemedi!';
+
+  @override
+  String get tournamentVoting => '🏆 TURNUVA OYLAMASI';
+
+  @override
+  String get whichTournamentParticipant =>
+      'Hangi turnuva katılımcısını tercih ediyorsunuz?';
+
+  @override
+  String ageYears(Object age, Object country) {
+    return '$age yaş • $country';
+  }
+
+  @override
+  String get clickToOpenInstagram => '📱 Instagram\'ı açmak için tıklayın';
+
+  @override
+  String get openInstagram => 'Instagram\'ı Aç';
+
+  @override
+  String get instagramCannotBeOpened =>
+      '❌ Instagram açılamadı. Lütfen Instagram uygulamasını kontrol edin.';
+
+  @override
+  String instagramOpenError(Object error) {
+    return '❌ Instagram açılırken hata oluştu: $error';
+  }
+
+  @override
+  String get tournamentPhoto => '🏆 Turnuva Fotoğrafı';
+
+  @override
+  String get tournamentJoinedUploadPhoto =>
+      'Turnuvaya katıldınız! Şimdi turnuva fotoğrafınızı yükleyin.';
+
+  @override
+  String get uploadLater => 'Sonra Yükle';
+
+  @override
+  String get uploadPhoto => 'Fotoğraf Yükle';
+
+  @override
+  String get tournamentPhotoUploaded => '✅ Turnuva fotoğrafı yüklendi!';
+
+  @override
+  String get photoUploadError => '❌ Fotoğraf yüklenirken hata oluştu!';
+
+  @override
+  String get noVotingForTournament => 'Bu turnuva için oylama bulunamadı';
+
+  @override
+  String votingLoadError(Object error) {
+    return 'Oylama yüklenirken hata: $error';
+  }
+
+  @override
+  String get tournamentVotingTitle => 'Turnuva Oylaması';
+
+  @override
+  String get whichParticipantPrefer => 'Hangi katılımcıyı tercih ediyorsunuz?';
+
+  @override
+  String get voteSavedSuccessfully => 'Oyunuz başarıyla kaydedildi!';
+
+  @override
+  String get noActiveTournament => 'Şu anda aktif turnuva bulunmuyor';
+
+  @override
+  String get registration => 'Kayıt';
+
+  @override
+  String get upcoming => 'Yaklaşıyor';
+
+  @override
+  String coinPrize(Object prize) {
+    return '$prize coin ödül';
+  }
+
+  @override
+  String startDate(Object date) {
+    return 'Başlangıç: $date';
+  }
+
+  @override
+  String get completed => 'Tamamlandı';
+
+  @override
+  String get join => 'Katıl';
+
+  @override
+  String get photo => 'Fotoğraf';
+
+  @override
+  String get languageChanged => 'Dil değiştirildi. Sayfa yenileniyor...';
+
+  @override
+  String get lightWhiteTheme => 'Açık beyaz tema';
+
+  @override
+  String get neutralDarkGrayTheme => 'Nötr koyu gri tema';
+
+  @override
+  String themeChanged(Object theme) {
+    return 'Tema değiştirildi: $theme';
+  }
+
+  @override
+  String get deleteAccountWarning =>
+      'Bu işlem geri alınamaz! Tüm verileriniz kalıcı olarak silinecek.\nHesabınızı silmek istediğinizden emin misiniz?';
+
+  @override
+  String get accountDeleted => 'Hesabınız silindi';
+
+  @override
+  String get logoutButton => 'Çıkış';
+
+  @override
+  String get themeSelection => '🎨 Tema Seçimi';
+
+  @override
+  String get notificationSettings => '🔔 Bildirim Ayarları';
+
+  @override
+  String get allNotifications => 'Tüm Bildirimler';
+
+  @override
+  String get allNotificationsSubtitle => 'Ana bildirimleri aç/kapat';
+
+  @override
+  String get voteReminder => 'Oylama Hatırlatması';
+
+  @override
+  String get winCelebration => 'Kazanç Kutlaması';
+
+  @override
+  String get streakReminder => 'Seri Hatırlatması';
+
+  @override
+  String get streakReminderSubtitle => 'Günlük seri ödülleri hatırlatması';
+
+  @override
+  String get moneyAndCoins => '💰 Para & Coin İşlemleri';
+
+  @override
+  String get purchaseCoinPackage => 'Coin Paketi Satın Al';
+
+  @override
+  String get purchaseCoinPackageSubtitle =>
+      'Coin satın alın ve ödüller kazanın';
+
+  @override
+  String get appSettings => '⚙️ Uygulama Ayarları';
+
+  @override
+  String get dailyRewards => 'Günlük Ödüller';
+
+  @override
+  String get dailyRewardsSubtitle => 'Seri ödülleri ve boost\'ları görün';
+
+  @override
+  String get aboutApp => 'Uygulama Hakkında';
+
+  @override
+  String get accountOperations => '👤 Hesap İşlemleri';
+
+  @override
+  String get dailyStreakRewards => 'Günlük Seri Ödülleri';
+
+  @override
+  String get dailyStreakDescription =>
+      '🎯 Her gün uygulamaya girin ve bonuslar kazanın!';
+
+  @override
+  String get appDescription =>
+      'Sohbet odalarında oylama ve turnuva uygulaması.';
+
+  @override
+  String get predictWinRateTitle => 'Kazanma oranını tahmin et!';
+
+  @override
+  String get correctPredictionReward =>
+      'Doğru tahmin ettiğinde 1 coin kazanacaksın!';
+
+  @override
+  String get wrongPredictionNoCoin => 'Yanlış tahmin = 0 coin';
+
+  @override
+  String get selectWinRateRange => 'Kazanma Oranı Aralığı Seç:';
+
+  @override
+  String get wrongPrediction => 'Yanlış Tahmin';
+
+  @override
+  String get correctPredictionMessage => 'Doğru tahmin ettin!';
+
+  @override
+  String get wrongPredictionMessage => 'Maalesef yanlış tahmin ettin.';
+
+  @override
+  String actualRate(Object rate) {
+    return 'Gerçek oran: $rate%';
+  }
+
+  @override
+  String get earnedOneCoin => '+1 coin kazandın!';
+
+  @override
+  String myPhotos(Object count) {
+    return 'Fotoğraflarım ($count/5)';
+  }
+
+  @override
+  String get photoCostInfo =>
+      'İlk fotoğraf ücretsiz, diğerleri coin ile alınır. Tüm fotoğrafların istatistiklerini görebilirsiniz.';
+
+  @override
+  String get addAge => 'Yaş Ekle';
+
+  @override
+  String get addCountry => 'Ülke Ekle';
+
+  @override
+  String get addGender => 'Cinsiyet Ekle';
+
+  @override
+  String get countrySelection => 'Ülke Seçimi';
+
+  @override
+  String countriesSelected(Object count) {
+    return '$count ülke seçili';
+  }
+
+  @override
+  String get allCountriesSelected => 'Tüm ülkeler seçili';
+
+  @override
+  String get ageRangeSelection => 'Yaş Aralığı Seçimi';
+
+  @override
+  String ageRangesSelected(Object count) {
+    return '$count yaş aralığı seçili';
+  }
+
+  @override
+  String get allAgeRangesSelected => 'Tüm yaş aralıkları seçili';
+
+  @override
+  String get editUsername => 'Kullanıcı Adı Düzenle';
+
+  @override
+  String get enterUsername => 'Kullanıcı adınızı girin';
+
+  @override
+  String get editAge => 'Yaş Düzenle';
+
+  @override
+  String get enterAge => 'Yaşınızı girin';
+
+  @override
+  String get selectCountry => 'Ülke Seç';
+
+  @override
+  String get selectYourCountry => 'Ülkenizi seçin';
+
+  @override
+  String get selectGender => 'Cinsiyet Seç';
+
+  @override
+  String get selectYourGender => 'Cinsiyetinizi seçin';
+
+  @override
+  String get editInstagram => 'Instagram Hesabı Düzenle';
+
+  @override
+  String get enterInstagram => 'Instagram kullanıcı adınızı girin (@ olmadan)';
+
+  @override
+  String get editProfession => 'Meslek Düzenle';
+
+  @override
+  String get enterProfession => 'Mesleğinizi girin';
+
+  @override
+  String get infoUpdated => 'Bilgi güncellendi';
+
+  @override
+  String get countryPreferencesUpdated => '✅ Ülke tercihleri güncellendi';
+
+  @override
+  String get countryPreferencesUpdateFailed =>
+      '❌ Ülke tercihleri güncellenemedi';
+
+  @override
+  String get ageRangePreferencesUpdated =>
+      '✅ Yaş aralığı tercihleri güncellendi';
+
+  @override
+  String get ageRangePreferencesUpdateFailed =>
+      '❌ Yaş aralığı tercihleri güncellenemedi';
+
+  @override
+  String winRateAndMatches(Object matches, Object winRate) {
+    return '$winRate kazanma oranı • $matches maç';
+  }
+
+  @override
+  String get mostWins => 'En Çok Galibiyet';
+
+  @override
+  String get highestWinRate => 'En Yüksek Kazanma Oranı';
+
+  @override
+  String get noWinsYet =>
+      'Henüz galibiyet yok!\nİlk maçını yap ve liderlik tablosuna gir!';
+
+  @override
+  String get noWinRateYet =>
+      'Henüz kazanma oranı yok!\nMaç yaparak kazanma oranını artır!';
+
+  @override
+  String get matchHistoryViewing => 'Match geçmişi görüntüleme';
+
+  @override
+  String winRateColon(Object winRate) {
+    return 'Kazanma Oranı: $winRate';
+  }
+
+  @override
+  String matchesAndWins(Object matches, Object wins) {
+    return '$matches maç • $wins galibiyet';
+  }
+
+  @override
+  String get youWon => 'Kazandın';
+
+  @override
+  String get youLost => 'Kaybettin';
+
+  @override
+  String get lastFiveMatchStats => '📊 Son 5 Match İstatistikleri';
+
+  @override
+  String get noMatchHistoryYet =>
+      'Henüz match geçmişiniz yok!\nİlk matchinizi yapın!';
+
+  @override
+  String get premiumFeature => '🔒 Premium Özellik';
+
+  @override
+  String get save => 'Kaydet';
+
+  @override
+  String get leaderboardTitle => '🏆 Liderlik Tablosu';
+
+  @override
+  String get day1_2Reward => 'Gün 1-2: 10-25 Coin';
+
+  @override
+  String get day3_6Reward => 'Gün 3-6: 50-100 Coin';
+
+  @override
+  String get day7PlusReward => 'Gün 7+: 200+ Coin & Boost';
+
+  @override
+  String get photoStatsLoadError => 'Fotoğraf istatistikleri yüklenemedi';
+
+  @override
+  String get tournamentNotifications => 'Turnuva Bildirimleri';
+
+  @override
+  String get newTournamentInvitations => 'Yeni turnuva davetleri';
+
+  @override
+  String get victoryNotifications => 'Zafer bildirimleri';
+
+  @override
+  String get vote => 'Oyla';
 }

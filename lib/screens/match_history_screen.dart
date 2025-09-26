@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/match_history_service.dart';
 import '../services/user_service.dart';
+import '../l10n/app_localizations.dart';
 
 class MatchHistoryScreen extends StatefulWidget {
   const MatchHistoryScreen({super.key});
@@ -50,7 +51,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
   Future<void> _purchaseMatchHistory() async {
     try {
       // 5 coin harca
-      final success = await UserService.updateCoins(-5, 'spent', 'Match geçmişi görüntüleme');
+      final success = await UserService.updateCoins(-5, 'spent', AppLocalizations.of(context)!.matchHistoryViewing);
       
       if (success) {
         setState(() {
@@ -58,22 +59,22 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
         });
         
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('✅ 5 coin harcandı! Match geçmişiniz görüntüleniyor.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.fiveCoinsSpentForHistory),
             backgroundColor: Colors.green,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('❌ Yeterli coin yok!'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.insufficientCoins),
             backgroundColor: Colors.red,
           ),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hata: $e')),
+        SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
     }
   }
@@ -167,14 +168,14 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Kazanma Oranı: ${opponent.winRateString}',
+                      AppLocalizations.of(context)!.winRateColon(opponent.winRateString),
                       style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 14,
                       ),
                     ),
                     Text(
-                      '${opponent.totalMatches} maç • ${opponent.wins} galibiyet',
+                      AppLocalizations.of(context)!.matchesAndWins(opponent.totalMatches, opponent.wins),
                       style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 12,
@@ -252,14 +253,14 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Kazanma Oranı: ${opponent.winRateString}',
+                    AppLocalizations.of(context)!.winRateColon(opponent.winRateString),
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[600],
                     ),
                   ),
                   Text(
-                    '${opponent.totalMatches} maç • ${opponent.wins} galibiyet',
+                    AppLocalizations.of(context)!.matchesAndWins(opponent.totalMatches, opponent.wins),
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey[500],
@@ -279,7 +280,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  isWinner ? 'Kazandın' : 'Kaybettin',
+                  isWinner ? AppLocalizations.of(context)!.youWon : AppLocalizations.of(context)!.youLost,
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -309,9 +310,9 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '📊 Son 5 Match İstatistikleri',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.lastFiveMatchStats,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -380,7 +381,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('📊 Match Geçmişi'),
+        title: Text(AppLocalizations.of(context)!.matchHistory),
         backgroundColor: Colors.blue[600],
         foregroundColor: Colors.white,
       ),
@@ -405,13 +406,13 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                       ),
                       const SizedBox(height: 8),
                       if (matchHistory.isEmpty)
-                        const Padding(
-                          padding: EdgeInsets.all(32),
+                        Padding(
+                          padding: const EdgeInsets.all(32),
                           child: Center(
                             child: Text(
-                              'Henüz match geçmişiniz yok!\nİlk matchinizi yapın!',
+                              AppLocalizations.of(context)!.noMatchHistoryYet,
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.grey,
                               ),
@@ -435,16 +436,16 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                           color: Colors.grey[400],
                         ),
                         const SizedBox(height: 24),
-                        const Text(
-                          '🔒 Premium Özellik',
-                          style: TextStyle(
+                        Text(
+                          AppLocalizations.of(context)!.premiumFeature,
+                          style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 16),
-                        const Text(
-                          'Son 5 matchinizi ve rakiplerinizi görmek için 5 coin harcayın',
+                        Text(
+                          AppLocalizations.of(context)!.spendFiveCoinsForHistory,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 16,
@@ -455,7 +456,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                         ElevatedButton.icon(
                           onPressed: _purchaseMatchHistory,
                           icon: const Icon(Icons.monetization_on),
-                          label: const Text('5 Coin Harca'),
+                          label: Text(AppLocalizations.of(context)!.spendFiveCoins),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.amber,
                             foregroundColor: Colors.white,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/leaderboard_service.dart';
+import '../l10n/app_localizations.dart';
 
 class LeaderboardTab extends StatefulWidget {
   const LeaderboardTab({super.key});
@@ -75,7 +76,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
         ),
         subtitle: subtitle != null 
           ? Text(subtitle)
-          : Text('${user.wins} galibiyet • ${user.totalMatches} maç'),
+          : Text(AppLocalizations.of(context)!.winsAndMatches(user.wins, user.totalMatches)),
         trailing: user.matchPhotos != null && user.matchPhotos!.isNotEmpty
           ? CircleAvatar(
               radius: 20,
@@ -147,7 +148,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
             subtitle = '${user.wins} galibiyet';
           } else {
             // Kazanma oranı
-            subtitle = '${user.winRateString} kazanma oranı • ${user.totalMatches} maç';
+            subtitle = AppLocalizations.of(context)!.winRateAndMatches(user.winRateString, user.totalMatches);
           }
 
           return _buildUserCard(user, rank, subtitle: subtitle);
@@ -161,12 +162,12 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🏆 Liderlik Tablosu'),
+        title: Text(AppLocalizations.of(context)!.leaderboardTitle),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(text: 'En Çok Galibiyet'),
-            Tab(text: 'En Yüksek Kazanma Oranı'),
+          tabs: [
+            Tab(text: AppLocalizations.of(context)!.mostWins),
+            Tab(text: AppLocalizations.of(context)!.highestWinRate),
           ],
         ),
         actions: [
@@ -181,11 +182,11 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
         children: [
           _buildLeaderboardList(
             _topWinners,
-            'Henüz galibiyet yok!\nİlk maçını yap ve liderlik tablosuna gir!',
+            AppLocalizations.of(context)!.noWinsYet,
           ),
           _buildLeaderboardList(
             _topWinRate,
-            'Henüz kazanma oranı yok!\nMaç yaparak kazanma oranını artır!',
+            AppLocalizations.of(context)!.noWinRateYet,
           ),
         ],
       ),

@@ -8,8 +8,8 @@ import '../services/match_service.dart';
 import '../services/user_service.dart';
 import '../services/prediction_service.dart';
 import '../services/photo_upload_service.dart';
-import '../services/tournament_service.dart';
 import '../l10n/app_localizations.dart';
+import '../services/tournament_service.dart';
 
 class VotingTab extends StatefulWidget {
   final VoidCallback? onVoteCompleted;
@@ -108,16 +108,16 @@ class _VotingTabState extends State<VotingTab> {
       
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('🏆 Turnuva oylaması kaydedildi!'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.tournamentVotingSaved),
             backgroundColor: Colors.purple,
           ),
         );
         _nextMatch();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('❌ Turnuva oylaması kaydedilemedi!'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.tournamentVotingFailed),
             backgroundColor: Colors.red,
           ),
         );
@@ -146,7 +146,7 @@ class _VotingTabState extends State<VotingTab> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.votingError)),
+        SnackBar(content: Text(AppLocalizations.of(context)!.votingError(''))),
       );
     }
   }
@@ -344,9 +344,9 @@ class _VotingTabState extends State<VotingTab> {
             color: Colors.purple,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: const Text(
-            '🏆 TURNUVA OYLAMASI',
-            style: TextStyle(
+          child: Text(
+            AppLocalizations.of(context)!.tournamentVoting,
+            style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -356,7 +356,7 @@ class _VotingTabState extends State<VotingTab> {
         const SizedBox(height: 20),
         
         Text(
-          'Hangi turnuva katılımcısını tercih ediyorsunuz?',
+          AppLocalizations.of(context)!.whichTournamentParticipant,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w500,
@@ -408,7 +408,7 @@ class _VotingTabState extends State<VotingTab> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '${user1['age']} yaş • ${user1['country']}',
+                                AppLocalizations.of(context)!.ageYears(user1['age'], user1['country']),
                                 style: TextStyle(
                                   color: Colors.grey[600],
                                   fontSize: 12,
@@ -466,7 +466,7 @@ class _VotingTabState extends State<VotingTab> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '${user2['age']} yaş • ${user2['country']}',
+                                AppLocalizations.of(context)!.ageYears(user2['age'], user2['country']),
                                 style: TextStyle(
                                   color: Colors.grey[600],
                                   fontSize: 12,
@@ -705,7 +705,7 @@ class _VotingTabState extends State<VotingTab> {
             const SizedBox(height: 20),
             
             Text(
-              '${currentMatchIndex + 1} / ${matches.length}',
+              AppLocalizations.of(context)!.matchCounter(currentMatchIndex + 1, matches.length),
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[600],
@@ -879,15 +879,15 @@ class _VotingTabState extends State<VotingTab> {
   Future<void> _purchasePremiumInfo(String info, String type) async {
     try {
       // 5 coin harca
-      final success = await UserService.updateCoins(-5, 'spent', '$type bilgisi görüntüleme');
+      final success = await UserService.updateCoins(-5, 'spent', AppLocalizations.of(context)!.matchHistoryViewing);
       
       if (success) {
         // Bilgiyi göster
         _showPremiumInfoResult(info, type);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('❌ Yeterli coin yok!'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.insufficientCoins),
             backgroundColor: Colors.red,
           ),
         );
@@ -938,7 +938,7 @@ class _VotingTabState extends State<VotingTab> {
             ),
             const SizedBox(height: 16),
             Text(
-              '✅ 5 coin harcandı',
+              AppLocalizations.of(context)!.fiveCoinsSpent,
               style: TextStyle(
                 color: Colors.green[600],
                 fontWeight: FontWeight.bold,
@@ -947,7 +947,7 @@ class _VotingTabState extends State<VotingTab> {
             if (type == AppLocalizations.of(context)!.instagramAccount) ...[
               const SizedBox(height: 8),
               Text(
-                '📱 Instagram\'ı açmak için tıklayın',
+                AppLocalizations.of(context)!.clickToOpenInstagram,
                 style: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 12,
@@ -961,7 +961,7 @@ class _VotingTabState extends State<VotingTab> {
             ElevatedButton.icon(
               onPressed: () => _openInstagramProfile(info),
               icon: const Icon(Icons.camera_alt),
-              label: const Text('Instagram\'ı Aç'),
+              label: Text(AppLocalizations.of(context)!.openInstagram),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.pink,
                 foregroundColor: Colors.white,
@@ -1006,8 +1006,8 @@ class _VotingTabState extends State<VotingTab> {
           await launchUrl(webUrl, mode: LaunchMode.externalApplication);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('❌ Instagram açılamadı. Lütfen Instagram uygulamasını kontrol edin.'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.instagramCannotBeOpened),
               backgroundColor: Colors.red,
             ),
           );
@@ -1016,7 +1016,7 @@ class _VotingTabState extends State<VotingTab> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('❌ Instagram açılırken hata oluştu: $e'),
+          content: Text(AppLocalizations.of(context)!.instagramOpenError(e.toString())),
           backgroundColor: Colors.red,
         ),
       );

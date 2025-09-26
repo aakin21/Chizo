@@ -66,14 +66,14 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(
+      return Scaffold(
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text('Yükleniyor...'),
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(AppLocalizations.of(context)!.loading),
             ],
           ),
         ),
@@ -81,8 +81,8 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
     }
 
     if (currentUser == null) {
-      return const Scaffold(
-        body: Center(child: Text('Kullanıcı bilgisi yüklenemedi')),
+      return Scaffold(
+        body: Center(child: Text(AppLocalizations.of(context)!.userInfoNotLoaded)),
       );
     }
 

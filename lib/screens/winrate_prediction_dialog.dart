@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/prediction_service.dart';
+import '../l10n/app_localizations.dart';
 
 class WinRatePredictionDialog extends StatefulWidget {
   final UserModel winner;
@@ -70,7 +71,7 @@ class _WinRatePredictionDialogState extends State<WinRatePredictionDialog> {
                         ),
                       ),
                       Text(
-                        'Kazanma oranını tahmin et!',
+                        AppLocalizations.of(context)!.predictWinRateTitle,
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],
@@ -96,9 +97,9 @@ class _WinRatePredictionDialogState extends State<WinRatePredictionDialog> {
                 children: [
                   const Icon(Icons.lightbulb, color: Colors.blue, size: 32),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Doğru tahmin ettiğinde 1 coin kazanacaksın!',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.correctPredictionReward,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.blue,
@@ -107,7 +108,7 @@ class _WinRatePredictionDialogState extends State<WinRatePredictionDialog> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Yanlış tahmin = 0 coin',
+                    AppLocalizations.of(context)!.wrongPredictionNoCoin,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[600],
@@ -120,9 +121,9 @@ class _WinRatePredictionDialogState extends State<WinRatePredictionDialog> {
             const SizedBox(height: 24),
             
             // Win rate aralıkları
-            const Text(
-              'Kazanma Oranı Aralığı Seç:',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.selectWinRateRange,
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -182,7 +183,7 @@ class _WinRatePredictionDialogState extends State<WinRatePredictionDialog> {
                     onPressed: isSubmitting ? null : () {
                       Navigator.pop(context);
                     },
-                    child: const Text('İptal'),
+                    child: Text(AppLocalizations.of(context)!.cancel),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -252,7 +253,7 @@ class _WinRatePredictionDialogState extends State<WinRatePredictionDialog> {
       
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hata: $e')),
+        SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
     } finally {
       setState(() {
@@ -282,7 +283,7 @@ class _WinRatePredictionDialogState extends State<WinRatePredictionDialog> {
             
             // Başlık
             Text(
-              isCorrect ? 'Tebrikler!' : 'Yanlış Tahmin',
+              isCorrect ? AppLocalizations.of(context)!.congratulations : AppLocalizations.of(context)!.wrongPrediction,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -295,8 +296,8 @@ class _WinRatePredictionDialogState extends State<WinRatePredictionDialog> {
             // Açıklama
             Text(
               isCorrect 
-                  ? 'Doğru tahmin ettin!'
-                  : 'Maalesef yanlış tahmin ettin.',
+                  ? AppLocalizations.of(context)!.correctPredictionMessage
+                  : AppLocalizations.of(context)!.wrongPredictionMessage,
               style: const TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
@@ -318,7 +319,7 @@ class _WinRatePredictionDialogState extends State<WinRatePredictionDialog> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Gerçek oran: ${actualWinRate.toStringAsFixed(1)}%',
+                    AppLocalizations.of(context)!.actualRate(actualWinRate),
                     style: const TextStyle(fontSize: 14),
                   ),
                   const SizedBox(height: 8),
@@ -330,7 +331,7 @@ class _WinRatePredictionDialogState extends State<WinRatePredictionDialog> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        '+1 coin kazandın!',
+                        AppLocalizations.of(context)!.earnedOneCoin,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -353,7 +354,7 @@ class _WinRatePredictionDialogState extends State<WinRatePredictionDialog> {
               backgroundColor: isCorrect ? Colors.green : Colors.grey,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Tamam'),
+            child: Text(AppLocalizations.of(context)!.ok),
           ),
         ],
       ),

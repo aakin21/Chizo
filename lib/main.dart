@@ -31,14 +31,14 @@ class AuthWrapper extends StatelessWidget {
       stream: Supabase.instance.client.auth.onAuthStateChange,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
+          return Scaffold(
             body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Yükleniyor...', style: TextStyle(fontSize: 16)),
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  Text(AppLocalizations.of(context)!.loading, style: const TextStyle(fontSize: 16)),
                 ],
               ),
             ),
@@ -68,6 +68,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Locale _currentLocale = const Locale('tr', 'TR');
+  Key _appKey = UniqueKey();
 
   @override
   void initState() {
@@ -82,15 +83,18 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void changeLanguage(Locale locale) {
+  void changeLanguage(Locale locale) async {
+    await LanguageService.setLanguage(locale);
     setState(() {
       _currentLocale = locale;
+      _appKey = UniqueKey(); // Force complete rebuild
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      key: _appKey,
       title: 'Chizo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

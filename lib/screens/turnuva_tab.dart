@@ -38,7 +38,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     } catch (e) {
       setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hata: $e')),
+        SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
     }
   }
@@ -76,19 +76,19 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('🏆 Turnuva Fotoğrafı'),
-        content: const Text('Turnuvaya katıldınız! Şimdi turnuva fotoğrafınızı yükleyin.'),
+        title: Text(AppLocalizations.of(context)!.tournamentPhoto),
+        content: Text(AppLocalizations.of(context)!.tournamentJoinedUploadPhoto),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Sonra Yükle'),
+            child: Text(AppLocalizations.of(context)!.uploadLater),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               _uploadTournamentPhoto(tournamentId);
             },
-            child: const Text('Fotoğraf Yükle'),
+            child: Text(AppLocalizations.of(context)!.uploadPhoto),
           ),
         ],
       ),
@@ -116,15 +116,15 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
           
           if (success) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('✅ Turnuva fotoğrafı yüklendi!'),
+              SnackBar(
+                content: Text(AppLocalizations.of(context)!.tournamentPhotoUploaded),
                 backgroundColor: Colors.green,
               ),
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('❌ Fotoğraf yüklenirken hata oluştu!'),
+              SnackBar(
+                content: Text(AppLocalizations.of(context)!.photoUploadError),
                 backgroundColor: Colors.red,
               ),
             );
@@ -134,7 +134,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Hata: $e'),
+          content: Text('${AppLocalizations.of(context)!.error}: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -159,7 +159,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       
       if (specificMatch == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Bu turnuva için oylama bulunamadı')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.noVotingForTournament)),
         );
         return;
       }
@@ -168,7 +168,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       await _showTournamentVotingDialog(specificMatch);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Oylama yüklenirken hata: $e')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.votingLoadError(e.toString()))),
       );
     }
   }
@@ -184,19 +184,19 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Row(
+          title: Row(
             children: [
-              Icon(Icons.how_to_vote, color: Colors.purple),
-              SizedBox(width: 8),
-              Text('Turnuva Oylaması'),
+              const Icon(Icons.how_to_vote, color: Colors.purple),
+              const SizedBox(width: 8),
+              Text(AppLocalizations.of(context)!.tournamentVotingTitle),
             ],
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Hangi katılımcıyı tercih ediyorsunuz?',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              Text(
+                AppLocalizations.of(context)!.whichParticipantPrefer,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 20),
               
@@ -290,7 +290,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('İptal'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               onPressed: selectedWinner != null 
@@ -303,7 +303,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 backgroundColor: Colors.purple,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Oyla'),
+              child: Text(AppLocalizations.of(context)!.vote),
             ),
           ],
         ),
@@ -325,15 +325,15 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       );
       
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Oyunuz başarıyla kaydedildi!'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.voteSavedSuccessfully),
           backgroundColor: Colors.green,
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Oylama sırasında hata: $e'),
+          content: Text(AppLocalizations.of(context)!.votingError(e.toString())),
           backgroundColor: Colors.red,
         ),
       );
@@ -358,16 +358,16 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
               child: Center(child: CircularProgressIndicator()),
             )
           else if (tournaments.isEmpty)
-            const Expanded(
+            Expanded(
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.emoji_events, size: 80, color: Colors.grey),
-                    SizedBox(height: 16),
+                    const Icon(Icons.emoji_events, size: 80, color: Colors.grey),
+                    const SizedBox(height: 16),
                     Text(
-                      'Şu anda aktif turnuva bulunmuyor',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      AppLocalizations.of(context)!.noActiveTournament,
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -425,8 +425,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                     tournament.status == 'active' 
                         ? 'Aktif' 
                         : tournament.status == 'registration'
-                        ? 'Kayıt'
-                        : 'Yaklaşıyor',
+                        ? AppLocalizations.of(context)!.registration
+                        : AppLocalizations.of(context)!.upcoming,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -463,7 +463,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 const SizedBox(width: 8),
                 _buildInfoChip(
                   Icons.stars,
-                  '${tournament.prizePool} coin ödül',
+                  AppLocalizations.of(context)!.coinPrize(tournament.prizePool),
                 ),
               ],
             ),
@@ -475,7 +475,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 Icon(Icons.schedule, size: 16, color: Colors.grey[600]),
                 const SizedBox(width: 4),
                 Text(
-                  'Başlangıç: ${_formatDate(tournament.startDate)}',
+                  AppLocalizations.of(context)!.startDate(_formatDate(tournament.startDate)),
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 12,
@@ -495,12 +495,12 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                         : null,
                     child: Text(
                       tournament.status == 'completed'
-                          ? 'Tamamlandı'
+                          ? AppLocalizations.of(context)!.completed
                           : tournament.status == 'active'
                           ? 'Devam Ediyor'
                           : tournament.currentParticipants >= tournament.maxParticipants
                       ? 'Turnuva Dolu'
-                      : 'Katıl',
+                      : AppLocalizations.of(context)!.join,
                     ),
                   ),
                 ),
@@ -509,7 +509,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                   ElevatedButton.icon(
                     onPressed: () => _showTournamentPhotoDialog(tournament.id),
                     icon: const Icon(Icons.photo_camera),
-                    label: const Text('Fotoğraf'),
+                    label: Text(AppLocalizations.of(context)!.photo),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orange,
                       foregroundColor: Colors.white,
@@ -521,7 +521,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                   ElevatedButton.icon(
                     onPressed: () => _voteForSpecificTournament(tournament.id),
                     icon: const Icon(Icons.how_to_vote),
-                    label: const Text('Oyla'),
+                    label: Text(AppLocalizations.of(context)!.vote),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple,
                       foregroundColor: Colors.white,
