@@ -49,13 +49,17 @@ class _LanguageSelectorState extends State<LanguageSelector> {
         children: [
           Row(
             children: [
-              const Icon(Icons.language, color: Colors.blue),
+              Icon(
+                Icons.language, 
+                color: Theme.of(context).colorScheme.primary
+              ),
               const SizedBox(width: 8),
               Text(
                 AppLocalizations.of(context)!.language,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],
@@ -77,21 +81,27 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                   option['name'],
                   style: TextStyle(
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    color: isSelected ? Colors.blue : Colors.black87,
+                    color: isSelected 
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 trailing: isSelected
-                    ? const Icon(Icons.check_circle, color: Colors.blue)
-                    : const Icon(Icons.radio_button_unchecked, color: Colors.grey),
+                    ? Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary)
+                    : Icon(Icons.radio_button_unchecked, color: Theme.of(context).colorScheme.outline),
                 onTap: () => _changeLanguage(option['locale']),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                   side: BorderSide(
-                    color: isSelected ? Colors.blue : Colors.grey[300]!,
+                    color: isSelected 
+                        ? Theme.of(context).colorScheme.primary 
+                        : Theme.of(context).colorScheme.outline,
                     width: isSelected ? 2 : 1,
                   ),
                 ),
-                tileColor: isSelected ? Colors.blue[50] : Colors.white,
+                tileColor: isSelected 
+                    ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                    : Theme.of(context).colorScheme.surface,
               ),
             );
           }).toList(),

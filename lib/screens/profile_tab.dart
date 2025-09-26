@@ -218,20 +218,6 @@ class _ProfileTabState extends State<ProfileTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.profile),
-        leading: BackButton(onPressed: () {
-          Navigator.pop(context);
-        }),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () async {
-              await loadUserData();
-            },
-          ),
-        ],
-      ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : currentUser == null
@@ -280,23 +266,23 @@ class _ProfileTabState extends State<ProfileTab> {
                                 Container(
                                   padding: const EdgeInsets.all(32),
                                   decoration: BoxDecoration(
-                                    color: Colors.grey[100],
+                                    color: Theme.of(context).colorScheme.surface,
                                     borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(color: Colors.grey[300]!),
+                                    border: Border.all(color: Theme.of(context).colorScheme.outline),
                                   ),
                                   child: Column(
                                     children: [
-                                      Icon(Icons.photo_camera, size: 48, color: Colors.grey[400]),
+                                      Icon(Icons.photo_camera, size: 48, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
                                       const SizedBox(height: 8),
                                       Text(
                                         AppLocalizations.of(context)!.noAdditionalPhotos,
-                                        style: TextStyle(color: Colors.grey[600]),
+                                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
                                         AppLocalizations.of(context)!.secondPhotoCost,
                                         style: TextStyle(
-                                          color: Colors.orange[600],
+                                          color: Theme.of(context).colorScheme.primary,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -327,10 +313,10 @@ class _ProfileTabState extends State<ProfileTab> {
                                         onTap: isUpdating ? null : _showPhotoUploadDialog,
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            color: Colors.grey[100],
+                                            color: Theme.of(context).colorScheme.surface,
                                             borderRadius: BorderRadius.circular(8),
                                             border: Border.all(
-                                              color: Colors.grey[300]!,
+                                              color: Theme.of(context).colorScheme.outline,
                                               style: BorderStyle.solid,
                                             ),
                                           ),
@@ -339,7 +325,7 @@ class _ProfileTabState extends State<ProfileTab> {
                                             children: [
                                               Icon(
                                                 Icons.add_photo_alternate,
-                                                color: Colors.grey[400],
+                                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                                                 size: 24,
                                               ),
                                               const SizedBox(height: 4),
@@ -347,14 +333,14 @@ class _ProfileTabState extends State<ProfileTab> {
                                                 AppLocalizations.of(context)!.slot(slot),
                                                 style: TextStyle(
                                                   fontSize: 10,
-                                                  color: Colors.grey[600],
+                                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                                                 ),
                                               ),
                                               Text(
                                                 '${PhotoUploadService.getPhotoUploadCost(slot)} coin',
                                                 style: TextStyle(
                                                   fontSize: 8,
-                                                  color: Colors.orange,
+                                                  color: Theme.of(context).colorScheme.primary,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -799,7 +785,7 @@ class _ProfileTabState extends State<ProfileTab> {
         label: Text(title),
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
-          foregroundColor: Colors.white,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
       ),

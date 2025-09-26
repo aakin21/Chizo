@@ -7,6 +7,8 @@ import '../widgets/language_selector.dart';
 import '../utils/constants.dart';
 import '../l10n/app_localizations.dart';
 import '../services/language_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../screens/home_screen.dart';
 
 class SettingsTab extends StatefulWidget {
   const SettingsTab({super.key});
@@ -23,13 +25,22 @@ class _SettingsTabState extends State<SettingsTab> {
   bool _streakReminderNotifications = true;
   UserModel? _currentUser;
 
-  final List<String> _themeOptions = ['Beyaz', 'Koyu Gri', 'Koyu'];
+  final List<String> _themeOptions = ['Beyaz', 'Koyu', 'Pembemsi'];
   String _selectedTheme = 'Beyaz';
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+    _loadSavedTheme();
+  }
+
+  Future<void> _loadSavedTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedTheme = prefs.getString('selected_theme') ?? 'Beyaz';
+    setState(() {
+      _selectedTheme = savedTheme;
+    });
   }
 
 
@@ -67,22 +78,57 @@ class _SettingsTabState extends State<SettingsTab> {
     switch (theme) {
       case 'Beyaz':
         return AppLocalizations.of(context)!.lightWhiteTheme;
-      case 'Koyu Gri':
-        return AppLocalizations.of(context)!.neutralDarkGrayTheme;
       case 'Koyu':
-        return 'Siyah koyu tema';
+        return 'Siyah materyal koyu tema';
+      case 'Pembemsi':
+        return 'Açık pembe renk tema';
       default:
         return '';
     }
   }
 
-  void _applyTheme(String theme) {
-    // TODO: Implement actual theme application using Provider/Singleton
-    // Bu notification sistemi de eklenebilir 
+  Future<void> _applyTheme(String theme) async {
+    // Save theme preference
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selected_theme', theme);
+    print('Save theme: $theme to SharedPreferences'); // Debug
+    
+    setState(() {
+      _selectedTheme = theme;
+    });
+    
+    // Verify save was successful
+    final verifyTheme = await prefs.getString('selected_theme');
+    print('Saved theme verify: $verifyTheme'); // Debug
+    
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.themeChanged(theme))),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.themeChanged(theme)),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+    
+    // Verify the save once more before restart
+    final currentSavedTheme = await prefs.getString('selected_theme');
+    print('Final verification - theme in storage: $currentSavedTheme');
+    
+    // Force immediate restart for reliable theme change  
+    await Future.delayed(const Duration(milliseconds: 200));
+    _restartApp();
+  }
+
+  void _restartApp() {
+    // Force complete app restart for theme change
+    print('🔄 RESTARTING APP for theme change: ${_selectedTheme}');
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => const HomeScreen(),
+      ),
+      (route) => false,
     );
   }
+
 
   Future<void> _deleteAccount() async {
     showDialog(
@@ -177,12 +223,12 @@ class _SettingsTabState extends State<SettingsTab> {
                 subtitle: Text(_getThemeDescription(theme)),
                 value: theme,
                 groupValue: _selectedTheme,
-                onChanged: (value) {
+                onChanged: (value) async {
                   setState(() {
                     _selectedTheme = value!;
                   });
-                  // Tema değiştir
-                  _applyTheme(theme);
+                  // Tema değiştir ve uygula
+                  await _applyTheme(theme);
                 },
               )).toList(),
             ],
