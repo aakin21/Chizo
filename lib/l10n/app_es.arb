@@ -58,10 +58,10 @@
   },
   "error": "Error",
   "invalidEmail": "❌ ¡Dirección de correo electrónico inválida! Por favor ingrese un formato de correo válido.",
-  "userNotFound": "❌ ¡No se encontró usuario con esta dirección de correo electrónico!",
+  "userNotFoundError": "❌ ¡No se encontró usuario con esta dirección de correo electrónico!",
   "userAlreadyRegistered": "❌ ¡Esta dirección de correo electrónico ya está registrada! Intente iniciar sesión.",
   "invalidPassword": "❌ ¡Contraseña incorrecta! Por favor verifique su contraseña.",
-  "passwordMinLength": "❌ ¡La contraseña debe tener al menos 6 caracteres!",
+  "passwordMinLengthError": "❌ ¡La contraseña debe tener al menos 6 caracteres!",
   "passwordTooWeak": "❌ ¡La contraseña es muy débil! Elija una contraseña más fuerte.",
   "usernameAlreadyTaken": "❌ ¡Este nombre de usuario ya está tomado! Elija otro nombre de usuario.",
   "usernameTooShort": "❌ ¡El nombre de usuario debe tener al menos 3 caracteres!",
@@ -99,13 +99,17 @@
   "photoUploadSlot": "Subir Foto - Espacio {slot}",
   "@photoUploadSlot": {
     "placeholders": {
-      "slot": {}
+      "slot": {
+        "type": "int"
+      }
     }
   },
   "coinsRequiredForSlot": "Se requieren {coins} monedas para este espacio.",
   "@coinsRequiredForSlot": {
     "placeholders": {
-      "coins": {}
+      "coins": {
+        "type": "int"
+      }
     }
   },
   "insufficientCoinsForUpload": "¡Monedas insuficientes! Usa el botón de monedas en la página de perfil para comprar monedas.",
@@ -113,13 +117,17 @@
   "upload": "Subir ({coins} monedas)",
   "@upload": {
     "placeholders": {
-      "coins": {}
+      "coins": {
+        "type": "int"
+      }
     }
   },
   "photoUploaded": "✅ ¡Foto subida! {coins} monedas gastadas.",
   "@photoUploaded": {
     "placeholders": {
-      "coins": {}
+      "coins": {
+        "type": "int"
+      }
     }
   },
   "deletePhoto": "Eliminar Foto",
@@ -133,7 +141,9 @@
   "additionalPhotosDescription": "Tus fotos adicionales que aparecerán en los partidos ({count}/4)",
   "@additionalPhotosDescription": {
     "placeholders": {
-      "count": {}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "noAdditionalPhotos": "Aún no hay fotos adicionales",
@@ -153,7 +163,9 @@
   "coinsEarnedFromPredictions": "Monedas Ganadas de Predicciones: {coins} monedas",
   "@coinsEarnedFromPredictions": {
     "placeholders": {
-      "coins": {}
+      "coins": {
+        "type": "int"
+      }
     }
   },
   "matchHistory": "📊 Historial de Partidos",
@@ -164,20 +176,26 @@
   "addInfo": "Agregar {type}",
   "@addInfo": {
     "placeholders": {
-      "type": {}
+      "type": {
+        "type": "String"
+      }
     }
   },
   "enterInfo": "Ingresa tu información de {type}:",
   "@enterInfo": {
     "placeholders": {
-      "type": {}
+      "type": {
+        "type": "String"
+      }
     }
   },
   "add": "Agregar",
   "infoAdded": "✅ ¡Información de {type} agregada!",
   "@infoAdded": {
     "placeholders": {
-      "type": {}
+      "type": {
+        "type": "String"
+      }
     }
   },
   "errorAddingInfo": "❌ ¡Error al agregar información!",
@@ -185,7 +203,9 @@
   "premiumInfo": "💎 Información de {type}",
   "@premiumInfo": {
     "placeholders": {
-      "type": {}
+      "type": {
+        "type": "String"
+      }
     }
   },
   "spendFiveCoins": "Gastar 5 Monedas",
@@ -195,8 +215,12 @@
   "matchCounter": "{current} / {total}",
   "@matchCounter": {
     "placeholders": {
-      "current": {},
-      "total": {}
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "spendFiveCoinsToView": "Gastarás 5 monedas para ver esta información",
@@ -209,7 +233,9 @@
   "streakMessage": "¡{days} días de racha!",
   "@streakMessage": {
     "placeholders": {
-      "days": {}
+      "days": {
+        "type": "int"
+      }
     }
   },
   "buy": "Comprar",
@@ -220,8 +246,12 @@
   "winsAndMatches": "{wins} victorias • {matches} partidos",
   "@winsAndMatches": {
     "placeholders": {
-      "wins": {},
-      "matches": {}
+      "wins": {
+        "type": "int"
+      },
+      "matches": {
+        "type": "int"
+      }
     }
   },
   "insufficientCoinsForTournament": "¡Monedas insuficientes para el torneo!",
@@ -269,7 +299,9 @@
   "additionalPhotosDescription": "Tus fotos adicionales que aparecerán en los partidos ({count}/4)",
   "@additionalPhotosDescription": {
     "placeholders": {
-      "count": {}
+      "count": {
+        "type": "int"
+      }
     }
   },
   "noAdditionalPhotos": "Aún no hay fotos adicionales",
@@ -277,26 +309,34 @@
   "slot": "Espacio {slot}",
   "@slot": {
     "placeholders": {
-      "slot": {}
+      "slot": {
+        "type": "Object"
+      }
     }
   },
   "photoUploadSlot": "Subir Foto - Espacio {slot}",
   "@photoUploadSlot": {
     "placeholders": {
-      "slot": {}
+      "slot": {
+        "type": "int"
+      }
     }
   },
   "coinsRequiredForSlot": "Se requieren {coins} monedas para este espacio.",
   "@coinsRequiredForSlot": {
     "placeholders": {
-      "coins": {}
+      "coins": {
+        "type": "int"
+      }
     }
   },
   "insufficientCoinsForUpload": "¡Monedas insuficientes! Usa el botón de monedas en la página de perfil para comprar monedas.",
   "upload": "Subir ({coins} monedas)",
   "@upload": {
     "placeholders": {
-      "coins": {}
+      "coins": {
+        "type": "int"
+      }
     }
   },
   "deletePhoto": "Eliminar Foto",

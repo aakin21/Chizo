@@ -384,6 +384,114 @@ abstract class AppLocalizations {
   /// **'Error'**
   String get error;
 
+  /// No description provided for @invalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Invalid email address! Please enter a valid email format.'**
+  String get invalidEmail;
+
+  /// No description provided for @userNotFoundError.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ No user found with this email address!'**
+  String get userNotFoundError;
+
+  /// No description provided for @userAlreadyRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ This email address is already registered! Try logging in.'**
+  String get userAlreadyRegistered;
+
+  /// No description provided for @invalidPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Wrong password! Please check your password.'**
+  String get invalidPassword;
+
+  /// No description provided for @passwordMinLengthError.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Password must be at least 6 characters!'**
+  String get passwordMinLengthError;
+
+  /// No description provided for @passwordTooWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Password is too weak! Choose a stronger password.'**
+  String get passwordTooWeak;
+
+  /// No description provided for @usernameAlreadyTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ This username is already taken! Choose another username.'**
+  String get usernameAlreadyTaken;
+
+  /// No description provided for @usernameTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Username must be at least 3 characters!'**
+  String get usernameTooShort;
+
+  /// No description provided for @networkError.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Check your internet connection!'**
+  String get networkError;
+
+  /// No description provided for @timeoutError.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Connection timeout! Please try again.'**
+  String get timeoutError;
+
+  /// No description provided for @emailNotConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ You need to confirm your email address!'**
+  String get emailNotConfirmed;
+
+  /// No description provided for @tooManyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Too many attempts! Please wait a few minutes and try again.'**
+  String get tooManyRequests;
+
+  /// No description provided for @accountDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Your account has been disabled!'**
+  String get accountDisabled;
+
+  /// No description provided for @duplicateData.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ This information is already in use! Try different information.'**
+  String get duplicateData;
+
+  /// No description provided for @invalidData.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ There is an error in the information you entered! Please check.'**
+  String get invalidData;
+
+  /// No description provided for @invalidCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Email or password is incorrect!'**
+  String get invalidCredentials;
+
+  /// No description provided for @tooManyEmails.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Too many emails sent! Please wait.'**
+  String get tooManyEmails;
+
+  /// No description provided for @operationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Operation failed! Please check your information.'**
+  String get operationFailed;
+
   /// Success label
   ///
   /// In en, this message translates to:
@@ -1949,114 +2057,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'✅ Country preferences updated'**
   String get countryPreferencesUpdated;
-
-  /// No description provided for @invalidEmail.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ Invalid email address! Please enter a valid email format.'**
-  String get invalidEmail;
-
-  /// No description provided for @userNotFound.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ No user found with this email address!'**
-  String get userNotFound;
-
-  /// No description provided for @userAlreadyRegistered.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ This email address is already registered! Try logging in.'**
-  String get userAlreadyRegistered;
-
-  /// No description provided for @invalidPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ Wrong password! Please check your password.'**
-  String get invalidPassword;
-
-  /// No description provided for @passwordMinLength.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ Password must be at least 6 characters!'**
-  String get passwordMinLength;
-
-  /// No description provided for @passwordTooWeak.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ Password is too weak! Choose a stronger password.'**
-  String get passwordTooWeak;
-
-  /// No description provided for @usernameAlreadyTaken.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ This username is already taken! Choose another username.'**
-  String get usernameAlreadyTaken;
-
-  /// No description provided for @usernameTooShort.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ Username must be at least 3 characters!'**
-  String get usernameTooShort;
-
-  /// No description provided for @networkError.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ Check your internet connection!'**
-  String get networkError;
-
-  /// No description provided for @timeoutError.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ Connection timeout! Please try again.'**
-  String get timeoutError;
-
-  /// No description provided for @emailNotConfirmed.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ You need to confirm your email address!'**
-  String get emailNotConfirmed;
-
-  /// No description provided for @tooManyRequests.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ Too many attempts! Please wait a few minutes and try again.'**
-  String get tooManyRequests;
-
-  /// No description provided for @accountDisabled.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ Your account has been disabled!'**
-  String get accountDisabled;
-
-  /// No description provided for @duplicateData.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ This information is already in use! Try different information.'**
-  String get duplicateData;
-
-  /// No description provided for @invalidData.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ There is an error in the information you entered! Please check.'**
-  String get invalidData;
-
-  /// No description provided for @invalidCredentials.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ Email or password is incorrect!'**
-  String get invalidCredentials;
-
-  /// No description provided for @tooManyEmails.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ Too many emails sent! Please wait.'**
-  String get tooManyEmails;
-
-  /// No description provided for @operationFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'❌ Operation failed! Please check your information.'**
-  String get operationFailed;
 
   /// No description provided for @countryPreferencesUpdateFailed.
   ///

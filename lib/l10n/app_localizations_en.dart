@@ -157,6 +157,69 @@ class AppLocalizationsEn extends AppLocalizations {
   String get error => 'Error';
 
   @override
+  String get invalidEmail =>
+      '❌ Invalid email address! Please enter a valid email format.';
+
+  @override
+  String get userNotFoundError => '❌ No user found with this email address!';
+
+  @override
+  String get userAlreadyRegistered =>
+      '❌ This email address is already registered! Try logging in.';
+
+  @override
+  String get invalidPassword => '❌ Wrong password! Please check your password.';
+
+  @override
+  String get passwordMinLengthError =>
+      '❌ Password must be at least 6 characters!';
+
+  @override
+  String get passwordTooWeak =>
+      '❌ Password is too weak! Choose a stronger password.';
+
+  @override
+  String get usernameAlreadyTaken =>
+      '❌ This username is already taken! Choose another username.';
+
+  @override
+  String get usernameTooShort => '❌ Username must be at least 3 characters!';
+
+  @override
+  String get networkError => '❌ Check your internet connection!';
+
+  @override
+  String get timeoutError => '❌ Connection timeout! Please try again.';
+
+  @override
+  String get emailNotConfirmed => '❌ You need to confirm your email address!';
+
+  @override
+  String get tooManyRequests =>
+      '❌ Too many attempts! Please wait a few minutes and try again.';
+
+  @override
+  String get accountDisabled => '❌ Your account has been disabled!';
+
+  @override
+  String get duplicateData =>
+      '❌ This information is already in use! Try different information.';
+
+  @override
+  String get invalidData =>
+      '❌ There is an error in the information you entered! Please check.';
+
+  @override
+  String get invalidCredentials => '❌ Email or password is incorrect!';
+
+  @override
+  String get tooManyEmails => '❌ Too many emails sent! Please wait.';
+
+  @override
+  String get operationFailed =>
+      '❌ Operation failed! Please check your information.';
+
+  @override
   String get success => 'Success';
 
   @override

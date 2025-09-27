@@ -228,10 +228,10 @@
     "description": "Error label"
   },
   "invalidEmail": "❌ Invalid email address! Please enter a valid email format.",
-  "userNotFound": "❌ No user found with this email address!",
+  "userNotFoundError": "❌ No user found with this email address!",
   "userAlreadyRegistered": "❌ This email address is already registered! Try logging in.",
   "invalidPassword": "❌ Wrong password! Please check your password.",
-  "passwordMinLength": "❌ Password must be at least 6 characters!",
+  "passwordMinLengthError": "❌ Password must be at least 6 characters!",
   "passwordTooWeak": "❌ Password is too weak! Choose a stronger password.",
   "usernameAlreadyTaken": "❌ This username is already taken! Choose another username.",
   "usernameTooShort": "❌ Username must be at least 3 characters!",

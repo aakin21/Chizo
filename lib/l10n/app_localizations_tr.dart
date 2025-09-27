@@ -157,6 +157,71 @@ class AppLocalizationsTr extends AppLocalizations {
   String get error => 'Hata';
 
   @override
+  String get invalidEmail =>
+      '❌ Geçersiz e-posta adresi! Lütfen doğru formatta e-posta girin.';
+
+  @override
+  String get userNotFoundError =>
+      '❌ Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı!';
+
+  @override
+  String get userAlreadyRegistered =>
+      '❌ Bu e-posta adresi zaten kayıtlı! Giriş yapmayı deneyin.';
+
+  @override
+  String get invalidPassword =>
+      '❌ Yanlış şifre! Lütfen şifrenizi kontrol edin.';
+
+  @override
+  String get passwordMinLengthError => '❌ Şifre en az 6 karakter olmalıdır!';
+
+  @override
+  String get passwordTooWeak =>
+      '❌ Şifre çok zayıf! Daha güçlü bir şifre seçin.';
+
+  @override
+  String get usernameAlreadyTaken =>
+      '❌ Bu kullanıcı adı zaten alınmış! Başka bir kullanıcı adı seçin.';
+
+  @override
+  String get usernameTooShort => '❌ Kullanıcı adı en az 3 karakter olmalıdır!';
+
+  @override
+  String get networkError => '❌ İnternet bağlantınızı kontrol edin!';
+
+  @override
+  String get timeoutError => '❌ Bağlantı zaman aşımı! Lütfen tekrar deneyin.';
+
+  @override
+  String get emailNotConfirmed => '❌ E-posta adresinizi onaylamanız gerekiyor!';
+
+  @override
+  String get tooManyRequests =>
+      '❌ Çok fazla deneme! Lütfen birkaç dakika sonra tekrar deneyin.';
+
+  @override
+  String get accountDisabled => '❌ Hesabınız devre dışı bırakılmış!';
+
+  @override
+  String get duplicateData =>
+      '❌ Bu bilgiler zaten kullanılıyor! Farklı bilgiler deneyin.';
+
+  @override
+  String get invalidData =>
+      '❌ Girdiğiniz bilgilerde hata var! Lütfen kontrol edin.';
+
+  @override
+  String get invalidCredentials => '❌ E-posta veya şifre hatalı!';
+
+  @override
+  String get tooManyEmails =>
+      '❌ Çok fazla e-posta gönderildi! Lütfen bekleyin.';
+
+  @override
+  String get operationFailed =>
+      '❌ İşlem başarısız! Lütfen bilgilerinizi kontrol edin.';
+
+  @override
   String get success => 'Başarılı';
 
   @override

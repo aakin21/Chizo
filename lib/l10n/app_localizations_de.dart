@@ -157,6 +157,74 @@ class AppLocalizationsDe extends AppLocalizations {
   String get error => 'Fehler';
 
   @override
+  String get invalidEmail =>
+      '❌ Ungültige E-Mail-Adresse! Bitte geben Sie eine gültige E-Mail-Format ein.';
+
+  @override
+  String get userNotFoundError =>
+      '❌ Kein Benutzer mit dieser E-Mail-Adresse gefunden!';
+
+  @override
+  String get userAlreadyRegistered =>
+      '❌ Diese E-Mail-Adresse ist bereits registriert! Versuchen Sie sich anzumelden.';
+
+  @override
+  String get invalidPassword =>
+      '❌ Falsches Passwort! Bitte überprüfen Sie Ihr Passwort.';
+
+  @override
+  String get passwordMinLengthError =>
+      '❌ Passwort muss mindestens 6 Zeichen haben!';
+
+  @override
+  String get passwordTooWeak =>
+      '❌ Passwort ist zu schwach! Wählen Sie ein stärkeres Passwort.';
+
+  @override
+  String get usernameAlreadyTaken =>
+      '❌ Dieser Benutzername ist bereits vergeben! Wählen Sie einen anderen Benutzernamen.';
+
+  @override
+  String get usernameTooShort =>
+      '❌ Benutzername muss mindestens 3 Zeichen haben!';
+
+  @override
+  String get networkError => '❌ Überprüfen Sie Ihre Internetverbindung!';
+
+  @override
+  String get timeoutError =>
+      '❌ Verbindungszeitüberschreitung! Bitte versuchen Sie es erneut.';
+
+  @override
+  String get emailNotConfirmed =>
+      '❌ Sie müssen Ihre E-Mail-Adresse bestätigen!';
+
+  @override
+  String get tooManyRequests =>
+      '❌ Zu viele Versuche! Bitte warten Sie ein paar Minuten und versuchen Sie es erneut.';
+
+  @override
+  String get accountDisabled => '❌ Ihr Konto wurde deaktiviert!';
+
+  @override
+  String get duplicateData =>
+      '❌ Diese Informationen werden bereits verwendet! Versuchen Sie andere Informationen.';
+
+  @override
+  String get invalidData =>
+      '❌ Es gibt einen Fehler in den eingegebenen Informationen! Bitte überprüfen Sie.';
+
+  @override
+  String get invalidCredentials => '❌ E-Mail oder Passwort ist falsch!';
+
+  @override
+  String get tooManyEmails => '❌ Zu viele E-Mails gesendet! Bitte warten Sie.';
+
+  @override
+  String get operationFailed =>
+      '❌ Vorgang fehlgeschlagen! Bitte überprüfen Sie Ihre Informationen.';
+
+  @override
   String get success => 'Erfolg';
 
   @override
