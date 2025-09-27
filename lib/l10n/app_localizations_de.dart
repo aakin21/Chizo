@@ -95,6 +95,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get german => 'Deutsch';
 
   @override
+  String get spanish => 'Spanisch';
+
+  @override
+  String get turkishLanguage => 'Türkisch';
+
+  @override
+  String get englishLanguage => 'Englisch';
+
+  @override
+  String get germanLanguage => 'Deutsch';
+
+  @override
   String get coins => 'Münzen';
 
   @override
@@ -619,6 +631,112 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tournamentFees => 'Turnier-Teilnahmegebühren';
 
   @override
+  String get weeklyMaleTournament1000 =>
+      'Wöchentliches Männerturnier (1000 Münzen)';
+
+  @override
+  String get weeklyMaleTournament1000Desc =>
+      'Wöchentliches Männerturnier - 300 Personen Kapazität';
+
+  @override
+  String get weeklyMaleTournament10000 =>
+      'Wöchentliches Männerturnier (10000 Münzen)';
+
+  @override
+  String get weeklyMaleTournament10000Desc =>
+      'Premium Männerturnier - 100 Personen Kapazität';
+
+  @override
+  String get weeklyFemaleTournament1000 =>
+      'Wöchentliches Frauenturnier (1000 Münzen)';
+
+  @override
+  String get weeklyFemaleTournament1000Desc =>
+      'Wöchentliches Frauenturnier - 300 Personen Kapazität';
+
+  @override
+  String get weeklyFemaleTournament10000 =>
+      'Wöchentliches Frauenturnier (10000 Münzen)';
+
+  @override
+  String get weeklyFemaleTournament10000Desc =>
+      'Premium Frauenturnier - 100 Personen Kapazität';
+
+  @override
+  String get tournamentEntryFee => 'Turnier-Teilnahmegebühr';
+
+  @override
+  String get tournamentVotingTitle => 'Turnier-Abstimmung';
+
+  @override
+  String get tournamentThirdPlace => 'Turnier 3. Platz';
+
+  @override
+  String get tournamentWon => 'Turnier gewonnen';
+
+  @override
+  String get userNotLoggedIn => 'Benutzer nicht angemeldet';
+
+  @override
+  String get userNotFound => 'Benutzer nicht gefunden';
+
+  @override
+  String get firstLoginReward =>
+      '🎉 Erster Login! Sie haben 50 Münzen verdient!';
+
+  @override
+  String streakReward(Object coins, Object streak) {
+    return '🔥 $streak Tage Streak! Sie haben $coins Münzen verdient!';
+  }
+
+  @override
+  String get streakBroken =>
+      '💔 Streak unterbrochen! Neuer Start: Sie haben 50 Münzen verdient!';
+
+  @override
+  String dailyStreakReward(Object streak) {
+    return 'Tägliche Streak-Belohnung ($streak Tage)';
+  }
+
+  @override
+  String get alreadyLoggedInToday => 'Sie haben sich heute bereits angemeldet!';
+
+  @override
+  String get streakCheckError => 'Fehler beim Streak-Check aufgetreten';
+
+  @override
+  String get streakInfoError =>
+      'Streak-Informationen konnten nicht abgerufen werden';
+
+  @override
+  String get correctPredictionReward =>
+      'Sie verdienen 1 Coin für eine richtige Vorhersage!';
+
+  @override
+  String get wrongPredictionMessage => 'Leider haben Sie falsch vorhergesagt.';
+
+  @override
+  String get predictionSaveError =>
+      'Fehler beim Speichern der Vorhersage aufgetreten';
+
+  @override
+  String get coinAddError => 'Fehler beim Hinzufügen von Münzen aufgetreten';
+
+  @override
+  String coinPurchaseTransaction(Object description) {
+    return 'Münzen-Kauf - $description';
+  }
+
+  @override
+  String get whiteThemeName => 'Weiß';
+
+  @override
+  String get darkThemeName => 'Dunkel';
+
+  @override
+  String get pinkThemeName => 'Rosa';
+
+  @override
   String get premiumFilters => 'Premium-Filter';
 
   @override
@@ -700,9 +818,6 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get tournamentVotingTitle => 'Turnier-Abstimmung';
-
-  @override
   String get whichParticipantPrefer => 'Welchen Teilnehmer bevorzugen Sie?';
 
   @override
@@ -741,7 +856,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get languageChanged => 'Sprache geändert. Seite wird aktualisiert...';
 
   @override
-  String get lightWhiteTheme => 'Helles weißes Theme';
+  String get lightWhiteTheme => 'Weißes Material helles Theme';
 
   @override
   String get neutralDarkGrayTheme => 'Neutrales dunkelgraues Theme';
@@ -763,6 +878,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get themeSelection => '🎨 Theme-Auswahl';
+
+  @override
+  String get darkMaterialTheme => 'Schwarzes Material dunkles Theme';
+
+  @override
+  String get lightPinkTheme => 'Helles rosa Farb-Theme';
 
   @override
   String get notificationSettings => '🔔 Benachrichtigungseinstellungen';
@@ -825,10 +946,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get predictWinRateTitle => 'Gewinnrate vorhersagen!';
 
   @override
-  String get correctPredictionReward =>
-      'Sie verdienen 1 Coin für eine richtige Vorhersage!';
-
-  @override
   String get wrongPredictionNoCoin => 'Falsche Vorhersage = 0 Coins';
 
   @override
@@ -839,9 +956,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get correctPredictionMessage => 'Sie haben richtig vorhergesagt!';
-
-  @override
-  String get wrongPredictionMessage => 'Leider haben Sie falsch vorhergesagt.';
 
   @override
   String actualRate(Object rate) {

@@ -10,6 +10,7 @@ class LanguageService {
     const Locale('tr', 'TR'), // Turkish
     const Locale('en', 'US'), // English
     const Locale('de', 'DE'), // German
+    const Locale('es', 'ES'), // Spanish
   ];
 
   // Mevcut dili al
@@ -57,6 +58,12 @@ class LanguageService {
         'flag': '🇩🇪',
         'locale': const Locale('de', 'DE'),
       },
+      {
+        'code': 'es',
+        'name': 'Español',
+        'flag': '🇪🇸',
+        'locale': const Locale('es', 'ES'),
+      },
     ];
   }
 
@@ -69,6 +76,8 @@ class LanguageService {
         return 'English';
       case 'de':
         return 'Deutsch';
+      case 'es':
+        return 'Español';
       default:
         return 'Türkçe';
     }
@@ -84,6 +93,8 @@ class LanguageService {
         return l10n.english;
       case 'de':
         return l10n.german;
+      case 'es':
+        return l10n.spanish;
       default:
         return l10n.turkish;
     }
@@ -98,6 +109,8 @@ class LanguageService {
         return '🇺🇸';
       case 'de':
         return '🇩🇪';
+      case 'es':
+        return '🇪🇸';
       default:
         return '🇹🇷';
     }

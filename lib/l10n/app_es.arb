@@ -1,0 +1,305 @@
+{
+  "appTitle": "Chizo",
+  "login": "Iniciar Sesión",
+  "register": "Registrarse",
+  "email": "Correo Electrónico",
+  "password": "Contraseña",
+  "username": "Nombre de Usuario",
+  "confirmPassword": "Confirmar Contraseña",
+  "age": "Edad",
+  "country": "País",
+  "gender": "Género",
+  "male": "Masculino",
+  "female": "Femenino",
+  "instagramHandle": "Usuario de Instagram",
+  "profession": "Profesión",
+  "voting": "Votación",
+  "whichDoYouPrefer": "¿Cuál prefieres más?",
+  "predictWinRate": "Predice la tasa de victoria de {username}",
+  "@predictWinRate": {
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "correctPrediction": "Predicción correcta = 1 moneda",
+  "submitPrediction": "Enviar Predicción",
+  "winRate": "Tasa de Victoria",
+  "profile": "Perfil",
+  "settings": "Configuración",
+  "leaderboard": "Tabla de Clasificación",
+  "tournament": "Torneo",
+  "language": "Idioma",
+  "turkish": "Turco",
+  "english": "Inglés",
+  "german": "Alemán",
+  "spanish": "Español",
+  "turkishLanguage": "Turco",
+  "englishLanguage": "Inglés",
+  "germanLanguage": "Alemán",
+  "spanishLanguage": "Español",
+  "coins": "Monedas",
+  "totalMatches": "Partidos Totales",
+  "wins": "Victorias",
+  "winRatePercentage": "Porcentaje de Victoria",
+  "currentStreak": "Racha Actual",
+  "totalStreakDays": "Total de Días de Racha",
+  "predictionStats": "Estadísticas de Predicción",
+  "totalPredictions": "Total de Predicciones",
+  "correctPredictions": "Predicciones Correctas",
+  "accuracy": "Precisión",
+  "coinsEarnedFromPredictions": "Monedas Ganadas de Predicciones",
+  "congratulations": "¡Felicidades!",
+  "correctPredictionMessage": "¡Predijiste correctamente y ganaste 1 moneda!",
+  "wrongPredictionMessage": "Predicción incorrecta. La tasa de victoria real fue {winRate}%",
+  "@wrongPredictionMessage": {
+    "placeholders": {
+      "winRate": {}
+    }
+  },
+  "error": "Error",
+  "invalidEmail": "❌ ¡Dirección de correo electrónico inválida! Por favor ingrese un formato de correo válido.",
+  "userNotFound": "❌ ¡No se encontró usuario con esta dirección de correo electrónico!",
+  "userAlreadyRegistered": "❌ ¡Esta dirección de correo electrónico ya está registrada! Intente iniciar sesión.",
+  "invalidPassword": "❌ ¡Contraseña incorrecta! Por favor verifique su contraseña.",
+  "passwordMinLength": "❌ ¡La contraseña debe tener al menos 6 caracteres!",
+  "passwordTooWeak": "❌ ¡La contraseña es muy débil! Elija una contraseña más fuerte.",
+  "usernameAlreadyTaken": "❌ ¡Este nombre de usuario ya está tomado! Elija otro nombre de usuario.",
+  "usernameTooShort": "❌ ¡El nombre de usuario debe tener al menos 3 caracteres!",
+  "networkError": "❌ ¡Verifique su conexión a internet!",
+  "timeoutError": "❌ ¡Tiempo de conexión agotado! Por favor intente de nuevo.",
+  "emailNotConfirmed": "❌ ¡Necesita confirmar su dirección de correo electrónico!",
+  "tooManyRequests": "❌ ¡Demasiados intentos! Por favor espere unos minutos e intente de nuevo.",
+  "accountDisabled": "❌ ¡Su cuenta ha sido deshabilitada!",
+  "duplicateData": "❌ ¡Esta información ya está en uso! Intente con información diferente.",
+  "invalidData": "❌ ¡Hay un error en la información que ingresó! Por favor verifique.",
+  "invalidCredentials": "❌ ¡El correo electrónico o la contraseña son incorrectos!",
+  "tooManyEmails": "❌ ¡Demasiados correos electrónicos enviados! Por favor espere.",
+  "operationFailed": "❌ ¡Operación fallida! Por favor verifique su información.",
+  "success": "Exitoso",
+  "loading": "Cargando...",
+  "noMatchesAvailable": "No hay partidos disponibles para votar en este momento",
+  "allMatchesVoted": "¡Has votado en todos los partidos!\nEspera nuevos partidos...",
+  "usernameCannotBeEmpty": "El nombre de usuario no puede estar vacío",
+  "emailCannotBeEmpty": "El correo electrónico no puede estar vacío",
+  "passwordCannotBeEmpty": "La contraseña no puede estar vacía",
+  "registrationSuccessful": "¡Registro exitoso!",
+  "userAlreadyExists": "Este usuario ya está registrado o ocurrió un error",
+  "loginSuccessful": "¡Inicio de sesión exitoso!",
+  "loginError": "Error de inicio de sesión: Error desconocido",
+  "dontHaveAccount": "¿No tienes cuenta? ",
+  "registerNow": "Regístrate",
+  "alreadyHaveAccount": "¿Ya tienes cuenta? ",
+  "loginNow": "Inicia sesión",
+  "confirmPassword": "Confirmar Contraseña",
+  "instagramHandle": "Usuario de Instagram",
+  "profession": "Profesión",
+  "male": "Masculino",
+  "female": "Femenino",
+  "allPhotoSlotsFull": "¡Todos los espacios de fotos adicionales están llenos!",
+  "photoUploadSlot": "Subir Foto - Espacio {slot}",
+  "@photoUploadSlot": {
+    "placeholders": {
+      "slot": {}
+    }
+  },
+  "coinsRequiredForSlot": "Se requieren {coins} monedas para este espacio.",
+  "@coinsRequiredForSlot": {
+    "placeholders": {
+      "coins": {}
+    }
+  },
+  "insufficientCoinsForUpload": "¡Monedas insuficientes! Usa el botón de monedas en la página de perfil para comprar monedas.",
+  "cancel": "Cancelar",
+  "upload": "Subir ({coins} monedas)",
+  "@upload": {
+    "placeholders": {
+      "coins": {}
+    }
+  },
+  "photoUploaded": "✅ ¡Foto subida! {coins} monedas gastadas.",
+  "@photoUploaded": {
+    "placeholders": {
+      "coins": {}
+    }
+  },
+  "deletePhoto": "Eliminar Foto",
+  "confirmDeletePhoto": "¿Estás seguro de que quieres eliminar esta foto?",
+  "delete": "Eliminar",
+  "photoDeleted": "✅ ¡Foto eliminada!",
+  "selectFromGallery": "Seleccionar de Galería",
+  "takeFromCamera": "Tomar de Cámara",
+  "additionalMatchPhotos": "📸 Fotos Adicionales de Partidos",
+  "addPhoto": "Agregar Foto",
+  "additionalPhotosDescription": "Tus fotos adicionales que aparecerán en los partidos ({count}/4)",
+  "@additionalPhotosDescription": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "noAdditionalPhotos": "Aún no hay fotos adicionales",
+  "secondPhotoCost": "¡2ª foto cuesta 50 monedas!",
+  "premiumInfoAdded": "¡Información premium agregada! Puedes configurar la visibilidad desde abajo.",
+  "premiumInfoVisibility": "💎 Visibilidad de Información Premium",
+  "premiumInfoDescription": "Otros usuarios pueden ver esta información gastando monedas",
+  "instagramAccount": "Cuenta de Instagram",
+  "statistics": "Estadísticas",
+  "totalMatches": "Partidos Totales",
+  "wins": "Victorias",
+  "winRatePercentage": "Porcentaje de Victoria",
+  "predictionStatistics": "🎯 Estadísticas de Predicción",
+  "totalPredictions": "Total de Predicciones",
+  "correctPredictions": "Predicciones Correctas",
+  "accuracy": "Precisión",
+  "coinsEarnedFromPredictions": "Monedas Ganadas de Predicciones: {coins} monedas",
+  "@coinsEarnedFromPredictions": {
+    "placeholders": {
+      "coins": {}
+    }
+  },
+  "matchHistory": "📊 Historial de Partidos",
+  "viewLastFiveMatches": "Ver tus últimos 5 partidos y oponentes (5 monedas)",
+  "visibleInMatches": "Visible en Partidos",
+  "nowVisibleInMatches": "¡Ahora aparecerás en los partidos!",
+  "removedFromMatches": "¡Removido de los partidos!",
+  "addInfo": "Agregar {type}",
+  "@addInfo": {
+    "placeholders": {
+      "type": {}
+    }
+  },
+  "enterInfo": "Ingresa tu información de {type}:",
+  "@enterInfo": {
+    "placeholders": {
+      "type": {}
+    }
+  },
+  "add": "Agregar",
+  "infoAdded": "✅ ¡Información de {type} agregada!",
+  "@infoAdded": {
+    "placeholders": {
+      "type": {}
+    }
+  },
+  "errorAddingInfo": "❌ ¡Error al agregar información!",
+  "matchInfoNotLoaded": "No se pudieron cargar los datos del partido",
+  "premiumInfo": "💎 Información de {type}",
+  "@premiumInfo": {
+    "placeholders": {
+      "type": {}
+    }
+  },
+  "spendFiveCoins": "Gastar 5 Monedas",
+  "insufficientCoins": "❌ ¡Monedas insuficientes!",
+  "fiveCoinsSpent": "✅ 5 monedas gastadas",
+  "ok": "OK",
+  "matchCounter": "{current} / {total}",
+  "@matchCounter": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "spendFiveCoinsToView": "Gastarás 5 monedas para ver esta información",
+  "great": "¡Genial!",
+  "homePage": "Página de Inicio",
+  "profile": "Perfil",
+  "tournament": "Torneo",
+  "leaderboard": "🏆 Liderazgo",
+  "settings": "Configuración",
+  "streakMessage": "¡{days} días de racha!",
+  "@streakMessage": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "buy": "Comprar",
+  "predict": "Predecir",
+  "fiveCoinsSpentForHistory": "✅ ¡5 monedas gastadas! Tu historial de partidos se está mostrando.",
+  "insufficientCoinsForHistory": "❌ ¡Monedas insuficientes!",
+  "spendFiveCoinsForHistory": "Gastar 5 Monedas",
+  "winsAndMatches": "{wins} victorias • {matches} partidos",
+  "@winsAndMatches": {
+    "placeholders": {
+      "wins": {},
+      "matches": {}
+    }
+  },
+  "insufficientCoinsForTournament": "¡Monedas insuficientes para el torneo!",
+  "joinedTournament": "¡Te uniste al torneo!",
+  "tournamentJoinFailed": "¡Fallo al unirse al torneo!",
+  "dailyStreak": "¡Racha Diaria!",
+  "imageUpdated": "¡Imagen actualizada!",
+  "updateFailed": "Actualización fallida",
+  "imageUpdateFailed": "¡No se pudo actualizar la imagen!",
+  "selectImage": "Seleccionar Imagen",
+  "userInfoNotLoaded": "No se pudieron cargar los datos del usuario",
+  "coin": "Moneda",
+  "premiumFeatures": "Características Premium",
+  "addInstagram": "Agregar Cuenta de Instagram",
+  "addProfession": "Agregar Profesión",
+  "profileUpdated": "¡Perfil actualizado!",
+  "profileUpdateFailed": "Error al actualizar el perfil",
+  "profileSettings": "Configuración de Perfil",
+  "passwordReset": "Restablecer Contraseña",
+  "passwordResetSubtitle": "Restablecer contraseña por correo electrónico",
+  "logoutSubtitle": "Cerrar sesión segura de tu cuenta",
+  "deleteAccountSubtitle": "Eliminar tu cuenta permanentemente",
+  "updateProfile": "Actualizar Perfil",
+  "passwordResetTitle": "Restablecimiento de Contraseña",
+  "passwordResetMessage": "Se enviará un enlace de restablecimiento de contraseña a tu dirección de correo electrónico. ¿Quieres continuar?",
+  "send": "Enviar",
+  "passwordResetSent": "¡Correo de restablecimiento de contraseña enviado!",
+  "emailNotFound": "¡Dirección de correo electrónico no encontrada!",
+  "votingError": "Error durante la votación",
+  "cancel": "Cancelar",
+  "delete": "Eliminar",
+  "photoUploaded": "¡Foto subida! {coinsSpent} monedas gastadas.",
+  "@photoUploaded": {
+    "placeholders": {
+      "coinsSpent": {
+        "type": "int"
+      }
+    }
+  },
+  "photoDeleted": "¡Foto eliminada!",
+  "selectFromGallery": "Seleccionar de Galería",
+  "takeFromCamera": "Tomar de Cámara",
+  "additionalMatchPhotos": "Fotos Adicionales de Partidos",
+  "addPhoto": "Agregar Foto",
+  "additionalPhotosDescription": "Tus fotos adicionales que aparecerán en los partidos ({count}/4)",
+  "@additionalPhotosDescription": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "noAdditionalPhotos": "Aún no hay fotos adicionales",
+  "secondPhotoCost": "¡2ª foto cuesta 50 monedas!",
+  "slot": "Espacio {slot}",
+  "@slot": {
+    "placeholders": {
+      "slot": {}
+    }
+  },
+  "photoUploadSlot": "Subir Foto - Espacio {slot}",
+  "@photoUploadSlot": {
+    "placeholders": {
+      "slot": {}
+    }
+  },
+  "coinsRequiredForSlot": "Se requieren {coins} monedas para este espacio.",
+  "@coinsRequiredForSlot": {
+    "placeholders": {
+      "coins": {}
+    }
+  },
+  "insufficientCoinsForUpload": "¡Monedas insuficientes! Usa el botón de monedas en la página de perfil para comprar monedas.",
+  "upload": "Subir ({coins} monedas)",
+  "@upload": {
+    "placeholders": {
+      "coins": {}
+    }
+  },
+  "deletePhoto": "Eliminar Foto",
+  "confirmDeletePhoto": "¿Estás seguro de que quieres eliminar esta foto?"
+}
+

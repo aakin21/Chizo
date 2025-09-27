@@ -7,6 +7,7 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
 import 'app_localizations_tr.dart';
 
 // ignore_for_file: type=lint
@@ -95,9 +96,10 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
-    Locale('de'),
     Locale('en'),
     Locale('tr'),
+    Locale('de'),
+    Locale('es'),
   ];
 
   /// The title of the application
@@ -267,6 +269,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'German'**
   String get german;
+
+  /// No description provided for @spanish.
+  ///
+  /// In en, this message translates to:
+  /// **'Spanish'**
+  String get spanish;
+
+  /// No description provided for @turkishLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Turkish'**
+  String get turkishLanguage;
+
+  /// No description provided for @englishLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get englishLanguage;
+
+  /// No description provided for @germanLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'German'**
+  String get germanLanguage;
 
   /// Coins label
   ///
@@ -1192,6 +1218,180 @@ abstract class AppLocalizations {
   /// **'Tournament participation fees'**
   String get tournamentFees;
 
+  /// No description provided for @weeklyMaleTournament1000.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Male Tournament (1000 Coins)'**
+  String get weeklyMaleTournament1000;
+
+  /// No description provided for @weeklyMaleTournament1000Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly male tournament - 300 person capacity'**
+  String get weeklyMaleTournament1000Desc;
+
+  /// No description provided for @weeklyMaleTournament10000.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Male Tournament (10000 Coins)'**
+  String get weeklyMaleTournament10000;
+
+  /// No description provided for @weeklyMaleTournament10000Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium male tournament - 100 person capacity'**
+  String get weeklyMaleTournament10000Desc;
+
+  /// No description provided for @weeklyFemaleTournament1000.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Female Tournament (1000 Coins)'**
+  String get weeklyFemaleTournament1000;
+
+  /// No description provided for @weeklyFemaleTournament1000Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly female tournament - 300 person capacity'**
+  String get weeklyFemaleTournament1000Desc;
+
+  /// No description provided for @weeklyFemaleTournament10000.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Female Tournament (10000 Coins)'**
+  String get weeklyFemaleTournament10000;
+
+  /// No description provided for @weeklyFemaleTournament10000Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium female tournament - 100 person capacity'**
+  String get weeklyFemaleTournament10000Desc;
+
+  /// No description provided for @tournamentEntryFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament entry fee'**
+  String get tournamentEntryFee;
+
+  /// No description provided for @tournamentVotingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament Voting'**
+  String get tournamentVotingTitle;
+
+  /// No description provided for @tournamentThirdPlace.
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament 3rd place'**
+  String get tournamentThirdPlace;
+
+  /// No description provided for @tournamentWon.
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament won'**
+  String get tournamentWon;
+
+  /// No description provided for @userNotLoggedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'User not logged in'**
+  String get userNotLoggedIn;
+
+  /// No description provided for @userNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'User not found'**
+  String get userNotFound;
+
+  /// No description provided for @firstLoginReward.
+  ///
+  /// In en, this message translates to:
+  /// **'🎉 First login! You earned 50 coins!'**
+  String get firstLoginReward;
+
+  /// No description provided for @streakReward.
+  ///
+  /// In en, this message translates to:
+  /// **'🔥 {streak} day streak! You earned {coins} coins!'**
+  String streakReward(Object coins, Object streak);
+
+  /// No description provided for @streakBroken.
+  ///
+  /// In en, this message translates to:
+  /// **'💔 Streak broken! New start: You earned 50 coins!'**
+  String get streakBroken;
+
+  /// No description provided for @dailyStreakReward.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily streak reward ({streak} days)'**
+  String dailyStreakReward(Object streak);
+
+  /// No description provided for @alreadyLoggedInToday.
+  ///
+  /// In en, this message translates to:
+  /// **'You already logged in today!'**
+  String get alreadyLoggedInToday;
+
+  /// No description provided for @streakCheckError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error occurred during streak check'**
+  String get streakCheckError;
+
+  /// No description provided for @streakInfoError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not get streak information'**
+  String get streakInfoError;
+
+  /// No description provided for @correctPredictionReward.
+  ///
+  /// In en, this message translates to:
+  /// **'You will earn 1 coin for correct prediction!'**
+  String get correctPredictionReward;
+
+  /// No description provided for @wrongPredictionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfortunately, you predicted incorrectly.'**
+  String get wrongPredictionMessage;
+
+  /// No description provided for @predictionSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error occurred while saving prediction'**
+  String get predictionSaveError;
+
+  /// No description provided for @coinAddError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error occurred while adding coins'**
+  String get coinAddError;
+
+  /// No description provided for @coinPurchaseTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Coin purchase - {description}'**
+  String coinPurchaseTransaction(Object description);
+
+  /// No description provided for @whiteThemeName.
+  ///
+  /// In en, this message translates to:
+  /// **'White'**
+  String get whiteThemeName;
+
+  /// No description provided for @darkThemeName.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get darkThemeName;
+
+  /// No description provided for @pinkThemeName.
+  ///
+  /// In en, this message translates to:
+  /// **'Pink'**
+  String get pinkThemeName;
+
   /// No description provided for @premiumFilters.
   ///
   /// In en, this message translates to:
@@ -1330,12 +1530,6 @@ abstract class AppLocalizations {
   /// **'Error loading voting: {error}'**
   String votingLoadError(Object error);
 
-  /// No description provided for @tournamentVotingTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Tournament Voting'**
-  String get tournamentVotingTitle;
-
   /// No description provided for @whichParticipantPrefer.
   ///
   /// In en, this message translates to:
@@ -1405,7 +1599,7 @@ abstract class AppLocalizations {
   /// No description provided for @lightWhiteTheme.
   ///
   /// In en, this message translates to:
-  /// **'Light white theme'**
+  /// **'White material light theme'**
   String get lightWhiteTheme;
 
   /// No description provided for @neutralDarkGrayTheme.
@@ -1443,6 +1637,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'🎨 Theme Selection'**
   String get themeSelection;
+
+  /// No description provided for @darkMaterialTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Black material dark theme'**
+  String get darkMaterialTheme;
+
+  /// No description provided for @lightPinkTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Light pink color theme'**
+  String get lightPinkTheme;
 
   /// No description provided for @notificationSettings.
   ///
@@ -1558,12 +1764,6 @@ abstract class AppLocalizations {
   /// **'Predict win rate!'**
   String get predictWinRateTitle;
 
-  /// No description provided for @correctPredictionReward.
-  ///
-  /// In en, this message translates to:
-  /// **'You will earn 1 coin for correct prediction!'**
-  String get correctPredictionReward;
-
   /// No description provided for @wrongPredictionNoCoin.
   ///
   /// In en, this message translates to:
@@ -1587,12 +1787,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You predicted correctly!'**
   String get correctPredictionMessage;
-
-  /// No description provided for @wrongPredictionMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Unfortunately, you predicted incorrectly.'**
-  String get wrongPredictionMessage;
 
   /// No description provided for @actualRate.
   ///
@@ -1755,6 +1949,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'✅ Country preferences updated'**
   String get countryPreferencesUpdated;
+
+  /// No description provided for @invalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Invalid email address! Please enter a valid email format.'**
+  String get invalidEmail;
+
+  /// No description provided for @userNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ No user found with this email address!'**
+  String get userNotFound;
+
+  /// No description provided for @userAlreadyRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ This email address is already registered! Try logging in.'**
+  String get userAlreadyRegistered;
+
+  /// No description provided for @invalidPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Wrong password! Please check your password.'**
+  String get invalidPassword;
+
+  /// No description provided for @passwordMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Password must be at least 6 characters!'**
+  String get passwordMinLength;
+
+  /// No description provided for @passwordTooWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Password is too weak! Choose a stronger password.'**
+  String get passwordTooWeak;
+
+  /// No description provided for @usernameAlreadyTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ This username is already taken! Choose another username.'**
+  String get usernameAlreadyTaken;
+
+  /// No description provided for @usernameTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Username must be at least 3 characters!'**
+  String get usernameTooShort;
+
+  /// No description provided for @networkError.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Check your internet connection!'**
+  String get networkError;
+
+  /// No description provided for @timeoutError.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Connection timeout! Please try again.'**
+  String get timeoutError;
+
+  /// No description provided for @emailNotConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ You need to confirm your email address!'**
+  String get emailNotConfirmed;
+
+  /// No description provided for @tooManyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Too many attempts! Please wait a few minutes and try again.'**
+  String get tooManyRequests;
+
+  /// No description provided for @accountDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Your account has been disabled!'**
+  String get accountDisabled;
+
+  /// No description provided for @duplicateData.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ This information is already in use! Try different information.'**
+  String get duplicateData;
+
+  /// No description provided for @invalidData.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ There is an error in the information you entered! Please check.'**
+  String get invalidData;
+
+  /// No description provided for @invalidCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Email or password is incorrect!'**
+  String get invalidCredentials;
+
+  /// No description provided for @tooManyEmails.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Too many emails sent! Please wait.'**
+  String get tooManyEmails;
+
+  /// No description provided for @operationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Operation failed! Please check your information.'**
+  String get operationFailed;
 
   /// No description provided for @countryPreferencesUpdateFailed.
   ///
@@ -1924,7 +2226,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['de', 'en', 'tr'].contains(locale.languageCode);
+      <String>['de', 'en', 'es', 'tr'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1937,6 +2239,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
     case 'tr':
       return AppLocalizationsTr();
   }

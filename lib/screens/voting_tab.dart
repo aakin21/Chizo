@@ -272,9 +272,15 @@ class _VotingTabState extends State<VotingTab> {
 
       if (result['success']) {
         // Başarı mesajı göster
+        String message;
+        if (result['is_correct']) {
+          message = AppLocalizations.of(context)!.correctPredictionMessage;
+        } else {
+          message = AppLocalizations.of(context)!.wrongPredictionMessage;
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result['message']),
+            content: Text(message),
             backgroundColor: result['is_correct'] ? Colors.green : Colors.orange,
           ),
         );

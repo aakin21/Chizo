@@ -224,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 // Ayarlar
                 IconButton(
-                  onPressed: () => _openPage(context, SettingsTab(), AppLocalizations.of(context)!.settings),
+                  onPressed: () => _openPage(context, SettingsTab(onLanguageChanged: widget.onLanguageChanged), AppLocalizations.of(context)!.settings),
                   icon: const Icon(Icons.settings, size: 20),
                   style: IconButton.styleFrom(
                     backgroundColor: Colors.green.withOpacity(0.1),
