@@ -191,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 // Profil
                 IconButton(
-                  onPressed: () => _openPage(context, ProfileTab(key: ValueKey(_profileRefreshKey), onRefresh: _refreshProfile), AppLocalizations.of(context)!.profile),
+                  onPressed: () => _openPage(context, ProfileTab(key: ValueKey('${_profileRefreshKey}_${Localizations.localeOf(context).languageCode}'), onRefresh: _refreshProfile), AppLocalizations.of(context)!.profile),
                   icon: const Icon(Icons.person, size: 20),
                   style: IconButton.styleFrom(
                     backgroundColor: Colors.blue.withOpacity(0.1),

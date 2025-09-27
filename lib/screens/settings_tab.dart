@@ -391,6 +391,9 @@ class _SettingsTabState extends State<SettingsTab> {
               ),
             ],
           ),
+          
+          const SizedBox(height: 24),
+          
         ],
       ),
     );

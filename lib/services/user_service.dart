@@ -68,7 +68,7 @@ class UserService {
   static Future<bool> updateProfile({
     String? username,
     int? age,
-    String? country,
+    String? countryCode,
     String? gender,
     String? instagramHandle,
     String? profession,
@@ -84,7 +84,7 @@ class UserService {
 
       if (username != null) updateData['username'] = username;
       if (age != null) updateData['age'] = age;
-      if (country != null) updateData['country'] = country;
+      if (countryCode != null) updateData['country_code'] = countryCode;
       if (gender != null) updateData['gender'] = gender;
       if (instagramHandle != null) updateData['instagram_handle'] = instagramHandle;
       if (profession != null) updateData['profession'] = profession;

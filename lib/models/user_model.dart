@@ -4,7 +4,7 @@ class UserModel {
   final String email;
   final int coins;
   final int? age;
-  final String? country;
+  final String? countryCode;
   final String? gender;
   final String? instagramHandle;
   final String? profession;
@@ -28,7 +28,7 @@ class UserModel {
     required this.email,
     required this.coins,
     this.age,
-    this.country,
+    this.countryCode,
     this.gender,
     this.instagramHandle,
     this.profession,
@@ -54,7 +54,7 @@ class UserModel {
       email: json['email'],
       coins: json['coins'] ?? 0,
       age: json['age'],
-      country: json['country'],
+      countryCode: json['country_code'] ?? json['country'], // Backward compatibility
       gender: json['gender'],
       instagramHandle: json['instagram_handle'],
       profession: json['profession'],
@@ -89,7 +89,7 @@ class UserModel {
       'email': email,
       'coins': coins,
       'age': age,
-      'country': country,
+      'country_code': countryCode,
       'gender': gender,
       'instagram_handle': instagramHandle,
       'profession': profession,

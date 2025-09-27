@@ -60,7 +60,7 @@ class MatchService {
           email: user.email,
           coins: user.coins,
           age: user.age,
-          country: user.country,
+          countryCode: user.countryCode,
           gender: user.gender,
           instagramHandle: user.instagramHandle,
           profession: user.profession,

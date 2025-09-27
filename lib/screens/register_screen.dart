@@ -4,6 +4,7 @@ import 'login_screen.dart';
 import '../utils/constants.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/compact_language_selector.dart';
+import '../widgets/country_selector.dart';
 import '../services/language_service.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -18,7 +19,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _usernameController = TextEditingController();
   final _ageController = TextEditingController();
-  String? _selectedCountry;
+  String? _selectedCountryCode;
   String? _selectedGender;
   bool _isLoading = false;
 
@@ -48,6 +49,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
+    if (_selectedCountryCode == null || _selectedCountryCode!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lütfen bir ülke seçin')),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
@@ -68,7 +76,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'age': _ageController.text.trim().isNotEmpty 
               ? int.tryParse(_ageController.text.trim()) 
               : null,
-          'country': _selectedCountry,
+          'country_code': _selectedCountryCode,
           'gender': _selectedGender,
           'is_visible': true,
           'total_matches': 0,
@@ -231,21 +239,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
               keyboardType: TextInputType.number
             ),
             const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: _selectedCountry,
-              decoration: InputDecoration(
-                labelText: l10n.country,
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.public),
-              ),
-              items: AppConstants.countries.map((country) => 
-                DropdownMenuItem(value: country, child: Text(country))
-              ).toList(),
-              onChanged: (value) {
+            CountrySelector(
+              key: ValueKey(Localizations.localeOf(context).languageCode),
+              selectedCountryCode: _selectedCountryCode,
+              onCountrySelected: (countryCode) {
                 setState(() {
-                  _selectedCountry = value;
+                  _selectedCountryCode = countryCode;
                 });
               },
+              label: AppLocalizations.of(context)!.country,
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
