@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'services/language_service.dart';
+import 'services/notification_service.dart';
 import 'l10n/app_localizations.dart';
 
 void main() async {
@@ -17,6 +18,9 @@ void main() async {
     anonKey: const String.fromEnvironment('SUPABASE_ANON_KEY',
         defaultValue: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdXB0d3NnbnBnc3ZscWlnaXRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5NjMzODUsImV4cCI6MjA3MzUzOTM4NX0.KiLkHJ22FhJkc8BnkLrTZpk-_gM81bTiCfe0gh3-DfM'),
   );
+
+  // Notification service'i initialize et
+  await NotificationService.initialize();
 
   runApp(const MyApp());
 }

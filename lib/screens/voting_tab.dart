@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:shimmer/shimmer.dart';
 import 'dart:math';
 import '../models/match_model.dart';
 import '../models/user_model.dart';
@@ -36,6 +38,7 @@ class _VotingTabState extends State<VotingTab> {
   bool isCurrentTournamentMatch = false; // Mevcut oylama turnuva oylaması mı?
   DateTime? lastTapTime; // Son tık zamanını takip et
   bool _isSliderDragging = false; // Tutulma durumu
+  int selectedPhotoOrder = 1; // Seçilen fotoğrafın sırası
 
   // Yüzdeye göre renk hesaplama - Advanced Spectrum Transparent->Solid
   Color _getSliderColorFromPercentage(double percentage) {
@@ -156,6 +159,21 @@ class _VotingTabState extends State<VotingTab> {
         );
       }
       return;
+    }
+
+      // Seçilen kullanıcının fotoğraf sırasını kaydet
+    final selectedUser = await _getWinnerUser(winnerId);
+    if (selectedUser != null && selectedUser.matchPhotos != null && selectedUser.matchPhotos!.isNotEmpty) {
+      // İlk fotoğrafı seç (photo_order = 1)
+      final sortedPhotos = List<Map<String, dynamic>>.from(selectedUser.matchPhotos!);
+      sortedPhotos.sort((a, b) {
+        final orderA = a['photo_order'] as int? ?? 0;
+        final orderB = b['photo_order'] as int? ?? 0;
+        return orderA.compareTo(orderB);
+      });
+      
+      // Seçilen fotoğrafın sırasını kaydet
+      selectedPhotoOrder = sortedPhotos.first['photo_order'] as int? ?? 1;
     }
 
     // Tek tık - direkt oy verme + slider
@@ -333,8 +351,8 @@ class _VotingTabState extends State<VotingTab> {
         children: [
           
           if (isLoading)
-            const Expanded(
-              child: Center(child: CircularProgressIndicator()),
+            Expanded(
+              child: _buildVotingSkeletonScreen(),
             )
           else if (votableItems.isEmpty)
             Expanded(
@@ -374,6 +392,7 @@ class _VotingTabState extends State<VotingTab> {
       previewUser = null;
       showSinglePhotoPreview = false;
       sliderValue = 50.0;
+      selectedPhotoOrder = 1; // Reset photo order
     });
     
     // Eğer tüm oylamalar bittiyse yeni match'ler yükle
@@ -598,12 +617,9 @@ class _VotingTabState extends State<VotingTab> {
 
         return Column(
           children: [
+            // İlk kullanıcı
             Expanded(
-              child: Column(
-                children: [
-                  // İlk kullanıcı
-                  Expanded(
-                    child: GestureDetector(
+              child: GestureDetector(
                       onTap: () => _voteForUser(user1.id),
                       child: Container(
                         decoration: BoxDecoration(
@@ -706,11 +722,11 @@ class _VotingTabState extends State<VotingTab> {
                     ),
                   ),
                   
-                  const SizedBox(height: 8),
-                  
-                  // İkinci kullanıcı
-                  Expanded(
-                    child: GestureDetector(
+            const SizedBox(height: 8),
+            
+            // İkinci kullanıcı
+            Expanded(
+              child: GestureDetector(
                       onTap: () => _voteForUser(user2.id),
                       child: Container(
                         decoration: BoxDecoration(
@@ -785,9 +801,6 @@ class _VotingTabState extends State<VotingTab> {
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
             
             const SizedBox(height: 8),
             
@@ -856,21 +869,6 @@ class _VotingTabState extends State<VotingTab> {
     // Çoklu fotoğraf varsa carousel göster, yoksa profil fotoğrafını göster
     if (user.matchPhotos != null && user.matchPhotos!.isNotEmpty) {
       return _buildPhotoCarousel(user.matchPhotos!, user.id, matchId);
-    } else if (user.matchPhotos != null && user.matchPhotos!.isNotEmpty) {
-      return CachedNetworkImage(
-        imageUrl: user.matchPhotos!.first['photo_url'],
-        fit: BoxFit.cover,
-        placeholder: (context, url) => Container(
-          color: Colors.grey[300],
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
-        errorWidget: (context, url, error) => Container(
-          color: Colors.grey[300],
-          child: const Icon(Icons.person, size: 80),
-        ),
-      );
     } else {
       return Container(
         color: Colors.grey[300],
@@ -880,26 +878,17 @@ class _VotingTabState extends State<VotingTab> {
   }
 
   Widget _buildPhotoCarousel(List<Map<String, dynamic>> photos, String userId, String matchId) {
-    // Her match için farklı fotoğraf seç ama aynı match içinde sabit kalsın
-    // User ID + Match ID + fotoğraf sayısı kullanarak daha iyi dağıtım
-    final combinedHash = (userId.hashCode.abs() + matchId.hashCode.abs() + photos.length * 23) % photos.length;
-    final photoIndex = photos.length > 1 ? combinedHash : 0;
-    
-    final selectedPhoto = photos[photoIndex];
+    // Seçilen fotoğraf sırasını bul
+    final selectedPhoto = photos.firstWhere(
+      (photo) => (photo['photo_order'] as int? ?? 0) == selectedPhotoOrder,
+      orElse: () => photos.first, // Bulunamazsa ilk fotoğrafı kullan
+    );
     
     return CachedNetworkImage(
       imageUrl: selectedPhoto['photo_url'],
       fit: BoxFit.cover,
-      placeholder: (context, url) => Container(
-        color: Colors.grey[300],
-        child: const Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
-      errorWidget: (context, url, error) => Container(
-        color: Colors.grey[300],
-        child: const Icon(Icons.person, size: 80),
-      ),
+      placeholder: (context, url) => _buildImageLoadingShimmer(),
+      errorWidget: (context, url, error) => _buildImageErrorWidget(),
     );
   }
 
@@ -1398,5 +1387,156 @@ class _VotingTabState extends State<VotingTab> {
     print('Photo order: ${selectedPhoto['photo_order']}');
     
     return selectedPhoto;
+  }
+
+  /// Build animated skeleton loading screen for voting tab
+  Widget _buildVotingSkeletonScreen() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Shimmer.fromColors(
+            baseColor: Theme.of(context).colorScheme.surface,
+            highlightColor: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+            child: Column(
+              children: [
+                // Two skeleton photo containers
+                Row(
+                  children: [
+                    // Left skeleton photo
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        height: 350,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Right skeleton photo
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        height: 350,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                // Usernames skeleton
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Container(
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                // VS text skeleton
+                Container(
+                  width: 60,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                const SizedBox(height: 40),
+                // Action buttons skeleton
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Build shimmer loading widget for image loading states
+  Widget _buildImageLoadingShimmer() {
+    return Shimmer.fromColors(
+      baseColor: Theme.of(context).colorScheme.surface,
+      highlightColor: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+  }
+
+  /// Build error placeholder widget for failed image loads
+  Widget _buildImageErrorWidget() {
+    return Container(
+      color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.person,
+              size: 50,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Image unavailable',
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

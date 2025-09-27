@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 import 'dart:math';
 import '../models/tournament_model.dart';
 import 'user_service.dart';
@@ -21,6 +22,33 @@ class TournamentService {
     } catch (e) {
       print('Error getting active tournaments: $e');
       return [];
+    }
+  }
+
+  // Test turnuvalarını temizle
+  static Future<void> cleanupTestTournaments() async {
+    try {
+      // Test turnuvalarını sil
+      await _client
+          .from('tournaments')
+          .delete()
+          .like('name', '%Test%');
+      
+      // Test turnuva katılımcılarını sil
+      await _client
+          .from('tournament_participants')
+          .delete()
+          .inFilter('tournament_id', 
+            await _client
+                .from('tournaments')
+                .select('id')
+                .like('name', '%Test%')
+                .then((result) => (result as List).map((t) => t['id']).toList())
+          );
+      
+      print('Test tournaments cleaned up!');
+    } catch (e) {
+      print('Error cleaning up test tournaments: $e');
     }
   }
 
@@ -656,6 +684,194 @@ class TournamentService {
     } catch (e) {
       print('Error completing tournament: $e');
       return false;
+    }
+  }
+
+  // Private turnuva oluştur
+  static Future<Map<String, dynamic>> createPrivateTournament({
+    required String name,
+    required String description,
+    required int entryFee,
+    required int maxParticipants,
+    required DateTime startDate,
+    required DateTime endDate,
+    required String tournamentFormat,
+    String? customRules,
+    String gender = 'Erkek',
+  }) async {
+    try {
+      final currentUser = await UserService.getCurrentUser();
+      if (currentUser == null) {
+        return {'success': false, 'message': 'Kullanıcı bulunamadı'};
+      }
+
+      // Coin kontrolü
+      if (currentUser.coins < entryFee) {
+        return {'success': false, 'message': 'Yetersiz coin'};
+      }
+
+      // Private key oluştur
+      final privateKey = _generatePrivateKey();
+
+      // Turnuva oluştur
+      final tournamentId = const Uuid().v4();
+      await _client.from('tournaments').insert({
+        'id': tournamentId,
+        'name': name,
+        'description': description,
+        'entry_fee': entryFee,
+        'prize_pool': entryFee * maxParticipants, // Entry fee * katılımcı sayısı
+        'max_participants': maxParticipants,
+        'current_participants': 0,
+        'start_date': startDate.toIso8601String(),
+        'end_date': endDate.toIso8601String(),
+        'status': 'registration',
+        'gender': gender,
+        'current_phase': 'registration',
+        'registration_start_date': DateTime.now().toIso8601String(),
+        'is_private': true,
+        'private_key': privateKey,
+        'tournament_format': tournamentFormat,
+        'custom_rules': customRules,
+        'created_at': DateTime.now().toIso8601String(),
+      }).select().single();
+
+      // Creator'ı otomatik katılımcı yap
+      await _client.from('tournament_participants').insert({
+        'tournament_id': tournamentId,
+        'user_id': currentUser.id,
+        'joined_at': DateTime.now().toIso8601String(),
+      });
+
+      // Turnuva oluşturma ücretini düş
+      await UserService.updateCoins(
+        -entryFee,
+        'spent',
+        'Private turnuva oluşturma ücreti'
+      );
+
+      // Current participants'ı güncelle
+      await _client
+          .from('tournaments')
+          .update({'current_participants': 1})
+          .eq('id', tournamentId);
+
+      return {
+        'success': true,
+        'tournament_id': tournamentId,
+        'private_key': privateKey,
+        'message': 'Private turnuva başarıyla oluşturuldu'
+      };
+    } catch (e) {
+      print('Error creating private tournament: $e');
+      return {'success': false, 'message': 'Turnuva oluşturulamadı: $e'};
+    }
+  }
+
+  // Private key ile turnuvaya katıl
+  static Future<Map<String, dynamic>> joinPrivateTournament(String privateKey) async {
+    try {
+      final currentUser = await UserService.getCurrentUser();
+      if (currentUser == null) {
+        return {'success': false, 'message': 'Kullanıcı bulunamadı'};
+      }
+
+      // Private key ile turnuva bul
+      final tournament = await _client
+          .from('tournaments')
+          .select()
+          .eq('private_key', privateKey)
+          .eq('is_private', true)
+          .maybeSingle();
+
+      if (tournament == null) {
+        return {'success': false, 'message': 'Geçersiz private key'};
+      }
+
+      // Turnuva durumu kontrolü
+      if (tournament['status'] != 'registration') {
+        return {'success': false, 'message': 'Kayıt kapalı'};
+      }
+
+      // Dolu mu kontrol et
+      if (tournament['current_participants'] >= tournament['max_participants']) {
+        return {'success': false, 'message': 'Turnuva dolu'};
+      }
+
+      // Zaten katılmış mı kontrol et
+      final existingParticipation = await _client
+          .from('tournament_participants')
+          .select('id')
+          .eq('tournament_id', tournament['id'])
+          .eq('user_id', currentUser.id)
+          .maybeSingle();
+
+      if (existingParticipation != null) {
+        return {'success': false, 'message': 'Zaten katılmışsınız'};
+      }
+
+      // Coin kontrolü
+      if (currentUser.coins < tournament['entry_fee']) {
+        return {'success': false, 'message': 'Yetersiz coin'};
+      }
+
+      // Turnuvaya katıl
+      await _client.from('tournament_participants').insert({
+        'tournament_id': tournament['id'],
+        'user_id': currentUser.id,
+        'joined_at': DateTime.now().toIso8601String(),
+      });
+
+      // Entry fee düş
+      await UserService.updateCoins(
+        -tournament['entry_fee'],
+        'spent',
+        'Private turnuva katılım ücreti'
+      );
+
+      // Current participants'ı güncelle
+      await _client
+          .from('tournaments')
+          .update({'current_participants': tournament['current_participants'] + 1})
+          .eq('id', tournament['id']);
+
+      return {
+        'success': true,
+        'message': 'Turnuvaya başarıyla katıldınız',
+        'tournament_name': tournament['name']
+      };
+    } catch (e) {
+      print('Error joining private tournament: $e');
+      return {'success': false, 'message': 'Katılım başarısız: $e'};
+    }
+  }
+
+  // Private key oluştur
+  static String _generatePrivateKey() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    final random = Random();
+    return List.generate(8, (index) => chars[random.nextInt(chars.length)]).join();
+  }
+
+  // Kullanıcının oluşturduğu private turnuvaları getir
+  static Future<List<TournamentModel>> getMyPrivateTournaments() async {
+    try {
+      final currentUser = await UserService.getCurrentUser();
+      if (currentUser == null) return [];
+
+      // Private turnuvaları getir - şimdilik tüm private turnuvaları getir
+      final response = await _client
+          .from('tournaments')
+          .select()
+          .eq('is_private', true)
+          .order('created_at', ascending: false);
+
+      return (response as List)
+          .map((json) => TournamentModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      print('Error getting my private tournaments: $e');
+      return [];
     }
   }
 }

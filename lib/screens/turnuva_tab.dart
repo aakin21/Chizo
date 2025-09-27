@@ -347,9 +347,39 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '🏆 Turnuvalar',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                '🏆 Turnuvalar',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              Row(
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: _showJoinPrivateTournamentDialog,
+                    icon: const Icon(Icons.key, size: 18),
+                    label: const Text('Key ile Katıl'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton.icon(
+                    onPressed: _showCreatePrivateTournamentDialog,
+                    icon: const Icon(Icons.add, size: 18),
+                    label: const Text('Private Turnuva'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.purple,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           
@@ -562,6 +592,463 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
 
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
+  }
+
+  // Turnuva format tooltip'leri
+  String _getFormatTooltip(String format) {
+    switch (format) {
+      case 'league':
+        return 'Lig Usulü: Herkes herkesle oynar, en yüksek win rate kazanır. Sınırsız katılımcı.';
+      case 'elimination':
+        return 'Eleme Usulü: Tek maçlık eleme sistemi. Maksimum 8 kişi (Çeyrek final, Yarı final, Final).';
+      case 'hybrid':
+        return 'Lig + Eleme: Önce lig usulü, sonra en iyi 8 kişi eleme usulü. Maksimum 8 kişi eleme aşaması için.';
+      default:
+        return 'Turnuva formatı seçin';
+    }
+  }
+
+  // Private turnuva oluşturma dialog'u
+  Future<void> _showCreatePrivateTournamentDialog() async {
+    final nameController = TextEditingController();
+    final descriptionController = TextEditingController();
+    final entryFeeController = TextEditingController(text: '1000');
+    final maxParticipantsController = TextEditingController(text: '8');
+    final customRulesController = TextEditingController();
+    
+    String selectedFormat = 'league';
+    String selectedGender = 'Erkek';
+    DateTime startDate = DateTime.now().add(const Duration(days: 1));
+    DateTime endDate = DateTime.now().add(const Duration(days: 7));
+
+    await showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.add_circle, color: Colors.purple),
+              SizedBox(width: 8),
+              Text('Private Turnuva Oluştur'),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Turnuva adı
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Turnuva Adı',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.emoji_events),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                
+                // Açıklama
+                TextField(
+                  controller: descriptionController,
+                  decoration: const InputDecoration(
+                    labelText: 'Açıklama',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.description),
+                  ),
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 16),
+                
+                // Entry fee ve max participants
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: entryFeeController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Entry Fee (Coin)',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.monetization_on),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: TextField(
+                        controller: maxParticipantsController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'Max Katılımcı',
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.people),
+                          suffixIcon: selectedFormat == 'elimination' 
+                            ? const Tooltip(
+                                message: 'Eleme usulü için maksimum 8 kişi',
+                                child: Icon(Icons.warning, color: Colors.orange, size: 16),
+                              )
+                            : null,
+                        ),
+                        onChanged: (value) {
+                          // Eleme usulü için maksimum 8 kişi kontrolü
+                          if (selectedFormat == 'elimination' && int.tryParse(value) != null && int.parse(value) > 8) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Eleme usulü için maksimum 8 kişi olabilir'),
+                                backgroundColor: Colors.orange,
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                            maxParticipantsController.text = '8';
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                
+                // Turnuva formatı
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        value: selectedFormat,
+                        decoration: const InputDecoration(
+                          labelText: 'Turnuva Formatı',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.sports_esports),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 'league', child: Text('Lig Usulü')),
+                          DropdownMenuItem(value: 'elimination', child: Text('Eleme Usulü')),
+                          DropdownMenuItem(value: 'hybrid', child: Text('Lig + Eleme')),
+                        ],
+                        onChanged: (value) {
+                          setDialogState(() {
+                            selectedFormat = value!;
+                            // Eleme usulü seçilirse maksimum 8 kişi
+                            if (value == 'elimination' && int.parse(maxParticipantsController.text) > 8) {
+                              maxParticipantsController.text = '8';
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Tooltip(
+                      message: _getFormatTooltip(selectedFormat),
+                      child: Icon(
+                        Icons.info_outline,
+                        color: Colors.blue,
+                        size: 20,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                
+                // Cinsiyet
+                DropdownButtonFormField<String>(
+                  value: selectedGender,
+                  decoration: const InputDecoration(
+                    labelText: 'Cinsiyet',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.person),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'Erkek', child: Text('Erkek')),
+                    DropdownMenuItem(value: 'Kadın', child: Text('Kadın')),
+                  ],
+                  onChanged: (value) {
+                    setDialogState(() {
+                      selectedGender = value!;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+                
+                // Başlangıç tarihi
+                ListTile(
+                  leading: const Icon(Icons.calendar_today),
+                  title: const Text('Başlangıç Tarihi'),
+                  subtitle: Text('${startDate.day}/${startDate.month}/${startDate.year}'),
+                  onTap: () async {
+                    final date = await showDatePicker(
+                      context: context,
+                      initialDate: startDate,
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime.now().add(const Duration(days: 30)),
+                    );
+                    if (date != null) {
+                      setDialogState(() {
+                        startDate = date;
+                      });
+                    }
+                  },
+                ),
+                
+                // Bitiş tarihi
+                ListTile(
+                  leading: const Icon(Icons.event),
+                  title: const Text('Bitiş Tarihi'),
+                  subtitle: Text('${endDate.day}/${endDate.month}/${endDate.year}'),
+                  onTap: () async {
+                    final date = await showDatePicker(
+                      context: context,
+                      initialDate: endDate,
+                      firstDate: startDate,
+                      lastDate: DateTime.now().add(const Duration(days: 60)),
+                    );
+                    if (date != null) {
+                      setDialogState(() {
+                        endDate = date;
+                      });
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+                
+                // Özel kurallar
+                TextField(
+                  controller: customRulesController,
+                  decoration: const InputDecoration(
+                    labelText: 'Özel Kurallar (Opsiyonel)',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.rule),
+                  ),
+                  maxLines: 2,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('İptal'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (nameController.text.isEmpty || 
+                    descriptionController.text.isEmpty ||
+                    entryFeeController.text.isEmpty ||
+                    maxParticipantsController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Lütfen tüm alanları doldurun'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                // Eleme usulü için maksimum 8 kişi kontrolü
+                final maxParticipants = int.tryParse(maxParticipantsController.text);
+                if (selectedFormat == 'elimination' && (maxParticipants == null || maxParticipants > 8)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Eleme usulü için maksimum 8 kişi olabilir'),
+                      backgroundColor: Colors.orange,
+                    ),
+                  );
+                  return;
+                }
+                
+                Navigator.pop(context);
+                await _createPrivateTournament(
+                  name: nameController.text,
+                  description: descriptionController.text,
+                  entryFee: int.parse(entryFeeController.text),
+                  maxParticipants: int.parse(maxParticipantsController.text),
+                  startDate: startDate,
+                  endDate: endDate,
+                  tournamentFormat: selectedFormat,
+                  customRules: customRulesController.text.isEmpty ? null : customRulesController.text,
+                  gender: selectedGender,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purple,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Oluştur'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Private turnuva oluştur
+  Future<void> _createPrivateTournament({
+    required String name,
+    required String description,
+    required int entryFee,
+    required int maxParticipants,
+    required DateTime startDate,
+    required DateTime endDate,
+    required String tournamentFormat,
+    String? customRules,
+    required String gender,
+  }) async {
+    try {
+      final result = await TournamentService.createPrivateTournament(
+        name: name,
+        description: description,
+        entryFee: entryFee,
+        maxParticipants: maxParticipants,
+        startDate: startDate,
+        endDate: endDate,
+        tournamentFormat: tournamentFormat,
+        customRules: customRules,
+        gender: gender,
+      );
+
+      if (result['success']) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['message']),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Private Key: ${result['private_key']}',
+              textColor: Colors.white,
+              onPressed: () {
+                // Private key'i kopyala
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Private Key: ${result['private_key']}'),
+                    backgroundColor: Colors.blue,
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+        
+        // Turnuvaları yenile
+        loadTournaments();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['message']),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Hata: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // Private key ile katılma dialog'u
+  Future<void> _showJoinPrivateTournamentDialog() async {
+    final keyController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.key, color: Colors.orange),
+            SizedBox(width: 8),
+            Text('Private Key ile Katıl'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: keyController,
+              decoration: const InputDecoration(
+                labelText: 'Private Key',
+                hintText: 'ABCD1234',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.vpn_key),
+              ),
+              textCapitalization: TextCapitalization.characters,
+              maxLength: 8,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Turnuva oluşturan kişiden private key\'i alın',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('İptal'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (keyController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Lütfen private key girin'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+                return;
+              }
+              
+              Navigator.pop(context);
+              await _joinPrivateTournament(keyController.text);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Katıl'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Private turnuvaya katıl
+  Future<void> _joinPrivateTournament(String privateKey) async {
+    try {
+      final result = await TournamentService.joinPrivateTournament(privateKey);
+
+      if (result['success']) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['message']),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+        
+        // Turnuvaları yenile
+        loadTournaments();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['message']),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Hata: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
 }

@@ -7,6 +7,7 @@ import '../widgets/language_selector.dart';
 import '../utils/constants.dart';
 import '../l10n/app_localizations.dart';
 import '../services/language_service.dart';
+import '../services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/home_screen.dart';
 
@@ -35,6 +36,23 @@ class _SettingsTabState extends State<SettingsTab> {
     super.initState();
     _loadUserData();
     _loadSavedTheme();
+    _loadNotificationPreferences();
+  }
+
+  Future<void> _loadNotificationPreferences() async {
+    try {
+      // Load notification preferences from database
+      _notificationsEnabled = await NotificationService.isNotificationEnabled('all') ?? true;
+      _tournamentNotifications = await NotificationService.isNotificationEnabled('tournament') ?? true;
+      _voteReminderNotifications = await NotificationService.isNotificationEnabled('vote_reminder') ?? true;
+      _winCelebrationNotifications = await NotificationService.isNotificationEnabled('win_celebration') ?? true;
+      _streakReminderNotifications = await NotificationService.isNotificationEnabled('streak_reminder') ?? true;
+      
+      setState(() {});
+    } catch (e) {
+      print('Error loading notification preferences: $e');
+      setState(() {}); // still show default preferences
+    }
   }
 
   Future<void> _loadSavedTheme() async {
@@ -243,10 +261,11 @@ class _SettingsTabState extends State<SettingsTab> {
                 title: Text(AppLocalizations.of(context)!.allNotifications),
                 subtitle: Text(AppLocalizations.of(context)!.allNotificationsSubtitle),
                 value: _notificationsEnabled,
-                onChanged: (value) {
+                onChanged: (value) async {
                   setState(() {
                     _notificationsEnabled = value;
                   });
+                  await NotificationService.updateNotificationPreference('all', value);
                 },
                 secondary: const Icon(Icons.notifications),
               ),
@@ -255,10 +274,11 @@ class _SettingsTabState extends State<SettingsTab> {
                 title: Text(AppLocalizations.of(context)!.tournamentNotifications),
                 subtitle: Text(AppLocalizations.of(context)!.newTournamentInvitations),
                 value: _tournamentNotifications,
-                onChanged: !_notificationsEnabled ? null : (value) {
+                onChanged: !_notificationsEnabled ? null : (value) async {
                   setState(() {
                     _tournamentNotifications = value;
                   });
+                  await NotificationService.updateNotificationPreference('tournament', value);
                 },
                 secondary: const Icon(Icons.emoji_events),
               ),
@@ -266,10 +286,11 @@ class _SettingsTabState extends State<SettingsTab> {
                 title: Text(AppLocalizations.of(context)!.voteReminder),
                 subtitle: Text(AppLocalizations.of(context)!.voteReminder),
                 value: _voteReminderNotifications,
-                onChanged: !_notificationsEnabled ? null : (value) {
+                onChanged: !_notificationsEnabled ? null : (value) async {
                   setState(() {
                     _voteReminderNotifications = value;
                   });
+                  await NotificationService.updateNotificationPreference('vote_reminder', value);
                 },
                 secondary: const Icon(Icons.how_to_vote),
               ),
@@ -277,10 +298,11 @@ class _SettingsTabState extends State<SettingsTab> {
                 title: Text(AppLocalizations.of(context)!.winCelebration),
                 subtitle: Text(AppLocalizations.of(context)!.victoryNotifications),
                 value: _winCelebrationNotifications,
-                onChanged: !_notificationsEnabled ? null : (value) {
+                onChanged: !_notificationsEnabled ? null : (value) async {
                   setState(() {
                     _winCelebrationNotifications = value;
                   });
+                  await NotificationService.updateNotificationPreference('win_celebration', value);
                 },
                 secondary: const Icon(Icons.celebration),
               ),
@@ -288,10 +310,11 @@ class _SettingsTabState extends State<SettingsTab> {
                 title: Text(AppLocalizations.of(context)!.streakReminder),
                 subtitle: Text(AppLocalizations.of(context)!.streakReminderSubtitle),
                 value: _streakReminderNotifications,
-                onChanged: !_notificationsEnabled ? null : (value) {
+                onChanged: !_notificationsEnabled ? null : (value) async {
                   setState(() {
                     _streakReminderNotifications = value;
                   });
+                  await NotificationService.updateNotificationPreference('streak_reminder', value);
                 },
                 secondary: const Icon(Icons.local_fire_department),
               ),

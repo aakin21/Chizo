@@ -18,6 +18,13 @@ class TournamentModel {
   final int? currentRound; // Hangi turda olduğu (1, 2, 3, 4)
   final DateTime? phaseStartDate; // Mevcut fazın başlangıç tarihi
   final DateTime? registrationStartDate; // Kayıt başlangıç tarihi
+  
+  // Private tournament fields
+  final bool isPrivate; // Private turnuva mı?
+  final String? privateKey; // Private turnuva key'i
+  final String? creatorId; // Turnuva oluşturan kullanıcı ID'si
+  final String tournamentFormat; // 'league', 'elimination', 'hybrid'
+  final String? customRules; // Özel kurallar
 
   TournamentModel({
     required this.id,
@@ -39,6 +46,11 @@ class TournamentModel {
     this.currentRound,
     this.phaseStartDate,
     this.registrationStartDate,
+    this.isPrivate = false,
+    this.privateKey,
+    this.creatorId,
+    this.tournamentFormat = 'league',
+    this.customRules,
   });
 
   factory TournamentModel.fromJson(Map<String, dynamic> json) {
@@ -62,6 +74,11 @@ class TournamentModel {
       currentRound: json['current_round'],
       phaseStartDate: json['phase_start_date'] != null ? DateTime.parse(json['phase_start_date']) : null,
       registrationStartDate: json['registration_start_date'] != null ? DateTime.parse(json['registration_start_date']) : null,
+      isPrivate: json['is_private'] ?? false,
+      privateKey: json['private_key'],
+      creatorId: json['creator_id'],
+      tournamentFormat: json['tournament_format'] ?? 'league',
+      customRules: json['custom_rules'],
     );
   }
 
@@ -86,6 +103,11 @@ class TournamentModel {
       'current_round': currentRound,
       'phase_start_date': phaseStartDate?.toIso8601String(),
       'registration_start_date': registrationStartDate?.toIso8601String(),
+      'is_private': isPrivate,
+      'private_key': privateKey,
+      'creator_id': creatorId,
+      'tournament_format': tournamentFormat,
+      'custom_rules': customRules,
     };
   }
 }
