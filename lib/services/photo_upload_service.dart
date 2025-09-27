@@ -444,7 +444,8 @@ class PhotoUploadService {
         final stats = await getPhotoStats(photo['id']);
         if (stats != null) {
           photoStats.add({
-            'photo_id': photo['id'],
+            'id': photo['id'], // Profile tab'da 'id' field'ı aranıyor
+            'photo_id': photo['id'], // Backward compatibility için
             'photo_url': photo['photo_url'],
             'photo_order': photo['photo_order'],
             'wins': stats['wins'],

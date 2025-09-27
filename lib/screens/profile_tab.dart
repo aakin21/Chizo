@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 import '../models/user_model.dart';
 import '../services/user_service.dart';
 import '../services/prediction_service.dart';
@@ -47,13 +48,26 @@ class _ProfileTabState extends State<ProfileTab> {
     try {
       final user = await UserService.getCurrentUser();
       final stats = await PredictionService.getUserPredictionStats();
-      final photos = user != null ? await PhotoUploadService.getUserPhotos(user.id) : [];
+      List<Map<String, dynamic>> photos = [];
+      
+      if (user != null) {
+        // Get photos with win rate stats
+        final userPhotoStats = await PhotoUploadService.getUserPhotoStats(user.id);
+        
+        // Sort photos by win rate (highest to lowest)
+        photos = userPhotoStats;
+        photos.sort((a, b) {
+          final aWinRate = double.tryParse(a['win_rate']?.toString() ?? '0') ?? 0;
+          final bWinRate = double.tryParse(b['win_rate']?.toString() ?? '0') ?? 0;
+          return bWinRate.compareTo(aWinRate);
+        });
+      }
       
       if (mounted) {
         setState(() {
           currentUser = user;
           predictionStats = stats;
-          userPhotos = List<Map<String, dynamic>>.from(photos);
+          userPhotos = photos;
           isLoading = false;
         });
       }
@@ -219,7 +233,7 @@ class _ProfileTabState extends State<ProfileTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? _buildProfileSkeletonScreen()
           : currentUser == null
               ? Center(child: Text(AppLocalizations.of(context)!.userInfoNotLoaded))
               : SingleChildScrollView(
@@ -241,17 +255,21 @@ class _ProfileTabState extends State<ProfileTab> {
                                     AppLocalizations.of(context)!.myPhotos(userPhotos.length),
                                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                   ),
-                                  if (userPhotos.length < 5)
-                                    ElevatedButton.icon(
-                                      onPressed: isUpdating ? null : _showPhotoUploadDialog,
-                                      icon: const Icon(Icons.add, size: 16),
-                                      label: Text(AppLocalizations.of(context)!.addPhoto),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.green,
-                                        foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                      ),
-                                    ),
+                                  Row(
+                                    children: [
+                                      if (userPhotos.length < 5)
+                                        ElevatedButton.icon(
+                                          onPressed: isUpdating ? null : _showPhotoUploadDialog,
+                                          icon: const Icon(Icons.add, size: 16),
+                                          label: Text(AppLocalizations.of(context)!.addPhoto),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.green,
+                                            foregroundColor: Colors.white,
+                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: 8),
@@ -384,21 +402,43 @@ class _ProfileTabState extends State<ProfileTab> {
                                           Positioned(
                                             bottom: 4,
                                             right: 4,
-                                            child: GestureDetector(
+                                            child: Material(
+                                              color: Colors.transparent,
+                                              child: InkWell(
                                               onTap: () => _showPhotoStats(photo['id']),
-                                              child: Container(
-                                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                borderRadius: BorderRadius.circular(8),
+                                                child: Container(
+                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                                                 decoration: BoxDecoration(
-                                                  color: Colors.blue.withOpacity(0.8),
-                                                  borderRadius: BorderRadius.circular(12),
+                                                  color: Colors.blue,
+                                                  borderRadius: BorderRadius.circular(8),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black.withOpacity(0.3),
+                                                      blurRadius: 4,
+                                                      offset: const Offset(0, 2),
+                                                    ),
+                                                  ],
                                                 ),
-                                                child: Text(
-                                                  AppLocalizations.of(context)!.viewStats,
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 8,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    const Icon(
+                                                      Icons.analytics,
+                                                      color: Colors.white,
+                                                      size: 12,
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      AppLocalizations.of(context)!.viewStats,
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 11,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                                 ),
                                               ),
                                             ),
@@ -1247,5 +1287,130 @@ class _ProfileTabState extends State<ProfileTab> {
     } finally {
       setState(() => isUpdating = false);
     }
+  }
+
+  /// Build animated skeleton loading screen for profile tab
+  Widget _buildProfileSkeletonScreen() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header skeleton
+          Shimmer.fromColors(
+            baseColor: Theme.of(context).colorScheme.surface,
+            highlightColor: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Profile photo skeleton
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(60),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Name and user info skeletons
+                Container(
+                  width: 200,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  width: 150,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                // Stats section skeleton
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: List.generate(3, (index) => 
+                    Column(
+                      children: [
+                        Container(
+                          width: 60,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Container(
+                          width: 50,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          // Photo management skeleton
+          Shimmer.fromColors(
+            baseColor: Theme.of(context).colorScheme.surface,
+            highlightColor: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Section title
+                    Container(
+                      width: 150,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Photo slots grid
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                        childAspectRatio: 1,
+                      ),
+                      itemCount: 6, // 5 photo slots + 1 grid title
+                      itemBuilder: (context, index) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -42,6 +42,9 @@ dependencies:
   image_picker: ^1.0.7
   cached_network_image: ^3.3.1
   
+  # Skeleton loading
+  shimmer: ^3.0.0
+  
   
   
   # Local storage
@@ -49,6 +52,14 @@ dependencies:
   
   # URL launcher for opening external links
   url_launcher: ^6.2.5
+  
+  # Notifications
+  flutter_local_notifications: ^17.2.3
+  timezone: ^0.9.4
+  http: ^1.1.2
+  
+  # UUID generation
+  uuid: ^4.4.0
   
   # Internationalization  
   flutter_localizations:
