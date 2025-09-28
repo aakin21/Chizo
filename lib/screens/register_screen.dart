@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_screen.dart';
-import '../utils/constants.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/compact_language_selector.dart';
 import '../widgets/country_selector.dart';
+import '../widgets/gender_selector.dart';
 import '../services/language_service.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -20,7 +20,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _usernameController = TextEditingController();
   final _ageController = TextEditingController();
   String? _selectedCountryCode;
-  String? _selectedGender;
+  String? _selectedGenderCode;
   bool _isLoading = false;
 
 
@@ -77,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ? int.tryParse(_ageController.text.trim()) 
               : null,
           'country_code': _selectedCountryCode,
-          'gender': _selectedGender,
+          'gender_code': _selectedGenderCode,
           'is_visible': true,
           'total_matches': 0,
           'wins': 0,
@@ -190,7 +190,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           CompactLanguageSelector(
             onLanguageChanged: (locale) async {
               await LanguageService.saveUserLanguagePreference(locale);
-              setState(() {});
+              // setState() çağırmayalım, widget'lar zaten key ile yeniden oluşturulacak
             },
           ),
         ],
@@ -240,31 +240,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             const SizedBox(height: 16),
             CountrySelector(
-              key: ValueKey(Localizations.localeOf(context).languageCode),
               selectedCountryCode: _selectedCountryCode,
               onCountrySelected: (countryCode) {
                 setState(() {
                   _selectedCountryCode = countryCode;
                 });
               },
-              label: AppLocalizations.of(context)!.country,
+              label: l10n.country,
             ),
             const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: _selectedGender,
-              decoration: InputDecoration(
-                labelText: l10n.gender,
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.people),
-              ),
-              items: AppConstants.genders.map((gender) => 
-                DropdownMenuItem(value: gender, child: Text(gender))
-              ).toList(),
-              onChanged: (value) {
+            GenderSelector(
+              selectedGenderCode: _selectedGenderCode,
+              onGenderSelected: (genderCode) {
                 setState(() {
-                  _selectedGender = value;
+                  _selectedGenderCode = genderCode;
                 });
               },
+              label: l10n.gender,
             ),
             const SizedBox(height: 20),
             _isLoading

@@ -69,7 +69,7 @@ class UserService {
     String? username,
     int? age,
     String? countryCode,
-    String? gender,
+    String? genderCode,
     String? instagramHandle,
     String? profession,
     bool? isVisible,
@@ -85,7 +85,7 @@ class UserService {
       if (username != null) updateData['username'] = username;
       if (age != null) updateData['age'] = age;
       if (countryCode != null) updateData['country_code'] = countryCode;
-      if (gender != null) updateData['gender'] = gender;
+      if (genderCode != null) updateData['gender_code'] = genderCode;
       if (instagramHandle != null) updateData['instagram_handle'] = instagramHandle;
       if (profession != null) updateData['profession'] = profession;
       if (isVisible != null) updateData['is_visible'] = isVisible;

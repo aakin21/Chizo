@@ -29,14 +29,14 @@ class MatchService {
   static Future<List<UserModel>> getRandomUsersForMatch(String currentUserId, {int limit = 2}) async {
     try {
       final currentUser = await UserService.getCurrentUser();
-      if (currentUser == null || currentUser.gender == null) return [];
+      if (currentUser == null || currentUser.genderCode == null) return [];
 
       // Aynı cinsiyetten, görünür olan, kendisi olmayan kullanıcıları getir
       // Ülke filtreleme burada yapılmaz - bu fonksiyon sadece match oluşturmak için kullanılır
       final response = await _client
           .from('users')
           .select()
-          .eq('gender', currentUser.gender!)
+          .eq('gender_code', currentUser.genderCode!)
           .eq('is_visible', true)
           .neq('id', currentUserId)
           .limit(limit);
@@ -61,7 +61,7 @@ class MatchService {
           coins: user.coins,
           age: user.age,
           countryCode: user.countryCode,
-          gender: user.gender,
+          genderCode: user.genderCode,
           instagramHandle: user.instagramHandle,
           profession: user.profession,
           isVisible: user.isVisible,

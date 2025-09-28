@@ -5,7 +5,7 @@ class UserModel {
   final int coins;
   final int? age;
   final String? countryCode;
-  final String? gender;
+  final String? genderCode;
   final String? instagramHandle;
   final String? profession;
   final bool isVisible;
@@ -29,7 +29,7 @@ class UserModel {
     required this.coins,
     this.age,
     this.countryCode,
-    this.gender,
+    this.genderCode,
     this.instagramHandle,
     this.profession,
     this.isVisible = true,
@@ -55,7 +55,7 @@ class UserModel {
       coins: json['coins'] ?? 0,
       age: json['age'],
       countryCode: json['country_code'] ?? json['country'], // Backward compatibility
-      gender: json['gender'],
+      genderCode: json['gender_code'] ?? json['gender'], // Backward compatibility
       instagramHandle: json['instagram_handle'],
       profession: json['profession'],
       isVisible: json['is_visible'] ?? true,
@@ -90,7 +90,7 @@ class UserModel {
       'coins': coins,
       'age': age,
       'country_code': countryCode,
-      'gender': gender,
+      'gender_code': genderCode,
       'instagram_handle': instagramHandle,
       'profession': profession,
       'is_visible': isVisible,

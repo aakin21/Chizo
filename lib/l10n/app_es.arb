@@ -9,6 +9,7 @@
   "age": "Edad",
   "country": "País",
   "gender": "Género",
+  "selectGender": "Seleccionar Género",
   "male": "Masculino",
   "female": "Femenino",
   "instagramHandle": "Usuario de Instagram",

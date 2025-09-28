@@ -1089,7 +1089,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get selectYourCountry => 'Select your country';
 
   @override
-  String get selectGender => 'Select Gender';
+  String get selectGender => 'Seleccionar Género';
 
   @override
   String get selectYourGender => 'Select your gender';

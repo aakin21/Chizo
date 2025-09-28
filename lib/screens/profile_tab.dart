@@ -8,8 +8,11 @@ import '../services/photo_upload_service.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/constants.dart';
 import '../widgets/country_selector.dart';
+import '../widgets/gender_selector.dart';
 import '../services/country_service.dart';
+import '../services/gender_service.dart';
 import '../models/country_model.dart';
+import '../models/gender_model.dart';
 import 'match_history_screen.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -28,6 +31,7 @@ class _ProfileTabState extends State<ProfileTab> {
   Map<String, dynamic> predictionStats = {};
   List<Map<String, dynamic>> userPhotos = [];
   String? _userCountryName;
+  String? _userGenderName;
   
 
 
@@ -83,6 +87,42 @@ class _ProfileTabState extends State<ProfileTab> {
     } catch (e) {
       print('Error loading country name: $e');
       return countryCode;
+    }
+  }
+
+  Future<String?> _getGenderName(String genderCode) async {
+    try {
+      // Geçici olarak hardcoded gender names kullan
+      final currentLanguage = Localizations.localeOf(context).languageCode;
+      
+      switch (genderCode) {
+        case 'M':
+          switch (currentLanguage) {
+            case 'tr': return 'Erkek';
+            case 'de': return 'Männlich';
+            case 'es': return 'Masculino';
+            default: return 'Male';
+          }
+        case 'F':
+          switch (currentLanguage) {
+            case 'tr': return 'Kadın';
+            case 'de': return 'Weiblich';
+            case 'es': return 'Femenino';
+            default: return 'Female';
+          }
+        case 'O':
+          switch (currentLanguage) {
+            case 'tr': return 'Diğer';
+            case 'de': return 'Andere';
+            case 'es': return 'Otro';
+            default: return 'Other';
+          }
+        default:
+          return genderCode;
+      }
+    } catch (e) {
+      print('Error loading gender name: $e');
+      return genderCode;
     }
   }
 
@@ -554,10 +594,16 @@ class _ProfileTabState extends State<ProfileTab> {
                       if (currentUser!.countryCode == null)
                         _buildAddInfoButton(AppLocalizations.of(context)!.addCountry, Icons.public, Colors.blue, () => _showEditDialog('country', '')),
 
-                      if (currentUser!.gender != null)
-                        _buildEditableInfoCard(AppLocalizations.of(context)!.gender, currentUser!.gender!, 'gender'),
-                      if (currentUser!.gender == null)
-                        _buildAddInfoButton(AppLocalizations.of(context)!.addGender, Icons.person, Colors.purple, () => _showEditDialog('gender', '')),
+                      if (currentUser!.genderCode != null)
+                        FutureBuilder<String?>(
+                          future: _getGenderName(currentUser!.genderCode!),
+                          builder: (context, snapshot) {
+                            final genderName = snapshot.data ?? currentUser!.genderCode!;
+                            return _buildEditableInfoCard('Gender', genderName, 'gender');
+                          },
+                        ),
+                      if (currentUser!.genderCode == null)
+                        _buildAddInfoButton('Add Gender', Icons.person, Colors.purple, () => _showEditDialog('gender', '')),
 
                       const SizedBox(height: 24),
 
@@ -924,8 +970,8 @@ class _ProfileTabState extends State<ProfileTab> {
         icon = Icons.public;
         break;
       case 'gender':
-        title = AppLocalizations.of(context)!.selectGender;
-        hint = AppLocalizations.of(context)!.selectYourGender;
+        title = 'Select Gender';
+        hint = 'Select your gender';
         icon = Icons.person;
         break;
       case 'instagram':
@@ -957,18 +1003,11 @@ class _ProfileTabState extends State<ProfileTab> {
                 },
               )
             else if (field == 'gender')
-              DropdownButtonFormField<String>(
-                value: currentValue.isNotEmpty ? currentValue : null,
-                decoration: InputDecoration(
-                  labelText: hint,
-                  border: const OutlineInputBorder(),
-                  prefixIcon: Icon(icon),
-                ),
-                items: AppConstants.genders.map((gender) => 
-                  DropdownMenuItem(value: gender, child: Text(gender))
-                ).toList(),
-                onChanged: (value) {
-                  controller.text = value ?? '';
+              GenderSelector(
+                key: ValueKey(Localizations.localeOf(context).languageCode),
+                selectedGenderCode: currentValue.isNotEmpty ? currentValue : null,
+                onGenderSelected: (genderCode) {
+                  controller.text = genderCode ?? '';
                 },
               )
             else
@@ -1021,7 +1060,7 @@ class _ProfileTabState extends State<ProfileTab> {
           success = await UserService.updateProfile(countryCode: value);
           break;
         case 'gender':
-          success = await UserService.updateProfile(gender: value);
+          success = await UserService.updateProfile(genderCode: value);
           break;
         case 'instagram':
           success = await UserService.updateProfile(instagramHandle: value);

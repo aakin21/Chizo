@@ -839,7 +839,7 @@ class _VotingTabState extends State<VotingTab> {
           coins: user.coins,
           age: user.age,
           countryCode: user.countryCode,
-          gender: user.gender,
+          genderCode: user.genderCode,
           instagramHandle: user.instagramHandle,
           profession: user.profession,
           isVisible: user.isVisible,
