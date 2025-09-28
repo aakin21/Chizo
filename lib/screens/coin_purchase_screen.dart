@@ -153,7 +153,7 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
                 package['price'] as double,
                 package['description'] as String,
               );
-            }).toList(),
+            }),
             
             const SizedBox(height: 24),
             

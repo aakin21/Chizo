@@ -84,37 +84,59 @@ class _GenderSelectorState extends State<GenderSelector> {
   @override
   Widget build(BuildContext context) {
     final genders = _getGenders();
+    final selectedGender = genders.firstWhere(
+      (gender) => gender['code'] == _selectedGenderCode,
+      orElse: () => {'code': '', 'name': ''},
+    );
     
-    return DropdownButtonFormField<String>(
-      value: _selectedGenderCode != null && 
-             genders.any((g) => g['code'] == _selectedGenderCode)
-             ? _selectedGenderCode : null,
-      decoration: InputDecoration(
-        labelText: widget.label ?? 'Gender',
-        border: OutlineInputBorder(),
-        prefixIcon: Icon(Icons.person),
-      ),
-      hint: Text(
-        _getSelectGenderText(),
-        style: TextStyle(color: Colors.grey.shade600),
-      ),
-      items: genders.map((gender) {
-        return DropdownMenuItem<String>(
-          value: gender['code'],
-          child: Text(
-            gender['name']!,
-            style: const TextStyle(fontSize: 16),
+    return GestureDetector(
+      onTap: widget.enabled ? () => _showGenderPicker(context, genders) : null,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade400),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: InputDecorator(
+          decoration: InputDecoration(
+            labelText: widget.label ?? 'Gender',
+            border: InputBorder.none,
+            prefixIcon: Icon(Icons.person),
+            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           ),
-        );
-      }).toList(),
-      onChanged: widget.enabled
-          ? (String? newValue) {
-              setState(() {
-                _selectedGenderCode = newValue;
-              });
-              widget.onGenderSelected(newValue);
-            }
-          : null,
+          child: Text(
+            _selectedGenderCode != null ? selectedGender['name']! : _getSelectGenderText(),
+            style: TextStyle(
+              color: _selectedGenderCode != null ? Colors.black : Colors.grey.shade600,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showGenderPicker(BuildContext context, List<Map<String, String>> genders) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(_getSelectGenderText()),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: genders.map((gender) {
+            return ListTile(
+              title: Text(gender['name']!),
+              onTap: () {
+                setState(() {
+                  _selectedGenderCode = gender['code'];
+                });
+                widget.onGenderSelected(gender['code']);
+                Navigator.pop(context);
+              },
+              selected: _selectedGenderCode == gender['code'],
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 }

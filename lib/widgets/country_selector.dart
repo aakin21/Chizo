@@ -319,37 +319,64 @@ class _CountrySelectorState extends State<CountrySelector> {
   @override
   Widget build(BuildContext context) {
     final countries = _getCountries();
+    final selectedCountry = countries.firstWhere(
+      (country) => country['code'] == _selectedCountryCode,
+      orElse: () => {'code': '', 'name': ''},
+    );
     
-    return DropdownButtonFormField<String>(
-      value: _selectedCountryCode != null && 
-             countries.any((c) => c['code'] == _selectedCountryCode)
-             ? _selectedCountryCode : null,
-      decoration: InputDecoration(
-        labelText: widget.label ?? AppLocalizations.of(context)!.country,
-        border: OutlineInputBorder(),
-        prefixIcon: Icon(Icons.public),
-      ),
-      hint: Text(
-        AppLocalizations.of(context)!.selectCountry,
-        style: TextStyle(color: Colors.grey.shade600),
-      ),
-      items: countries.map((country) {
-        return DropdownMenuItem<String>(
-          value: country['code'],
-          child: Text(
-            country['name']!,
-            style: const TextStyle(fontSize: 16),
+    return GestureDetector(
+      onTap: widget.enabled ? () => _showCountryPicker(context, countries) : null,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade400),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: InputDecorator(
+          decoration: InputDecoration(
+            labelText: widget.label ?? AppLocalizations.of(context)!.country,
+            border: InputBorder.none,
+            prefixIcon: Icon(Icons.public),
+            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           ),
-        );
-      }).toList(),
-      onChanged: widget.enabled
-          ? (String? newValue) {
-              setState(() {
-                _selectedCountryCode = newValue;
-              });
-              widget.onCountrySelected(newValue);
-            }
-          : null,
+          child: Text(
+            _selectedCountryCode != null ? selectedCountry['name']! : AppLocalizations.of(context)!.selectCountry,
+            style: TextStyle(
+              color: _selectedCountryCode != null ? Colors.black : Colors.grey.shade600,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showCountryPicker(BuildContext context, List<Map<String, String>> countries) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.selectCountry),
+        content: SizedBox(
+          width: double.maxFinite,
+          height: 300,
+          child: ListView.builder(
+            itemCount: countries.length,
+            itemBuilder: (context, index) {
+              final country = countries[index];
+              return ListTile(
+                title: Text(country['name']!),
+                onTap: () {
+                  setState(() {
+                    _selectedCountryCode = country['code'];
+                  });
+                  widget.onCountrySelected(country['code']);
+                  Navigator.pop(context);
+                },
+                selected: _selectedCountryCode == country['code'],
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

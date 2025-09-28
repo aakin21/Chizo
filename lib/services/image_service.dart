@@ -58,7 +58,7 @@ class ImageService {
       if (!fileName.toLowerCase().endsWith('.jpg') && 
           !fileName.toLowerCase().endsWith('.jpeg') && 
           !fileName.toLowerCase().endsWith('.png')) {
-        finalFileName = '${fileName}.jpg';
+        finalFileName = '$fileName.jpg';
       }
 
       // Kullanıcı ID'si ile dosya adı oluştur (RLS policy için gerekli)

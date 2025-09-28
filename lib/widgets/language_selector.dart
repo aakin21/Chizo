@@ -104,7 +104,7 @@ class _LanguageSelectorState extends State<LanguageSelector> {
                     : Theme.of(context).colorScheme.surface,
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

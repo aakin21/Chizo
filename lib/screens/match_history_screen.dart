@@ -99,7 +99,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                         fit: BoxFit.contain,
                         loadingBuilder: (context, child, loadingProgress) {
                           if (loadingProgress == null) return child;
-                          return Container(
+                          return SizedBox(
                             width: 200,
                             height: 200,
                             child: Center(
