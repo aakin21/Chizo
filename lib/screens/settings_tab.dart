@@ -9,12 +9,12 @@ import '../l10n/app_localizations.dart';
 import '../services/language_service.dart';
 import '../services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../screens/home_screen.dart';
 
 class SettingsTab extends StatefulWidget {
+  final Function(String)? onThemeChanged;
   final Function(Locale)? onLanguageChanged;
   
-  const SettingsTab({super.key, this.onLanguageChanged});
+  const SettingsTab({super.key, this.onThemeChanged, this.onLanguageChanged});
 
   @override
   State<SettingsTab> createState() => _SettingsTabState();
@@ -108,7 +108,7 @@ class _SettingsTabState extends State<SettingsTab> {
     // Save theme preference
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('selected_theme', theme);
-    print('Save theme: $theme to SharedPreferences'); // Debug
+    print('🎨 THEME SAVED: $theme to SharedPreferences');
     
     setState(() {
       _selectedTheme = theme;
@@ -116,35 +116,23 @@ class _SettingsTabState extends State<SettingsTab> {
     
     // Verify save was successful
     final verifyTheme = await prefs.getString('selected_theme');
-    print('Saved theme verify: $verifyTheme'); // Debug
+    print('✅ THEME VERIFIED: $verifyTheme');
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(AppLocalizations.of(context)!.themeChanged(theme)),
         backgroundColor: Colors.green,
-        duration: const Duration(seconds: 3),
+        duration: const Duration(seconds: 2),
       ),
     );
     
-    // Verify the save once more before restart
-    final currentSavedTheme = await prefs.getString('selected_theme');
-    print('Final verification - theme in storage: $currentSavedTheme');
-    
-    // Force immediate restart for reliable theme change  
-    await Future.delayed(const Duration(milliseconds: 200));
-    _restartApp();
+    // Ana uygulamaya theme değişikliğini bildir
+    if (widget.onThemeChanged != null) {
+      print('🔄 NOTIFYING MAIN APP: Theme changed to $theme');
+      widget.onThemeChanged!(theme);
+    }
   }
 
-  void _restartApp() {
-    // Force complete app restart for theme change
-    print('🔄 RESTARTING APP for theme change: ${_selectedTheme}');
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
-      ),
-      (route) => false,
-    );
-  }
 
 
   Future<void> _deleteAccount() async {
@@ -246,6 +234,10 @@ class _SettingsTabState extends State<SettingsTab> {
                   });
                   // Tema değiştir ve uygula
                   await _applyTheme(theme);
+                  // Ana uygulamaya theme değişikliğini bildir
+                  if (widget.onThemeChanged != null) {
+                    widget.onThemeChanged!(theme);
+                  }
                 },
               )).toList(),
             ],

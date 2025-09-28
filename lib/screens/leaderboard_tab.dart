@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/leaderboard_service.dart';
 import '../l10n/app_localizations.dart';
+import 'user_profile_screen.dart';
 
 class LeaderboardTab extends StatefulWidget {
   const LeaderboardTab({super.key});
@@ -77,18 +78,36 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
         subtitle: subtitle != null 
           ? Text(subtitle)
           : Text(AppLocalizations.of(context)!.winsAndMatches(user.wins, user.totalMatches)),
-        trailing: user.matchPhotos != null && user.matchPhotos!.isNotEmpty
-          ? CircleAvatar(
-              radius: 20,
-              backgroundImage: NetworkImage(user.matchPhotos!.first['photo_url']),
-            )
-          : const CircleAvatar(
-              radius: 20,
-              child: Icon(Icons.person),
-            ),
+         trailing: GestureDetector(
+           onTap: () {
+             print('🎯 Avatar tapped for user: ${user.username}');
+             _navigateToUserProfile(user);
+           },
+           child: user.matchPhotos != null && user.matchPhotos!.isNotEmpty
+             ? CircleAvatar(
+                 radius: 20,
+                 backgroundImage: NetworkImage(user.matchPhotos!.first['photo_url']),
+               )
+             : const CircleAvatar(
+                 radius: 20,
+                 child: Icon(Icons.person),
+               ),
+         ),
       ),
     );
   }
+
+  void _navigateToUserProfile(UserModel user) {
+    print('🎯 Navigating to profile for user: ${user.username}');
+    
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UserProfileScreen(user: user),
+      ),
+    );
+  }
+
 
   Color _getRankColor(int rank) {
     switch (rank) {

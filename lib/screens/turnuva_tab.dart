@@ -141,6 +141,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     }
   }
 
+
   // Belirli turnuva için oylama
   Future<void> _voteForSpecificTournament(String tournamentId) async {
     try {
@@ -347,40 +348,33 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                '🏆 Turnuvalar',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              Row(
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: _showJoinPrivateTournamentDialog,
-                    icon: const Icon(Icons.key, size: 18),
-                    label: const Text('Key ile Katıl'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: _showJoinPrivateTournamentDialog,
+                  icon: const Icon(Icons.key, size: 16),
+                  label: const Text('Key ile Katıl'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    minimumSize: const Size(0, 32),
                   ),
-                  const SizedBox(width: 8),
-                  ElevatedButton.icon(
-                    onPressed: _showCreatePrivateTournamentDialog,
-                    icon: const Icon(Icons.add, size: 18),
-                    label: const Text('Private Turnuva'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: _showCreatePrivateTournamentDialog,
+                  icon: const Icon(Icons.add, size: 16),
+                  label: const Text('Private'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    minimumSize: const Size(0, 32),
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
           const SizedBox(height: 16),
           
           if (isLoading)
@@ -554,6 +548,17 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                     label: Text(AppLocalizations.of(context)!.vote),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Sıralama butonu
+                  ElevatedButton.icon(
+                    onPressed: () => _showTournamentLeaderboard(tournament.id),
+                    icon: const Icon(Icons.leaderboard),
+                    label: const Text('Sıralama'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
                     ),
                   ),
@@ -1016,6 +1021,68 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       ),
     );
   }
+
+  // Turnuva sıralamasını göster
+  Future<void> _showTournamentLeaderboard(String tournamentId) async {
+    try {
+      final leaderboard = await TournamentService.getTournamentLeaderboard(tournamentId);
+      
+      if (!mounted) return;
+      
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Turnuva Sıralaması'),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 400,
+            child: ListView.builder(
+              itemCount: leaderboard.length,
+              itemBuilder: (context, index) {
+                final participant = leaderboard[index];
+                final rank = index + 1;
+                
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: rank <= 3 ? Colors.amber : Colors.grey,
+                    child: Text(
+                      rank.toString(),
+                      style: TextStyle(
+                        color: rank <= 3 ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  title: Text(participant['profiles']['username'] ?? 'Bilinmeyen'),
+                  subtitle: Text('Skor: ${participant['score']}'),
+                  trailing: participant['is_eliminated'] 
+                      ? const Icon(Icons.close, color: Colors.red)
+                      : const Icon(Icons.check, color: Colors.green),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Kapat'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Sıralama yüklenirken hata: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+
+
 
   // Private turnuvaya katıl
   Future<void> _joinPrivateTournament(String privateKey) async {

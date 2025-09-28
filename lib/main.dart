@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'services/language_service.dart';
@@ -10,6 +11,13 @@ import 'l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Firebase initialize (sadece mobile için)
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    print('Firebase initialization failed (web platform): $e');
+  }
 
   // Supabase başlat - Environment variables should be used in production
   await Supabase.initialize(
@@ -27,8 +35,9 @@ void main() async {
 
 class AuthWrapper extends StatelessWidget {
   final Function(Locale) onLanguageChanged;
+  final Function(String) onThemeChanged;
   
-  const AuthWrapper({super.key, required this.onLanguageChanged});
+  const AuthWrapper({super.key, required this.onLanguageChanged, required this.onThemeChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +63,10 @@ class AuthWrapper extends StatelessWidget {
         
         if (session != null) {
           // User is logged in, go to home screen
-          return HomeScreen(onLanguageChanged: onLanguageChanged);
+          return HomeScreen(
+            onLanguageChanged: onLanguageChanged,
+            onThemeChanged: onThemeChanged,
+          );
         } else {
           // User is not logged in, go to login screen  
           return const LoginScreen();
@@ -73,21 +85,15 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Locale _currentLocale = const Locale('tr', 'TR');
-  Key _appKey = UniqueKey();
   String _selectedTheme = 'Beyaz';
+  bool _isThemeLoaded = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _loadCurrentLocale();
-    _initialThemeLoad();
-  }
-
-  Future<void> _initialThemeLoad() async {
-    print('🚀 APP STARTING - Loading theme...');
-    await _loadTheme();
-    if (mounted) setState(() {});
+    _loadTheme();
   }
 
   @override
@@ -105,16 +111,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
-  // Public method to refresh theme from other pages
-  void refreshTheme() async {
-    await _loadTheme();
-  }
-
   Future<void> _loadCurrentLocale() async {
     final locale = await LanguageService.getCurrentLocale();
-    setState(() {
-      _currentLocale = locale;
-    });
+    if (mounted) {
+      setState(() {
+        _currentLocale = locale;
+      });
+    }
   }
 
   Future<void> _loadTheme() async {
@@ -123,49 +126,100 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       final theme = prefs.getString('selected_theme') ?? 'Beyaz';
       print('🔍 THEME LOADING: Reading from storage -> $theme');
       
-      // Force update state always to ensure fresh theme
-      setState(() {
-        _selectedTheme = theme;
-      });
-      print('✅ THEME APPLIED: $_selectedTheme set successfully');
+      if (mounted) {
+        setState(() {
+          _selectedTheme = theme;
+          _isThemeLoaded = true;
+        });
+        print('✅ THEME APPLIED: $_selectedTheme set successfully');
+      }
     } catch (e) {
       print('❌ THEME ERROR: Failed to load theme - $e');
-      setState(() {
-        _selectedTheme = 'Beyaz'; // fallback
-      });
+      if (mounted) {
+        setState(() {
+          _selectedTheme = 'Beyaz';
+          _isThemeLoaded = true;
+        });
+      }
     }
   }
 
   void changeLanguage(Locale locale) async {
     await LanguageService.setLanguage(locale);
-    setState(() {
-      _currentLocale = locale;
-      _appKey = UniqueKey(); // Force complete rebuild
-    });
+    if (mounted) {
+      setState(() {
+        _currentLocale = locale;
+      });
+    }
+  }
+
+  void changeTheme(String theme) async {
+    print('🎨 THEME CHANGE REQUESTED: $theme');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('selected_theme', theme);
+      
+      if (mounted) {
+        setState(() {
+          _selectedTheme = theme;
+        });
+        print('✅ THEME CHANGED SUCCESSFULLY: $theme');
+      }
+    } catch (e) {
+      print('❌ THEME CHANGE ERROR: $e');
+    }
   }
 
   ColorScheme _getThemeColorScheme() {
     print('🎨 THEME SYSTEM: $_selectedTheme');
+    
     switch (_selectedTheme) {
       case 'Beyaz':
         print('  ↳ BEYAZ light theme active');
-        return ColorScheme.fromSeed(seedColor: Colors.white, brightness: Brightness.light);
+        return ColorScheme.fromSeed(
+          seedColor: Colors.white, 
+          brightness: Brightness.light
+        );
       case 'Koyu':
         print('  ↳ KOYU dark theme active');
-        return ColorScheme.fromSeed(seedColor: Colors.grey.shade900, brightness: Brightness.dark);
+        return ColorScheme.fromSeed(
+          seedColor: Colors.grey.shade900, 
+          brightness: Brightness.dark
+        );
       case 'Pembemsi':
         print('  ↳ PEMBE light theme active');
-        return ColorScheme.fromSeed(seedColor: const Color(0xFFC2185B), brightness: Brightness.light);
+        return ColorScheme.fromSeed(
+          seedColor: const Color(0xFFC2185B), 
+          brightness: Brightness.light
+        );
       default:
         print('  ↳ DEFAULT beyaz theme');
-        return ColorScheme.fromSeed(seedColor: Colors.white, brightness: Brightness.light);
+        return ColorScheme.fromSeed(
+          seedColor: Colors.white, 
+          brightness: Brightness.light
+        );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Theme yüklenene kadar loading göster
+    if (!_isThemeLoaded) {
+      return MaterialApp(
+        title: 'Chizo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.white, brightness: Brightness.light),
+          useMaterial3: true,
+        ),
+        home: const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
+
     return MaterialApp(
-      key: _appKey,
       title: 'Chizo',
       theme: ThemeData(
         colorScheme: _getThemeColorScheme(),
@@ -185,7 +239,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: AuthWrapper(onLanguageChanged: changeLanguage),
+      home: AuthWrapper(
+        onLanguageChanged: changeLanguage,
+        onThemeChanged: changeTheme, // Theme değişikliği callback'i ekle
+      ),
       
       // Localization configuration
       localizationsDelegates: const [
