@@ -247,7 +247,7 @@ class _WinRatePredictionDialogState extends State<WinRatePredictionDialog> {
         widget.onPredictionComplete();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['message'])),
+          SnackBar(content: Text(AppLocalizations.of(context)!.predictionSaveError)),
         );
       }
       

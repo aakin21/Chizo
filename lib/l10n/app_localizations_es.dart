@@ -4,57 +4,57 @@ import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
 
-/// The translations for English (`en`).
-class AppLocalizationsEn extends AppLocalizations {
-  AppLocalizationsEn([String locale = 'en']) : super(locale);
+/// The translations for Spanish Castilian (`es`).
+class AppLocalizationsEs extends AppLocalizations {
+  AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
   String get appTitle => 'Chizo';
 
   @override
-  String get login => 'Login';
+  String get login => 'Iniciar Sesión';
 
   @override
-  String get register => 'Register';
+  String get register => 'Registrarse';
 
   @override
-  String get email => 'Email';
+  String get email => 'Correo Electrónico';
 
   @override
-  String get password => 'Password';
+  String get password => 'Contraseña';
 
   @override
-  String get username => 'Username';
+  String get username => 'Nombre de Usuario';
 
   @override
-  String get confirmPassword => 'Confirm Password';
+  String get confirmPassword => 'Confirmar Contraseña';
 
   @override
-  String get age => 'Age';
+  String get age => 'Edad';
 
   @override
-  String get country => 'Country';
+  String get country => 'País';
 
   @override
-  String get gender => 'Gender';
+  String get gender => 'Género';
 
   @override
-  String get male => 'Male';
+  String get male => 'Masculino';
 
   @override
-  String get female => 'Female';
+  String get female => 'Femenino';
 
   @override
-  String get instagramHandle => 'Instagram Handle';
+  String get instagramHandle => 'Usuario de Instagram';
 
   @override
-  String get profession => 'Profession';
+  String get profession => 'Profesión';
 
   @override
-  String get voting => 'Voting';
+  String get voting => 'Votación';
 
   @override
-  String get whichDoYouPrefer => 'Which one do you prefer?';
+  String get whichDoYouPrefer => '¿Cuál prefieres más?';
 
   @override
   String predictUserWinRate(String username) {
@@ -62,87 +62,87 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get correctPrediction => 'Correct prediction = 1 coin';
+  String get correctPrediction => 'Predicción correcta = 1 moneda';
 
   @override
-  String get submitPrediction => 'Submit Prediction';
+  String get submitPrediction => 'Enviar Predicción';
 
   @override
-  String get winRate => 'Win Rate';
+  String get winRate => 'Tasa de Victoria';
 
   @override
-  String get profile => 'Profile';
+  String get profile => 'Perfil';
 
   @override
-  String get settings => 'Settings';
+  String get settings => 'Configuración';
 
   @override
-  String get leaderboard => '🏆 Leaderboard';
+  String get leaderboard => '🏆 Liderazgo';
 
   @override
-  String get tournament => 'Tournament';
+  String get tournament => 'Torneo';
 
   @override
-  String get language => 'Language';
+  String get language => 'Idioma';
 
   @override
-  String get turkish => 'Turkish';
+  String get turkish => 'Turco';
 
   @override
-  String get english => 'English';
+  String get english => 'Inglés';
 
   @override
-  String get german => 'German';
+  String get german => 'Alemán';
 
   @override
-  String get spanish => 'Spanish';
+  String get spanish => 'Español';
 
   @override
-  String get turkishLanguage => 'Turkish';
+  String get turkishLanguage => 'Turco';
 
   @override
-  String get englishLanguage => 'English';
+  String get englishLanguage => 'Inglés';
 
   @override
-  String get germanLanguage => 'German';
+  String get germanLanguage => 'Alemán';
 
   @override
-  String get coins => 'Coins';
+  String get coins => 'Monedas';
 
   @override
-  String get totalMatches => 'Total Matches';
+  String get totalMatches => 'Partidos Totales';
 
   @override
-  String get wins => 'Wins';
+  String get wins => 'Victorias';
 
   @override
-  String get winRatePercentage => 'Win Rate';
+  String get winRatePercentage => 'Porcentaje de Victoria';
 
   @override
-  String get currentStreak => 'Current Streak';
+  String get currentStreak => 'Racha Actual';
 
   @override
-  String get totalStreakDays => 'Total Streak Days';
+  String get totalStreakDays => 'Total de Días de Racha';
 
   @override
-  String get predictionStats => 'Prediction Statistics';
+  String get predictionStats => 'Estadísticas de Predicción';
 
   @override
-  String get totalPredictions => 'Total Predictions';
+  String get totalPredictions => 'Total de Predicciones';
 
   @override
-  String get correctPredictions => 'Correct Predictions';
+  String get correctPredictions => 'Predicciones Correctas';
 
   @override
-  String get accuracy => 'Accuracy';
+  String get accuracy => 'Precisión';
 
   @override
   String coinsEarnedFromPredictions(int coins) {
-    return 'Coins earned from predictions: $coins';
+    return 'Monedas Ganadas de Predicciones: $coins monedas';
   }
 
   @override
-  String get congratulations => 'Congratulations!';
+  String get congratulations => '¡Felicidades!';
 
   @override
   String get correctPredictionWithReward =>
@@ -158,256 +158,267 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invalidEmail =>
-      '❌ Invalid email address! Please enter a valid email format.';
+      '❌ ¡Dirección de correo electrónico inválida! Por favor ingrese un formato de correo válido.';
 
   @override
-  String get userNotFoundError => '❌ No user found with this email address!';
+  String get userNotFoundError =>
+      '❌ ¡No se encontró usuario con esta dirección de correo electrónico!';
 
   @override
   String get userAlreadyRegistered =>
-      '❌ This email address is already registered! Try logging in.';
+      '❌ ¡Esta dirección de correo electrónico ya está registrada! Intente iniciar sesión.';
 
   @override
-  String get invalidPassword => '❌ Wrong password! Please check your password.';
+  String get invalidPassword =>
+      '❌ ¡Contraseña incorrecta! Por favor verifique su contraseña.';
 
   @override
   String get passwordMinLengthError =>
-      '❌ Password must be at least 6 characters!';
+      '❌ ¡La contraseña debe tener al menos 6 caracteres!';
 
   @override
   String get passwordTooWeak =>
-      '❌ Password is too weak! Choose a stronger password.';
+      '❌ ¡La contraseña es muy débil! Elija una contraseña más fuerte.';
 
   @override
   String get usernameAlreadyTaken =>
-      '❌ This username is already taken! Choose another username.';
+      '❌ ¡Este nombre de usuario ya está tomado! Elija otro nombre de usuario.';
 
   @override
-  String get usernameTooShort => '❌ Username must be at least 3 characters!';
+  String get usernameTooShort =>
+      '❌ ¡El nombre de usuario debe tener al menos 3 caracteres!';
 
   @override
-  String get networkError => '❌ Check your internet connection!';
+  String get networkError => '❌ ¡Verifique su conexión a internet!';
 
   @override
-  String get timeoutError => '❌ Connection timeout! Please try again.';
+  String get timeoutError =>
+      '❌ ¡Tiempo de conexión agotado! Por favor intente de nuevo.';
 
   @override
-  String get emailNotConfirmed => '❌ You need to confirm your email address!';
+  String get emailNotConfirmed =>
+      '❌ ¡Necesita confirmar su dirección de correo electrónico!';
 
   @override
   String get tooManyRequests =>
-      '❌ Too many attempts! Please wait a few minutes and try again.';
+      '❌ ¡Demasiados intentos! Por favor espere unos minutos e intente de nuevo.';
 
   @override
-  String get accountDisabled => '❌ Your account has been disabled!';
+  String get accountDisabled => '❌ ¡Su cuenta ha sido deshabilitada!';
 
   @override
   String get duplicateData =>
-      '❌ This information is already in use! Try different information.';
+      '❌ ¡Esta información ya está en uso! Intente con información diferente.';
 
   @override
   String get invalidData =>
-      '❌ There is an error in the information you entered! Please check.';
+      '❌ ¡Hay un error en la información que ingresó! Por favor verifique.';
 
   @override
-  String get invalidCredentials => '❌ Email or password is incorrect!';
+  String get invalidCredentials =>
+      '❌ ¡El correo electrónico o la contraseña son incorrectos!';
 
   @override
-  String get tooManyEmails => '❌ Too many emails sent! Please wait.';
+  String get tooManyEmails =>
+      '❌ ¡Demasiados correos electrónicos enviados! Por favor espere.';
 
   @override
   String get operationFailed =>
-      '❌ Operation failed! Please check your information.';
+      '❌ ¡Operación fallida! Por favor verifique su información.';
 
   @override
-  String get success => 'Success';
+  String get success => 'Exitoso';
 
   @override
-  String get loading => 'Loading...';
+  String get loading => 'Cargando...';
 
   @override
-  String get noMatchesAvailable => 'No matches available for voting';
+  String get noMatchesAvailable =>
+      'No hay partidos disponibles para votar en este momento';
 
   @override
   String get allMatchesVoted =>
-      'All matches voted!\nWaiting for new matches...';
+      '¡Has votado en todos los partidos!\nEspera nuevos partidos...';
 
   @override
-  String get usernameCannotBeEmpty => 'Username cannot be empty';
+  String get usernameCannotBeEmpty =>
+      'El nombre de usuario no puede estar vacío';
 
   @override
-  String get emailCannotBeEmpty => 'Email cannot be empty';
+  String get emailCannotBeEmpty => 'El correo electrónico no puede estar vacío';
 
   @override
-  String get passwordCannotBeEmpty => 'Password cannot be empty';
+  String get passwordCannotBeEmpty => 'La contraseña no puede estar vacía';
 
   @override
   String get passwordMinLength => 'Password must be at least 6 characters';
 
   @override
-  String get registrationSuccessful => 'Registration successful!';
+  String get registrationSuccessful => '¡Registro exitoso!';
 
   @override
   String get userAlreadyExists =>
-      'This user is already registered or an error occurred';
+      'Este usuario ya está registrado o ocurrió un error';
 
   @override
-  String get loginSuccessful => 'Login successful!';
+  String get loginSuccessful => '¡Inicio de sesión exitoso!';
 
   @override
-  String get loginError => 'Login error: Unknown error';
+  String get loginError => 'Error de inicio de sesión: Error desconocido';
 
   @override
-  String get dontHaveAccount => 'Don\'t have an account? ';
+  String get dontHaveAccount => '¿No tienes cuenta? ';
 
   @override
-  String get registerNow => 'Register now';
+  String get registerNow => 'Regístrate';
 
   @override
-  String get alreadyHaveAccount => 'Already have an account? ';
+  String get alreadyHaveAccount => '¿Ya tienes cuenta? ';
 
   @override
-  String get loginNow => 'Login now';
+  String get loginNow => 'Inicia sesión';
 
   @override
-  String get allPhotoSlotsFull => 'All additional photo slots are full!';
+  String get allPhotoSlotsFull =>
+      '¡Todos los espacios de fotos adicionales están llenos!';
 
   @override
   String photoUploadSlot(int slot) {
-    return 'Photo Upload - Slot $slot';
+    return 'Subir Foto - Espacio $slot';
   }
 
   @override
   String coinsRequiredForSlot(int coins) {
-    return 'This slot requires $coins coins.';
+    return 'Se requieren $coins monedas para este espacio.';
   }
 
   @override
   String get insufficientCoinsForUpload =>
-      'Insufficient coins! Use the coin button on profile page to purchase coins.';
+      '¡Monedas insuficientes! Usa el botón de monedas en la página de perfil para comprar monedas.';
 
   @override
-  String get cancel => 'Cancel';
+  String get cancel => 'Cancelar';
 
   @override
   String upload(int coins) {
-    return 'Upload ($coins coins)';
+    return 'Subir ($coins monedas)';
   }
 
   @override
   String photoUploaded(int coinsSpent) {
-    return 'Photo uploaded! $coinsSpent coins spent.';
+    return '¡Foto subida! $coinsSpent monedas gastadas.';
   }
 
   @override
-  String get deletePhoto => 'Delete Photo';
+  String get deletePhoto => 'Eliminar Foto';
 
   @override
   String get confirmDeletePhoto =>
-      'Are you sure you want to delete this photo?';
+      '¿Estás seguro de que quieres eliminar esta foto?';
 
   @override
-  String get delete => 'Delete';
+  String get delete => 'Eliminar';
 
   @override
-  String get photoDeleted => 'Photo deleted!';
+  String get photoDeleted => '¡Foto eliminada!';
 
   @override
-  String get selectFromGallery => 'Select from Gallery';
+  String get selectFromGallery => 'Seleccionar de Galería';
 
   @override
-  String get takeFromCamera => 'Take from Camera';
+  String get takeFromCamera => 'Tomar de Cámara';
 
   @override
-  String get additionalMatchPhotos => 'Additional Match Photos';
+  String get additionalMatchPhotos => 'Fotos Adicionales de Partidos';
 
   @override
-  String get addPhoto => 'Add Photo';
+  String get addPhoto => 'Agregar Foto';
 
   @override
   String additionalPhotosDescription(int count) {
-    return 'Additional photos that will appear in matches ($count/4)';
+    return 'Tus fotos adicionales que aparecerán en los partidos ($count/4)';
   }
 
   @override
-  String get noAdditionalPhotos => 'No additional photos yet';
+  String get noAdditionalPhotos => 'Aún no hay fotos adicionales';
 
   @override
-  String get secondPhotoCost => '2nd photo costs 50 coins!';
+  String get secondPhotoCost => '¡2ª foto cuesta 50 monedas!';
 
   @override
   String get premiumInfoAdded =>
-      'Your premium information has been added! You can adjust visibility settings below.';
+      '¡Información premium agregada! Puedes configurar la visibilidad desde abajo.';
 
   @override
-  String get premiumInfoVisibility => 'Premium Info Visibility';
+  String get premiumInfoVisibility => '💎 Visibilidad de Información Premium';
 
   @override
   String get premiumInfoDescription =>
-      'Other users can view this information by spending coins';
+      'Otros usuarios pueden ver esta información gastando monedas';
 
   @override
-  String get instagramAccount => 'Instagram Account';
+  String get instagramAccount => 'Cuenta de Instagram';
 
   @override
-  String get statistics => 'Statistics';
+  String get statistics => 'Estadísticas';
 
   @override
-  String get predictionStatistics => 'Prediction Statistics';
+  String get predictionStatistics => '🎯 Estadísticas de Predicción';
 
   @override
-  String get matchHistory => '📊 Match History';
+  String get matchHistory => '📊 Historial de Partidos';
 
   @override
   String get viewLastFiveMatches =>
-      'View your last 5 matches and opponents (5 coins)';
+      'Ver tus últimos 5 partidos y oponentes (5 monedas)';
 
   @override
-  String get visibleInMatches => 'Visible in Matches';
+  String get visibleInMatches => 'Visible en Partidos';
 
   @override
-  String get nowVisibleInMatches => 'You will now appear in matches!';
+  String get nowVisibleInMatches => '¡Ahora aparecerás en los partidos!';
 
   @override
-  String get removedFromMatches => 'You have been removed from matches!';
+  String get removedFromMatches => '¡Removido de los partidos!';
 
   @override
   String addInfo(String type) {
-    return 'Add $type';
+    return 'Agregar $type';
   }
 
   @override
   String enterInfo(String type) {
-    return 'Enter your $type information:';
+    return 'Ingresa tu información de $type:';
   }
 
   @override
-  String get add => 'Add';
+  String get add => 'Agregar';
 
   @override
   String infoAdded(String type) {
-    return '✅ $type information added!';
+    return '✅ ¡Información de $type agregada!';
   }
 
   @override
-  String get errorAddingInfo => '❌ Error occurred while adding information!';
+  String get errorAddingInfo => '❌ ¡Error al agregar información!';
 
   @override
-  String get matchInfoNotLoaded => 'Match information could not be loaded';
+  String get matchInfoNotLoaded =>
+      'No se pudieron cargar los datos del partido';
 
   @override
   String premiumInfo(String type) {
-    return 'Premium Information';
+    return '💎 Información de $type';
   }
 
   @override
-  String get spendFiveCoins => 'Spend 5 Coins';
+  String get spendFiveCoins => 'Gastar 5 Monedas';
 
   @override
-  String get insufficientCoins => '❌ Insufficient coins!';
+  String get insufficientCoins => '❌ ¡Monedas insuficientes!';
 
   @override
-  String get fiveCoinsSpent => '✅ 5 coins spent';
+  String get fiveCoinsSpent => '✅ 5 monedas gastadas';
 
   @override
   String get ok => 'OK';
@@ -419,17 +430,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get spendFiveCoinsToView =>
-      'You will spend 5 coins to view this information';
+      'Gastarás 5 monedas para ver esta información';
 
   @override
-  String get great => 'Great!';
+  String get great => '¡Genial!';
 
   @override
-  String get homePage => 'Home Page';
+  String get homePage => 'Página de Inicio';
 
   @override
   String streakMessage(int days) {
-    return '$days day streak!';
+    return '¡$days días de racha!';
   }
 
   @override
@@ -518,115 +529,116 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorAddingCoins => 'Error occurred while adding coins';
 
   @override
-  String get buy => 'Buy';
+  String get buy => 'Comprar';
 
   @override
-  String get predict => 'Predict';
+  String get predict => 'Predecir';
 
   @override
   String get fiveCoinsSpentForHistory =>
-      '✅ 5 coins spent! Your match history is being displayed.';
+      '✅ ¡5 monedas gastadas! Tu historial de partidos se está mostrando.';
 
   @override
-  String get insufficientCoinsForHistory => '❌ Insufficient coins!';
+  String get insufficientCoinsForHistory => '❌ ¡Monedas insuficientes!';
 
   @override
-  String get spendFiveCoinsForHistory =>
-      'Spend 5 coins to see your last 5 matches and opponents';
+  String get spendFiveCoinsForHistory => 'Gastar 5 Monedas';
 
   @override
   String winsAndMatches(int wins, int matches) {
-    return '$wins wins • $matches matches';
+    return '$wins victorias • $matches partidos';
   }
 
   @override
   String get insufficientCoinsForTournament =>
-      'Insufficient coins for tournament!';
+      '¡Monedas insuficientes para el torneo!';
 
   @override
-  String get joinedTournament => 'You joined the tournament!';
+  String get joinedTournament => '¡Te uniste al torneo!';
 
   @override
-  String get tournamentJoinFailed => 'Failed to join tournament!';
+  String get tournamentJoinFailed => '¡Fallo al unirse al torneo!';
 
   @override
-  String get dailyStreak => 'Daily Streak!';
+  String get dailyStreak => '¡Racha Diaria!';
 
   @override
-  String get imageUpdated => 'Image updated!';
+  String get imageUpdated => '¡Imagen actualizada!';
 
   @override
-  String get updateFailed => 'Update failed';
+  String get updateFailed => 'Actualización fallida';
 
   @override
-  String get imageUpdateFailed => 'Image update failed!';
+  String get imageUpdateFailed => '¡No se pudo actualizar la imagen!';
 
   @override
-  String get selectImage => 'Select Image';
+  String get selectImage => 'Seleccionar Imagen';
 
   @override
-  String get userInfoNotLoaded => 'User information could not be loaded';
+  String get userInfoNotLoaded => 'No se pudieron cargar los datos del usuario';
 
   @override
-  String get coin => 'Coin';
+  String get coin => 'Moneda';
 
   @override
-  String get premiumFeatures => 'Premium Features';
+  String get premiumFeatures => 'Características Premium';
 
   @override
-  String get addInstagram => 'Add Instagram Account';
+  String get addInstagram => 'Agregar Cuenta de Instagram';
 
   @override
-  String get addProfession => 'Add Profession';
+  String get addProfession => 'Agregar Profesión';
 
   @override
-  String get profileUpdated => 'Profile updated!';
+  String get profileUpdated => '¡Perfil actualizado!';
 
   @override
-  String get profileUpdateFailed => 'Profile update failed!';
+  String get profileUpdateFailed => 'Error al actualizar el perfil';
 
   @override
-  String get profileSettings => 'Profile Settings';
+  String get profileSettings => 'Configuración de Perfil';
 
   @override
-  String get passwordReset => 'Reset Password';
+  String get passwordReset => 'Restablecer Contraseña';
 
   @override
-  String get passwordResetSubtitle => 'Reset password via email';
+  String get passwordResetSubtitle =>
+      'Restablecer contraseña por correo electrónico';
 
   @override
-  String get logoutSubtitle => 'Secure logout from your account';
+  String get logoutSubtitle => 'Cerrar sesión segura de tu cuenta';
 
   @override
-  String get deleteAccountSubtitle => 'Permanently delete your account';
+  String get deleteAccountSubtitle => 'Eliminar tu cuenta permanentemente';
 
   @override
-  String get updateProfile => 'Update Profile';
+  String get updateProfile => 'Actualizar Perfil';
 
   @override
-  String get passwordResetTitle => 'Password Reset';
+  String get passwordResetTitle => 'Restablecimiento de Contraseña';
 
   @override
   String get passwordResetMessage =>
-      'A password reset link will be sent to your email address. Do you want to continue?';
+      'Se enviará un enlace de restablecimiento de contraseña a tu dirección de correo electrónico. ¿Quieres continuar?';
 
   @override
-  String get send => 'Send';
+  String get send => 'Enviar';
 
   @override
-  String get passwordResetSent => 'Password reset email sent!';
+  String get passwordResetSent =>
+      '¡Correo de restablecimiento de contraseña enviado!';
 
   @override
-  String get emailNotFound => 'Email address not found!';
+  String get emailNotFound => '¡Dirección de correo electrónico no encontrada!';
 
   @override
   String votingError(Object error) {
-    return 'Error during voting: $error';
+    return 'Error durante la votación';
   }
 
   @override
   String slot(Object slot) {
-    return 'Slot $slot';
+    return 'Espacio $slot';
   }
 
   @override
@@ -771,7 +783,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get wrongPredictionMessage =>
-      'Unfortunately, you predicted incorrectly.';
+      'Predicción incorrecta. La tasa de victoria real fue null%';
 
   @override
   String get predictionSaveError => 'Error occurred while saving prediction';
@@ -1007,7 +1019,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get wrongPrediction => 'Wrong Prediction';
 
   @override
-  String get correctPredictionMessage => 'You predicted correctly!';
+  String get correctPredictionMessage =>
+      '¡Predijiste correctamente y ganaste 1 moneda!';
 
   @override
   String actualRate(Object rate) {

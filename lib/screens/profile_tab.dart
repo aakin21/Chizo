@@ -7,6 +7,9 @@ import '../services/prediction_service.dart';
 import '../services/photo_upload_service.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/constants.dart';
+import '../widgets/country_selector.dart';
+import '../services/country_service.dart';
+import '../models/country_model.dart';
 import 'match_history_screen.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -24,6 +27,7 @@ class _ProfileTabState extends State<ProfileTab> {
   bool isUpdating = false;
   Map<String, dynamic> predictionStats = {};
   List<Map<String, dynamic>> userPhotos = [];
+  String? _userCountryName;
   
 
 
@@ -39,6 +43,46 @@ class _ProfileTabState extends State<ProfileTab> {
     // Widget güncellendiğinde veriyi yeniden yükle
     if (oldWidget.onRefresh != widget.onRefresh) {
       loadUserData();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Dil değişiminde ülke ismini yeniden yükle
+    if (currentUser?.countryCode != null) {
+      _loadCountryName();
+    }
+  }
+
+  Future<void> _loadCountryName() async {
+    if (currentUser?.countryCode != null) {
+      try {
+        final country = await CountryService.getCountryByCode(
+          currentUser!.countryCode!,
+          Localizations.localeOf(context).languageCode
+        );
+        if (mounted) {
+          setState(() {
+            _userCountryName = country?.name;
+          });
+        }
+      } catch (e) {
+        print('Error loading country name: $e');
+      }
+    }
+  }
+
+  Future<String?> _getCountryName(String countryCode) async {
+    try {
+      final country = await CountryService.getCountryByCode(
+        countryCode,
+        Localizations.localeOf(context).languageCode
+      );
+      return country?.name;
+    } catch (e) {
+      print('Error loading country name: $e');
+      return countryCode;
     }
   }
 
@@ -61,6 +105,21 @@ class _ProfileTabState extends State<ProfileTab> {
           final bWinRate = double.tryParse(b['win_rate']?.toString() ?? '0') ?? 0;
           return bWinRate.compareTo(aWinRate);
         });
+        
+        // Kullanıcının ülke ismini yükle
+        String? countryName;
+        if (user.countryCode != null) {
+          try {
+            final country = await CountryService.getCountryByCode(
+              user.countryCode!,
+              Localizations.localeOf(context).languageCode
+            );
+            countryName = country?.name;
+          } catch (e) {
+            print('Error loading country name: $e');
+          }
+        }
+        _userCountryName = countryName;
       }
       
       if (mounted) {
@@ -484,9 +543,15 @@ class _ProfileTabState extends State<ProfileTab> {
                       if (currentUser!.age == null)
                         _buildAddInfoButton(AppLocalizations.of(context)!.addAge, Icons.cake, Colors.orange, () => _showEditDialog('age', '')),
 
-                      if (currentUser!.country != null)
-                        _buildEditableInfoCard(AppLocalizations.of(context)!.country, currentUser!.country!, 'country'),
-                      if (currentUser!.country == null)
+                      if (currentUser!.countryCode != null)
+                        FutureBuilder<String?>(
+                          future: _getCountryName(currentUser!.countryCode!),
+                          builder: (context, snapshot) {
+                            final countryName = snapshot.data ?? currentUser!.countryCode!;
+                            return _buildEditableInfoCard(AppLocalizations.of(context)!.country, countryName, 'country');
+                          },
+                        ),
+                      if (currentUser!.countryCode == null)
                         _buildAddInfoButton(AppLocalizations.of(context)!.addCountry, Icons.public, Colors.blue, () => _showEditDialog('country', '')),
 
                       if (currentUser!.gender != null)
@@ -877,24 +942,18 @@ class _ProfileTabState extends State<ProfileTab> {
     
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Text(title),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
             if (field == 'country')
-              DropdownButtonFormField<String>(
-                value: currentValue.isNotEmpty ? currentValue : null,
-                decoration: InputDecoration(
-                  labelText: hint,
-                  border: const OutlineInputBorder(),
-                  prefixIcon: Icon(icon),
-                ),
-                items: AppConstants.countries.map((country) => 
-                  DropdownMenuItem(value: country, child: Text(country))
-                ).toList(),
-                onChanged: (value) {
-                  controller.text = value ?? '';
+              CountrySelector(
+                key: ValueKey(Localizations.localeOf(context).languageCode),
+                selectedCountryCode: currentValue.isNotEmpty ? currentValue : null,
+                onCountrySelected: (countryCode) {
+                  controller.text = countryCode ?? '';
                 },
               )
             else if (field == 'gender')
@@ -939,6 +998,7 @@ class _ProfileTabState extends State<ProfileTab> {
             child: Text(AppLocalizations.of(context)!.save),
           ),
         ],
+        ),
       ),
     );
   }
@@ -958,7 +1018,7 @@ class _ProfileTabState extends State<ProfileTab> {
           }
           break;
         case 'country':
-          success = await UserService.updateProfile(country: value);
+          success = await UserService.updateProfile(countryCode: value);
           break;
         case 'gender':
           success = await UserService.updateProfile(gender: value);
@@ -1097,8 +1157,14 @@ class _ProfileTabState extends State<ProfileTab> {
   Future<void> _showCountrySelectionDialog() async {
     if (currentUser == null) return;
     
+    // Mevcut dilde ülke listesini al
+    final countries = await CountryService.getCountriesByLanguage(
+      Localizations.localeOf(context).languageCode
+    );
+    final countryCodes = countries.map((c) => c.code).toList();
+    
     // Mevcut seçili ülkeleri al (eğer yoksa tüm ülkeler seçili olsun)
-    List<String> selectedCountries = currentUser!.countryPreferences ?? AppConstants.countries;
+    List<String> selectedCountries = currentUser!.countryPreferences ?? countryCodes;
     
     showDialog(
       context: context,
@@ -1116,23 +1182,39 @@ class _ProfileTabState extends State<ProfileTab> {
                 ),
                 const SizedBox(height: 16),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: AppConstants.countries.length,
-                    itemBuilder: (context, index) {
-                      final country = AppConstants.countries[index];
-                      final isSelected = selectedCountries.contains(country);
+                  child: FutureBuilder<List<Country>>(
+                    future: CountryService.getCountriesByLanguage(
+                      Localizations.localeOf(context).languageCode
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
                       
-                      return CheckboxListTile(
-                        title: Text(country),
-                        value: isSelected,
-                        onChanged: (value) {
-                          setDialogState(() {
-                            if (value == true) {
-                              selectedCountries.add(country);
-                            } else {
-                              selectedCountries.remove(country);
-                            }
-                          });
+                      if (!snapshot.hasData) {
+                        return const Center(child: Text('Ülkeler yüklenemedi'));
+                      }
+                      
+                      final countries = snapshot.data!;
+                      return ListView.builder(
+                        itemCount: countries.length,
+                        itemBuilder: (context, index) {
+                          final country = countries[index];
+                          final isSelected = selectedCountries.contains(country.code);
+                          
+                          return CheckboxListTile(
+                            title: Text(country.name),
+                            value: isSelected,
+                            onChanged: (value) {
+                              setDialogState(() {
+                                if (value == true) {
+                                  selectedCountries.add(country.code);
+                                } else {
+                                  selectedCountries.remove(country.code);
+                                }
+                              });
+                            },
+                          );
                         },
                       );
                     },

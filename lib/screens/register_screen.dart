@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_screen.dart';
 import '../utils/constants.dart';
-import '../utils/error_handler.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/compact_language_selector.dart';
+import '../widgets/country_selector.dart';
 import '../services/language_service.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -19,7 +19,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _usernameController = TextEditingController();
   final _ageController = TextEditingController();
-  String? _selectedCountry;
+  String? _selectedCountryCode;
   String? _selectedGender;
   bool _isLoading = false;
 
@@ -49,6 +49,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
+    if (_selectedCountryCode == null || _selectedCountryCode!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lütfen bir ülke seçin')),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
@@ -69,7 +76,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'age': _ageController.text.trim().isNotEmpty 
               ? int.tryParse(_ageController.text.trim()) 
               : null,
-          'country': _selectedCountry,
+          'country_code': _selectedCountryCode,
           'gender': _selectedGender,
           'is_visible': true,
           'total_matches': 0,
@@ -93,7 +100,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       }
     } catch (e) {
-      String errorMessage = ErrorHandler.getUserFriendlyErrorMessage(e.toString());
+      String errorMessage = _getLocalizedErrorMessage(e.toString());
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
@@ -103,6 +110,64 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  String _getLocalizedErrorMessage(String error) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    if (error.contains('Invalid email')) {
+      return l10n.invalidEmail;
+    }
+    if (error.contains('User not found')) {
+      return l10n.userNotFound;
+    }
+    if (error.contains('User already registered')) {
+      return l10n.userAlreadyRegistered;
+    }
+    if (error.contains('Invalid password')) {
+      return l10n.invalidPassword;
+    }
+    if (error.contains('Password should be at least')) {
+      return l10n.passwordMinLength;
+    }
+    if (error.contains('Password is too weak')) {
+      return l10n.passwordTooWeak;
+    }
+    if (error.contains('Username already taken')) {
+      return l10n.usernameAlreadyTaken;
+    }
+    if (error.contains('Username too short')) {
+      return l10n.usernameTooShort;
+    }
+    if (error.contains('Network error') || error.contains('Connection failed')) {
+      return l10n.networkError;
+    }
+    if (error.contains('Timeout')) {
+      return l10n.timeoutError;
+    }
+    if (error.contains('Email not confirmed')) {
+      return l10n.emailNotConfirmed;
+    }
+    if (error.contains('Too many requests')) {
+      return l10n.tooManyRequests;
+    }
+    if (error.contains('Account disabled')) {
+      return l10n.accountDisabled;
+    }
+    if (error.contains('Duplicate data')) {
+      return l10n.duplicateData;
+    }
+    if (error.contains('Invalid data')) {
+      return l10n.invalidData;
+    }
+    if (error.contains('Invalid credentials')) {
+      return l10n.invalidCredentials;
+    }
+    if (error.contains('Too many emails')) {
+      return l10n.tooManyEmails;
+    }
+    
+    return l10n.operationFailed;
   }
 
   @override
@@ -174,21 +239,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
               keyboardType: TextInputType.number
             ),
             const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: _selectedCountry,
-              decoration: InputDecoration(
-                labelText: l10n.country,
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.public),
-              ),
-              items: AppConstants.countries.map((country) => 
-                DropdownMenuItem(value: country, child: Text(country))
-              ).toList(),
-              onChanged: (value) {
+            CountrySelector(
+              key: ValueKey(Localizations.localeOf(context).languageCode),
+              selectedCountryCode: _selectedCountryCode,
+              onCountrySelected: (countryCode) {
                 setState(() {
-                  _selectedCountry = value;
+                  _selectedCountryCode = countryCode;
                 });
               },
+              label: AppLocalizations.of(context)!.country,
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(

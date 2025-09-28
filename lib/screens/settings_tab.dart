@@ -12,8 +12,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsTab extends StatefulWidget {
   final Function(String)? onThemeChanged;
+  final Function(Locale)? onLanguageChanged;
   
-  const SettingsTab({super.key, this.onThemeChanged});
+  const SettingsTab({super.key, this.onThemeChanged, this.onLanguageChanged});
 
   @override
   State<SettingsTab> createState() => _SettingsTabState();
@@ -77,20 +78,17 @@ class _SettingsTabState extends State<SettingsTab> {
   void _onLanguageChanged(Locale locale) async {
     // Save user language preference
     await LanguageService.saveUserLanguagePreference(locale);
-    // Full app refresh after language change
-    setState(() {});
-    // Force app rebuild with new locale
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (mounted) {
-        setState(() {});
-        ScaffoldMessenger.of(context).showSnackBar(
+    // Notify parent widget about language change
+    if (widget.onLanguageChanged != null) {
+      widget.onLanguageChanged!(locale);
+    }
+    // Show success message
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(AppLocalizations.of(context)!.languageChanged),
         duration: const Duration(seconds: 1),
       ),
-        );
-      }
-    });
+    );
   }
 
   String _getThemeDescription(String theme) {
@@ -98,9 +96,9 @@ class _SettingsTabState extends State<SettingsTab> {
       case 'Beyaz':
         return AppLocalizations.of(context)!.lightWhiteTheme;
       case 'Koyu':
-        return 'Siyah materyal koyu tema';
+        return AppLocalizations.of(context)!.darkMaterialTheme;
       case 'Pembemsi':
-        return 'Açık pembe renk tema';
+        return AppLocalizations.of(context)!.lightPinkTheme;
       default:
         return '';
     }
@@ -385,6 +383,9 @@ class _SettingsTabState extends State<SettingsTab> {
               ),
             ],
           ),
+          
+          const SizedBox(height: 24),
+          
         ],
       ),
     );

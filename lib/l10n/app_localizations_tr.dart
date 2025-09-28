@@ -95,6 +95,18 @@ class AppLocalizationsTr extends AppLocalizations {
   String get german => 'Almanca';
 
   @override
+  String get spanish => 'İspanyolca';
+
+  @override
+  String get turkishLanguage => 'Türkçe';
+
+  @override
+  String get englishLanguage => 'İngilizce';
+
+  @override
+  String get germanLanguage => 'Almanca';
+
+  @override
   String get coins => 'Coin';
 
   @override
@@ -143,6 +155,71 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get error => 'Hata';
+
+  @override
+  String get invalidEmail =>
+      '❌ Geçersiz e-posta adresi! Lütfen doğru formatta e-posta girin.';
+
+  @override
+  String get userNotFoundError =>
+      '❌ Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı!';
+
+  @override
+  String get userAlreadyRegistered =>
+      '❌ Bu e-posta adresi zaten kayıtlı! Giriş yapmayı deneyin.';
+
+  @override
+  String get invalidPassword =>
+      '❌ Yanlış şifre! Lütfen şifrenizi kontrol edin.';
+
+  @override
+  String get passwordMinLengthError => '❌ Şifre en az 6 karakter olmalıdır!';
+
+  @override
+  String get passwordTooWeak =>
+      '❌ Şifre çok zayıf! Daha güçlü bir şifre seçin.';
+
+  @override
+  String get usernameAlreadyTaken =>
+      '❌ Bu kullanıcı adı zaten alınmış! Başka bir kullanıcı adı seçin.';
+
+  @override
+  String get usernameTooShort => '❌ Kullanıcı adı en az 3 karakter olmalıdır!';
+
+  @override
+  String get networkError => '❌ İnternet bağlantınızı kontrol edin!';
+
+  @override
+  String get timeoutError => '❌ Bağlantı zaman aşımı! Lütfen tekrar deneyin.';
+
+  @override
+  String get emailNotConfirmed => '❌ E-posta adresinizi onaylamanız gerekiyor!';
+
+  @override
+  String get tooManyRequests =>
+      '❌ Çok fazla deneme! Lütfen birkaç dakika sonra tekrar deneyin.';
+
+  @override
+  String get accountDisabled => '❌ Hesabınız devre dışı bırakılmış!';
+
+  @override
+  String get duplicateData =>
+      '❌ Bu bilgiler zaten kullanılıyor! Farklı bilgiler deneyin.';
+
+  @override
+  String get invalidData =>
+      '❌ Girdiğiniz bilgilerde hata var! Lütfen kontrol edin.';
+
+  @override
+  String get invalidCredentials => '❌ E-posta veya şifre hatalı!';
+
+  @override
+  String get tooManyEmails =>
+      '❌ Çok fazla e-posta gönderildi! Lütfen bekleyin.';
+
+  @override
+  String get operationFailed =>
+      '❌ İşlem başarısız! Lütfen bilgilerinizi kontrol edin.';
 
   @override
   String get success => 'Başarılı';
@@ -614,6 +691,108 @@ class AppLocalizationsTr extends AppLocalizations {
   String get tournamentFees => 'Turnuva katılım ücretleri';
 
   @override
+  String get weeklyMaleTournament1000 => 'Haftalık Erkek Turnuvası (1000 Coin)';
+
+  @override
+  String get weeklyMaleTournament1000Desc =>
+      'Her hafta düzenlenen erkek turnuvası - 300 kişi kapasiteli';
+
+  @override
+  String get weeklyMaleTournament10000 =>
+      'Haftalık Erkek Turnuvası (10000 Coin)';
+
+  @override
+  String get weeklyMaleTournament10000Desc =>
+      'Premium erkek turnuvası - 100 kişi kapasiteli';
+
+  @override
+  String get weeklyFemaleTournament1000 =>
+      'Haftalık Kadın Turnuvası (1000 Coin)';
+
+  @override
+  String get weeklyFemaleTournament1000Desc =>
+      'Her hafta düzenlenen kadın turnuvası - 300 kişi kapasiteli';
+
+  @override
+  String get weeklyFemaleTournament10000 =>
+      'Haftalık Kadın Turnuvası (10000 Coin)';
+
+  @override
+  String get weeklyFemaleTournament10000Desc =>
+      'Premium kadın turnuvası - 100 kişi kapasiteli';
+
+  @override
+  String get tournamentEntryFee => 'Turnuva katılım ücreti';
+
+  @override
+  String get tournamentVotingTitle => 'Turnuva Oylaması';
+
+  @override
+  String get tournamentThirdPlace => 'Turnuva 3.lük';
+
+  @override
+  String get tournamentWon => 'Turnuva kazandı';
+
+  @override
+  String get userNotLoggedIn => 'Kullanıcı giriş yapmamış';
+
+  @override
+  String get userNotFound => 'Kullanıcı bulunamadı';
+
+  @override
+  String get firstLoginReward => '🎉 İlk girişiniz! 50 coin kazandınız!';
+
+  @override
+  String streakReward(Object coins, Object streak) {
+    return '🔥 $streak günlük streak! $coins coin kazandınız!';
+  }
+
+  @override
+  String get streakBroken =>
+      '💔 Streak kırıldı! Yeni başlangıç: 50 coin kazandınız!';
+
+  @override
+  String dailyStreakReward(Object streak) {
+    return 'Günlük streak ödülü ($streak gün)';
+  }
+
+  @override
+  String get alreadyLoggedInToday => 'Bugün zaten giriş yaptınız!';
+
+  @override
+  String get streakCheckError => 'Streak kontrolünde hata oluştu';
+
+  @override
+  String get streakInfoError => 'Streak bilgisi alınamadı';
+
+  @override
+  String get correctPredictionReward =>
+      'Doğru tahmin ettiğinde 1 coin kazanacaksın!';
+
+  @override
+  String get wrongPredictionMessage => 'Maalesef yanlış tahmin ettin.';
+
+  @override
+  String get predictionSaveError => 'Tahmin kaydedilirken hata oluştu';
+
+  @override
+  String get coinAddError => 'Coin eklenirken hata oluştu';
+
+  @override
+  String coinPurchaseTransaction(Object description) {
+    return 'Coin satın alma - $description';
+  }
+
+  @override
+  String get whiteThemeName => 'Beyaz';
+
+  @override
+  String get darkThemeName => 'Koyu';
+
+  @override
+  String get pinkThemeName => 'Pembemsi';
+
+  @override
   String get premiumFilters => 'Premium filtreler';
 
   @override
@@ -694,9 +873,6 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get tournamentVotingTitle => 'Turnuva Oylaması';
-
-  @override
   String get whichParticipantPrefer => 'Hangi katılımcıyı tercih ediyorsunuz?';
 
   @override
@@ -734,7 +910,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get languageChanged => 'Dil değiştirildi. Sayfa yenileniyor...';
 
   @override
-  String get lightWhiteTheme => 'Açık beyaz tema';
+  String get lightWhiteTheme => 'Beyaz materyal açık tema';
 
   @override
   String get neutralDarkGrayTheme => 'Nötr koyu gri tema';
@@ -756,6 +932,12 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get themeSelection => '🎨 Tema Seçimi';
+
+  @override
+  String get darkMaterialTheme => 'Siyah materyal koyu tema';
+
+  @override
+  String get lightPinkTheme => 'Açık pembe renk tema';
 
   @override
   String get notificationSettings => '🔔 Bildirim Ayarları';
@@ -818,10 +1000,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get predictWinRateTitle => 'Kazanma oranını tahmin et!';
 
   @override
-  String get correctPredictionReward =>
-      'Doğru tahmin ettiğinde 1 coin kazanacaksın!';
-
-  @override
   String get wrongPredictionNoCoin => 'Yanlış tahmin = 0 coin';
 
   @override
@@ -832,9 +1010,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get correctPredictionMessage => 'Doğru tahmin ettin!';
-
-  @override
-  String get wrongPredictionMessage => 'Maalesef yanlış tahmin ettin.';
 
   @override
   String actualRate(Object rate) {

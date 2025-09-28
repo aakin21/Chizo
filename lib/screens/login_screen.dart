@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'home_screen.dart';
 import 'register_screen.dart';
-import '../utils/error_handler.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/compact_language_selector.dart';
 import '../services/language_service.dart';
@@ -67,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } catch (e) {
-      String errorMessage = ErrorHandler.getUserFriendlyErrorMessage(e.toString());
+      String errorMessage = _getLocalizedErrorMessage(e.toString());
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
@@ -79,6 +78,64 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  String _getLocalizedErrorMessage(String error) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    if (error.contains('Invalid email')) {
+      return l10n.invalidEmail;
+    }
+    if (error.contains('User not found')) {
+      return l10n.userNotFound;
+    }
+    if (error.contains('User already registered')) {
+      return l10n.userAlreadyRegistered;
+    }
+    if (error.contains('Invalid password')) {
+      return l10n.invalidPassword;
+    }
+    if (error.contains('Password should be at least')) {
+      return l10n.passwordMinLength;
+    }
+    if (error.contains('Password is too weak')) {
+      return l10n.passwordTooWeak;
+    }
+    if (error.contains('Username already taken')) {
+      return l10n.usernameAlreadyTaken;
+    }
+    if (error.contains('Username too short')) {
+      return l10n.usernameTooShort;
+    }
+    if (error.contains('Network error') || error.contains('Connection failed')) {
+      return l10n.networkError;
+    }
+    if (error.contains('Timeout')) {
+      return l10n.timeoutError;
+    }
+    if (error.contains('Email not confirmed')) {
+      return l10n.emailNotConfirmed;
+    }
+    if (error.contains('Too many requests')) {
+      return l10n.tooManyRequests;
+    }
+    if (error.contains('Account disabled')) {
+      return l10n.accountDisabled;
+    }
+    if (error.contains('Duplicate data')) {
+      return l10n.duplicateData;
+    }
+    if (error.contains('Invalid data')) {
+      return l10n.invalidData;
+    }
+    if (error.contains('Invalid credentials')) {
+      return l10n.invalidCredentials;
+    }
+    if (error.contains('Too many emails')) {
+      return l10n.tooManyEmails;
+    }
+    
+    return l10n.operationFailed;
   }
 
   @override

@@ -193,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 // Profil
                 IconButton(
-                  onPressed: () => _openPage(context, ProfileTab(key: ValueKey(_profileRefreshKey), onRefresh: _refreshProfile), AppLocalizations.of(context)!.profile),
+                  onPressed: () => _openPage(context, ProfileTab(key: ValueKey('${_profileRefreshKey}_${Localizations.localeOf(context).languageCode}'), onRefresh: _refreshProfile), AppLocalizations.of(context)!.profile),
                   icon: const Icon(Icons.person, size: 20),
                   style: IconButton.styleFrom(
                     backgroundColor: Colors.blue.withOpacity(0.1),
@@ -229,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 // Ayarlar
                 IconButton(
-                  onPressed: () => _openPage(context, SettingsTab(onThemeChanged: widget.onThemeChanged), AppLocalizations.of(context)!.settings),
+                  onPressed: () => _openPage(context, SettingsTab(onLanguageChanged: widget.onLanguageChanged, onThemeChanged: widget.onThemeChanged), AppLocalizations.of(context)!.settings),
                   icon: const Icon(Icons.settings, size: 20),
                   style: IconButton.styleFrom(
                     backgroundColor: Colors.green.withOpacity(0.1),
