@@ -10,9 +10,7 @@ import '../utils/constants.dart';
 import '../widgets/country_selector.dart';
 import '../widgets/gender_selector.dart';
 import '../services/country_service.dart';
-import '../services/gender_service.dart';
 import '../models/country_model.dart';
-import '../models/gender_model.dart';
 import 'match_history_screen.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -30,8 +28,6 @@ class _ProfileTabState extends State<ProfileTab> {
   bool isUpdating = false;
   Map<String, dynamic> predictionStats = {};
   List<Map<String, dynamic>> userPhotos = [];
-  String? _userCountryName;
-  String? _userGenderName;
   
 
 
@@ -62,13 +58,13 @@ class _ProfileTabState extends State<ProfileTab> {
   Future<void> _loadCountryName() async {
     if (currentUser?.countryCode != null) {
       try {
-        final country = await CountryService.getCountryByCode(
+        await CountryService.getCountryByCode(
           currentUser!.countryCode!,
           Localizations.localeOf(context).languageCode
         );
         if (mounted) {
           setState(() {
-            _userCountryName = country?.name;
+            // Country name loaded
           });
         }
       } catch (e) {
@@ -147,19 +143,16 @@ class _ProfileTabState extends State<ProfileTab> {
         });
         
         // Kullanıcının ülke ismini yükle
-        String? countryName;
         if (user.countryCode != null) {
           try {
-            final country = await CountryService.getCountryByCode(
+            await CountryService.getCountryByCode(
               user.countryCode!,
               Localizations.localeOf(context).languageCode
             );
-            countryName = country?.name;
           } catch (e) {
             print('Error loading country name: $e');
           }
         }
-        _userCountryName = countryName;
       }
       
       if (mounted) {
