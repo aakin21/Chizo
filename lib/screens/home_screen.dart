@@ -9,8 +9,9 @@ import '../l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(Locale)? onLanguageChanged;
+  final Function(String)? onThemeChanged;
   
-  const HomeScreen({super.key, this.onLanguageChanged});
+  const HomeScreen({super.key, this.onLanguageChanged, this.onThemeChanged});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -25,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _checkStreakOnLoad();
   }
+
 
   Future<void> _checkStreakOnLoad() async {
     if (!_streakChecked) {
@@ -213,7 +215,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 // Liderlik
                 IconButton(
-                  onPressed: () => _openPage(context, LeaderboardTab(), AppLocalizations.of(context)!.leaderboard),
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LeaderboardTab()),
+                  ),
                   icon: const Icon(Icons.leaderboard, size: 20),
                   style: IconButton.styleFrom(
                     backgroundColor: Colors.orange.withOpacity(0.1),
@@ -224,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 // Ayarlar
                 IconButton(
-                  onPressed: () => _openPage(context, SettingsTab(), AppLocalizations.of(context)!.settings),
+                  onPressed: () => _openPage(context, SettingsTab(onThemeChanged: widget.onThemeChanged), AppLocalizations.of(context)!.settings),
                   icon: const Icon(Icons.settings, size: 20),
                   style: IconButton.styleFrom(
                     backgroundColor: Colors.green.withOpacity(0.1),

@@ -70,8 +70,8 @@ class UserModel {
           : null,
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
-      matchPhotos: json['match_photos'] != null 
-          ? List<Map<String, dynamic>>.from(json['match_photos'])
+      matchPhotos: json['user_photos'] != null 
+          ? List<Map<String, dynamic>>.from(json['user_photos'])
           : null,
       countryPreferences: json['country_preferences'] != null 
           ? List<String>.from(json['country_preferences'])

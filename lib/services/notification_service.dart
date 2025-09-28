@@ -1,52 +1,353 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/timezone.dart' as tz;
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/notification_model.dart';
 import 'dart:convert';
 
 class NotificationService {
-  static final SupabaseClient _client = Supabase.instance.client;
-  static final FlutterLocalNotificationsPlugin _localNotifications =
+  static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  static final FlutterLocalNotificationsPlugin _localNotifications = 
       FlutterLocalNotificationsPlugin();
+  static final SupabaseClient _supabase = Supabase.instance.client;
 
-  // Local notifications initialize
+  static String? _fcmToken;
+  static bool _isInitialized = false;
+
+  /// Initialize notification service
   static Future<void> initialize() async {
-    const AndroidInitializationSettings initializationSettingsAndroid =
+    if (_isInitialized) return;
+
+    try {
+      // Initialize Firebase (sadece mobile için)
+      try {
+        await Firebase.initializeApp();
+      } catch (e) {
+        print('Firebase initialization failed (web platform): $e');
+        // Web'de Firebase olmadan devam et
+        _isInitialized = true;
+        return;
+      }
+      
+      // Initialize local notifications
+      await _initializeLocalNotifications();
+      
+      // Request permissions
+      await _requestPermissions();
+      
+      // Get FCM token
+      await _getFCMToken();
+      
+      // Setup message handlers
+      _setupMessageHandlers();
+      
+      _isInitialized = true;
+      print('✅ NotificationService initialized successfully');
+    } catch (e) {
+      print('❌ NotificationService initialization failed: $e');
+    }
+  }
+
+  /// Initialize local notifications
+  static Future<void> _initializeLocalNotifications() async {
+    const AndroidInitializationSettings androidSettings = 
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    const DarwinInitializationSettings initializationSettingsIOS =
-        DarwinInitializationSettings();
-    const InitializationSettings initializationSettings =
-        InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
     
+    const DarwinInitializationSettings iosSettings = 
+        DarwinInitializationSettings(
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
+
+    const InitializationSettings settings = InitializationSettings(
+      android: androidSettings,
+      iOS: iosSettings,
+    );
+
     await _localNotifications.initialize(
-      initializationSettings,
+      settings,
       onDidReceiveNotificationResponse: _onNotificationTapped,
     );
   }
 
-  // Notification tap handler
-  static void _onNotificationTapped(NotificationResponse notificationResponse) {
-    print('Notification tapped: ${notificationResponse.payload}');
+  /// Request notification permissions
+  static Future<void> _requestPermissions() async {
+    // Request FCM permissions
+    NotificationSettings settings = await _firebaseMessaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    print('Notification permission status: ${settings.authorizationStatus}');
+
+    // Request local notification permissions for Android
+    await _localNotifications
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
   }
 
-  // Show instant in-app notification
-  static Future<void> showInAppNotification({
-    required String title,
-    required String message,
-    String? type,
+  /// Get FCM token
+  static Future<void> _getFCMToken() async {
+    try {
+      _fcmToken = await _firebaseMessaging.getToken();
+      print('FCM Token: $_fcmToken');
+      
+      // Save token to Supabase
+      await _saveTokenToDatabase(_fcmToken);
+    } catch (e) {
+      print('❌ Failed to get FCM token: $e');
+    }
+  }
+
+  /// Save FCM token to database
+  static Future<void> _saveTokenToDatabase(String? token) async {
+    if (token == null) return;
+
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) return;
+
+      await _supabase.from('user_tokens').upsert({
+        'user_id': user.id,
+        'fcm_token': token,
+        'updated_at': DateTime.now().toIso8601String(),
+      });
+
+      print('✅ FCM token saved to database');
+    } catch (e) {
+      print('❌ Failed to save FCM token: $e');
+    }
+  }
+
+  /// Setup message handlers
+  static void _setupMessageHandlers() {
+    // Handle background messages
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    // Handle foreground messages
+    FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+
+    // Handle notification taps
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationTap);
+  }
+
+  /// Handle foreground messages
+  static Future<void> _handleForegroundMessage(RemoteMessage message) async {
+    print('📱 Foreground message received: ${message.messageId}');
+    
+    // Show local notification
+    await _showLocalNotification(message);
+    
+    // Save to database
+    await _saveNotificationToDatabase(message);
+  }
+
+  /// Handle notification tap
+  static Future<void> _handleNotificationTap(RemoteMessage message) async {
+    print('👆 Notification tapped: ${message.messageId}');
+    
+    // Handle navigation based on notification data
+    _handleNotificationNavigation(message.data);
+  }
+
+  /// Handle local notification tap
+  static void _onNotificationTapped(NotificationResponse response) {
+    print('👆 Local notification tapped: ${response.id}');
+    
+    // Handle navigation based on notification data
+    if (response.payload != null) {
+      final data = json.decode(response.payload!);
+      _handleNotificationNavigation(data);
+    }
+  }
+
+  /// Handle notification navigation
+  static void _handleNotificationNavigation(Map<String, dynamic> data) {
+    final type = data['type'] ?? '';
+    
+    switch (type) {
+      case NotificationTypes.tournamentUpdate:
+        // Navigate to tournament tab
+        print('Navigate to tournament');
+        break;
+      case NotificationTypes.votingResult:
+        // Navigate to voting tab
+        print('Navigate to voting');
+        break;
+      case NotificationTypes.coinReward:
+        // Navigate to profile tab
+        print('Navigate to profile');
+        break;
+      default:
+        print('Navigate to home');
+        break;
+    }
+  }
+
+  /// Show local notification
+  static Future<void> _showLocalNotification(RemoteMessage message) async {
+    final notification = message.notification;
+    if (notification == null) return;
+
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'chizo_notifications',
+      'Chizo Notifications',
+      channelDescription: 'Notifications for Chizo app',
+      importance: Importance.high,
+      priority: Priority.high,
+      icon: '@mipmap/ic_launcher',
+    );
+
+    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    const NotificationDetails details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    await _localNotifications.show(
+      DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      notification.title,
+      notification.body,
+      details,
+      payload: json.encode(message.data),
+    );
+  }
+
+  /// Save notification to database
+  static Future<void> _saveNotificationToDatabase(RemoteMessage message) async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) return;
+
+      final notification = NotificationModel(
+        id: message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString(),
+        userId: user.id,
+        type: message.data['type'] ?? 'system_announcement',
+        title: message.notification?.title ?? 'Notification',
+        body: message.notification?.body ?? '',
+        data: message.data,
+        isRead: false,
+        createdAt: DateTime.now(),
+      );
+
+      await _supabase.from('notifications').insert(notification.toJson());
+      print('✅ Notification saved to database');
+    } catch (e) {
+      print('❌ Failed to save notification: $e');
+    }
+  }
+
+  /// Get user notifications
+  static Future<List<NotificationModel>> getUserNotifications({
+    int limit = 50,
+    int offset = 0,
   }) async {
     try {
-      int notificationId = DateTime.now().millisecondsSinceEpoch.remainder(100000);
-      
+      final user = _supabase.auth.currentUser;
+      if (user == null) return [];
+
+      final response = await _supabase
+          .from('notifications')
+          .select()
+          .eq('user_id', user.id)
+          .order('created_at', ascending: false)
+          .range(offset, offset + limit - 1);
+
+      return (response as List)
+          .map((json) => NotificationModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      print('❌ Failed to get notifications: $e');
+      return [];
+    }
+  }
+
+  /// Mark notification as read
+  static Future<bool> markAsRead(String notificationId) async {
+    try {
+      await _supabase
+          .from('notifications')
+          .update({
+            'is_read': true,
+            'read_at': DateTime.now().toIso8601String(),
+          })
+          .eq('id', notificationId);
+
+      print('✅ Notification marked as read');
+      return true;
+    } catch (e) {
+      print('❌ Failed to mark notification as read: $e');
+      return false;
+    }
+  }
+
+  /// Mark all notifications as read
+  static Future<bool> markAllAsRead() async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) return false;
+
+      await _supabase
+          .from('notifications')
+          .update({
+            'is_read': true,
+            'read_at': DateTime.now().toIso8601String(),
+          })
+          .eq('user_id', user.id)
+          .eq('is_read', false);
+
+      print('✅ All notifications marked as read');
+      return true;
+    } catch (e) {
+      print('❌ Failed to mark all notifications as read: $e');
+      return false;
+    }
+  }
+
+  /// Get unread count
+  static Future<int> getUnreadCount() async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) return 0;
+
+      final response = await _supabase
+          .from('notifications')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('is_read', false);
+
+      return (response as List).length;
+    } catch (e) {
+      print('❌ Failed to get unread count: $e');
+      return 0;
+    }
+  }
+
+  /// Send test notification
+  static Future<void> sendTestNotification() async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) return;
+
       const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-        'chizo_app_notifications',
-        'Chizo Application Notifications',
-        channelDescription: 'Notifications for matches, tournaments, and app events',
-        importance: Importance.max,
+        'chizo_test',
+        'Test Notifications',
+        channelDescription: 'Test notifications for Chizo app',
+        importance: Importance.high,
         priority: Priority.high,
-        showWhen: true,
+        icon: '@mipmap/ic_launcher',
       );
 
       const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
@@ -55,225 +356,70 @@ class NotificationService {
         presentSound: true,
       );
 
-      const NotificationDetails platformDetails = NotificationDetails(
+      const NotificationDetails details = NotificationDetails(
         android: androidDetails,
         iOS: iosDetails,
       );
 
       await _localNotifications.show(
-        notificationId,
-        title,
-        message,
-        platformDetails,
-        payload: jsonEncode({'type': type, 'timestamp': DateTime.now().toIso8601String()}),
+        DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        '🧪 Test Notification',
+        'Chizo notification system is working!',
+        details,
       );
 
-      print('Shown notification: $title - $message');
+      print('✅ Test notification sent');
     } catch (e) {
-      print('Error showing notification: $e');
+      print('❌ Failed to send test notification: $e');
     }
   }
 
-  // Check user notification preferences from database 
+  /// Subscribe to topic
+  static Future<void> subscribeToTopic(String topic) async {
+    try {
+      await _firebaseMessaging.subscribeToTopic(topic);
+      print('✅ Subscribed to topic: $topic');
+    } catch (e) {
+      print('❌ Failed to subscribe to topic: $e');
+    }
+  }
+
+  /// Unsubscribe from topic
+  static Future<void> unsubscribeFromTopic(String topic) async {
+    try {
+      await _firebaseMessaging.unsubscribeFromTopic(topic);
+      print('✅ Unsubscribed from topic: $topic');
+    } catch (e) {
+      print('❌ Failed to unsubscribe from topic: $e');
+    }
+  }
+
+  /// Check if notification type is enabled
   static Future<bool?> isNotificationEnabled(String type) async {
     try {
-      final currentUser = _client.auth.currentUser;
-      if (currentUser == null) return null;
-
-      final response = await _client
-          .from('user_notification_preferences')
-          .select('is_enabled')
-          .eq('user_id', currentUser.id)
-          .eq('notification_type', type)
-          .maybeSingle();
-
-      if (response == null) return null;
-      return response['is_enabled'] == true;
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getBool('notification_$type');
     } catch (e) {
-      print('Error checking notification preferences: $e');
-      return null; // No preference found
+      print('❌ Failed to get notification preference: $e');
+      return null;
     }
   }
 
-  // Update user notification preferences
-  static Future<bool> updateNotificationPreference(String type, bool isEnabled) async {
+  /// Update notification preference
+  static Future<void> updateNotificationPreference(String type, bool enabled) async {
     try {
-      final currentUser = _client.auth.currentUser;
-      if (currentUser == null) return false;
-
-      await _client
-          .from('user_notification_preferences')
-          .upsert({
-            'user_id': currentUser.id,
-            'notification_type': type,
-            'is_enabled': isEnabled,
-            'updated_at': DateTime.now().toIso8601String(),
-          });
-
-      return true;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('notification_$type', enabled);
+      print('✅ Notification preference updated: $type = $enabled');
     } catch (e) {
-      print('Error updating notification preference: $e');
-      return false;
+      print('❌ Failed to update notification preference: $e');
     }
   }
+}
 
-  // Tournament notifications
-  static Future<void> notifyTournamentJoin(String tournamentTitle) async {
-    final isEnabled = await isNotificationEnabled('tournament');
-    if (isEnabled == null || !isEnabled) return;
-    
-    await showInAppNotification(
-      title: '🏆 Turnuva',
-      message: 'Yeni turnuva "$tournamentTitle" başladı!',
-      type: 'tournament',
-    );
-  }
-
-  static Future<void> notifyTournamentResult(String tournamentTitle, bool isWinner) async {
-    final isEnabled = await isNotificationEnabled('tournament');
-    if (isEnabled == null || !isEnabled) return;
-    
-    await showInAppNotification(
-      title: '🏆 Turnuva Sonucu',
-      message: isWinner 
-          ? 'Tebrikler! "$tournamentTitle" turnuvasını kazandınız!'
-          : '"$tournamentTitle" turnuvasını tamamladınız.',
-      type: 'tournament',
-    );
-  }
-
-  // Match notifications  
-  static Future<void> notifyMatchReminder() async {
-    final isEnabled = await isNotificationEnabled('vote_reminder');
-    if (isEnabled == null || !isEnabled) return;
-    
-    await showInAppNotification(
-      title: '🗳️ Oy Hatırlatması', 
-      message: 'Bekleyen oy verme işleminiz var!',
-      type: 'vote_reminder',
-    );
-  }
-
-  // Victory notifications
-  static Future<void> notifyVictory(int coinsEarned) async {
-    final isEnabled = await isNotificationEnabled('win_celebration');
-    if (isEnabled == null || !isEnabled) return;
-    
-    await showInAppNotification(
-      title: '🎉 Tebrikler!',
-      message: 'Zafer kazandınız ve $coinsEarned coin kazandınız!',
-      type: 'victory',
-    );
-  }
-
-  // Streak notifications
-  static Future<void> notifyStreakReminder(int currentStreak) async {
-    final isEnabled = await isNotificationEnabled('streak_reminder');
-    if (isEnabled == null || !isEnabled) return;
-    
-    await showInAppNotification(
-      title: '🔥 Streak Hatırlatması',
-      message: 'Günlük streak\'iniz devam ediyor! ($currentStreak gün)',
-      type: 'streak',
-    );
-  }
-
-  static Future<void> notifyNewStreak(int streakDays, int coinsEarned) async {
-    final isEnabled = await isNotificationEnabled('streak_reminder');
-    if (isEnabled == null || !isEnabled) return;
-    
-    await showInAppNotification(
-      title: '🔥 Yeni Streak!',
-      message: 'Günlük streak ödülü: $streakDays gün streak ile $coinsEarned coin!',
-      type: 'streak',
-    );
-  }
-
-  // Store notification history to database
-  static Future<void> storeNotificationHistory({
-    required String title,
-    required String message,
-    required String type,
-  }) async {
-    try {
-      final currentUser = _client.auth.currentUser;
-      if (currentUser == null) return;
-
-      await _client.from('notification_history').insert({
-        'user_id': currentUser.id,
-        'title': title,
-        'message': message,
-        'type': type,
-        'created_at': DateTime.now().toIso8601String(),
-        'is_read': false,
-      });
-    } catch (e) {
-      print('Error storing notification history: $e');
-    }
-  }
-
-  // Get notification history for user
-  static Future<List<Map<String, dynamic>>> getNotificationHistory() async {
-    try {
-      final currentUser = _client.auth.currentUser;
-      if (currentUser == null) return [];
-
-      final response = await _client
-          .from('notification_history')
-          .select()
-          .eq('user_id', currentUser.id)
-          .order('created_at', ascending: false)
-          .limit(50);
-
-      return (response as List).cast<Map<String, dynamic>>();
-    } catch (e) {
-      print('Error getting notification history: $e');
-      return [];
-    }
-  }
-
-  // Schedule future notification
-  static Future<void> scheduleNotification({
-    required String title,
-    required String message,
-    required DateTime scheduledTime,
-    String? type,
-  }) async {
-    try {
-      const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-        'chizo_scheduled_notifications',
-        'Chizo Scheduled Notifications',
-        channelDescription: 'Scheduled notifications for reminders',
-        importance: Importance.max,
-        priority: Priority.high,
-      );
-
-      const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-      );
-
-      const NotificationDetails platformDetails = NotificationDetails(
-        android: androidDetails,
-        iOS: iosDetails,
-      );
-
-      // Convert DateTime to TZDateTime
-      final tz.TZDateTime tzScheduledTime = tz.TZDateTime.from(scheduledTime, tz.local);
-
-      await _localNotifications.zonedSchedule(
-        DateTime.now().millisecondsSinceEpoch.remainder(100000),
-        title,
-        message,
-        tzScheduledTime,
-        platformDetails,
-        uiLocalNotificationDateInterpretation: 
-            UILocalNotificationDateInterpretation.absoluteTime,
-        payload: jsonEncode({'type': type}),
-      );
-    } catch (e) {
-      print('Error scheduling notification: $e');
-    }
-  }
+/// Background message handler
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print('📱 Background message received: ${message.messageId}');
 }

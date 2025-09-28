@@ -7,17 +7,30 @@ class LeaderboardService {
   // Genel en çok kazanan kullanıcılar (top 10)
   static Future<List<UserModel>> getTopWinners({int limit = 10}) async {
     try {
+      print('🔍 Getting top winners with limit: $limit');
+      
       final response = await _client
           .from('users')
-          .select()
+          .select('''
+            *,
+            user_photos(photo_url, created_at)
+          ''')
           .eq('is_visible', true)
-          .not('profile_image_url', 'is', null)
+          .gte('total_matches', 50)
           .order('wins', ascending: false)
           .limit(limit);
 
-      return (response as List)
-          .map((json) => UserModel.fromJson(json))
+      print('📊 Query response count: ${(response as List).length}');
+      
+      final users = (response as List)
+          .map((json) {
+            print('👤 User: ${json['username']}, wins: ${json['wins']}, photos: ${json['user_photos']?.length ?? 0}');
+            return UserModel.fromJson(json);
+          })
           .toList();
+          
+      print('✅ Returning ${users.length} users for top winners');
+      return users;
     } catch (e) {
       print('Error getting top winners: $e');
       return [];
@@ -27,24 +40,36 @@ class LeaderboardService {
   // En yüksek kazanma oranına sahip kullanıcılar (top 10)
   static Future<List<UserModel>> getTopWinRate({int limit = 10}) async {
     try {
+      print('🔍 Getting top win rate with limit: $limit');
+      
       final response = await _client
           .from('users')
-          .select()
+          .select('''
+            *,
+            user_photos(photo_url, created_at)
+          ''')
           .eq('is_visible', true)
-          .not('profile_image_url', 'is', null)
+          .gte('total_matches', 50)
           .gt('total_matches', 0) // En az 1 maç yapmış olmalı
           .limit(limit * 2); // Daha fazla alıp kazanma oranına göre sıralayacağız
 
+      print('📊 Query response count: ${(response as List).length}');
+
       final users = (response as List)
-          .map((json) => UserModel.fromJson(json))
+          .map((json) {
+            print('👤 User: ${json['username']}, wins: ${json['wins']}, photos: ${json['user_photos']?.length ?? 0}');
+            return UserModel.fromJson(json);
+          })
           .toList();
 
       // Kazanma oranına göre sırala
       users.sort((a, b) => b.winRate.compareTo(a.winRate));
-
-      return users.take(limit).toList();
+      
+      final topUsers = users.take(limit).toList();
+      print('✅ Returning ${topUsers.length} users for top win rate');
+      return topUsers;
     } catch (e) {
-      print('Error getting top win rate: $e');
+      print('❌ Error getting top win rate: $e');
       return [];
     }
   }
