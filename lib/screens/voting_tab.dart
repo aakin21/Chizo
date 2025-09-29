@@ -932,7 +932,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('💎 $type Bilgisi'),
+        title: Text(AppLocalizations.of(context)!.premiumInfo(type)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -986,7 +986,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('💎 $type Bilgisi'),
+        title: Text(AppLocalizations.of(context)!.premiumInfo(type)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

@@ -399,7 +399,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String premiumInfo(String type) {
-    return 'Premium Bilgiler';
+    return '💎 $type Bilgisi';
   }
 
   @override
@@ -1260,6 +1260,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get retry => 'Tekrar Dene';
 
   @override
+<<<<<<< HEAD
   String get alreadyJoinedTournament => 'Bu turnuvaya zaten katıldınız';
 
   @override
@@ -1313,4 +1314,32 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get refundFailed => 'İade İşlemi Başarısız';
+=======
+  String get createPrivateTournament => 'Private Turnuva Oluştur';
+
+  @override
+  String get tournamentName => 'Turnuva Adı';
+
+  @override
+  String get maxParticipants => 'Maksimum Katılımcı';
+
+  @override
+  String get tournamentFormat => 'Turnuva Formatı';
+
+  @override
+  String get leagueFormat => 'Lig Usulü';
+
+  @override
+  String get eliminationFormat => 'Eleme Usulü';
+
+  @override
+  String get hybridFormat => 'Lig + Eleme';
+
+  @override
+  String get eliminationMaxParticipants => 'Eleme usulü için maksimum 8 kişi';
+
+  @override
+  String get eliminationMaxParticipantsWarning =>
+      'Eleme usulü için maksimum 8 kişi olabilir';
+>>>>>>> origin/master
 }

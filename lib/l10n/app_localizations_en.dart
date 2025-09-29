@@ -397,7 +397,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String premiumInfo(String type) {
-    return 'Premium Information';
+    return '💎 $type Information';
   }
 
   @override
@@ -1257,6 +1257,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retry => 'Retry';
 
   @override
+<<<<<<< HEAD
   String get alreadyJoinedTournament =>
       'You have already joined this tournament';
 
@@ -1311,4 +1312,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get refundFailed => 'Refund Failed';
+=======
+  String get createPrivateTournament => 'Create Private Tournament';
+
+  @override
+  String get tournamentName => 'Tournament Name';
+
+  @override
+  String get maxParticipants => 'Maximum Participants';
+
+  @override
+  String get tournamentFormat => 'Tournament Format';
+
+  @override
+  String get leagueFormat => 'League Format';
+
+  @override
+  String get eliminationFormat => 'Elimination Format';
+
+  @override
+  String get hybridFormat => 'League + Elimination';
+
+  @override
+  String get eliminationMaxParticipants =>
+      'Maximum 8 participants for elimination format';
+
+  @override
+  String get eliminationMaxParticipantsWarning =>
+      'Maximum 8 participants allowed for elimination format';
+>>>>>>> origin/master
 }

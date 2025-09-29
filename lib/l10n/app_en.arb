@@ -1454,6 +1454,7 @@
   "yourPerformance": "Your Performance",
   "againstCountry": "Country Comparison",
   "retry": "Retry",
+<<<<<<< HEAD
   
   "alreadyJoinedTournament": "You have already joined this tournament",
   "uploadTournamentPhoto": "Upload Tournament Photo",
@@ -1474,5 +1475,15 @@
   "photoUploaded": "Photo Uploaded",
   "photoUploadFailed": "Photo Upload Failed",
   "tournamentCancelled": "Tournament Cancelled",
-  "refundFailed": "Refund Failed"
+  "refundFailed": "Refund Failed",
+  "createPrivateTournament": "Create Private Tournament",
+  "tournamentName": "Tournament Name",
+  "maxParticipants": "Maximum Participants",
+  "tournamentFormat": "Tournament Format",
+  "leagueFormat": "League Format",
+  "eliminationFormat": "Elimination Format",
+  "hybridFormat": "League + Elimination",
+  "eliminationMaxParticipants": "Maximum 8 participants for elimination format",
+  "eliminationMaxParticipantsWarning": "Maximum 8 participants allowed for elimination format",
+  "premiumInfo": "💎 {type} Information"
 }

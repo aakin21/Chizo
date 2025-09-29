@@ -567,6 +567,7 @@
   
   "joinWithKey": "Mit Schlüssel beitreten",
   "private": "Privat",
+<<<<<<< HEAD
   
   "alreadyJoinedTournament": "Sie sind diesem Turnier bereits beigetreten",
   "uploadTournamentPhoto": "Turnier-Foto hochladen",
@@ -582,5 +583,34 @@
   "viewTournamentPhotos": "Turnier-Fotos anzeigen",
   "genderMismatch": "Geschlecht stimmt nicht überein",
   "photoAlreadyUploaded": "Foto bereits hochgeladen",
-  "viewParticipantPhoto": "Teilnehmer-Foto anzeigen"
+  "viewParticipantPhoto": "Teilnehmer-Foto anzeigen",
+  "selectPhoto": "Foto auswählen",
+  "photoUploaded": "Foto hochgeladen",
+  "photoUploadFailed": "Foto-Upload fehlgeschlagen",
+  "tournamentCancelled": "Turnier abgebrochen",
+  "refundFailed": "Rückerstattung fehlgeschlagen",
+  "countryRanking": "Länder-Ranking",
+  "countryRankingSubtitle": "Wie erfolgreich sind Sie gegen Bürger verschiedener Länder",
+  "countryRankingTitle": "Länder-Ranking",
+  "countryRankingDescription": "Wie erfolgreich sind Sie gegen Bürger verschiedener Länder",
+  "winsAgainst": "Siege",
+  "lossesAgainst": "Niederlagen",
+  "winRateAgainst": "Gewinnrate",
+  "totalMatches": "Gesamte Matches",
+  "noDataAvailable": "Keine Daten verfügbar",
+  "loadingCountryStats": "Länder-Statistiken werden geladen...",
+  "countryStats": "Länder-Statistiken",
+  "yourPerformance": "Ihre Leistung",
+  "againstCountry": "Länder-Vergleich",
+  "retry": "Wiederholen",
+  "createPrivateTournament": "Privates Turnier erstellen",
+  "tournamentName": "Turnier-Name",
+  "maxParticipants": "Maximale Teilnehmer",
+  "tournamentFormat": "Turnier-Format",
+  "leagueFormat": "Liga-Format",
+  "eliminationFormat": "K.O.-Format",
+  "hybridFormat": "Liga + K.O.",
+  "eliminationMaxParticipants": "Maximal 8 Teilnehmer für K.O.-Format",
+  "eliminationMaxParticipantsWarning": "Maximal 8 Teilnehmer für K.O.-Format erlaubt",
+  "premiumInfo": "💎 {type} Informationen"
 }

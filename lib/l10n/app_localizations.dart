@@ -801,7 +801,7 @@ abstract class AppLocalizations {
   /// Premium info dialog title
   ///
   /// In en, this message translates to:
-  /// **'Premium Information'**
+  /// **'💎 {type} Information'**
   String premiumInfo(String type);
 
   /// Spend 5 coins button text
@@ -2346,6 +2346,7 @@ abstract class AppLocalizations {
   /// **'Retry'**
   String get retry;
 
+<<<<<<< HEAD
   /// No description provided for @alreadyJoinedTournament.
   ///
   /// In en, this message translates to:
@@ -2453,6 +2454,61 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Refund Failed'**
   String get refundFailed;
+=======
+  /// No description provided for @createPrivateTournament.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Private Tournament'**
+  String get createPrivateTournament;
+
+  /// No description provided for @tournamentName.
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament Name'**
+  String get tournamentName;
+
+  /// No description provided for @maxParticipants.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum Participants'**
+  String get maxParticipants;
+
+  /// No description provided for @tournamentFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament Format'**
+  String get tournamentFormat;
+
+  /// No description provided for @leagueFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'League Format'**
+  String get leagueFormat;
+
+  /// No description provided for @eliminationFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Elimination Format'**
+  String get eliminationFormat;
+
+  /// No description provided for @hybridFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'League + Elimination'**
+  String get hybridFormat;
+
+  /// No description provided for @eliminationMaxParticipants.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum 8 participants for elimination format'**
+  String get eliminationMaxParticipants;
+
+  /// No description provided for @eliminationMaxParticipantsWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum 8 participants allowed for elimination format'**
+  String get eliminationMaxParticipantsWarning;
+>>>>>>> origin/master
 }
 
 class _AppLocalizationsDelegate
