@@ -20,12 +20,17 @@ void main() async {
   }
 
   // Supabase başlat - Environment variables should be used in production
-  await Supabase.initialize(
-    url: const String.fromEnvironment('SUPABASE_URL', 
-        defaultValue: 'https://rsuptwsgnpgsvlqigitq.supabase.co'),
-    anonKey: const String.fromEnvironment('SUPABASE_ANON_KEY',
-        defaultValue: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdXB0d3NnbnBnc3ZscWlnaXRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5NjMzODUsImV4cCI6MjA3MzUzOTM4NX0.KiLkHJ22FhJkc8BnkLrTZpk-_gM81bTiCfe0gh3-DfM'),
-  );
+  try {
+    await Supabase.initialize(
+      url: 'https://rsuptwsgnpgsvlqigitq.supabase.co',
+      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdXB0d3NnbnBnc3ZscWlnaXRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5NjMzODUsImV4cCI6MjA3MzUzOTM4NX0.KiLkHJ22FhJkc8BnkLrTZpk-_gM81bTiCfe0gh3-DfM',
+    );
+    print('✅ Supabase initialized successfully');
+    print('🔑 Supabase URL: https://rsuptwsgnpgsvlqigitq.supabase.co');
+    print('🔑 API Key configured: true');
+  } catch (e) {
+    print('❌ Supabase initialization failed: $e');
+  }
 
   // Notification service'i initialize et
   await NotificationService.initialize();

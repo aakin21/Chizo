@@ -7,23 +7,57 @@ import 'user_service.dart';
 class TournamentService {
   static final SupabaseClient _client = Supabase.instance.client;
 
+  // Supabase client'ın API anahtarını test et
+  static Future<void> testSupabaseConnection() async {
+    try {
+      print('🧪 Testing Supabase connection...');
+      print('🔑 Supabase URL: https://rsuptwsgnpgsvlqigitq.supabase.co');
+      print('🔑 Supabase Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...');
+      
+      // Basit bir test sorgusu
+      await _client
+          .from('tournaments')
+          .select('count')
+          .limit(1);
+      
+      print('✅ Supabase connection test successful');
+    } catch (e) {
+      print('❌ Supabase connection test failed: $e');
+      if (e.toString().contains('apikey')) {
+        print('❌ API Key issue detected in connection test');
+      }
+    }
+  }
+
   // Aktif turnuvaları getir (yeni sistem)
   static Future<List<TournamentModel>> getActiveTournaments() async {
     try {
+      print('🔍 Getting active tournaments...');
+      print('🔑 Supabase client auth: ${_client.auth.currentUser?.id}');
+      print('🔑 Supabase client URL: https://rsuptwsgnpgsvlqigitq.supabase.co');
+      
       final response = await _client
           .from('tournaments')
           .select()
-          .inFilter('status', ['registration', 'active'])
+          .inFilter('status', ['upcoming', 'active'])
           .order('entry_fee', ascending: true);
 
-      return (response as List)
+      print('✅ Tournaments response: ${response.length} tournaments found');
+      final tournaments = (response as List)
           .map((json) => TournamentModel.fromJson(json))
           .toList();
+      
+      return tournaments;
     } catch (e) {
-      print('Error getting active tournaments: $e');
+      print('❌ Error getting active tournaments: $e');
+      print('❌ Error type: ${e.runtimeType}');
+      if (e.toString().contains('apikey')) {
+        print('❌ API Key error detected - Supabase client may not be properly configured');
+      }
       return [];
     }
   }
+
 
   // Test turnuvalarını temizle
   static Future<void> cleanupTestTournaments() async {
@@ -188,6 +222,7 @@ class TournamentService {
     final endDate = finalDate ?? startDate.add(const Duration(days: 7));
     final prizePool = entryFee * maxParticipants; // Ödül havuzu = giriş ücreti * max katılımcı
 
+
     await _client.from('tournaments').insert({
       'name': name,
       'description': description,
@@ -203,13 +238,14 @@ class TournamentService {
       'semi_final_date': semiFinalDate?.toIso8601String(),
       'final_date': finalDate?.toIso8601String(),
       'end_date': endDate.toIso8601String(),
-      'status': 'registration',
+      'status': 'upcoming',
       'gender': gender,
       'current_phase': 'registration',
       'current_round': null,
       'phase_start_date': registrationStartDate.toIso8601String(),
       'created_at': DateTime.now().toIso8601String(),
     });
+    
   }
 
   // Turnuvaya katıl (yeni sistem)
@@ -231,8 +267,8 @@ class TournamentService {
 
       // Cinsiyet kontrolü kaldırıldı - herkes tüm turnuvalara katılabilir
 
-      // Turnuva durumu kontrolü - registration veya active olabilir
-      if (tournament['status'] != 'registration' && tournament['status'] != 'active') {
+      // Turnuva durumu kontrolü - upcoming veya active olabilir
+      if (tournament['status'] != 'upcoming' && tournament['status'] != 'active') {
         return false; // Kayıt kapalı
       }
 
@@ -960,7 +996,7 @@ class TournamentService {
         'current_participants': 0,
         'start_date': startDate.toIso8601String(),
         'end_date': endDate.toIso8601String(),
-        'status': 'registration',
+        'status': 'upcoming',
         'gender': gender,
         'current_phase': 'registration',
         'registration_start_date': DateTime.now().toIso8601String(),
@@ -1025,7 +1061,7 @@ class TournamentService {
       }
 
       // Turnuva durumu kontrolü
-      if (tournament['status'] != 'registration') {
+      if (tournament['status'] != 'upcoming') {
         return {'success': false, 'message': 'Kayıt kapalı'};
       }
 

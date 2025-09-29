@@ -28,6 +28,9 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   Future<void> loadTournaments() async {
     setState(() => isLoading = true);
     try {
+      // Önce Supabase bağlantısını test et
+      await TournamentService.testSupabaseConnection();
+      
       // Önce haftalık turnuvaları oluşturmayı dene
       await TournamentService.createWeeklyTournaments();
       
@@ -45,6 +48,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       );
     }
   }
+
 
   Future<void> _joinTournament(TournamentModel tournament) async {
     if (currentUser == null) return;
@@ -517,7 +521,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: tournament.status == 'registration' && tournament.currentParticipants < tournament.maxParticipants
+                    onPressed: (tournament.status == 'upcoming' || tournament.status == 'active') && tournament.currentParticipants < tournament.maxParticipants
                         ? () => _joinTournament(tournament)
                         : null,
                     child: Text(
@@ -525,6 +529,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                           ? AppLocalizations.of(context)!.completed
                           : tournament.status == 'active'
                           ? AppLocalizations.of(context)!.ongoing
+                          : tournament.status == 'upcoming'
+                          ? AppLocalizations.of(context)!.join
                           : tournament.currentParticipants >= tournament.maxParticipants
                       ? AppLocalizations.of(context)!.tournamentFull
                       : AppLocalizations.of(context)!.join,
@@ -532,7 +538,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                if (tournament.status == 'registration' && tournament.currentParticipants < tournament.maxParticipants)
+                if ((tournament.status == 'upcoming' || tournament.status == 'active') && tournament.currentParticipants < tournament.maxParticipants)
                   ElevatedButton.icon(
                     onPressed: () => _showTournamentPhotoDialog(tournament.id),
                     icon: const Icon(Icons.photo_camera),
