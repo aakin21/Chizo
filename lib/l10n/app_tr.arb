@@ -553,5 +553,15 @@
   "countryStats": "Ülke İstatistikleri",
   "yourPerformance": "Performansın",
   "againstCountry": "Ülke Karşılaştırması",
-  "retry": "Tekrar Dene"
+  "retry": "Tekrar Dene",
+  "createPrivateTournament": "Private Turnuva Oluştur",
+  "tournamentName": "Turnuva Adı",
+  "maxParticipants": "Maksimum Katılımcı",
+  "tournamentFormat": "Turnuva Formatı",
+  "leagueFormat": "Lig Usulü",
+  "eliminationFormat": "Eleme Usulü",
+  "hybridFormat": "Lig + Eleme",
+  "eliminationMaxParticipants": "Eleme usulü için maksimum 8 kişi",
+  "eliminationMaxParticipantsWarning": "Eleme usulü için maksimum 8 kişi olabilir",
+  "premiumInfo": "💎 {type} Bilgisi"
 }

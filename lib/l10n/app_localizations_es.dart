@@ -1241,43 +1241,72 @@ class AppLocalizationsEs extends AppLocalizations {
   String get private => 'Privado';
 
   @override
-  String get countryRanking => 'Country Ranking';
+  String get countryRanking => 'Ranking de Países';
 
   @override
   String get countryRankingSubtitle =>
-      'How successful are you against citizens of different countries';
+      'Qué tan exitoso eres contra ciudadanos de diferentes países';
 
   @override
-  String get countryRankingTitle => 'Country Ranking';
+  String get countryRankingTitle => 'Ranking de Países';
 
   @override
   String get countryRankingDescription =>
-      'How successful are you against citizens of different countries';
+      'Qué tan exitoso eres contra ciudadanos de diferentes países';
 
   @override
-  String get winsAgainst => 'Wins';
+  String get winsAgainst => 'Victorias';
 
   @override
-  String get lossesAgainst => 'Losses';
+  String get lossesAgainst => 'Derrotas';
 
   @override
-  String get winRateAgainst => 'Win Rate';
+  String get winRateAgainst => 'Tasa de Victoria';
 
   @override
-  String get noDataAvailable => 'No data available';
+  String get noDataAvailable => 'No hay datos disponibles';
 
   @override
-  String get loadingCountryStats => 'Loading country statistics...';
+  String get loadingCountryStats => 'Cargando estadísticas de países...';
 
   @override
-  String get countryStats => 'Country Statistics';
+  String get countryStats => 'Estadísticas de Países';
 
   @override
-  String get yourPerformance => 'Your Performance';
+  String get yourPerformance => 'Tu Rendimiento';
 
   @override
-  String get againstCountry => 'Country Comparison';
+  String get againstCountry => 'Comparación de Países';
 
   @override
-  String get retry => 'Retry';
+  String get retry => 'Reintentar';
+
+  @override
+  String get createPrivateTournament => 'Crear Torneo Privado';
+
+  @override
+  String get tournamentName => 'Nombre del Torneo';
+
+  @override
+  String get maxParticipants => 'Máximo de Participantes';
+
+  @override
+  String get tournamentFormat => 'Formato del Torneo';
+
+  @override
+  String get leagueFormat => 'Formato de Liga';
+
+  @override
+  String get eliminationFormat => 'Formato de Eliminación';
+
+  @override
+  String get hybridFormat => 'Liga + Eliminación';
+
+  @override
+  String get eliminationMaxParticipants =>
+      'Máximo 8 participantes para formato de eliminación';
+
+  @override
+  String get eliminationMaxParticipantsWarning =>
+      'Máximo 8 participantes permitidos para formato de eliminación';
 }

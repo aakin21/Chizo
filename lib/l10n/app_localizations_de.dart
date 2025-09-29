@@ -110,7 +110,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coins => 'Münzen';
 
   @override
-  String get totalMatches => 'Gesamtspiele';
+  String get totalMatches => 'Gesamte Matches';
 
   @override
   String get wins => 'Siege';
@@ -403,7 +403,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String premiumInfo(String type) {
-    return 'Premium-Informationen';
+    return '💎 $type Informationen';
   }
 
   @override
@@ -1235,43 +1235,72 @@ class AppLocalizationsDe extends AppLocalizations {
   String get private => 'Privat';
 
   @override
-  String get countryRanking => 'Country Ranking';
+  String get countryRanking => 'Länder-Ranking';
 
   @override
   String get countryRankingSubtitle =>
-      'How successful are you against citizens of different countries';
+      'Wie erfolgreich sind Sie gegen Bürger verschiedener Länder';
 
   @override
-  String get countryRankingTitle => 'Country Ranking';
+  String get countryRankingTitle => 'Länder-Ranking';
 
   @override
   String get countryRankingDescription =>
-      'How successful are you against citizens of different countries';
+      'Wie erfolgreich sind Sie gegen Bürger verschiedener Länder';
 
   @override
-  String get winsAgainst => 'Wins';
+  String get winsAgainst => 'Siege';
 
   @override
-  String get lossesAgainst => 'Losses';
+  String get lossesAgainst => 'Niederlagen';
 
   @override
-  String get winRateAgainst => 'Win Rate';
+  String get winRateAgainst => 'Gewinnrate';
 
   @override
-  String get noDataAvailable => 'No data available';
+  String get noDataAvailable => 'Keine Daten verfügbar';
 
   @override
-  String get loadingCountryStats => 'Loading country statistics...';
+  String get loadingCountryStats => 'Länder-Statistiken werden geladen...';
 
   @override
-  String get countryStats => 'Country Statistics';
+  String get countryStats => 'Länder-Statistiken';
 
   @override
-  String get yourPerformance => 'Your Performance';
+  String get yourPerformance => 'Ihre Leistung';
 
   @override
-  String get againstCountry => 'Country Comparison';
+  String get againstCountry => 'Länder-Vergleich';
 
   @override
-  String get retry => 'Retry';
+  String get retry => 'Wiederholen';
+
+  @override
+  String get createPrivateTournament => 'Privates Turnier erstellen';
+
+  @override
+  String get tournamentName => 'Turnier-Name';
+
+  @override
+  String get maxParticipants => 'Maximale Teilnehmer';
+
+  @override
+  String get tournamentFormat => 'Turnier-Format';
+
+  @override
+  String get leagueFormat => 'Liga-Format';
+
+  @override
+  String get eliminationFormat => 'K.O.-Format';
+
+  @override
+  String get hybridFormat => 'Liga + K.O.';
+
+  @override
+  String get eliminationMaxParticipants =>
+      'Maximal 8 Teilnehmer für K.O.-Format';
+
+  @override
+  String get eliminationMaxParticipantsWarning =>
+      'Maximal 8 Teilnehmer für K.O.-Format erlaubt';
 }

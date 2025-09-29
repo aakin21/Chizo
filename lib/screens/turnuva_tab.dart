@@ -639,11 +639,11 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Row(
+          title: Row(
             children: [
-              Icon(Icons.add_circle, color: Colors.purple),
-              SizedBox(width: 8),
-              Text('Private Turnuva Oluştur'),
+              const Icon(Icons.add_circle, color: Colors.purple),
+              const SizedBox(width: 8),
+              Text(AppLocalizations.of(context)!.createPrivateTournament),
             ],
           ),
           content: SingleChildScrollView(
@@ -654,8 +654,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 // Turnuva adı
                 TextField(
                   controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Turnuva Adı',
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.tournamentName,
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.emoji_events),
                   ),
@@ -694,12 +694,12 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                         controller: maxParticipantsController,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
-                          labelText: 'Max Katılımcı',
+                          labelText: AppLocalizations.of(context)!.maxParticipants,
                           border: const OutlineInputBorder(),
                           prefixIcon: const Icon(Icons.people),
                           suffixIcon: selectedFormat == 'elimination' 
-                            ? const Tooltip(
-                                message: 'Eleme usulü için maksimum 8 kişi',
+                            ? Tooltip(
+                                message: AppLocalizations.of(context)!.eliminationMaxParticipants,
                                 child: Icon(Icons.warning, color: Colors.orange, size: 16),
                               )
                             : null,
@@ -708,8 +708,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                           // Eleme usulü için maksimum 8 kişi kontrolü
                           if (selectedFormat == 'elimination' && int.tryParse(value) != null && int.parse(value) > 8) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Eleme usulü için maksimum 8 kişi olabilir'),
+                              SnackBar(
+                                content: Text(AppLocalizations.of(context)!.eliminationMaxParticipantsWarning),
                                 backgroundColor: Colors.orange,
                                 duration: Duration(seconds: 2),
                               ),
@@ -729,15 +729,15 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                     Expanded(
                       child: DropdownButtonFormField<String>(
                         initialValue: selectedFormat,
-                        decoration: const InputDecoration(
-                          labelText: 'Turnuva Formatı',
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.tournamentFormat,
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.sports_esports),
                         ),
-                        items: const [
-                          DropdownMenuItem(value: 'league', child: Text('Lig Usulü')),
-                          DropdownMenuItem(value: 'elimination', child: Text('Eleme Usulü')),
-                          DropdownMenuItem(value: 'hybrid', child: Text('Lig + Eleme')),
+                        items: [
+                          DropdownMenuItem(value: 'league', child: Text(AppLocalizations.of(context)!.leagueFormat)),
+                          DropdownMenuItem(value: 'elimination', child: Text(AppLocalizations.of(context)!.eliminationFormat)),
+                          DropdownMenuItem(value: 'hybrid', child: Text(AppLocalizations.of(context)!.hybridFormat)),
                         ],
                         onChanged: (value) {
                           setDialogState(() {

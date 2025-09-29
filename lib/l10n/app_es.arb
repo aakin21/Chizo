@@ -567,6 +567,30 @@
   "active": "Activo",
   
   "joinWithKey": "Unirse con Clave",
-  "private": "Privado"
+  "private": "Privado",
+  "countryRanking": "Ranking de Países",
+  "countryRankingSubtitle": "Qué tan exitoso eres contra ciudadanos de diferentes países",
+  "countryRankingTitle": "Ranking de Países",
+  "countryRankingDescription": "Qué tan exitoso eres contra ciudadanos de diferentes países",
+  "winsAgainst": "Victorias",
+  "lossesAgainst": "Derrotas",
+  "winRateAgainst": "Tasa de Victoria",
+  "totalMatches": "Partidos Totales",
+  "noDataAvailable": "No hay datos disponibles",
+  "loadingCountryStats": "Cargando estadísticas de países...",
+  "countryStats": "Estadísticas de Países",
+  "yourPerformance": "Tu Rendimiento",
+  "againstCountry": "Comparación de Países",
+  "retry": "Reintentar",
+  "createPrivateTournament": "Crear Torneo Privado",
+  "tournamentName": "Nombre del Torneo",
+  "maxParticipants": "Máximo de Participantes",
+  "tournamentFormat": "Formato del Torneo",
+  "leagueFormat": "Formato de Liga",
+  "eliminationFormat": "Formato de Eliminación",
+  "hybridFormat": "Liga + Eliminación",
+  "eliminationMaxParticipants": "Máximo 8 participantes para formato de eliminación",
+  "eliminationMaxParticipantsWarning": "Máximo 8 participantes permitidos para formato de eliminación",
+  "premiumInfo": "💎 Información de {type}"
 }
 
