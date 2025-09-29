@@ -1260,7 +1260,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get retry => 'Tekrar Dene';
 
   @override
-<<<<<<< HEAD
   String get alreadyJoinedTournament => 'Bu turnuvaya zaten katıldınız';
 
   @override
@@ -1314,7 +1313,8 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get refundFailed => 'İade İşlemi Başarısız';
-=======
+
+  @override
   String get createPrivateTournament => 'Private Turnuva Oluştur';
 
   @override
@@ -1341,5 +1341,4 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get eliminationMaxParticipantsWarning =>
       'Eleme usulü için maksimum 8 kişi olabilir';
->>>>>>> origin/master
 }

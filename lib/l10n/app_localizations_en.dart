@@ -1257,7 +1257,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retry => 'Retry';
 
   @override
-<<<<<<< HEAD
   String get alreadyJoinedTournament =>
       'You have already joined this tournament';
 
@@ -1312,7 +1311,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get refundFailed => 'Refund Failed';
-=======
+
+  @override
   String get createPrivateTournament => 'Create Private Tournament';
 
   @override
@@ -1340,5 +1340,4 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get eliminationMaxParticipantsWarning =>
       'Maximum 8 participants allowed for elimination format';
->>>>>>> origin/master
 }

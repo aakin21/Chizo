@@ -1279,8 +1279,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get againstCountry => 'Comparación de Países';
 
   @override
-<<<<<<< HEAD
-  String get retry => 'Retry';
+  String get retry => 'Reintentar';
 
   @override
   String get alreadyJoinedTournament => 'Ya te has unido a este torneo';
@@ -1326,18 +1325,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get viewParticipantPhoto => 'Ver Foto del Participante';
 
   @override
-  String get selectPhoto => 'Select Photo';
+  String get selectPhoto => 'Seleccionar Foto';
 
   @override
-  String get photoUploadFailed => 'Photo Upload Failed';
+  String get photoUploadFailed => 'Error al Subir Foto';
 
   @override
-  String get tournamentCancelled => 'Tournament Cancelled';
+  String get tournamentCancelled => 'Torneo Cancelado';
 
   @override
-  String get refundFailed => 'Refund Failed';
-=======
-  String get retry => 'Reintentar';
+  String get refundFailed => 'Reembolso Fallido';
 
   @override
   String get createPrivateTournament => 'Crear Torneo Privado';
@@ -1367,5 +1364,4 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get eliminationMaxParticipantsWarning =>
       'Máximo 8 participantes permitidos para formato de eliminación';
->>>>>>> origin/master
 }

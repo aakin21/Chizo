@@ -2346,7 +2346,6 @@ abstract class AppLocalizations {
   /// **'Retry'**
   String get retry;
 
-<<<<<<< HEAD
   /// No description provided for @alreadyJoinedTournament.
   ///
   /// In en, this message translates to:
@@ -2454,7 +2453,7 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Refund Failed'**
   String get refundFailed;
-=======
+
   /// No description provided for @createPrivateTournament.
   ///
   /// In en, this message translates to:
@@ -2508,7 +2507,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Maximum 8 participants allowed for elimination format'**
   String get eliminationMaxParticipantsWarning;
->>>>>>> origin/master
 }
 
 class _AppLocalizationsDelegate

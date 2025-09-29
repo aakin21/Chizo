@@ -1273,8 +1273,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get againstCountry => 'Länder-Vergleich';
 
   @override
-<<<<<<< HEAD
-  String get retry => 'Retry';
+  String get retry => 'Wiederholen';
 
   @override
   String get alreadyJoinedTournament =>
@@ -1321,18 +1320,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get viewParticipantPhoto => 'Teilnehmer-Foto anzeigen';
 
   @override
-  String get selectPhoto => 'Select Photo';
+  String get selectPhoto => 'Foto auswählen';
 
   @override
-  String get photoUploadFailed => 'Photo Upload Failed';
+  String get photoUploadFailed => 'Foto-Upload fehlgeschlagen';
 
   @override
-  String get tournamentCancelled => 'Tournament Cancelled';
+  String get tournamentCancelled => 'Turnier abgebrochen';
 
   @override
-  String get refundFailed => 'Refund Failed';
-=======
-  String get retry => 'Wiederholen';
+  String get refundFailed => 'Rückerstattung fehlgeschlagen';
 
   @override
   String get createPrivateTournament => 'Privates Turnier erstellen';
@@ -1362,5 +1359,4 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get eliminationMaxParticipantsWarning =>
       'Maximal 8 Teilnehmer für K.O.-Format erlaubt';
->>>>>>> origin/master
 }
