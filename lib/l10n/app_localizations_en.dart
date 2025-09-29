@@ -1187,4 +1187,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get vote => 'Vote';
+
+  @override
+  String get lastFiveMatches => 'Last 5 Matches';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get losses => 'Losses';
+
+  @override
+  String get rate => 'Rate';
+
+  @override
+  String get ongoing => 'Ongoing';
+
+  @override
+  String get tournamentFull => 'Tournament Full';
+
+  @override
+  String get active => 'Active';
+
+  @override
+  String get joinWithKey => 'Join with Key';
+
+  @override
+  String get private => 'Private';
 }

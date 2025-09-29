@@ -2213,6 +2213,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Vote'**
   String get vote;
+
+  /// No description provided for @lastFiveMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 5 Matches'**
+  String get lastFiveMatches;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @losses.
+  ///
+  /// In en, this message translates to:
+  /// **'Losses'**
+  String get losses;
+
+  /// No description provided for @rate.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate'**
+  String get rate;
+
+  /// No description provided for @ongoing.
+  ///
+  /// In en, this message translates to:
+  /// **'Ongoing'**
+  String get ongoing;
+
+  /// No description provided for @tournamentFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament Full'**
+  String get tournamentFull;
+
+  /// No description provided for @active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get active;
+
+  /// No description provided for @joinWithKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Join with Key'**
+  String get joinWithKey;
+
+  /// No description provided for @private.
+  ///
+  /// In en, this message translates to:
+  /// **'Private'**
+  String get private;
 }
 
 class _AppLocalizationsDelegate

@@ -15,7 +15,7 @@
   "profession": "Beruf",
   "voting": "Abstimmung",
   "whichDoYouPrefer": "Welches bevorzugen Sie?",
-  "predictWinRate": "{username}s Gewinnrate vorhersagen",
+  "predictUserWinRate": "{username}s Gewinnrate vorhersagen",
   "correctPrediction": "Richtige Vorhersage = 1 Münze",
   "submitPrediction": "Vorhersage absenden",
   "winRate": "Gewinnrate",
@@ -45,6 +45,8 @@
   "congratulations": "Glückwunsch!",
   "correctPredictionMessage": "Sie haben richtig vorhergesagt und 1 Münze verdient!",
   "wrongPredictionMessage": "Falsche Vorhersage. Die tatsächliche Gewinnrate war {winRate}%",
+  "correctPredictionWithReward": "Sie haben richtig vorhergesagt und 1 Münze verdient!",
+  "wrongPredictionWithRate": "Falsche Vorhersage. Die tatsächliche Gewinnrate war {winRate}%",
   "error": "Fehler",
   "invalidEmail": "❌ Ungültige E-Mail-Adresse! Bitte geben Sie eine gültige E-Mail-Format ein.",
   "userNotFoundError": "❌ Kein Benutzer mit dieser E-Mail-Adresse gefunden!",
@@ -551,5 +553,18 @@
   "ageRangePreferencesUpdated": "✅ Altersbereich-Präferenzen aktualisiert",
   "ageRangePreferencesUpdateFailed": "❌ Altersbereich-Präferenzen konnten nicht aktualisiert werden",
   "userInfoNotLoaded": "Benutzerinformationen konnten nicht geladen werden",
-  "loading": "Laden..."
+  "loading": "Laden...",
+  
+  "lastFiveMatches": "Letzte 5 Spiele",
+  "total": "Gesamt",
+  "wins": "Siege",
+  "losses": "Niederlagen",
+  "rate": "Rate",
+  
+  "ongoing": "Laufend",
+  "tournamentFull": "Turnier Voll",
+  "active": "Aktiv",
+  
+  "joinWithKey": "Mit Schlüssel beitreten",
+  "private": "Privat"
 }

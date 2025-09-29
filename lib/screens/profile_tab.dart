@@ -12,6 +12,7 @@ import '../widgets/gender_selector.dart';
 import '../services/country_service.dart';
 import '../models/country_model.dart';
 import 'match_history_screen.dart';
+import 'coin_purchase_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   final VoidCallback? onRefresh;
@@ -400,165 +401,7 @@ class _ProfileTabState extends State<ProfileTab> {
                                   ),
                                 )
                               else
-                                GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                    crossAxisSpacing: 8,
-                                    mainAxisSpacing: 8,
-                                    childAspectRatio: 1,
-                                  ),
-                                  itemCount: 5, // Always show 5 slots (1-5)
-                                  itemBuilder: (context, index) {
-                                    final slot = index + 1; // Slots 1-5
-                                    final photo = userPhotos.firstWhere(
-                                      (p) => p['photo_order'] == slot,
-                                      orElse: () => {},
-                                    );
-                                    
-                                    if (photo.isEmpty) {
-                                      // Empty slot
-                                      return GestureDetector(
-                                        onTap: isUpdating ? null : _showPhotoUploadDialog,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context).colorScheme.surface,
-                                            borderRadius: BorderRadius.circular(8),
-                                            border: Border.all(
-                                              color: Theme.of(context).colorScheme.outline,
-                                              style: BorderStyle.solid,
-                                            ),
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                Icons.add_photo_alternate,
-                                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                                                size: 24,
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Text(
-                                                AppLocalizations.of(context)!.slot(slot),
-                                                style: TextStyle(
-                                                  fontSize: 10,
-                                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                                                ),
-                                              ),
-                                              Text(
-                                                '${PhotoUploadService.getPhotoUploadCost(slot)} coin',
-                                                style: TextStyle(
-                                                  fontSize: 8,
-                                                  color: Theme.of(context).colorScheme.primary,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      // Photo slot
-                                      return Stack(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(8),
-                                              image: DecorationImage(
-                                                image: CachedNetworkImageProvider(photo['photo_url']),
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            top: 4,
-                                            right: 4,
-                                            child: GestureDetector(
-                                              onTap: () => _deletePhoto(slot),
-                                              child: Container(
-                                                padding: const EdgeInsets.all(4),
-                                                decoration: const BoxDecoration(
-                                                  color: Colors.red,
-                                                  shape: BoxShape.circle,
-                                                ),
-                                                child: const Icon(
-                                                  Icons.close,
-                                                  color: Colors.white,
-                                                  size: 12,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          // İstatistik Gör butonu
-                                          Positioned(
-                                            bottom: 4,
-                                            right: 4,
-                                            child: Material(
-                                              color: Colors.transparent,
-                                              child: InkWell(
-                                              onTap: () => _showPhotoStats(photo['id']),
-                                                borderRadius: BorderRadius.circular(8),
-                                                child: Container(
-                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.blue,
-                                                  borderRadius: BorderRadius.circular(8),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.black.withOpacity(0.3),
-                                                      blurRadius: 4,
-                                                      offset: const Offset(0, 2),
-                                                    ),
-                                                  ],
-                                                ),
-                                                child: Row(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    const Icon(
-                                                      Icons.analytics,
-                                                      color: Colors.white,
-                                                      size: 12,
-                                                    ),
-                                                    const SizedBox(width: 4),
-                                                    Text(
-                                                      AppLocalizations.of(context)!.viewStats,
-                                                      style: const TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 11,
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            bottom: 4,
-                                            left: 4,
-                                            child: Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                                              decoration: BoxDecoration(
-                                                color: Colors.black54,
-                                                borderRadius: BorderRadius.circular(4),
-                                              ),
-                                              child: Text(
-                                                AppLocalizations.of(context)!.slot(slot),
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    }
-                                  },
-                                ),
+                                _buildPhotoGrid(),
                             ],
                           ),
                         ),
@@ -569,7 +412,6 @@ class _ProfileTabState extends State<ProfileTab> {
                       // Kullanıcı Bilgileri
                       _buildEditableInfoCard(AppLocalizations.of(context)!.username, currentUser!.username, 'username'),
                       _buildEditableInfoCard(AppLocalizations.of(context)!.email, currentUser!.email, 'email'),
-                      _buildInfoCard(AppLocalizations.of(context)!.coin, '${currentUser!.coins}'),
 
                       if (currentUser!.age != null)
                         _buildEditableInfoCard(AppLocalizations.of(context)!.age, '${currentUser!.age}', 'age'),
@@ -597,6 +439,40 @@ class _ProfileTabState extends State<ProfileTab> {
                         ),
                       if (currentUser!.genderCode == null)
                         _buildAddInfoButton('Add Gender', Icons.person, Colors.purple, () => _showEditDialog('gender', '')),
+
+                      // Coin Bilgisi ve İşlemleri - Gender'dan sonra
+                      _buildInfoCard(AppLocalizations.of(context)!.coin, '${currentUser!.coins}'),
+
+                      // Coin İşlemleri
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.local_activity,
+                            color: Colors.amber,
+                            size: 28,
+                          ),
+                          title: Text(
+                            AppLocalizations.of(context)!.purchaseCoinPackage,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text(
+                            AppLocalizations.of(context)!.purchaseCoinPackageSubtitle,
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CoinPurchaseScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
 
                       const SizedBox(height: 24),
 
@@ -1401,6 +1277,195 @@ class _ProfileTabState extends State<ProfileTab> {
     } finally {
       setState(() => isUpdating = false);
     }
+  }
+
+  /// Build photo grid showing only existing photos and next available slot
+  Widget _buildPhotoGrid() {
+    // Find the next available slot
+    final nextSlot = userPhotos.length + 1;
+    
+    // If all 5 slots are full, don't show add button
+    if (nextSlot > 5) {
+      // Show only existing photos
+      return GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+          childAspectRatio: 1,
+        ),
+        itemCount: userPhotos.length,
+        itemBuilder: (context, index) {
+          final photo = userPhotos[index];
+          final slot = photo['photo_order'] as int;
+          return _buildPhotoSlot(photo, slot);
+        },
+      );
+    }
+    
+    // Show existing photos + next available slot
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 1,
+      ),
+      itemCount: userPhotos.length + 1, // +1 for next slot
+      itemBuilder: (context, index) {
+        if (index < userPhotos.length) {
+          // Show existing photo
+          final photo = userPhotos[index];
+          final slot = photo['photo_order'] as int;
+          return _buildPhotoSlot(photo, slot);
+        } else {
+          // Show next available slot
+          return _buildNextSlotButton(nextSlot);
+        }
+      },
+    );
+  }
+
+  /// Build individual photo slot
+  Widget _buildPhotoSlot(Map<String, dynamic> photo, int slot) {
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            image: DecorationImage(
+              image: CachedNetworkImageProvider(photo['photo_url']),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Positioned(
+          top: 4,
+          right: 4,
+          child: GestureDetector(
+            onTap: () => _deletePhoto(slot),
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.close,
+                color: Colors.white,
+                size: 12,
+              ),
+            ),
+          ),
+        ),
+        // İstatistik Gör butonu
+        Positioned(
+          bottom: 4,
+          right: 4,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => _showPhotoStats(photo['id']),
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.analytics,
+                      color: Colors.white,
+                      size: 12,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      AppLocalizations.of(context)!.viewStats,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 4,
+          left: 4,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            decoration: BoxDecoration(
+              color: Colors.black54,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              AppLocalizations.of(context)!.slot(slot),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Build next available slot button
+  Widget _buildNextSlotButton(int slot) {
+    final cost = PhotoUploadService.getPhotoUploadCost(slot);
+    
+    return GestureDetector(
+      onTap: isUpdating ? null : _showPhotoUploadDialog,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline,
+            style: BorderStyle.solid,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.add,
+              color: Theme.of(context).colorScheme.primary,
+              size: 32,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '$cost coin',
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   /// Build animated skeleton loading screen for profile tab

@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import '../services/user_service.dart';
 import '../models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../screens/coin_purchase_screen.dart';
-import '../widgets/language_selector.dart';
+import '../widgets/compact_language_selector.dart';
 import '../utils/constants.dart';
 import '../l10n/app_localizations.dart';
-import '../services/language_service.dart';
 import '../services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/home_screen.dart';
+import '../screens/login_screen.dart';
 
 class SettingsTab extends StatefulWidget {
   final Function(Locale)? onLanguageChanged;
@@ -76,20 +75,18 @@ class _SettingsTabState extends State<SettingsTab> {
     }
   }
 
-  void _onLanguageChanged(Locale locale) async {
-    // Save user language preference
-    await LanguageService.saveUserLanguagePreference(locale);
-    // Notify parent widget about language change
-    if (widget.onLanguageChanged != null) {
-      widget.onLanguageChanged!(locale);
+
+  String _getThemeName(String theme) {
+    switch (theme) {
+      case 'Beyaz':
+        return AppLocalizations.of(context)!.whiteThemeName;
+      case 'Koyu':
+        return AppLocalizations.of(context)!.darkThemeName;
+      case 'Pembemsi':
+        return AppLocalizations.of(context)!.pinkThemeName;
+      default:
+        return theme;
     }
-    // Show success message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context)!.languageChanged),
-        duration: const Duration(seconds: 1),
-      ),
-    );
   }
 
   String _getThemeDescription(String theme) {
@@ -126,7 +123,7 @@ class _SettingsTabState extends State<SettingsTab> {
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(AppLocalizations.of(context)!.themeChanged(theme)),
+        content: Text(AppLocalizations.of(context)!.themeChanged(_getThemeName(theme))),
         backgroundColor: Colors.green,
         duration: const Duration(seconds: 3),
       ),
@@ -178,6 +175,14 @@ class _SettingsTabState extends State<SettingsTab> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(AppLocalizations.of(context)!.accountDeleted)),
                   );
+                  
+                  // Navigate to login screen and clear all previous routes
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
+                    (route) => false,
+                  );
+                  
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
@@ -209,7 +214,25 @@ class _SettingsTabState extends State<SettingsTab> {
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
-              await Supabase.instance.client.auth.signOut();
+              try {
+                // Sign out
+                await Supabase.instance.client.auth.signOut();
+                
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('${AppLocalizations.of(context)!.logout} successful!')),
+                );
+                
+                // Navigate to login screen and clear all previous routes
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
+                  (route) => false,
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
+                );
+              }
             },
             child: Text(
               AppLocalizations.of(context)!.logoutButton,
@@ -227,22 +250,12 @@ class _SettingsTabState extends State<SettingsTab> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // Dil ayarları
-          _buildSectionCard(
-            title: '🌍 Dil / Language',
-            children: [
-              LanguageSelector(onLanguageChanged: _onLanguageChanged),
-            ],
-          ),
-          
-          const SizedBox(height: 24),
-          
           // Tema ve Görünüm
           _buildSectionCard(
             title: AppLocalizations.of(context)!.themeSelection,
             children: [
               ..._themeOptions.map((theme) => RadioListTile<String>(
-                title: Text(theme),
+                title: Text(_getThemeName(theme)),
                 subtitle: Text(_getThemeDescription(theme)),
                 value: theme,
                 groupValue: _selectedTheme,
@@ -329,29 +342,6 @@ class _SettingsTabState extends State<SettingsTab> {
 
           const SizedBox(height: 24),
           
-          // Coin İşlemleri
-          _buildSectionCard(
-            title: AppLocalizations.of(context)!.moneyAndCoins,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.local_activity, color: Colors.amber),
-                title: Text(AppLocalizations.of(context)!.purchaseCoinPackage),
-                subtitle: Text(AppLocalizations.of(context)!.purchaseCoinPackageSubtitle),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CoinPurchaseScreen(),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-          
-          const SizedBox(height: 24),
-          
           // Uygulama Ayarları
           _buildSectionCard(
             title: AppLocalizations.of(context)!.appSettings,
@@ -374,10 +364,35 @@ class _SettingsTabState extends State<SettingsTab> {
               ),
             ],
           ),
-
+          
+          const SizedBox(height: 24),
+          
+          // Dil Ayarları
+          _buildSectionCard(
+            title: '🌍 Dil / Language',
+            children: [
+              ListTile(
+                leading: const Icon(Icons.language, color: Colors.blue),
+                title: Text(AppLocalizations.of(context)!.language),
+                subtitle: Text('Select your preferred language'),
+                trailing: CompactLanguageSelector(
+                  onLanguageChanged: (locale) async {
+                    // CompactLanguageSelector zaten LanguageService.setLanguage() çağırıyor
+                    // Parent'a bildir ve sayfayı yeniden build et
+                    if (widget.onLanguageChanged != null) {
+                      widget.onLanguageChanged!(locale);
+                    }
+                    // Sayfayı yeniden build et
+                    setState(() {});
+                  },
+                ),
+              ),
+            ],
+          ),
+          
           const SizedBox(height: 24),
 
-          // Hesap İşlemleri
+          // Hesap İşlemleri - En alt kısımda
           _buildSectionCard(
             title: AppLocalizations.of(context)!.accountOperations,
             children: [

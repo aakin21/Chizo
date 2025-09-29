@@ -15,7 +15,7 @@
   "profession": "Meslek",
   "voting": "Oylama",
   "whichDoYouPrefer": "Hangisini daha çok beğeniyorsunuz?",
-  "predictWinRate": "{username} kazanma oranını tahmin et",
+  "predictUserWinRate": "{username} kazanma oranını tahmin et",
   "correctPrediction": "Doğru tahmin = 1 coin",
   "submitPrediction": "Tahmini Gönder",
   "winRate": "Kazanma Oranı",
@@ -45,6 +45,8 @@
   "congratulations": "Tebrikler!",
   "correctPredictionMessage": "Doğru tahmin ettin ve 1 coin kazandın!",
   "wrongPredictionMessage": "Yanlış tahmin. Gerçek kazanma oranı %{winRate} idi",
+  "correctPredictionWithReward": "Doğru tahmin ettin ve 1 coin kazandın!",
+  "wrongPredictionWithRate": "Yanlış tahmin. Gerçek kazanma oranı %{winRate} idi",
   "error": "Hata",
   "invalidEmail": "❌ Geçersiz e-posta adresi! Lütfen doğru formatta e-posta girin.",
   "userNotFoundError": "❌ Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı!",
@@ -524,5 +526,18 @@
   "ageRangePreferencesUpdated": "✅ Yaş aralığı tercihleri güncellendi",
   "ageRangePreferencesUpdateFailed": "❌ Yaş aralığı tercihleri güncellenemedi",
   "userInfoNotLoaded": "Kullanıcı bilgileri yüklenemedi",
-  "loading": "Yükleniyor..."
+  "loading": "Yükleniyor...",
+  
+  "lastFiveMatches": "Son 5 Maç",
+  "total": "Toplam",
+  "wins": "Kazanma",
+  "losses": "Kaybetme",
+  "rate": "Oran",
+  
+  "ongoing": "Devam Ediyor",
+  "tournamentFull": "Turnuva Dolu",
+  "active": "Aktif",
+  
+  "joinWithKey": "Key ile Katıl",
+  "private": "Private"
 }

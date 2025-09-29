@@ -25,16 +25,22 @@ class _CompactLanguageSelectorState extends State<CompactLanguageSelector> {
 
   Future<void> _loadCurrentLanguage() async {
     final currentLocale = await LanguageService.getCurrentLocale();
+    print('🔍 COMPACT LANGUAGE SELECTOR: Loaded locale = $currentLocale');
     setState(() {
       _selectedLocale = currentLocale;
     });
+    print('🔍 COMPACT LANGUAGE SELECTOR: State updated, _selectedLocale = $_selectedLocale');
   }
 
   Future<void> _changeLanguage(Locale locale) async {
+    print('🔄 COMPACT LANGUAGE SELECTOR: Changing language to $locale');
     await LanguageService.setLanguage(locale);
+    print('💾 COMPACT LANGUAGE SELECTOR: Language saved to SharedPreferences');
     setState(() {
       _selectedLocale = locale;
     });
+    print('🔄 COMPACT LANGUAGE SELECTOR: State updated, calling parent callback');
+    // Parent widget'a dil değişikliğini bildir
     widget.onLanguageChanged(locale);
   }
 

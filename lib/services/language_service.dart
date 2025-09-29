@@ -19,7 +19,19 @@ class LanguageService {
     final languageCode = prefs.getString(_languageKey);
     
     if (languageCode != null) {
-      return Locale(languageCode);
+      // Desteklenen locale'leri kontrol et ve doğru format ile döndür
+      switch (languageCode) {
+        case 'tr':
+          return const Locale('tr', 'TR');
+        case 'en':
+          return const Locale('en', 'US');
+        case 'de':
+          return const Locale('de', 'DE');
+        case 'es':
+          return const Locale('es', 'ES');
+        default:
+          return const Locale('tr', 'TR'); // Default fallback
+      }
     }
     
     return _defaultLocale;

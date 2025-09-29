@@ -4,10 +4,11 @@ import 'home_screen.dart';
 import 'register_screen.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/compact_language_selector.dart';
-import '../services/language_service.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final Function(Locale)? onLanguageChanged;
+  
+  const LoginScreen({super.key, this.onLanguageChanged});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -138,6 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return l10n.operationFailed;
   }
 
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -155,8 +157,11 @@ class _LoginScreenState extends State<LoginScreen> {
         actions: [
           CompactLanguageSelector(
             onLanguageChanged: (locale) async {
-              await LanguageService.saveUserLanguagePreference(locale);
-              setState(() {});
+              // CompactLanguageSelector zaten LanguageService.setLanguage() çağırıyor
+              // Sadece parent'a bildir yeterli
+              if (widget.onLanguageChanged != null) {
+                widget.onLanguageChanged!(locale);
+              }
             },
           ),
         ],
@@ -201,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const RegisterScreen(),
+                        builder: (context) => RegisterScreen(onLanguageChanged: widget.onLanguageChanged),
                       ),
                     );
                   },

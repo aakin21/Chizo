@@ -5,10 +5,11 @@ import '../l10n/app_localizations.dart';
 import '../widgets/compact_language_selector.dart';
 import '../widgets/country_selector.dart';
 import '../widgets/gender_selector.dart';
-import '../services/language_service.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  final Function(Locale)? onLanguageChanged;
+  
+  const RegisterScreen({super.key, this.onLanguageChanged});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -92,7 +93,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         // Login ekranına yönlendir
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
+          MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -170,6 +171,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return l10n.operationFailed;
   }
 
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -189,8 +191,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         actions: [
           CompactLanguageSelector(
             onLanguageChanged: (locale) async {
-              await LanguageService.saveUserLanguagePreference(locale);
-              // setState() çağırmayalım, widget'lar zaten key ile yeniden oluşturulacak
+              // CompactLanguageSelector zaten LanguageService.setLanguage() çağırıyor
+              // Sadece parent'a bildir yeterli
+              if (widget.onLanguageChanged != null) {
+                widget.onLanguageChanged!(locale);
+              }
             },
           ),
         ],
@@ -270,7 +275,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextButton(
                   onPressed: () => Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
                   ),
                   child: Text(l10n.loginNow),
                 ),

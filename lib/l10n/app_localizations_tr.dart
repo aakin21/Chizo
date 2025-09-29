@@ -58,7 +58,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String predictUserWinRate(String username) {
-    return 'Predict $username\'s win rate';
+    return '$username kazanma oranını tahmin et';
   }
 
   @override
@@ -113,7 +113,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get totalMatches => 'Toplam Maçlar';
 
   @override
-  String get wins => 'Galibiyetler';
+  String get wins => 'Kazanma';
 
   @override
   String get winRatePercentage => 'Kazanma Oranı';
@@ -146,11 +146,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get correctPredictionWithReward =>
-      'You predicted correctly and earned 1 coin!';
+      'Doğru tahmin ettin ve 1 coin kazandın!';
 
   @override
   String wrongPredictionWithRate(double winRate) {
-    return 'Wrong prediction. The actual win rate was $winRate%';
+    return 'Yanlış tahmin. Gerçek kazanma oranı %$winRate idi';
   }
 
   @override
@@ -1190,4 +1190,31 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get vote => 'Oyla';
+
+  @override
+  String get lastFiveMatches => 'Son 5 Maç';
+
+  @override
+  String get total => 'Toplam';
+
+  @override
+  String get losses => 'Kaybetme';
+
+  @override
+  String get rate => 'Oran';
+
+  @override
+  String get ongoing => 'Devam Ediyor';
+
+  @override
+  String get tournamentFull => 'Turnuva Dolu';
+
+  @override
+  String get active => 'Aktif';
+
+  @override
+  String get joinWithKey => 'Key ile Katıl';
+
+  @override
+  String get private => 'Private';
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shimmer/shimmer.dart';
@@ -676,7 +675,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                           borderRadius: BorderRadius.circular(8),
                           child: Stack(
                             children: [
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 height: double.infinity,
                                 child: _buildUserPhotoDisplay(user1, match.id),
@@ -761,7 +760,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                           borderRadius: BorderRadius.circular(8),
                           child: Stack(
                             children: [
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 height: double.infinity,
                                 child: _buildUserPhotoDisplay(user2, match.id),
@@ -1250,7 +1249,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                           return Column(
                             children: [
                               Expanded( // Bu slider containerı full height kullanır
-                                child: Container(
+                                child: SizedBox(
                                   width: double.infinity,
                                   height: double.infinity,
                                   child: RotatedBox(
@@ -1585,7 +1584,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     print('🎨 VS CONTAINER: Creating container with theme $_currentTheme');
     
     return Container(
-      key: ValueKey('vs_container_${_currentTheme}'), // Theme değişikliğinde container'ı yenile
+      key: ValueKey('vs_container_$_currentTheme'), // Theme değişikliğinde container'ı yenile
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: _getVSContainerBackgroundColor(_currentTheme),
@@ -1596,7 +1595,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         ),
       ),
       child: VSImageWidget(
-        key: ValueKey('vs_${theme.name}_${_currentTheme}'), // Theme değişikliğinde widget'ı yenile
+        key: ValueKey('vs_${theme.name}_$_currentTheme'), // Theme değişikliğinde widget'ı yenile
         theme: theme,
         width: 60,
         height: 30,
@@ -1660,12 +1659,12 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     print("🚀 Photo Verification API Test Başlıyor...");
     
     // API URL - Yarkın'ın ngrok URL'i
-    const String API_URL = 'https://noneducated-monika-isographical.ngrok-free.dev';
+    const String apiUrl = 'https://noneducated-monika-isographical.ngrok-free.dev';
     
     try {
       // 1. Health Check
       print("🔍 1. API sağlık kontrolü...");
-      final healthResponse = await http.get(Uri.parse('$API_URL/health'));
+      final healthResponse = await http.get(Uri.parse('$apiUrl/health'));
       
       if (healthResponse.statusCode == 200) {
         print("✅ API çalışıyor!");
@@ -1771,7 +1770,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
       
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('$API_URL/verify-photo'),
+        Uri.parse('$apiUrl/verify-photo'),
       );
       
       request.files.add(await http.MultipartFile.fromPath('file', photoFile.path));
@@ -1809,7 +1808,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
           print("Durum kontrolü ${i + 1}/20...");
           
           final statusResponse = await http.get(
-            Uri.parse('$API_URL/verification-status/$taskId'),
+            Uri.parse('$apiUrl/verification-status/$taskId'),
           );
           
           if (statusResponse.statusCode == 200) {

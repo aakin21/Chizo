@@ -69,7 +69,7 @@ class AuthWrapper extends StatelessWidget {
           );
         } else {
           // User is not logged in, go to login screen  
-          return const LoginScreen();
+          return LoginScreen(onLanguageChanged: onLanguageChanged);
         }
       },
     );
@@ -87,6 +87,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Locale _currentLocale = const Locale('tr', 'TR');
   String _selectedTheme = 'Beyaz';
   bool _isThemeLoaded = false;
+  Key _appKey = UniqueKey(); // Dil değişikliği için key
 
   @override
   void initState() {
@@ -145,11 +146,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   void changeLanguage(Locale locale) async {
+    print('🌍 MAIN: Language change requested to $locale');
     await LanguageService.setLanguage(locale);
     if (mounted) {
       setState(() {
         _currentLocale = locale;
+        _appKey = UniqueKey(); // Yeni key ile tüm uygulamayı yeniden build et
       });
+      print('🌍 MAIN: Language changed successfully to $locale');
     }
   }
 
@@ -220,6 +224,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
 
     return MaterialApp(
+      key: _appKey, // Dil değişikliği için key
       title: 'Chizo',
       theme: ThemeData(
         colorScheme: _getThemeColorScheme(),

@@ -1426,5 +1426,18 @@
   "ageRangePreferencesUpdateFailed": "❌ Age range preferences could not be updated",
   
   "userInfoNotLoaded": "User information could not be loaded",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  
+  "lastFiveMatches": "Last 5 Matches",
+  "total": "Total",
+  "wins": "Wins",
+  "losses": "Losses",
+  "rate": "Rate",
+  
+  "ongoing": "Ongoing",
+  "tournamentFull": "Tournament Full",
+  "active": "Active",
+  
+  "joinWithKey": "Join with Key",
+  "private": "Private"
 }

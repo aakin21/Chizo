@@ -58,7 +58,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String predictUserWinRate(String username) {
-    return 'Predict $username\'s win rate';
+    return '${username}s Gewinnrate vorhersagen';
   }
 
   @override
@@ -146,11 +146,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get correctPredictionWithReward =>
-      'You predicted correctly and earned 1 coin!';
+      'Sie haben richtig vorhergesagt und 1 Münze verdient!';
 
   @override
   String wrongPredictionWithRate(double winRate) {
-    return 'Wrong prediction. The actual win rate was $winRate%';
+    return 'Falsche Vorhersage. Die tatsächliche Gewinnrate war $winRate%';
   }
 
   @override
@@ -1206,4 +1206,31 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get vote => 'Abstimmen';
+
+  @override
+  String get lastFiveMatches => 'Letzte 5 Spiele';
+
+  @override
+  String get total => 'Gesamt';
+
+  @override
+  String get losses => 'Niederlagen';
+
+  @override
+  String get rate => 'Rate';
+
+  @override
+  String get ongoing => 'Laufend';
+
+  @override
+  String get tournamentFull => 'Turnier Voll';
+
+  @override
+  String get active => 'Aktiv';
+
+  @override
+  String get joinWithKey => 'Mit Schlüssel beitreten';
+
+  @override
+  String get private => 'Privat';
 }

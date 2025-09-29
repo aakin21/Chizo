@@ -41,70 +41,90 @@ class _LanguageSelectorState extends State<LanguageSelector> {
   @override
   Widget build(BuildContext context) {
     final languageOptions = LanguageService.getLanguageOptions();
+    final currentLanguage = languageOptions.firstWhere(
+      (option) => _selectedLocale?.languageCode == option['code'],
+      orElse: () => languageOptions.first,
+    );
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return ListTile(
+      leading: const Icon(Icons.language, color: Colors.blue),
+      title: Text(
+        AppLocalizations.of(context)!.language,
+        style: const TextStyle(fontSize: 16),
+      ),
+      subtitle: Text(
+        currentLanguage['name'],
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.primary,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.language, 
-                color: Theme.of(context).colorScheme.primary
-              ),
-              const SizedBox(width: 8),
-              Text(
-                AppLocalizations.of(context)!.language,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-            ],
+          Text(
+            currentLanguage['flag'],
+            style: const TextStyle(fontSize: 20),
           ),
-          const SizedBox(height: 16),
-          
-          // Dil seçenekleri
-          ...languageOptions.map((option) {
+          const SizedBox(width: 8),
+          const Icon(Icons.arrow_drop_down),
+        ],
+      ),
+      onTap: () => _showLanguageDialog(context, languageOptions),
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context, List<Map<String, dynamic>> languageOptions) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.language, color: Colors.blue),
+            const SizedBox(width: 8),
+            Text(AppLocalizations.of(context)!.language),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: languageOptions.map((option) {
             final isSelected = _selectedLocale?.languageCode == option['code'];
             
-            return Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: ListTile(
-                leading: Text(
-                  option['flag'],
-                  style: const TextStyle(fontSize: 24),
-                ),
-                title: Text(
-                  option['name'],
-                  style: TextStyle(
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    color: isSelected 
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-                trailing: isSelected
-                    ? Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary)
-                    : Icon(Icons.radio_button_unchecked, color: Theme.of(context).colorScheme.outline),
-                onTap: () => _changeLanguage(option['locale']),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(
-                    color: isSelected 
-                        ? Theme.of(context).colorScheme.primary 
-                        : Theme.of(context).colorScheme.outline,
-                    width: isSelected ? 2 : 1,
-                  ),
-                ),
-                tileColor: isSelected 
-                    ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-                    : Theme.of(context).colorScheme.surface,
+            return ListTile(
+              leading: Text(
+                option['flag'],
+                style: const TextStyle(fontSize: 24),
               ),
+              title: Text(
+                option['name'],
+                style: TextStyle(
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isSelected 
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              trailing: isSelected
+                  ? Icon(Icons.check_circle, color: Theme.of(context).colorScheme.primary)
+                  : null,
+              onTap: () {
+                _changeLanguage(option['locale']);
+                Navigator.pop(context);
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              tileColor: isSelected 
+                  ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                  : null,
             );
-          }),
+          }).toList(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
         ],
       ),
     );

@@ -354,7 +354,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 ElevatedButton.icon(
                   onPressed: _showJoinPrivateTournamentDialog,
                   icon: const Icon(Icons.key, size: 16),
-                  label: const Text('Key ile Katıl'),
+                  label: Text(AppLocalizations.of(context)!.joinWithKey),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     foregroundColor: Colors.white,
@@ -365,7 +365,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 ElevatedButton.icon(
                   onPressed: _showCreatePrivateTournamentDialog,
                   icon: const Icon(Icons.add, size: 16),
-                  label: const Text('Private'),
+                  label: Text(AppLocalizations.of(context)!.private),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.purple,
                     foregroundColor: Colors.white,
@@ -447,7 +447,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                   ),
                   child: Text(
                     tournament.status == 'active' 
-                        ? 'Aktif' 
+                        ? AppLocalizations.of(context)!.active
                         : tournament.status == 'registration'
                         ? AppLocalizations.of(context)!.registration
                         : AppLocalizations.of(context)!.upcoming,
@@ -521,9 +521,9 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                       tournament.status == 'completed'
                           ? AppLocalizations.of(context)!.completed
                           : tournament.status == 'active'
-                          ? 'Devam Ediyor'
+                          ? AppLocalizations.of(context)!.ongoing
                           : tournament.currentParticipants >= tournament.maxParticipants
-                      ? 'Turnuva Dolu'
+                      ? AppLocalizations.of(context)!.tournamentFull
                       : AppLocalizations.of(context)!.join,
                     ),
                   ),
@@ -556,7 +556,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                   ElevatedButton.icon(
                     onPressed: () => _showTournamentLeaderboard(tournament.id),
                     icon: const Icon(Icons.leaderboard),
-                    label: const Text('Sıralama'),
+                    label: Text(AppLocalizations.of(context)!.leaderboard),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
@@ -719,7 +719,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                   children: [
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        value: selectedFormat,
+                        initialValue: selectedFormat,
                         decoration: const InputDecoration(
                           labelText: 'Turnuva Formatı',
                           border: OutlineInputBorder(),
@@ -756,7 +756,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 
                 // Cinsiyet
                 DropdownButtonFormField<String>(
-                  value: selectedGender,
+                  initialValue: selectedGender,
                   decoration: const InputDecoration(
                     labelText: 'Cinsiyet',
                     border: OutlineInputBorder(),
@@ -994,7 +994,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('İptal'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -1015,7 +1015,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
               backgroundColor: Colors.orange,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Katıl'),
+            child: Text(AppLocalizations.of(context)!.join),
           ),
         ],
       ),

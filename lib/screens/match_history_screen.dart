@@ -322,25 +322,25 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildStatItem(
-                  'Toplam',
+                  AppLocalizations.of(context)!.total,
                   '${matchStats['total_matches']}',
                   Icons.sports,
                   Colors.blue,
                 ),
                 _buildStatItem(
-                  'Kazanma',
+                  AppLocalizations.of(context)!.wins,
                   '${matchStats['wins']}',
                   Icons.emoji_events,
                   Colors.green,
                 ),
                 _buildStatItem(
-                  'Kaybetme',
+                  AppLocalizations.of(context)!.losses,
                   '${matchStats['losses']}',
                   Icons.close,
                   Colors.red,
                 ),
                 _buildStatItem(
-                  'Oran',
+                  AppLocalizations.of(context)!.rate,
                   '${(matchStats['win_rate'] as double).toStringAsFixed(1)}%',
                   Icons.trending_up,
                   Colors.orange,
@@ -394,11 +394,11 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                     children: [
                       _buildStatsCard(),
                       const SizedBox(height: 16),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          'Son 5 Match',
-                          style: TextStyle(
+                          AppLocalizations.of(context)!.lastFiveMatches,
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
