@@ -2079,7 +2079,7 @@ abstract class AppLocalizations {
   /// No description provided for @winRateAndMatches.
   ///
   /// In en, this message translates to:
-  /// **'{winRate} win rate • {matches} matches'**
+  /// **'{matches} matches • {winRate}'**
   String winRateAndMatches(Object matches, Object winRate);
 
   /// No description provided for @mostWins.

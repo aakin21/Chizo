@@ -1292,7 +1292,7 @@
   "ageRangePreferencesUpdated": "✅ Age range preferences updated",
   "ageRangePreferencesUpdateFailed": "❌ Age range preferences could not be updated",
   "winsAndMatches": "{wins} wins • {matches} matches",
-  "winRateAndMatches": "{winRate} win rate • {matches} matches",
+  "winRateAndMatches": "{matches} matches • {winRate}",
   "mostWins": "Most Wins",
   "highestWinRate": "Highest Win Rate",
   "noWinsYet": "No wins yet!\nPlay your first match and enter the leaderboard!",

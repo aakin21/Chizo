@@ -453,7 +453,7 @@
   "ageRangePreferencesUpdated": "✅ Yaş aralığı tercihleri güncellendi",
   "ageRangePreferencesUpdateFailed": "❌ Yaş aralığı tercihleri güncellenemedi",
   "winsAndMatches": "{wins} galibiyet • {matches} maç",
-  "winRateAndMatches": "{winRate} kazanma oranı • {matches} maç",
+  "winRateAndMatches": "{matches} maç • {winRate}",
   "mostWins": "En Çok Galibiyet",
   "highestWinRate": "En Yüksek Kazanma Oranı",
   "noWinsYet": "Henüz galibiyet yok!\nİlk maçını yap ve liderlik tablosuna gir!",

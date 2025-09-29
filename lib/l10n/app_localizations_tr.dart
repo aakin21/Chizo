@@ -1115,7 +1115,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String winRateAndMatches(Object matches, Object winRate) {
-    return '$winRate kazanma oranı • $matches maç';
+    return '$matches maç • $winRate';
   }
 
   @override

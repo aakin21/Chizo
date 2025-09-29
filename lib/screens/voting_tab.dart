@@ -819,16 +819,6 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                     ),
                   ),
             
-            const SizedBox(height: 8),
-            
-            Text(
-              AppLocalizations.of(context)!.matchCounter(currentMatchIndex + 1, matches.length),
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
-              ),
-            ),
           ],
         );
       },

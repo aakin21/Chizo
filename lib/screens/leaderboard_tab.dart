@@ -167,7 +167,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
             subtitle = AppLocalizations.of(context)!.winsAndMatches(user.wins, user.totalMatches);
           } else {
             // Kazanma oranı
-            subtitle = AppLocalizations.of(context)!.winRateAndMatches(user.winRateString, user.totalMatches);
+            subtitle = AppLocalizations.of(context)!.winRateAndMatches(user.totalMatches, user.winRateString);
           }
 
           return _buildUserCard(user, rank, subtitle: subtitle);
