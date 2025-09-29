@@ -12,7 +12,11 @@
     "countryStats",
     "yourPerformance",
     "againstCountry",
-    "retry"
+    "retry",
+    "selectPhoto",
+    "photoUploadFailed",
+    "tournamentCancelled",
+    "refundFailed"
   ],
 
   "es": [
@@ -28,6 +32,10 @@
     "countryStats",
     "yourPerformance",
     "againstCountry",
-    "retry"
+    "retry",
+    "selectPhoto",
+    "photoUploadFailed",
+    "tournamentCancelled",
+    "refundFailed"
   ]
 }

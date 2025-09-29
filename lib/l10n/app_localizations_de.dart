@@ -301,7 +301,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String photoUploaded(int coinsSpent) {
-    return 'Foto hochgeladen! $coinsSpent Coins ausgegeben.';
+    return 'Foto hochgeladen';
   }
 
   @override
@@ -1274,4 +1274,60 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get retry => 'Retry';
+
+  @override
+  String get alreadyJoinedTournament =>
+      'Sie sind diesem Turnier bereits beigetreten';
+
+  @override
+  String get uploadTournamentPhoto => 'Turnier-Foto hochladen';
+
+  @override
+  String get viewTournament => 'Turnier anzeigen';
+
+  @override
+  String get tournamentParticipants => 'Turnier-Teilnehmer';
+
+  @override
+  String get yourRank => 'Ihr Rang';
+
+  @override
+  String get rank => 'Rang';
+
+  @override
+  String get participant => 'Teilnehmer';
+
+  @override
+  String get photoNotUploaded => 'Foto nicht hochgeladen';
+
+  @override
+  String get uploadPhotoUntilWednesday =>
+      'Sie können das Foto bis Mittwoch hochladen';
+
+  @override
+  String get tournamentStarted => 'Turnier gestartet';
+
+  @override
+  String get viewTournamentPhotos => 'Turnier-Fotos anzeigen';
+
+  @override
+  String get genderMismatch => 'Geschlecht stimmt nicht überein';
+
+  @override
+  String get photoAlreadyUploaded => 'Foto bereits hochgeladen';
+
+  @override
+  String get viewParticipantPhoto => 'Teilnehmer-Foto anzeigen';
+
+  @override
+  String get selectPhoto => 'Select Photo';
+
+  @override
+  String get photoUploadFailed => 'Photo Upload Failed';
+
+  @override
+  String get tournamentCancelled => 'Tournament Cancelled';
+
+  @override
+  String get refundFailed => 'Refund Failed';
 }

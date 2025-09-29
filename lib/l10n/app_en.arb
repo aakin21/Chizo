@@ -1453,5 +1453,26 @@
   "countryStats": "Country Statistics",
   "yourPerformance": "Your Performance",
   "againstCountry": "Country Comparison",
-  "retry": "Retry"
+  "retry": "Retry",
+  
+  "alreadyJoinedTournament": "You have already joined this tournament",
+  "uploadTournamentPhoto": "Upload Tournament Photo",
+  "viewTournament": "View Tournament",
+  "tournamentParticipants": "Tournament Participants",
+  "yourRank": "Your Rank",
+  "rank": "Rank",
+  "participant": "Participant",
+  "photoUploaded": "Photo Uploaded",
+  "photoNotUploaded": "Photo Not Uploaded",
+  "uploadPhotoUntilWednesday": "You can upload photo until Wednesday",
+  "tournamentStarted": "Tournament Started",
+  "viewTournamentPhotos": "View Tournament Photos",
+  "genderMismatch": "Gender Mismatch",
+  "photoAlreadyUploaded": "Photo Already Uploaded",
+  "viewParticipantPhoto": "View Participant Photo",
+  "selectPhoto": "Select Photo",
+  "photoUploaded": "Photo Uploaded",
+  "photoUploadFailed": "Photo Upload Failed",
+  "tournamentCancelled": "Tournament Cancelled",
+  "refundFailed": "Refund Failed"
 }

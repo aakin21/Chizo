@@ -298,7 +298,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String photoUploaded(int coinsSpent) {
-    return 'Fotoğraf yüklendi! $coinsSpent coin harcandı.';
+    return 'Fotoğraf Yüklendi';
   }
 
   @override
@@ -1258,4 +1258,59 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get retry => 'Tekrar Dene';
+
+  @override
+  String get alreadyJoinedTournament => 'Bu turnuvaya zaten katıldınız';
+
+  @override
+  String get uploadTournamentPhoto => 'Turnuva Fotoğrafı Yükle';
+
+  @override
+  String get viewTournament => 'Turnuvayı Gör';
+
+  @override
+  String get tournamentParticipants => 'Turnuva Katılımcıları';
+
+  @override
+  String get yourRank => 'Sıralamanız';
+
+  @override
+  String get rank => 'Sıra';
+
+  @override
+  String get participant => 'Katılımcı';
+
+  @override
+  String get photoNotUploaded => 'Fotoğraf Yüklenmedi';
+
+  @override
+  String get uploadPhotoUntilWednesday =>
+      'Fotoğrafı Çarşamba\'ya kadar yükleyebilirsiniz';
+
+  @override
+  String get tournamentStarted => 'Turnuva Başladı';
+
+  @override
+  String get viewTournamentPhotos => 'Turnuva Fotoğraflarını Görüntüle';
+
+  @override
+  String get genderMismatch => 'Cinsiyet Uyumsuzluğu';
+
+  @override
+  String get photoAlreadyUploaded => 'Fotoğraf Zaten Yüklendi';
+
+  @override
+  String get viewParticipantPhoto => 'Katılımcı Fotoğrafını Görüntüle';
+
+  @override
+  String get selectPhoto => 'Fotoğraf Seç';
+
+  @override
+  String get photoUploadFailed => 'Fotoğraf Yüklenemedi';
+
+  @override
+  String get tournamentCancelled => 'Turnuva İptal Edildi';
+
+  @override
+  String get refundFailed => 'İade İşlemi Başarısız';
 }
