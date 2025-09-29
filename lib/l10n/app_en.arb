@@ -1439,5 +1439,19 @@
   "active": "Active",
   
   "joinWithKey": "Join with Key",
-  "private": "Private"
+  "private": "Private",
+  "countryRanking": "Country Ranking",
+  "countryRankingSubtitle": "How successful are you against citizens of different countries",
+  "countryRankingTitle": "Country Ranking",
+  "countryRankingDescription": "How successful are you against citizens of different countries",
+  "winsAgainst": "Wins",
+  "lossesAgainst": "Losses",
+  "winRateAgainst": "Win Rate",
+  "totalMatches": "Total Matches",
+  "noDataAvailable": "No data available",
+  "loadingCountryStats": "Loading country statistics...",
+  "countryStats": "Country Statistics",
+  "yourPerformance": "Your Performance",
+  "againstCountry": "Country Comparison",
+  "retry": "Retry"
 }

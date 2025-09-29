@@ -539,5 +539,19 @@
   "active": "Aktif",
   
   "joinWithKey": "Key ile Katıl",
-  "private": "Private"
+  "private": "Private",
+  "countryRanking": "Ülke Sıralaması",
+  "countryRankingSubtitle": "Hangi ülke vatandaşlarına karşı ne kadar başarılısın",
+  "countryRankingTitle": "Ülke Sıralaması",
+  "countryRankingDescription": "Hangi ülke vatandaşlarına karşı ne kadar başarılısın",
+  "winsAgainst": "Kazanma",
+  "lossesAgainst": "Kaybetme",
+  "winRateAgainst": "Kazanma Oranı",
+  "totalMatches": "Toplam Maç",
+  "noDataAvailable": "Veri bulunamadı",
+  "loadingCountryStats": "Ülke istatistikleri yükleniyor...",
+  "countryStats": "Ülke İstatistikleri",
+  "yourPerformance": "Performansın",
+  "againstCountry": "Ülke Karşılaştırması",
+  "retry": "Tekrar Dene"
 }

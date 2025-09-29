@@ -13,6 +13,7 @@ import '../services/country_service.dart';
 import '../models/country_model.dart';
 import 'match_history_screen.dart';
 import 'coin_purchase_screen.dart';
+import 'country_ranking_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   final VoidCallback? onRefresh;
@@ -666,6 +667,39 @@ class _ProfileTabState extends State<ProfileTab> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => const MatchHistoryScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Ülke Sıralaması Butonu
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.flag,
+                            color: Colors.blue,
+                            size: 28,
+                          ),
+                          title: Text(
+                            AppLocalizations.of(context)!.countryRanking,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text(
+                            AppLocalizations.of(context)!.countryRankingSubtitle,
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CountryRankingScreen(),
                               ),
                             );
                           },
