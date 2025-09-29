@@ -163,8 +163,8 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
           
           String subtitle;
           if (_tabController.index == 0) {
-            // En çok galibiyet - sadece win sayısı
-            subtitle = AppLocalizations.of(context)!.winsAndMatches(user.wins, 0);
+            // En çok galibiyet - win sayısı ve toplam maç
+            subtitle = AppLocalizations.of(context)!.winsAndMatches(user.wins, user.totalMatches);
           } else {
             // Kazanma oranı
             subtitle = AppLocalizations.of(context)!.winRateAndMatches(user.winRateString, user.totalMatches);

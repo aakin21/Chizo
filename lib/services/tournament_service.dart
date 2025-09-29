@@ -80,8 +80,15 @@ class TournamentService {
       final thisWeekSaturday = thisWeekMonday.add(const Duration(days: 5));
       final thisWeekSunday = thisWeekMonday.add(const Duration(days: 6));
       
-      // Pazartesi'den itibaren çalışacak sistem
-      if (now.weekday == 1) { // Pazartesi günü
+      // Bu hafta için turnuva var mı kontrol et
+      final existingTournaments = await _client
+          .from('tournaments')
+          .select('id')
+          .gte('registration_start_date', thisWeekMonday.toIso8601String())
+          .lt('registration_start_date', thisWeekMonday.add(const Duration(days: 7)).toIso8601String());
+      
+      // Eğer bu hafta için turnuva yoksa oluştur
+      if ((existingTournaments as List).isEmpty) {
         await _cleanupOldTournaments();
         
         // Erkek turnuvaları
@@ -147,6 +154,8 @@ class TournamentService {
         );
 
         print('Weekly tournaments created successfully');
+      } else {
+        print('Weekly tournaments already exist for this week');
       }
     } catch (e) {
       print('Error creating weekly tournaments: $e');

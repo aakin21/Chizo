@@ -28,6 +28,9 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   Future<void> loadTournaments() async {
     setState(() => isLoading = true);
     try {
+      // Önce haftalık turnuvaları oluşturmayı dene
+      await TournamentService.createWeeklyTournaments();
+      
       final activeTournaments = await TournamentService.getActiveTournaments();
       final user = await UserService.getCurrentUser();
       setState(() {
