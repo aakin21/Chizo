@@ -1222,6 +1222,32 @@ class _ProfileTabState extends State<ProfileTab> {
     // Mevcut seçili yaş aralıklarını al (eğer yoksa tüm yaş aralıkları seçili olsun)
     List<String> selectedAgeRanges = currentUser!.ageRangePreferences ?? AppConstants.ageRanges;
     
+    // Mevcut seçili yaş aralıklarından min ve max yaşları hesapla
+    int minAge = 18;
+    int maxAge = 100;
+    
+    if (selectedAgeRanges.isNotEmpty && selectedAgeRanges.length < AppConstants.ageRanges.length) {
+      // Seçili yaş aralıklarından min ve max hesapla
+      List<int> selectedAges = [];
+      for (String range in selectedAgeRanges) {
+        if (range.contains('-')) {
+          final parts = range.split('-');
+          if (parts.length == 2) {
+            final start = int.tryParse(parts[0].trim());
+            final end = int.tryParse(parts[1].trim());
+            if (start != null && end != null) {
+              selectedAges.addAll(List.generate(end - start + 1, (i) => start + i));
+            }
+          }
+        }
+      }
+      if (selectedAges.isNotEmpty) {
+        selectedAges.sort();
+        minAge = selectedAges.first;
+        maxAge = selectedAges.last;
+      }
+    }
+    
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -1229,53 +1255,87 @@ class _ProfileTabState extends State<ProfileTab> {
           title: Text(AppLocalizations.of(context)!.ageRangeSelection),
           content: SizedBox(
             width: double.maxFinite,
-            height: 300,
+            height: 200,
             child: Column(
               children: [
                 Text(
-                  AppLocalizations.of(context)!.ageRangeSelection,
+                  'Seçmek istediğiniz yaş aralığını belirleyin',
                   style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: AppConstants.ageRanges.length,
-                    itemBuilder: (context, index) {
-                      final ageRange = AppConstants.ageRanges[index];
-                      final isSelected = selectedAgeRanges.contains(ageRange);
-                      
-                      return CheckboxListTile(
-                        title: Text(ageRange),
-                        value: isSelected,
-                        onChanged: (value) {
-                          setDialogState(() {
-                            if (value == true) {
-                              selectedAgeRanges.add(ageRange);
-                            } else {
-                              selectedAgeRanges.remove(ageRange);
-                            }
-                          });
-                        },
-                      );
-                    },
-                  ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text('Min Yaş: $minAge', style: const TextStyle(fontWeight: FontWeight.bold)),
+                          Slider(
+                            value: minAge.toDouble(),
+                            min: 18,
+                            max: 100,
+                            divisions: 82,
+                            onChanged: (value) {
+                              setDialogState(() {
+                                minAge = value.round();
+                                if (minAge >= maxAge) {
+                                  maxAge = minAge;
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text('Max Yaş: $maxAge', style: const TextStyle(fontWeight: FontWeight.bold)),
+                          Slider(
+                            value: maxAge.toDouble(),
+                            min: 18,
+                            max: 100,
+                            divisions: 82,
+                            onChanged: (value) {
+                              setDialogState(() {
+                                maxAge = value.round();
+                                if (maxAge <= minAge) {
+                                  minAge = maxAge;
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Seçilen yaş aralığı: $minAge - $maxAge',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue),
                 ),
               ],
             ),
           ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(AppLocalizations.of(context)!.cancel),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  Navigator.pop(context);
-                  await _updateAgeRangePreferences(selectedAgeRanges);
-                },
-                child: Text(AppLocalizations.of(context)!.save),
-              ),
-            ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                // Yaş aralığını string listesine çevir
+                List<String> newAgeRanges = [];
+                for (int age = minAge; age <= maxAge; age++) {
+                  newAgeRanges.add('$age-$age');
+                }
+                await _updateAgeRangePreferences(newAgeRanges);
+              },
+              child: Text(AppLocalizations.of(context)!.save),
+            ),
+          ],
         ),
       ),
     );
