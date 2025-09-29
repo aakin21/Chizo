@@ -110,7 +110,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get coins => 'Coin';
 
   @override
-  String get totalMatches => 'Toplam Maçlar';
+  String get totalMatches => 'Toplam Maç';
 
   @override
   String get wins => 'Kazanma';
@@ -1115,7 +1115,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String winRateAndMatches(Object matches, Object winRate) {
-    return '$winRate kazanma oranı • $matches maç';
+    return '$matches maç • $winRate';
   }
 
   @override
@@ -1217,4 +1217,45 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get private => 'Private';
+
+  @override
+  String get countryRanking => 'Ülke Sıralaması';
+
+  @override
+  String get countryRankingSubtitle =>
+      'Hangi ülke vatandaşlarına karşı ne kadar başarılısın';
+
+  @override
+  String get countryRankingTitle => 'Ülke Sıralaması';
+
+  @override
+  String get countryRankingDescription =>
+      'Hangi ülke vatandaşlarına karşı ne kadar başarılısın';
+
+  @override
+  String get winsAgainst => 'Kazanma';
+
+  @override
+  String get lossesAgainst => 'Kaybetme';
+
+  @override
+  String get winRateAgainst => 'Kazanma Oranı';
+
+  @override
+  String get noDataAvailable => 'Veri bulunamadı';
+
+  @override
+  String get loadingCountryStats => 'Ülke istatistikleri yükleniyor...';
+
+  @override
+  String get countryStats => 'Ülke İstatistikleri';
+
+  @override
+  String get yourPerformance => 'Performansın';
+
+  @override
+  String get againstCountry => 'Ülke Karşılaştırması';
+
+  @override
+  String get retry => 'Tekrar Dene';
 }

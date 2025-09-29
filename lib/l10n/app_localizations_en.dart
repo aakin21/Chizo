@@ -1112,7 +1112,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String winRateAndMatches(Object matches, Object winRate) {
-    return '$winRate win rate • $matches matches';
+    return '$matches matches • $winRate';
   }
 
   @override
@@ -1214,4 +1214,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get private => 'Private';
+
+  @override
+  String get countryRanking => 'Country Ranking';
+
+  @override
+  String get countryRankingSubtitle =>
+      'How successful are you against citizens of different countries';
+
+  @override
+  String get countryRankingTitle => 'Country Ranking';
+
+  @override
+  String get countryRankingDescription =>
+      'How successful are you against citizens of different countries';
+
+  @override
+  String get winsAgainst => 'Wins';
+
+  @override
+  String get lossesAgainst => 'Losses';
+
+  @override
+  String get winRateAgainst => 'Win Rate';
+
+  @override
+  String get noDataAvailable => 'No data available';
+
+  @override
+  String get loadingCountryStats => 'Loading country statistics...';
+
+  @override
+  String get countryStats => 'Country Statistics';
+
+  @override
+  String get yourPerformance => 'Your Performance';
+
+  @override
+  String get againstCountry => 'Country Comparison';
+
+  @override
+  String get retry => 'Retry';
 }

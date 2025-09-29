@@ -2079,7 +2079,7 @@ abstract class AppLocalizations {
   /// No description provided for @winRateAndMatches.
   ///
   /// In en, this message translates to:
-  /// **'{winRate} win rate • {matches} matches'**
+  /// **'{matches} matches • {winRate}'**
   String winRateAndMatches(Object matches, Object winRate);
 
   /// No description provided for @mostWins.
@@ -2267,6 +2267,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Private'**
   String get private;
+
+  /// No description provided for @countryRanking.
+  ///
+  /// In en, this message translates to:
+  /// **'Country Ranking'**
+  String get countryRanking;
+
+  /// No description provided for @countryRankingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How successful are you against citizens of different countries'**
+  String get countryRankingSubtitle;
+
+  /// No description provided for @countryRankingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Country Ranking'**
+  String get countryRankingTitle;
+
+  /// No description provided for @countryRankingDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'How successful are you against citizens of different countries'**
+  String get countryRankingDescription;
+
+  /// No description provided for @winsAgainst.
+  ///
+  /// In en, this message translates to:
+  /// **'Wins'**
+  String get winsAgainst;
+
+  /// No description provided for @lossesAgainst.
+  ///
+  /// In en, this message translates to:
+  /// **'Losses'**
+  String get lossesAgainst;
+
+  /// No description provided for @winRateAgainst.
+  ///
+  /// In en, this message translates to:
+  /// **'Win Rate'**
+  String get winRateAgainst;
+
+  /// No description provided for @noDataAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No data available'**
+  String get noDataAvailable;
+
+  /// No description provided for @loadingCountryStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading country statistics...'**
+  String get loadingCountryStats;
+
+  /// No description provided for @countryStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Country Statistics'**
+  String get countryStats;
+
+  /// No description provided for @yourPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Performance'**
+  String get yourPerformance;
+
+  /// No description provided for @againstCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Country Comparison'**
+  String get againstCountry;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
 }
 
 class _AppLocalizationsDelegate
