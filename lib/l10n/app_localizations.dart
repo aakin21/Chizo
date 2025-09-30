@@ -627,7 +627,7 @@ abstract class AppLocalizations {
   /// No description provided for @photoUploaded.
   ///
   /// In en, this message translates to:
-  /// **'Photo uploaded! {coinsSpent} coins spent.'**
+  /// **'Photo Uploaded'**
   String photoUploaded(int coinsSpent);
 
   /// Delete photo dialog title
@@ -2345,6 +2345,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get retry;
+
+  /// No description provided for @alreadyJoinedTournament.
+  ///
+  /// In en, this message translates to:
+  /// **'You have already joined this tournament'**
+  String get alreadyJoinedTournament;
+
+  /// No description provided for @uploadTournamentPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Tournament Photo'**
+  String get uploadTournamentPhoto;
+
+  /// No description provided for @viewTournament.
+  ///
+  /// In en, this message translates to:
+  /// **'View Tournament'**
+  String get viewTournament;
+
+  /// No description provided for @tournamentParticipants.
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament Participants'**
+  String get tournamentParticipants;
+
+  /// No description provided for @yourRank.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Rank'**
+  String get yourRank;
+
+  /// No description provided for @rank.
+  ///
+  /// In en, this message translates to:
+  /// **'Rank'**
+  String get rank;
+
+  /// No description provided for @participant.
+  ///
+  /// In en, this message translates to:
+  /// **'Participant'**
+  String get participant;
+
+  /// No description provided for @photoNotUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Not Uploaded'**
+  String get photoNotUploaded;
+
+  /// No description provided for @uploadPhotoUntilWednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'You can upload photo until Wednesday'**
+  String get uploadPhotoUntilWednesday;
+
+  /// No description provided for @tournamentStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament Started'**
+  String get tournamentStarted;
+
+  /// No description provided for @viewTournamentPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'View Tournament Photos'**
+  String get viewTournamentPhotos;
+
+  /// No description provided for @genderMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender Mismatch'**
+  String get genderMismatch;
+
+  /// No description provided for @photoAlreadyUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Already Uploaded'**
+  String get photoAlreadyUploaded;
+
+  /// No description provided for @viewParticipantPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'View Participant Photo'**
+  String get viewParticipantPhoto;
+
+  /// No description provided for @selectPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Photo'**
+  String get selectPhoto;
+
+  /// No description provided for @photoUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Upload Failed'**
+  String get photoUploadFailed;
+
+  /// No description provided for @tournamentCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament Cancelled'**
+  String get tournamentCancelled;
+
+  /// No description provided for @refundFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund Failed'**
+  String get refundFailed;
 
   /// No description provided for @createPrivateTournament.
   ///

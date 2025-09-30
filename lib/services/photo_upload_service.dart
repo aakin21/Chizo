@@ -37,20 +37,36 @@ class PhotoUploadService {
   /// Upload tournament photo
   static Future<String?> uploadTournamentPhoto(XFile image) async {
     try {
-      final file = File(image.path);
       final fileName = 'tournament_${DateTime.now().millisecondsSinceEpoch}_${image.name}';
       
-      // Upload to Supabase Storage
-      final response = await _client.storage
-          .from('tournament-photos')
-          .upload(fileName, file);
-
-      if (response.isNotEmpty) {
-        final photoUrl = _client.storage
+      if (kIsWeb) {
+        // Web platform - use bytes
+        final bytes = await image.readAsBytes();
+        final response = await _client.storage
             .from('tournament-photos')
-            .getPublicUrl(fileName);
-        
-        return photoUrl;
+            .uploadBinary(fileName, bytes);
+
+        if (response.isNotEmpty) {
+          final photoUrl = _client.storage
+              .from('tournament-photos')
+              .getPublicUrl(fileName);
+          
+          return photoUrl;
+        }
+      } else {
+        // Mobile platform - use file
+        final file = File(image.path);
+        final response = await _client.storage
+            .from('tournament-photos')
+            .upload(fileName, file);
+
+        if (response.isNotEmpty) {
+          final photoUrl = _client.storage
+              .from('tournament-photos')
+              .getPublicUrl(fileName);
+          
+          return photoUrl;
+        }
       }
       
       return null;

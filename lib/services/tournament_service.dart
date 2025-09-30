@@ -396,12 +396,22 @@ class TournamentService {
   // Turnuvaya katıl (yeni sistem)
   static Future<bool> joinTournament(String tournamentId) async {
     try {
+      print('🎯 JOIN TOURNAMENT: Starting join process for tournament $tournamentId');
+      
       final user = _client.auth.currentUser;
-      if (user == null) return false;
+      if (user == null) {
+        print('❌ JOIN TOURNAMENT: No authenticated user');
+        return false;
+      }
+      print('✅ JOIN TOURNAMENT: User authenticated: ${user.id}');
 
       // Kullanıcı bilgilerini al
       final currentUser = await UserService.getCurrentUser();
-      if (currentUser == null) return false;
+      if (currentUser == null) {
+        print('❌ JOIN TOURNAMENT: Current user not found in database');
+        return false;
+      }
+      print('✅ JOIN TOURNAMENT: Current user found: ${currentUser.username}, coins: ${currentUser.coins}');
 
       // Turnuva bilgilerini al
       final tournament = await _client
@@ -409,23 +419,45 @@ class TournamentService {
           .select()
           .eq('id', tournamentId)
           .single();
+      print('✅ JOIN TOURNAMENT: Tournament found: ${tournament['name']}, status: ${tournament['status']}, entry_fee: ${tournament['entry_fee']}');
 
-      // Cinsiyet kontrolü kaldırıldı - herkes tüm turnuvalara katılabilir
+      // Cinsiyet kontrolü - M/F ile Erkek/Kadın karşılaştırması
+      final tournamentGender = tournament['gender'];
+      if (tournamentGender != null && tournamentGender != 'all') {
+        bool canJoin = false;
+        if (currentUser.genderCode == 'M' && tournamentGender == 'Erkek') {
+          canJoin = true;
+        } else if (currentUser.genderCode == 'F' && tournamentGender == 'Kadın') {
+          canJoin = true;
+        }
+        
+        if (!canJoin) {
+          print('❌ JOIN TOURNAMENT: Gender mismatch. User: ${currentUser.genderCode}, Required: $tournamentGender');
+          return false; // Cinsiyet uyumsuzluğu
+        }
+      }
+      print('✅ JOIN TOURNAMENT: Gender check passed');
 
       // Turnuva durumu kontrolü - upcoming veya active olabilir
       if (tournament['status'] != 'upcoming' && tournament['status'] != 'active') {
+        print('❌ JOIN TOURNAMENT: Tournament status is ${tournament['status']}, not joinable');
         return false; // Kayıt kapalı
       }
+      print('✅ JOIN TOURNAMENT: Tournament status is valid');
 
       // Kullanıcının coin kontrolü
       if (currentUser.coins < tournament['entry_fee']) {
+        print('❌ JOIN TOURNAMENT: Insufficient coins. User has ${currentUser.coins}, needs ${tournament['entry_fee']}');
         return false; // Yetersiz coin
       }
+      print('✅ JOIN TOURNAMENT: User has sufficient coins');
 
       // Turnuva dolu mu kontrol et
       if (tournament['current_participants'] >= tournament['max_participants']) {
+        print('❌ JOIN TOURNAMENT: Tournament is full. Current: ${tournament['current_participants']}, Max: ${tournament['max_participants']}');
         return false; // Turnuva dolu
       }
+      print('✅ JOIN TOURNAMENT: Tournament has space');
 
       // Zaten katılmış mı kontrol et
       final existingParticipation = await _client
@@ -436,10 +468,13 @@ class TournamentService {
           .maybeSingle();
 
       if (existingParticipation != null) {
+        print('❌ JOIN TOURNAMENT: User already participating');
         return false; // Zaten katılmış
       }
+      print('✅ JOIN TOURNAMENT: User not already participating');
 
       // Turnuvaya katıl
+      print('🎯 JOIN TOURNAMENT: Inserting into tournament_participants...');
       await _client.from('tournament_participants').insert({
         'tournament_id': tournamentId,
         'user_id': currentUser.id,
@@ -447,20 +482,35 @@ class TournamentService {
         'is_eliminated': false,
         'score': 0,
         'tournament_photo_url': null, // Turnuva fotoğrafı henüz yüklenmedi
-        'photo_uploaded': false, // Fotoğraf yüklenme durumu
+        // 'photo_uploaded': false, // Bu kolon veritabanında yok, kaldırıldı
       });
+      print('✅ JOIN TOURNAMENT: Successfully inserted into tournament_participants');
 
       // Entry fee'yi düş
+      print('🎯 JOIN TOURNAMENT: Updating user coins...');
       await UserService.updateCoins(
         -tournament['entry_fee'], 
         'spent', 
         'Turnuva katılım ücreti'
       );
+      print('✅ JOIN TOURNAMENT: User coins updated');
 
       // Turnuva katılımcı sayısını güncelle
-      await _client.rpc('increment_tournament_participants', params: {
-        'tournament_id': tournamentId,
-      });
+      print('🎯 JOIN TOURNAMENT: Updating tournament participant count...');
+      try {
+        await _client.rpc('increment_tournament_participants', params: {
+          'tournament_id': tournamentId,
+        });
+        print('✅ JOIN TOURNAMENT: Tournament participant count updated via RPC');
+      } catch (rpcError) {
+        print('⚠️ JOIN TOURNAMENT: RPC failed, trying manual update: $rpcError');
+        // RPC başarısız olursa manuel güncelleme yap
+        await _client
+            .from('tournaments')
+            .update({'current_participants': tournament['current_participants'] + 1})
+            .eq('id', tournamentId);
+        print('✅ JOIN TOURNAMENT: Tournament participant count updated manually');
+      }
 
       // Turnuva başlatma mantığı:
       // - 100 kişi turnuvaları: 100 kişi dolunca otomatik başlar
@@ -468,6 +518,7 @@ class TournamentService {
       if (tournament['max_participants'] == 100 && 
           tournament['current_participants'] + 1 >= tournament['max_participants']) {
         // 100 kişi turnuvaları dolunca otomatik başlat
+        print('🎯 JOIN TOURNAMENT: Starting 100-person tournament...');
         await _startTournament(tournamentId);
       } else if (tournament['max_participants'] == 300) {
         // 300 kişi turnuvaları için özel kontrol
@@ -476,13 +527,16 @@ class TournamentService {
         
         // Eğer başlangıç tarihi gelmişse ve yeterli katılımcı varsa başlat
         if (now.isAfter(startDate) && tournament['current_participants'] + 1 >= 100) {
+          print('🎯 JOIN TOURNAMENT: Starting 300-person tournament...');
           await _startTournament(tournamentId);
         }
       }
 
+      print('✅ JOIN TOURNAMENT: Successfully joined tournament!');
       return true;
     } catch (e) {
-      print('Error joining tournament: $e');
+      print('❌ JOIN TOURNAMENT ERROR: $e');
+      print('❌ JOIN TOURNAMENT ERROR TYPE: ${e.runtimeType}');
       return false;
     }
   }
@@ -551,18 +605,29 @@ class TournamentService {
       final response = await _client
           .from('tournament_participants')
           .select('''
-            *,
-            user:users(username, profile_image_url, coins)
+            id,
+            user_id,
+            joined_at,
+            is_eliminated,
+            score,
+            tournament_photo_url,
+            user:users!inner(
+              id,
+              username,
+              profile_image_url,
+              coins
+            )
           ''')
           .eq('tournament_id', tournamentId)
-          .order('score', ascending: false);
+          .order('joined_at', ascending: true);
 
-      return (response as List).cast<Map<String, dynamic>>();
+      return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       print('Error getting tournament participants: $e');
       return [];
     }
   }
+
 
   // Turnuva sıralamasını getir
   static Future<List<Map<String, dynamic>>> getTournamentLeaderboard(String tournamentId) async {
@@ -801,6 +866,77 @@ class TournamentService {
     }
   }
 
+  // Turnuva katılımını iptal et ve coin iadesi yap
+  static Future<bool> refundTournamentEntry(String tournamentId) async {
+    try {
+      print('🔄 REFUND: Starting refund process for tournament $tournamentId');
+      
+      final user = _client.auth.currentUser;
+      if (user == null) {
+        print('❌ REFUND: No authenticated user');
+        return false;
+      }
+
+      // Kullanıcı bilgilerini al
+      final currentUser = await UserService.getCurrentUser();
+      if (currentUser == null) {
+        print('❌ REFUND: Current user not found');
+        return false;
+      }
+      print('✅ REFUND: Current user found: ${currentUser.username}, coins: ${currentUser.coins}');
+
+      // Turnuva bilgilerini al
+      final tournament = await _client
+          .from('tournaments')
+          .select('entry_fee')
+          .eq('id', tournamentId)
+          .single();
+      print('✅ REFUND: Tournament found, entry_fee: ${tournament['entry_fee']}');
+
+      // Turnuva katılımını sil
+      print('🔄 REFUND: Deleting tournament participation...');
+      await _client
+          .from('tournament_participants')
+          .delete()
+          .eq('tournament_id', tournamentId)
+          .eq('user_id', currentUser.id);
+      print('✅ REFUND: Tournament participation deleted');
+
+      // Coin iadesi yap
+      final newCoinAmount = currentUser.coins + tournament['entry_fee'];
+      print('🔄 REFUND: Refunding ${tournament['entry_fee']} coins, new total: $newCoinAmount');
+      await _client
+          .from('users')
+          .update({
+            'coins': newCoinAmount,
+            'updated_at': DateTime.now().toIso8601String(),
+          })
+          .eq('id', currentUser.id);
+      print('✅ REFUND: Coins updated in database');
+
+      // Turnuva katılımcı sayısını manuel olarak güncelle (RPC yerine)
+      print('🔄 REFUND: Updating tournament participant count...');
+      final currentCount = await _client
+          .from('tournaments')
+          .select('current_participants')
+          .eq('id', tournamentId)
+          .single();
+      
+      final newCount = (currentCount['current_participants'] as int) - 1;
+      await _client
+          .from('tournaments')
+          .update({'current_participants': newCount})
+          .eq('id', tournamentId);
+      print('✅ REFUND: Tournament participant count updated to $newCount');
+
+      print('✅ REFUND: Tournament entry refunded successfully');
+      return true;
+    } catch (e) {
+      print('❌ REFUND ERROR: $e');
+      return false;
+    }
+  }
+
   // Turnuva fotoğrafı yükle
   static Future<bool> uploadTournamentPhoto(String tournamentId, String photoUrl) async {
     try {
@@ -822,7 +958,7 @@ class TournamentService {
           .from('tournament_participants')
           .update({
             'tournament_photo_url': photoUrl,
-            'photo_uploaded': true, // Fotoğraf yüklendi olarak işaretle
+            // 'photo_uploaded': true, // Bu kolon veritabanında yok, kaldırıldı
           })
           .eq('tournament_id', tournamentId)
           .eq('user_id', user.id);
