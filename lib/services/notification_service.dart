@@ -43,7 +43,6 @@ class NotificationService {
       _setupMessageHandlers();
       
       _isInitialized = true;
-      print('✅ NotificationService initialized successfully');
     } catch (e) {
       print('❌ NotificationService initialization failed: $e');
     }
@@ -120,7 +119,6 @@ class NotificationService {
         'updated_at': DateTime.now().toIso8601String(),
       });
 
-      print('✅ FCM token saved to database');
     } catch (e) {
       print('❌ Failed to save FCM token: $e');
     }
@@ -243,7 +241,6 @@ class NotificationService {
       );
 
       await _supabase.from('notifications').insert(notification.toJson());
-      print('✅ Notification saved to database');
     } catch (e) {
       print('❌ Failed to save notification: $e');
     }
@@ -285,7 +282,6 @@ class NotificationService {
           })
           .eq('id', notificationId);
 
-      print('✅ Notification marked as read');
       return true;
     } catch (e) {
       print('❌ Failed to mark notification as read: $e');
@@ -308,7 +304,6 @@ class NotificationService {
           .eq('user_id', user.id)
           .eq('is_read', false);
 
-      print('✅ All notifications marked as read');
       return true;
     } catch (e) {
       print('❌ Failed to mark all notifications as read: $e');
@@ -368,7 +363,6 @@ class NotificationService {
         details,
       );
 
-      print('✅ Test notification sent');
     } catch (e) {
       print('❌ Failed to send test notification: $e');
     }
@@ -378,7 +372,6 @@ class NotificationService {
   static Future<void> subscribeToTopic(String topic) async {
     try {
       await _firebaseMessaging.subscribeToTopic(topic);
-      print('✅ Subscribed to topic: $topic');
     } catch (e) {
       print('❌ Failed to subscribe to topic: $e');
     }
@@ -388,7 +381,6 @@ class NotificationService {
   static Future<void> unsubscribeFromTopic(String topic) async {
     try {
       await _firebaseMessaging.unsubscribeFromTopic(topic);
-      print('✅ Unsubscribed from topic: $topic');
     } catch (e) {
       print('❌ Failed to unsubscribe from topic: $e');
     }
@@ -410,7 +402,6 @@ class NotificationService {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('notification_$type', enabled);
-      print('✅ Notification preference updated: $type = $enabled');
     } catch (e) {
       print('❌ Failed to update notification preference: $e');
     }

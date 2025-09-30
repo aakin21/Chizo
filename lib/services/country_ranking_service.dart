@@ -7,7 +7,6 @@ class CountryRankingService {
   /// Bu, diğer ülkelerden gelen oylar ile kazanma oranını gösterir
   static Future<List<Map<String, dynamic>>> getUserCountryStats(String authUserId) async {
     try {
-      print('🔍 Getting country stats for auth user: $authUserId');
       
       // Önce auth ID'den user ID'yi al
       final userResponse = await _supabase
@@ -17,7 +16,6 @@ class CountryRankingService {
           .single();
       
       final userId = userResponse['id'];
-      print('🔍 Found user ID: $userId');
       
       // Yeni tablodan direkt verileri al (çok daha hızlı!)
       final statsResponse = await _supabase
@@ -27,11 +25,8 @@ class CountryRankingService {
           .gt('total_matches', 0) // Sadece maçı olan ülkeleri getir
           .order('win_rate', ascending: false);
 
-      print('📊 Found ${statsResponse.length} country stats');
-      print('📊 Stats data: $statsResponse');
 
       if (statsResponse.isEmpty) {
-        print('❌ No country stats found for user');
         return [];
       }
 
@@ -47,7 +42,6 @@ class CountryRankingService {
         });
       }
 
-      print('✅ Final result: $result');
       return result;
     } catch (e) {
       print('Error fetching country stats: $e');

@@ -25,9 +25,6 @@ void main() async {
       url: 'https://rsuptwsgnpgsvlqigitq.supabase.co',
       anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdXB0d3NnbnBnc3ZscWlnaXRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5NjMzODUsImV4cCI6MjA3MzUzOTM4NX0.KiLkHJ22FhJkc8BnkLrTZpk-_gM81bTiCfe0gh3-DfM',
     );
-    print('✅ Supabase initialized successfully');
-    print('🔑 Supabase URL: https://rsuptwsgnpgsvlqigitq.supabase.co');
-    print('🔑 API Key configured: true');
   } catch (e) {
     print('❌ Supabase initialization failed: $e');
   }
@@ -130,14 +127,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     try {
       final prefs = await SharedPreferences.getInstance();
       final theme = prefs.getString('selected_theme') ?? 'Beyaz';
-      print('🔍 THEME LOADING: Reading from storage -> $theme');
       
       if (mounted) {
         setState(() {
           _selectedTheme = theme;
           _isThemeLoaded = true;
         });
-        print('✅ THEME APPLIED: $_selectedTheme set successfully');
       }
     } catch (e) {
       print('❌ THEME ERROR: Failed to load theme - $e');
@@ -159,6 +154,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         _appKey = UniqueKey(); // Yeni key ile tüm uygulamayı yeniden build et
       });
       print('🌍 MAIN: Language changed successfully to $locale');
+      
+      // Dil değişikliği sonrası otomatik refresh
+      await Future.delayed(const Duration(milliseconds: 300));
+      if (mounted) {
+        setState(() {
+          _appKey = UniqueKey(); // Ekstra refresh için yeni key
+        });
+      }
     }
   }
 
@@ -171,8 +174,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       if (mounted) {
         setState(() {
           _selectedTheme = theme;
+          _appKey = UniqueKey(); // Theme değişikliği için yeni key
         });
-        print('✅ THEME CHANGED SUCCESSFULLY: $theme');
+        
+        // Theme değişikliği sonrası otomatik refresh
+        await Future.delayed(const Duration(milliseconds: 200));
+        if (mounted) {
+          setState(() {
+            _appKey = UniqueKey(); // Ekstra refresh için yeni key
+          });
+        }
       }
     } catch (e) {
       print('❌ THEME CHANGE ERROR: $e');

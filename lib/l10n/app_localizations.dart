@@ -1326,7 +1326,7 @@ abstract class AppLocalizations {
   /// **'Tournament participation fees'**
   String get tournamentFees;
 
-  /// No description provided for @weeklyMaleTournament1000.
+  /// Name for weekly male tournament with 1000 coin entry fee
   ///
   /// In en, this message translates to:
   /// **'Weekly Male Tournament (1000 Coins)'**
@@ -1338,7 +1338,7 @@ abstract class AppLocalizations {
   /// **'Weekly male tournament - 300 person capacity'**
   String get weeklyMaleTournament1000Desc;
 
-  /// No description provided for @weeklyMaleTournament10000.
+  /// Name for weekly male tournament with 10000 coin entry fee
   ///
   /// In en, this message translates to:
   /// **'Weekly Male Tournament (10000 Coins)'**
@@ -1350,7 +1350,7 @@ abstract class AppLocalizations {
   /// **'Premium male tournament - 100 person capacity'**
   String get weeklyMaleTournament10000Desc;
 
-  /// No description provided for @weeklyFemaleTournament1000.
+  /// Name for weekly female tournament with 1000 coin entry fee
   ///
   /// In en, this message translates to:
   /// **'Weekly Female Tournament (1000 Coins)'**
@@ -1362,7 +1362,7 @@ abstract class AppLocalizations {
   /// **'Weekly female tournament - 300 person capacity'**
   String get weeklyFemaleTournament1000Desc;
 
-  /// No description provided for @weeklyFemaleTournament10000.
+  /// Name for weekly female tournament with 10000 coin entry fee
   ///
   /// In en, this message translates to:
   /// **'Weekly Female Tournament (10000 Coins)'**
@@ -2399,6 +2399,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Maximum 8 participants allowed for elimination format'**
   String get eliminationMaxParticipantsWarning;
+
+  /// Description for weekly male tournament with 1000 coin entry fee
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly male tournament - 300 participant capacity'**
+  String get weeklyMaleTournament1000Description;
+
+  /// Description for weekly male tournament with 10000 coin entry fee
+  ///
+  /// In en, this message translates to:
+  /// **'Premium male tournament - 100 participant capacity'**
+  String get weeklyMaleTournament10000Description;
+
+  /// Description for weekly female tournament with 1000 coin entry fee
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly female tournament - 300 participant capacity'**
+  String get weeklyFemaleTournament1000Description;
+
+  /// Description for weekly female tournament with 10000 coin entry fee
+  ///
+  /// In en, this message translates to:
+  /// **'Premium female tournament - 100 participant capacity'**
+  String get weeklyFemaleTournament10000Description;
 }
 
 class _AppLocalizationsDelegate

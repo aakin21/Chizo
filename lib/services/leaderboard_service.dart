@@ -7,7 +7,6 @@ class LeaderboardService {
   // Genel en çok kazanan kullanıcılar (top 10)
   static Future<List<UserModel>> getTopWinners({int limit = 10}) async {
     try {
-      print('🔍 Getting top winners with limit: $limit');
       
       final response = await _client
           .from('users')
@@ -29,7 +28,6 @@ class LeaderboardService {
           })
           .toList();
           
-      print('✅ Returning ${users.length} users for top winners');
       return users;
     } catch (e) {
       print('Error getting top winners: $e');
@@ -40,7 +38,6 @@ class LeaderboardService {
   // En yüksek kazanma oranına sahip kullanıcılar (top 10)
   static Future<List<UserModel>> getTopWinRate({int limit = 10}) async {
     try {
-      print('🔍 Getting top win rate with limit: $limit');
       
       final response = await _client
           .from('users')
@@ -66,7 +63,6 @@ class LeaderboardService {
       users.sort((a, b) => b.winRate.compareTo(a.winRate));
       
       final topUsers = users.take(limit).toList();
-      print('✅ Returning ${topUsers.length} users for top win rate');
       return topUsers;
     } catch (e) {
       print('❌ Error getting top win rate: $e');

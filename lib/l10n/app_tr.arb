@@ -563,5 +563,38 @@
   "hybridFormat": "Lig + Eleme",
   "eliminationMaxParticipants": "Eleme usulü için maksimum 8 kişi",
   "eliminationMaxParticipantsWarning": "Eleme usulü için maksimum 8 kişi olabilir",
-  "premiumInfo": "💎 {type} Bilgisi"
+  "premiumInfo": "💎 {type} Bilgisi",
+
+  "weeklyMaleTournament1000": "Haftalık Erkek Turnuvası (1000 Coin)",
+  "@weeklyMaleTournament1000": {
+    "description": "1000 coin giriş ücretli haftalık erkek turnuvası adı"
+  },
+  "weeklyMaleTournament1000Description": "Her hafta düzenlenen erkek turnuvası - 300 kişi kapasiteli",
+  "@weeklyMaleTournament1000Description": {
+    "description": "1000 coin giriş ücretli haftalık erkek turnuvası açıklaması"
+  },
+  "weeklyMaleTournament10000": "Haftalık Erkek Turnuvası (10000 Coin)",
+  "@weeklyMaleTournament10000": {
+    "description": "10000 coin giriş ücretli haftalık erkek turnuvası adı"
+  },
+  "weeklyMaleTournament10000Description": "Premium erkek turnuvası - 100 kişi kapasiteli",
+  "@weeklyMaleTournament10000Description": {
+    "description": "10000 coin giriş ücretli haftalık erkek turnuvası açıklaması"
+  },
+  "weeklyFemaleTournament1000": "Haftalık Kadın Turnuvası (1000 Coin)",
+  "@weeklyFemaleTournament1000": {
+    "description": "1000 coin giriş ücretli haftalık kadın turnuvası adı"
+  },
+  "weeklyFemaleTournament1000Description": "Her hafta düzenlenen kadın turnuvası - 300 kişi kapasiteli",
+  "@weeklyFemaleTournament1000Description": {
+    "description": "1000 coin giriş ücretli haftalık kadın turnuvası açıklaması"
+  },
+  "weeklyFemaleTournament10000": "Haftalık Kadın Turnuvası (10000 Coin)",
+  "@weeklyFemaleTournament10000": {
+    "description": "10000 coin giriş ücretli haftalık kadın turnuvası adı"
+  },
+  "weeklyFemaleTournament10000Description": "Premium kadın turnuvası - 100 kişi kapasiteli",
+  "@weeklyFemaleTournament10000Description": {
+    "description": "10000 coin giriş ücretli haftalık kadın turnuvası açıklaması"
+  }
 }

@@ -1284,4 +1284,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get eliminationMaxParticipantsWarning =>
       'Maximum 8 participants allowed for elimination format';
+
+  @override
+  String get weeklyMaleTournament1000Description =>
+      'Weekly male tournament - 300 participant capacity';
+
+  @override
+  String get weeklyMaleTournament10000Description =>
+      'Premium male tournament - 100 participant capacity';
+
+  @override
+  String get weeklyFemaleTournament1000Description =>
+      'Weekly female tournament - 300 participant capacity';
+
+  @override
+  String get weeklyFemaleTournament10000Description =>
+      'Premium female tournament - 100 participant capacity';
 }

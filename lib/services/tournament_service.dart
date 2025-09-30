@@ -20,7 +20,6 @@ class TournamentService {
           .select('count')
           .limit(1);
       
-      print('✅ Supabase connection test successful');
     } catch (e) {
       print('❌ Supabase connection test failed: $e');
       if (e.toString().contains('apikey')) {
@@ -29,31 +28,29 @@ class TournamentService {
     }
   }
 
-  // Aktif turnuvaları getir (yeni sistem)
-  static Future<List<TournamentModel>> getActiveTournaments() async {
+  // Aktif turnuvaları getir (yeni sistem) - dil desteği ile
+  static Future<List<TournamentModel>> getActiveTournaments({String? language}) async {
     try {
-      print('🔍 Getting active tournaments...');
-      print('🔑 Supabase client auth: ${_client.auth.currentUser?.id}');
       print('🔑 Supabase client URL: https://rsuptwsgnpgsvlqigitq.supabase.co');
       
-      final response = await _client
+      var query = _client
           .from('tournaments')
           .select()
-          .inFilter('status', ['upcoming', 'active'])
-          .order('entry_fee', ascending: true);
+          .inFilter('status', ['upcoming', 'active']);
+      
+      // Eğer dil belirtilmişse, o dile göre filtrele
+      if (language != null) {
+        query = query.eq('language', language);
+      }
+      
+      final response = await query.order('entry_fee', ascending: true);
 
-      print('✅ Tournaments response: ${response.length} tournaments found');
       final tournaments = (response as List)
           .map((json) => TournamentModel.fromJson(json))
           .toList();
       
       return tournaments;
     } catch (e) {
-      print('❌ Error getting active tournaments: $e');
-      print('❌ Error type: ${e.runtimeType}');
-      if (e.toString().contains('apikey')) {
-        print('❌ API Key error detected - Supabase client may not be properly configured');
-      }
       return [];
     }
   }
@@ -86,13 +83,16 @@ class TournamentService {
     }
   }
 
-  // Eski turnuvaları temizle
+  // Eski turnuvaları temizle - sadece eski haftalık turnuvaları sil
   static Future<void> _cleanupOldTournaments() async {
     try {
-      // Eski haftalık turnuvaları sil
+      // Sadece eski haftalık turnuvaları sil (geçen hafta ve öncesi)
+      final lastWeek = DateTime.now().subtract(const Duration(days: 7));
+      
       await _client
           .from('tournaments')
           .delete()
+          .lt('registration_start_date', lastWeek.toIso8601String())
           .like('name', '%Haftalık%');
       
       print('Old weekly tournaments cleaned up!');
@@ -101,7 +101,7 @@ class TournamentService {
     }
   }
 
-  // Otomatik haftalık turnuva sistemi
+  // Otomatik haftalık turnuva sistemi - çok dilli (her gün çalışır)
   static Future<void> createWeeklyTournaments() async {
     try {
       final now = DateTime.now();
@@ -114,77 +114,27 @@ class TournamentService {
       final thisWeekSaturday = thisWeekMonday.add(const Duration(days: 5));
       final thisWeekSunday = thisWeekMonday.add(const Duration(days: 6));
       
-      // Bu hafta için turnuva var mı kontrol et
+      // Bu hafta için turnuva var mı kontrol et (sadece sistem turnuvaları)
       final existingTournaments = await _client
           .from('tournaments')
           .select('id')
           .gte('registration_start_date', thisWeekMonday.toIso8601String())
-          .lt('registration_start_date', thisWeekMonday.add(const Duration(days: 7)).toIso8601String());
+          .lt('registration_start_date', thisWeekMonday.add(const Duration(days: 7)).toIso8601String())
+          .eq('is_private', false); // Sadece sistem turnuvaları
       
-      // Eğer bu hafta için turnuva yoksa oluştur
+      // Eğer bu hafta için sistem turnuvası yoksa oluştur
       if ((existingTournaments as List).isEmpty) {
         await _cleanupOldTournaments();
         
-        // Erkek turnuvaları
-        await _createTournament(
-          name: 'Haftalık Erkek Turnuvası (1000 Coin)',
-          description: 'Her hafta düzenlenen erkek turnuvası - 300 kişi kapasiteli',
-          entryFee: 1000,
-          maxParticipants: 300,
-          gender: 'Erkek',
-          registrationStartDate: thisWeekMonday,
-          startDate: thisWeekWednesday,
-          votingStartDate: thisWeekWednesday,
-          votingEndDate: thisWeekThursday,
-          quarterFinalDate: thisWeekFriday,
-          semiFinalDate: thisWeekSaturday,
-          finalDate: thisWeekSunday,
-        );
-
-        await _createTournament(
-          name: 'Haftalık Erkek Turnuvası (10000 Coin)',
-          description: 'Premium erkek turnuvası - 100 kişi kapasiteli',
-          entryFee: 10000,
-          maxParticipants: 100,
-          gender: 'Erkek',
-          registrationStartDate: thisWeekMonday,
-          startDate: thisWeekWednesday,
-          votingStartDate: thisWeekWednesday,
-          votingEndDate: thisWeekThursday,
-          quarterFinalDate: thisWeekFriday,
-          semiFinalDate: thisWeekSaturday,
-          finalDate: thisWeekSunday,
-        );
-
-        // Kadın turnuvaları
-        await _createTournament(
-          name: 'Haftalık Kadın Turnuvası (1000 Coin)',
-          description: 'Her hafta düzenlenen kadın turnuvası - 300 kişi kapasiteli',
-          entryFee: 1000,
-          maxParticipants: 300,
-          gender: 'Kadın',
-          registrationStartDate: thisWeekMonday,
-          startDate: thisWeekWednesday,
-          votingStartDate: thisWeekWednesday,
-          votingEndDate: thisWeekThursday,
-          quarterFinalDate: thisWeekFriday,
-          semiFinalDate: thisWeekSaturday,
-          finalDate: thisWeekSunday,
-        );
-
-        await _createTournament(
-          name: 'Haftalık Kadın Turnuvası (10000 Coin)',
-          description: 'Premium kadın turnuvası - 100 kişi kapasiteli',
-          entryFee: 10000,
-          maxParticipants: 100,
-          gender: 'Kadın',
-          registrationStartDate: thisWeekMonday,
-          startDate: thisWeekWednesday,
-          votingStartDate: thisWeekWednesday,
-          votingEndDate: thisWeekThursday,
-          quarterFinalDate: thisWeekFriday,
-          semiFinalDate: thisWeekSaturday,
-          finalDate: thisWeekSunday,
+        // Çok dilli turnuva oluştur
+        await _createMultiLanguageTournaments(
+          thisWeekMonday,
+          thisWeekWednesday,
+          thisWeekWednesday,
+          thisWeekThursday,
+          thisWeekFriday,
+          thisWeekSaturday,
+          thisWeekSunday,
         );
 
         print('Weekly tournaments created successfully');
@@ -194,6 +144,206 @@ class TournamentService {
     } catch (e) {
       print('Error creating weekly tournaments: $e');
     }
+  }
+
+  // Çok dilli turnuva oluşturma
+  static Future<void> _createMultiLanguageTournaments(
+    DateTime registrationStartDate,
+    DateTime startDate,
+    DateTime votingStartDate,
+    DateTime votingEndDate,
+    DateTime quarterFinalDate,
+    DateTime semiFinalDate,
+    DateTime finalDate,
+  ) async {
+    // Desteklenen diller
+    final supportedLanguages = ['tr', 'en', 'de', 'es'];
+    
+    for (String language in supportedLanguages) {
+        // Erkek turnuvaları
+        await _createTournament(
+        name: _getLocalizedTournamentName('male', 1000, language),
+        description: _getLocalizedTournamentDescription('male', 1000, language),
+          entryFee: 1000,
+          maxParticipants: 300,
+          gender: 'Erkek',
+        registrationStartDate: registrationStartDate,
+        startDate: startDate,
+        votingStartDate: votingStartDate,
+        votingEndDate: votingEndDate,
+        quarterFinalDate: quarterFinalDate,
+        semiFinalDate: semiFinalDate,
+        finalDate: finalDate,
+        language: language,
+        );
+
+        await _createTournament(
+        name: _getLocalizedTournamentName('male', 10000, language),
+        description: _getLocalizedTournamentDescription('male', 10000, language),
+          entryFee: 10000,
+          maxParticipants: 100,
+          gender: 'Erkek',
+        registrationStartDate: registrationStartDate,
+        startDate: startDate,
+        votingStartDate: votingStartDate,
+        votingEndDate: votingEndDate,
+        quarterFinalDate: quarterFinalDate,
+        semiFinalDate: semiFinalDate,
+        finalDate: finalDate,
+        language: language,
+        );
+
+        // Kadın turnuvaları
+        await _createTournament(
+        name: _getLocalizedTournamentName('female', 1000, language),
+        description: _getLocalizedTournamentDescription('female', 1000, language),
+          entryFee: 1000,
+          maxParticipants: 300,
+          gender: 'Kadın',
+        registrationStartDate: registrationStartDate,
+        startDate: startDate,
+        votingStartDate: votingStartDate,
+        votingEndDate: votingEndDate,
+        quarterFinalDate: quarterFinalDate,
+        semiFinalDate: semiFinalDate,
+        finalDate: finalDate,
+        language: language,
+        );
+
+        await _createTournament(
+        name: _getLocalizedTournamentName('female', 10000, language),
+        description: _getLocalizedTournamentDescription('female', 10000, language),
+          entryFee: 10000,
+          maxParticipants: 100,
+          gender: 'Kadın',
+        registrationStartDate: registrationStartDate,
+        startDate: startDate,
+        votingStartDate: votingStartDate,
+        votingEndDate: votingEndDate,
+        quarterFinalDate: quarterFinalDate,
+        semiFinalDate: semiFinalDate,
+        finalDate: finalDate,
+        language: language,
+      );
+    }
+  }
+
+  // Yerelleştirilmiş turnuva adı
+  static String _getLocalizedTournamentName(String gender, int entryFee, String language) {
+    final key = 'weekly${gender == 'male' ? 'Male' : 'Female'}Tournament$entryFee';
+    
+    switch (language) {
+      case 'tr':
+        switch (key) {
+          case 'weeklyMaleTournament1000':
+            return 'Haftalık Erkek Turnuvası (1000 Coin)';
+          case 'weeklyMaleTournament10000':
+            return 'Haftalık Erkek Turnuvası (10000 Coin)';
+          case 'weeklyFemaleTournament1000':
+            return 'Haftalık Kadın Turnuvası (1000 Coin)';
+          case 'weeklyFemaleTournament10000':
+            return 'Haftalık Kadın Turnuvası (10000 Coin)';
+        }
+        break;
+      case 'en':
+        switch (key) {
+          case 'weeklyMaleTournament1000':
+            return 'Weekly Male Tournament (1000 Coins)';
+          case 'weeklyMaleTournament10000':
+            return 'Weekly Male Tournament (10000 Coins)';
+          case 'weeklyFemaleTournament1000':
+            return 'Weekly Female Tournament (1000 Coins)';
+          case 'weeklyFemaleTournament10000':
+            return 'Weekly Female Tournament (10000 Coins)';
+        }
+        break;
+      case 'de':
+        switch (key) {
+          case 'weeklyMaleTournament1000':
+            return 'Wöchentliches Männerturnier (1000 Münzen)';
+          case 'weeklyMaleTournament10000':
+            return 'Wöchentliches Männerturnier (10000 Münzen)';
+          case 'weeklyFemaleTournament1000':
+            return 'Wöchentliches Frauenturnier (1000 Münzen)';
+          case 'weeklyFemaleTournament10000':
+            return 'Wöchentliches Frauenturnier (10000 Münzen)';
+        }
+        break;
+      case 'es':
+        switch (key) {
+          case 'weeklyMaleTournament1000':
+            return 'Torneo Masculino Semanal (1000 Monedas)';
+          case 'weeklyMaleTournament10000':
+            return 'Torneo Masculino Semanal (10000 Monedas)';
+          case 'weeklyFemaleTournament1000':
+            return 'Torneo Femenino Semanal (1000 Monedas)';
+          case 'weeklyFemaleTournament10000':
+            return 'Torneo Femenino Semanal (10000 Monedas)';
+        }
+        break;
+    }
+    
+    // Fallback to Turkish
+    return _getLocalizedTournamentName(gender, entryFee, 'tr');
+  }
+
+  // Yerelleştirilmiş turnuva açıklaması
+  static String _getLocalizedTournamentDescription(String gender, int entryFee, String language) {
+    final key = 'weekly${gender == 'male' ? 'Male' : 'Female'}Tournament$entryFee';
+    
+    switch (language) {
+      case 'tr':
+        switch (key) {
+          case 'weeklyMaleTournament1000':
+            return 'Her hafta düzenlenen erkek turnuvası - 300 kişi kapasiteli';
+          case 'weeklyMaleTournament10000':
+            return 'Premium erkek turnuvası - 100 kişi kapasiteli';
+          case 'weeklyFemaleTournament1000':
+            return 'Her hafta düzenlenen kadın turnuvası - 300 kişi kapasiteli';
+          case 'weeklyFemaleTournament10000':
+            return 'Premium kadın turnuvası - 100 kişi kapasiteli';
+        }
+        break;
+      case 'en':
+        switch (key) {
+          case 'weeklyMaleTournament1000':
+            return 'Weekly male tournament - 300 participant capacity';
+          case 'weeklyMaleTournament10000':
+            return 'Premium male tournament - 100 participant capacity';
+          case 'weeklyFemaleTournament1000':
+            return 'Weekly female tournament - 300 participant capacity';
+          case 'weeklyFemaleTournament10000':
+            return 'Premium female tournament - 100 participant capacity';
+        }
+        break;
+      case 'de':
+        switch (key) {
+          case 'weeklyMaleTournament1000':
+            return 'Wöchentliches Männerturnier - 300 Teilnehmer Kapazität';
+          case 'weeklyMaleTournament10000':
+            return 'Premium Männerturnier - 100 Teilnehmer Kapazität';
+          case 'weeklyFemaleTournament1000':
+            return 'Wöchentliches Frauenturnier - 300 Teilnehmer Kapazität';
+          case 'weeklyFemaleTournament10000':
+            return 'Premium Frauenturnier - 100 Teilnehmer Kapazität';
+        }
+        break;
+      case 'es':
+        switch (key) {
+          case 'weeklyMaleTournament1000':
+            return 'Torneo masculino semanal - capacidad de 300 participantes';
+          case 'weeklyMaleTournament10000':
+            return 'Torneo masculino premium - capacidad de 100 participantes';
+          case 'weeklyFemaleTournament1000':
+            return 'Torneo femenino semanal - capacidad de 300 participantes';
+          case 'weeklyFemaleTournament10000':
+            return 'Torneo femenino premium - capacidad de 100 participantes';
+        }
+        break;
+    }
+    
+    // Fallback to Turkish
+    return _getLocalizedTournamentDescription(gender, entryFee, 'tr');
   }
 
   // Bu haftanın Pazartesi gününü hesapla
@@ -218,6 +368,7 @@ class TournamentService {
     DateTime? quarterFinalDate,
     DateTime? semiFinalDate,
     DateTime? finalDate,
+    String language = 'tr',
   }) async {
     final endDate = finalDate ?? startDate.add(const Duration(days: 7));
     final prizePool = entryFee * maxParticipants; // Ödül havuzu = giriş ücreti * max katılımcı
@@ -232,18 +383,12 @@ class TournamentService {
       'current_participants': 0,
       'registration_start_date': registrationStartDate.toIso8601String(),
       'start_date': startDate.toIso8601String(),
-      'voting_start_date': votingStartDate?.toIso8601String(),
-      'voting_end_date': votingEndDate?.toIso8601String(),
-      'quarter_final_date': quarterFinalDate?.toIso8601String(),
-      'semi_final_date': semiFinalDate?.toIso8601String(),
-      'final_date': finalDate?.toIso8601String(),
       'end_date': endDate.toIso8601String(),
       'status': 'upcoming',
       'gender': gender,
       'current_phase': 'registration',
-      'current_round': null,
-      'phase_start_date': registrationStartDate.toIso8601String(),
       'created_at': DateTime.now().toIso8601String(),
+      'is_private': false, // Sistem turnuvası
     });
     
   }
@@ -969,6 +1114,7 @@ class TournamentService {
     required String tournamentFormat,
     String? customRules,
     String gender = 'Erkek',
+    String language = 'tr',
   }) async {
     try {
       final currentUser = await UserService.getCurrentUser();
@@ -991,7 +1137,7 @@ class TournamentService {
         'name': name,
         'description': description,
         'entry_fee': entryFee,
-        'prize_pool': entryFee * maxParticipants, // Entry fee * katılımcı sayısı
+        'prize_pool': entryFee * maxParticipants,
         'max_participants': maxParticipants,
         'current_participants': 0,
         'start_date': startDate.toIso8601String(),
@@ -1004,6 +1150,7 @@ class TournamentService {
         'private_key': privateKey,
         'tournament_format': tournamentFormat,
         'custom_rules': customRules,
+        'language': language,
         'created_at': DateTime.now().toIso8601String(),
       }).select().single();
 
@@ -1043,10 +1190,15 @@ class TournamentService {
   // Private key ile turnuvaya katıl
   static Future<Map<String, dynamic>> joinPrivateTournament(String privateKey) async {
     try {
+      print('🔑 Joining private tournament with key: $privateKey');
+      
       final currentUser = await UserService.getCurrentUser();
       if (currentUser == null) {
+        print('❌ User not found');
         return {'success': false, 'message': 'Kullanıcı bulunamadı'};
       }
+
+      print('👤 Current user: ${currentUser.id}');
 
       // Private key ile turnuva bul
       final tournament = await _client
@@ -1056,17 +1208,24 @@ class TournamentService {
           .eq('is_private', true)
           .maybeSingle();
 
+      print('🏆 Tournament found: $tournament');
+
       if (tournament == null) {
+        print('❌ Tournament not found with private key: $privateKey');
         return {'success': false, 'message': 'Geçersiz private key'};
       }
 
       // Turnuva durumu kontrolü
+      print('📊 Tournament status: ${tournament['status']}');
       if (tournament['status'] != 'upcoming') {
+        print('❌ Tournament status is not upcoming: ${tournament['status']}');
         return {'success': false, 'message': 'Kayıt kapalı'};
       }
 
       // Dolu mu kontrol et
+      print('👥 Current participants: ${tournament['current_participants']}/${tournament['max_participants']}');
       if (tournament['current_participants'] >= tournament['max_participants']) {
+        print('❌ Tournament is full');
         return {'success': false, 'message': 'Turnuva dolu'};
       }
 

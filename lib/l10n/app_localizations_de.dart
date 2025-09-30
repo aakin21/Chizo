@@ -1303,4 +1303,20 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get eliminationMaxParticipantsWarning =>
       'Maximal 8 Teilnehmer für K.O.-Format erlaubt';
+
+  @override
+  String get weeklyMaleTournament1000Description =>
+      'Wöchentliches Männerturnier - 300 Teilnehmer Kapazität';
+
+  @override
+  String get weeklyMaleTournament10000Description =>
+      'Premium Männerturnier - 100 Teilnehmer Kapazität';
+
+  @override
+  String get weeklyFemaleTournament1000Description =>
+      'Wöchentliches Frauenturnier - 300 Teilnehmer Kapazität';
+
+  @override
+  String get weeklyFemaleTournament10000Description =>
+      'Premium Frauenturnier - 100 Teilnehmer Kapazität';
 }

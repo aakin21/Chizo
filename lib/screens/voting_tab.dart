@@ -14,10 +14,6 @@ import '../services/tournament_service.dart';
 import '../widgets/vs_image_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'dart:io';
-import 'package:flutter/foundation.dart';
 
 class VotingTab extends StatefulWidget {
   final VoidCallback? onVoteCompleted;
@@ -107,10 +103,8 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         });
       }
     } catch (e) {
-      print('❌ THEME LOAD ERROR: $e');
     }
   }
-
 
   Future<void> loadMatches() async {
     if (mounted) {
@@ -1551,7 +1545,6 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
   Widget _buildVSImage() {
     VSTheme theme;
     
-    print('🔍 BUILDING VS IMAGE: Current theme = $_currentTheme');
     
     // Check if we're in a tournament match (always use pink theme)
     if (currentMatchIndex < votableItems.length) {
@@ -1559,19 +1552,14 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
       final isTournament = currentItem['is_tournament'] as bool;
       if (isTournament) {
         theme = VSTheme.pink;
-        print('  ↳ Tournament match - using PINK theme');
       } else {
         // For normal matches, use theme based on saved theme preference
         theme = _getVSThemeFromAppTheme(_currentTheme);
-        print('  ↳ Normal match - using $_currentTheme -> ${theme.name}');
       }
     } else {
       // Default theme based on saved theme preference
       theme = _getVSThemeFromAppTheme(_currentTheme);
-      print('  ↳ Default - using $_currentTheme -> ${theme.name}');
     }
-    
-    print('🎨 VS CONTAINER: Creating container with theme $_currentTheme');
     
     return Container(
       key: ValueKey('vs_container_$_currentTheme'), // Theme değişikliğinde container'ı yenile
@@ -1642,271 +1630,4 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     return color;
   }
 
-  // ===== API TEST FONKSİYONLARI =====
-  
-  /// Photo Verification API Test Fonksiyonu
-  Future<void> testPhotoVerificationAPI() async {
-    print("🚀 Photo Verification API Test Başlıyor...");
-    
-    // API URL - Yarkın'ın ngrok URL'i
-    const String apiUrl = 'https://noneducated-monika-isographical.ngrok-free.dev';
-    
-    try {
-      // 1. Health Check
-      print("🔍 1. API sağlık kontrolü...");
-      final healthResponse = await http.get(Uri.parse('$apiUrl/health'));
-      
-      if (healthResponse.statusCode == 200) {
-        print("✅ API çalışıyor!");
-        print("Response: ${healthResponse.body}");
-        
-        // Response'u kontrol et - ngrok warning page mi?
-        if (healthResponse.body.contains('ngrok') || healthResponse.body.contains('DOCTYPE html')) {
-          print("⚠️ ngrok warning page algılandı!");
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('⚠️ ngrok Uyarı Sayfası!\nAPI erişimi engellenmiş.\nYarkın\'a ngrok ayarlarını kontrol etmesini söyle.'),
-                backgroundColor: Colors.orange,
-                duration: Duration(seconds: 7),
-              ),
-            );
-          }
-          return;
-        }
-        
-        // Success mesajı göster
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('✅ API Bağlantısı Başarılı!'),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 3),
-            ),
-          );
-        }
-      } else {
-        print("❌ API sağlık kontrolü başarısız: ${healthResponse.statusCode}");
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('❌ API Bağlantı Hatası: ${healthResponse.statusCode}'),
-              backgroundColor: Colors.red,
-              duration: Duration(seconds: 3),
-            ),
-          );
-        }
-        return;
-      }
-      
-      // 2. Test fotoğrafı için bilgi ver
-      print("📸 2. Test için fotoğraf gerekli...");
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('📸 Test fotoğrafı için: desktop/test1.jpg konumuna fotoğraf koyun'),
-            backgroundColor: Colors.orange,
-            duration: Duration(seconds: 5),
-          ),
-        );
-      }
-      
-      // 3. Platform kontrolü
-      if (kIsWeb) {
-        print("🌐 Web platformu - Dosya okuma desteklenmiyor");
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('🌐 Web Platformu!\nDosya okuma desteklenmiyor.\nSadece API bağlantısı test edildi.'),
-              backgroundColor: Colors.orange,
-              duration: Duration(seconds: 5),
-            ),
-          );
-        }
-        return;
-      }
-      
-      // 3. Test fotoğrafı kontrolü (sadece mobile/desktop)
-      final photoFile = File('C:/Users/akinb/Desktop/test1.jpg');
-      
-      if (!await photoFile.exists()) {
-        print("❌ Test fotoğrafı bulunamadı: desktop/test1.jpg");
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('❌ Test fotoğrafı bulunamadı!\nDesktop/test1.jpg konumuna fotoğraf koyun'),
-              backgroundColor: Colors.red,
-              duration: Duration(seconds: 5),
-            ),
-          );
-        }
-        return;
-      }
-      
-      print("✅ Test fotoğrafı bulundu: ${photoFile.path}");
-      
-      // 4. Fotoğrafı API'ye gönder
-      print("📤 3. Fotoğraf API'ye gönderiliyor...");
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('📤 Fotoğraf API\'ye gönderiliyor...'),
-            backgroundColor: Colors.blue,
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
-      
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse('$apiUrl/verify-photo'),
-      );
-      
-      request.files.add(await http.MultipartFile.fromPath('file', photoFile.path));
-      request.fields['user_id'] = 'chizo_test_user_${DateTime.now().millisecondsSinceEpoch}';
-      
-      print("Gönderilen user_id: ${request.fields['user_id']}");
-      
-      var response = await request.send();
-      var responseBody = await response.stream.bytesToString();
-      
-      print("Response Status: ${response.statusCode}");
-      print("Response Body: $responseBody");
-      
-      if (response.statusCode == 200) {
-        final responseData = json.decode(responseBody);
-        final taskId = responseData['task_id'];
-        print("✅ Fotoğraf gönderildi! Task ID: $taskId");
-        
-        // 5. Sonucu bekle
-        print("⏳ 4. Sonuç bekleniyor...");
-        
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('⏳ Sonuç bekleniyor... Task ID: $taskId'),
-              backgroundColor: Colors.orange,
-              duration: Duration(seconds: 3),
-            ),
-          );
-        }
-        
-        for (int i = 0; i < 20; i++) { // 10 saniye bekle
-          await Future.delayed(Duration(milliseconds: 500));
-          
-          print("Durum kontrolü ${i + 1}/20...");
-          
-          final statusResponse = await http.get(
-            Uri.parse('$apiUrl/verification-status/$taskId'),
-          );
-          
-          if (statusResponse.statusCode == 200) {
-            final statusData = json.decode(statusResponse.body);
-            print("Status: ${statusData['status']}");
-            
-            if (statusData['status'] == 'completed') {
-              print("✅ Doğrulama tamamlandı!");
-              print("Sonuç: ${json.encode(statusData)}");
-              
-              // 6. Onay/Red kontrolü
-              final nudityDetected = statusData['nudity_detected'] ?? false;
-              final faceVerificationPassed = statusData['face_verification_passed'] ?? true;
-              
-              print("📊 Sonuç Detayları:");
-              print("  - Nudity Detected: $nudityDetected");
-              print("  - Face Verification: $faceVerificationPassed");
-              
-              if (statusData['confidence_scores'] != null) {
-                final scores = statusData['confidence_scores'];
-                print("  - Nudity Confidence: ${scores['nudity_confidence']}");
-                print("  - Face Confidence: ${scores['face_confidence']}");
-              }
-              
-              // Final karar
-              final isApproved = !nudityDetected && faceVerificationPassed;
-              
-              print("\n🎯 FINAL SONUÇ:");
-              if (isApproved) {
-                print("✅ ONAYLANDI - Fotoğraf onaylandı!");
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('✅ ONAYLANDI!\nFotoğraf onaylandı!'),
-                      backgroundColor: Colors.green,
-                      duration: Duration(seconds: 5),
-                    ),
-                  );
-                }
-              } else {
-                print("❌ REDDEDİLDİ - Fotoğraf reddedildi!");
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('❌ REDDEDİLDİ!\nFotoğraf reddedildi!'),
-                      backgroundColor: Colors.red,
-                      duration: Duration(seconds: 5),
-                    ),
-                  );
-                }
-              }
-              
-              return;
-              
-            } else if (statusData['status'] == 'failed') {
-              print("❌ Doğrulama başarısız: ${statusData['error_message']}");
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('❌ Doğrulama Başarısız!\n${statusData['error_message']}'),
-                    backgroundColor: Colors.red,
-                    duration: Duration(seconds: 5),
-                  ),
-                );
-              }
-              return;
-            }
-          } else {
-            print("Status check hatası: ${statusResponse.statusCode}");
-          }
-        }
-        
-        print("⏰ Zaman aşımı - sonuç alınamadı");
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('⏰ Zaman Aşımı!\nSonuç alınamadı'),
-              backgroundColor: Colors.orange,
-              duration: Duration(seconds: 5),
-            ),
-          );
-        }
-        
-      } else {
-        print("❌ Fotoğraf gönderme hatası: ${response.statusCode}");
-        print("Hata: $responseBody");
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('❌ Fotoğraf Gönderme Hatası!\nStatus: ${response.statusCode}'),
-              backgroundColor: Colors.red,
-              duration: Duration(seconds: 5),
-            ),
-          );
-        }
-      }
-      
-    } catch (e) {
-      print("❌ Test hatası: $e");
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('❌ Test Hatası!\n$e'),
-            backgroundColor: Colors.red,
-            duration: Duration(seconds: 5),
-          ),
-        );
-      }
-    }
-  }
 }

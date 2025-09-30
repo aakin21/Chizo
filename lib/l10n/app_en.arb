@@ -1463,5 +1463,38 @@
   "hybridFormat": "League + Elimination",
   "eliminationMaxParticipants": "Maximum 8 participants for elimination format",
   "eliminationMaxParticipantsWarning": "Maximum 8 participants allowed for elimination format",
-  "premiumInfo": "💎 {type} Information"
+  "premiumInfo": "💎 {type} Information",
+
+  "weeklyMaleTournament1000": "Weekly Male Tournament (1000 Coins)",
+  "@weeklyMaleTournament1000": {
+    "description": "Name for weekly male tournament with 1000 coin entry fee"
+  },
+  "weeklyMaleTournament1000Description": "Weekly male tournament - 300 participant capacity",
+  "@weeklyMaleTournament1000Description": {
+    "description": "Description for weekly male tournament with 1000 coin entry fee"
+  },
+  "weeklyMaleTournament10000": "Weekly Male Tournament (10000 Coins)",
+  "@weeklyMaleTournament10000": {
+    "description": "Name for weekly male tournament with 10000 coin entry fee"
+  },
+  "weeklyMaleTournament10000Description": "Premium male tournament - 100 participant capacity",
+  "@weeklyMaleTournament10000Description": {
+    "description": "Description for weekly male tournament with 10000 coin entry fee"
+  },
+  "weeklyFemaleTournament1000": "Weekly Female Tournament (1000 Coins)",
+  "@weeklyFemaleTournament1000": {
+    "description": "Name for weekly female tournament with 1000 coin entry fee"
+  },
+  "weeklyFemaleTournament1000Description": "Weekly female tournament - 300 participant capacity",
+  "@weeklyFemaleTournament1000Description": {
+    "description": "Description for weekly female tournament with 1000 coin entry fee"
+  },
+  "weeklyFemaleTournament10000": "Weekly Female Tournament (10000 Coins)",
+  "@weeklyFemaleTournament10000": {
+    "description": "Name for weekly female tournament with 10000 coin entry fee"
+  },
+  "weeklyFemaleTournament10000Description": "Premium female tournament - 100 participant capacity",
+  "@weeklyFemaleTournament10000Description": {
+    "description": "Description for weekly female tournament with 10000 coin entry fee"
+  }
 }

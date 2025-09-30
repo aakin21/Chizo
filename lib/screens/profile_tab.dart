@@ -7,6 +7,7 @@ import '../services/prediction_service.dart';
 import '../services/photo_upload_service.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/constants.dart';
+import '../utils/beautiful_snackbar.dart';
 import '../widgets/country_selector.dart';
 import '../widgets/gender_selector.dart';
 import '../services/country_service.dart';
@@ -30,8 +31,6 @@ class _ProfileTabState extends State<ProfileTab> {
   bool isUpdating = false;
   Map<String, dynamic> predictionStats = {};
   List<Map<String, dynamic>> userPhotos = [];
-  
-
 
   @override
   void initState() {
@@ -248,23 +247,20 @@ class _ProfileTabState extends State<ProfileTab> {
       
       if (result['success']) {
         await loadUserData();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('✅ ${AppLocalizations.of(context)!.photoUploaded(result['coinsSpent'])}'),
-            backgroundColor: Colors.green,
-          ),
+        BeautifulSnackBar.showSuccess(
+          context,
+          message: '✅ ${AppLocalizations.of(context)!.photoUploaded(result['coinsSpent'])}',
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${AppLocalizations.of(context)!.error}: ${result['message']}'),
-            backgroundColor: Colors.red,
-          ),
+        BeautifulSnackBar.showError(
+          context,
+          message: '${AppLocalizations.of(context)!.error}: ${result['message']}',
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
+      BeautifulSnackBar.showError(
+        context,
+        message: '${AppLocalizations.of(context)!.error}: $e',
       );
     } finally {
       setState(() => isUpdating = false);
@@ -292,23 +288,20 @@ class _ProfileTabState extends State<ProfileTab> {
                 
                 if (result['success']) {
                   await loadUserData();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(AppLocalizations.of(context)!.photoDeleted),
-                      backgroundColor: Colors.green,
-                    ),
+                  BeautifulSnackBar.showSuccess(
+                    context,
+                    message: AppLocalizations.of(context)!.photoDeleted,
                   );
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('${AppLocalizations.of(context)!.error}: ${result['message']}'),
-                      backgroundColor: Colors.red,
-                    ),
+                  BeautifulSnackBar.showError(
+                    context,
+                    message: '${AppLocalizations.of(context)!.error}: ${result['message']}',
                   );
                 }
               } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
+                BeautifulSnackBar.showError(
+                  context,
+                  message: '${AppLocalizations.of(context)!.error}: $e',
                 );
               } finally {
                 setState(() => isUpdating = false);
@@ -330,8 +323,10 @@ class _ProfileTabState extends State<ProfileTab> {
           ? _buildProfileSkeletonScreen()
           : currentUser == null
               ? Center(child: Text(AppLocalizations.of(context)!.userInfoNotLoaded))
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
+              : RefreshIndicator(
+                  onRefresh: loadUserData,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -803,6 +798,7 @@ class _ProfileTabState extends State<ProfileTab> {
                     ],
                   ),
                 ),
+              ),
     );
   }
 

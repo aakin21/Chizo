@@ -141,12 +141,6 @@ class MatchService {
           .neq('user2_id', currentUserId)  // Kendisi user2 değil
           .limit(10);
 
-      print('Total matches found: ${response.length}');
-      for (var match in response) {
-        print('Match ID: ${match['id']}');
-        print('User1: ${match['user1']?['username'] ?? 'NULL'}');
-        print('User2: ${match['user2']?['username'] ?? 'NULL'}');
-      }
 
       // Sadece her iki kullanıcısı da mevcut olan VE ülke tercihlerine uygun match'leri filtrele
       final validMatches = <MatchModel>[];
@@ -204,122 +198,6 @@ class MatchService {
     }
   }
 
-  // TÜM match'leri sil (nuclear option)
-  static Future<void> deleteAllMatches() async {
-    try {
-      await _client
-          .from('matches')
-          .delete()
-          .neq('id', '00000000-0000-0000-0000-000000000000'); // Tüm match'leri sil
-      print('All matches deleted!');
-    } catch (e) {
-      print('Error deleting all matches: $e');
-    }
-  }
-
-  // akin123 ve alpcakin kullanıcılarını sil
-  static Future<void> deleteProblematicUsers() async {
-    try {
-      await _client
-          .from('users')
-          .delete()
-          .inFilter('username', ['akin123', 'alpcakin']);
-      print('Problematic users deleted!');
-    } catch (e) {
-      print('Error deleting problematic users: $e');
-    }
-  }
-
-  // Duplicate user'ları temizle (aynı username'e sahip olanları)
-  static Future<void> cleanupDuplicateUsers() async {
-    try {
-      // Tüm kullanıcıları getir
-      final allUsers = await _client.from('users').select();
-      
-      // Username'e göre grupla
-      Map<String, List<Map<String, dynamic>>> userGroups = {};
-      for (var user in allUsers) {
-        String username = user['username'] ?? '';
-        if (!userGroups.containsKey(username)) {
-          userGroups[username] = [];
-        }
-        userGroups[username]!.add(user);
-      }
-      
-      // Her grup için duplicate'ları temizle
-      for (var entry in userGroups.entries) {
-        String username = entry.key;
-        List<Map<String, dynamic>> users = entry.value;
-        
-        if (users.length > 1) {
-          print('Found ${users.length} duplicate users for username: $username');
-          
-          // En eski kullanıcıyı tut (created_at'e göre sırala)
-          users.sort((a, b) {
-            DateTime aDate = DateTime.parse(a['created_at'] ?? '2025-01-01');
-            DateTime bDate = DateTime.parse(b['created_at'] ?? '2025-01-01');
-            return aDate.compareTo(bDate);
-          });
-          
-          // İlk (en eski) user'ı tut, diğerlerini sil
-          for (int i = 1; i < users.length; i++) {
-            String userIdToDelete = users[i]['id'];
-            print('Deleting duplicate user: $userIdToDelete (keeping oldest: ${users[0]['id']})');
-            
-            // Önce bu user'ın match'lerini sil
-            await _client
-                .from('matches')
-                .delete()
-                .or('user1_id.eq.$userIdToDelete,user2_id.eq.$userIdToDelete');
-            
-            // Bu user'ın vote'larını sil
-            await _client
-                .from('votes')
-                .delete()
-                .eq('voter_id', userIdToDelete);
-            
-            // Sonra user'ı sil
-            await _client
-                .from('users')
-                .delete()
-                .eq('id', userIdToDelete);
-          }
-        }
-      }
-      
-      print('Duplicate users cleanup completed!');
-    } catch (e) {
-      print('Error cleaning up duplicate users: $e');
-    }
-  }
-
-  // Silinmiş kullanıcıların match'lerini temizle
-  static Future<void> cleanupInvalidMatches() async {
-    try {
-      // Tüm tamamlanmamış match'leri getir
-      final allMatches = await _client
-          .from('matches')
-          .select('''
-            *,
-            user1:users!matches_user1_id_fkey(*),
-            user2:users!matches_user2_id_fkey(*)
-          ''')
-          .eq('is_completed', false);
-
-      // Silinmiş kullanıcıların match'lerini bul ve sil
-      for (var match in allMatches) {
-        if (match['user1'] == null || match['user2'] == null) {
-          await _client
-              .from('matches')
-              .delete()
-              .eq('id', match['id']);
-          print('Invalid match deleted: ${match['id']}');
-        }
-      }
-    } catch (e) {
-      print('Error cleaning up invalid matches: $e');
-    }
-  }
 
   // Oylama yap
   static Future<bool> voteForMatch(String matchId, String winnerId) async {

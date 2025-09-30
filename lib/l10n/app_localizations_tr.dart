@@ -1286,4 +1286,20 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get eliminationMaxParticipantsWarning =>
       'Eleme usulü için maksimum 8 kişi olabilir';
+
+  @override
+  String get weeklyMaleTournament1000Description =>
+      'Her hafta düzenlenen erkek turnuvası - 300 kişi kapasiteli';
+
+  @override
+  String get weeklyMaleTournament10000Description =>
+      'Premium erkek turnuvası - 100 kişi kapasiteli';
+
+  @override
+  String get weeklyFemaleTournament1000Description =>
+      'Her hafta düzenlenen kadın turnuvası - 300 kişi kapasiteli';
+
+  @override
+  String get weeklyFemaleTournament10000Description =>
+      'Premium kadın turnuvası - 100 kişi kapasiteli';
 }

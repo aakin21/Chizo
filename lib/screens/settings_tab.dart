@@ -27,6 +27,7 @@ class _SettingsTabState extends State<SettingsTab> {
   bool _winCelebrationNotifications = true;
   bool _streakReminderNotifications = true;
   UserModel? _currentUser;
+  bool _isLoggingOut = false;
 
   final List<String> _themeOptions = ['Beyaz', 'Koyu', 'Pembemsi'];
   String _selectedTheme = 'Beyaz';
@@ -201,6 +202,8 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
   void _logout() {
+    if (_isLoggingOut) return; // Zaten çıkış yapılıyorsa işlemi engelle
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -208,36 +211,56 @@ class _SettingsTabState extends State<SettingsTab> {
         content: Text(AppLocalizations.of(context)!.logoutConfirmation),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: _isLoggingOut ? null : () => Navigator.pop(context),
             child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
-            onPressed: () async {
+            onPressed: _isLoggingOut ? null : () async {
+              if (_isLoggingOut) return; // Çift tıklamayı engelle
+              
+              setState(() {
+                _isLoggingOut = true;
+              });
+              
               Navigator.pop(context);
+              
               try {
                 // Sign out
                 await Supabase.instance.client.auth.signOut();
                 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${AppLocalizations.of(context)!.logout} successful!')),
-                );
-                
-                // Navigate to login screen and clear all previous routes
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
-                  (route) => false,
-                );
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('${AppLocalizations.of(context)!.logout} successful!')),
+                  );
+                  
+                  // Navigate to login screen and clear all previous routes
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
+                    (route) => false,
+                  );
+                }
               } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
-                );
+                if (mounted) {
+                  setState(() {
+                    _isLoggingOut = false;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
+                  );
+                }
               }
             },
-            child: Text(
-              AppLocalizations.of(context)!.logoutButton,
-              style: const TextStyle(color: Colors.red),
-            ),
+            child: _isLoggingOut 
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Text(
+                  AppLocalizations.of(context)!.logoutButton,
+                  style: const TextStyle(color: Colors.red),
+                ),
           ),
         ],
       ),
@@ -384,6 +407,14 @@ class _SettingsTabState extends State<SettingsTab> {
                     }
                     // Sayfayı yeniden build et
                     setState(() {});
+                    
+                    // Dil değişikliği sonrası otomatik refresh
+                    await Future.delayed(const Duration(milliseconds: 300));
+                    if (mounted) {
+                      setState(() {});
+                      // Dil değişikliği için de restart
+                      _restartApp();
+                    }
                   },
                 ),
               ),
@@ -400,8 +431,14 @@ class _SettingsTabState extends State<SettingsTab> {
                 leading: const Icon(Icons.logout, color: Colors.orange),
                 title: Text(AppLocalizations.of(context)!.logout),
                 subtitle: Text(AppLocalizations.of(context)!.logout),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: _logout,
+                trailing: _isLoggingOut 
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.arrow_forward_ios),
+                onTap: _isLoggingOut ? null : _logout,
               ),
               ListTile(
                 leading: const Icon(Icons.delete_forever, color: Colors.red),

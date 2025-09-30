@@ -590,5 +590,38 @@
   "hybridFormat": "Liga + K.O.",
   "eliminationMaxParticipants": "Maximal 8 Teilnehmer für K.O.-Format",
   "eliminationMaxParticipantsWarning": "Maximal 8 Teilnehmer für K.O.-Format erlaubt",
-  "premiumInfo": "💎 {type} Informationen"
+  "premiumInfo": "💎 {type} Informationen",
+
+  "weeklyMaleTournament1000": "Wöchentliches Männerturnier (1000 Münzen)",
+  "@weeklyMaleTournament1000": {
+    "description": "Name für wöchentliches Männerturnier mit 1000 Münzen Eintrittsgebühr"
+  },
+  "weeklyMaleTournament1000Description": "Wöchentliches Männerturnier - 300 Teilnehmer Kapazität",
+  "@weeklyMaleTournament1000Description": {
+    "description": "Beschreibung für wöchentliches Männerturnier mit 1000 Münzen Eintrittsgebühr"
+  },
+  "weeklyMaleTournament10000": "Wöchentliches Männerturnier (10000 Münzen)",
+  "@weeklyMaleTournament10000": {
+    "description": "Name für wöchentliches Männerturnier mit 10000 Münzen Eintrittsgebühr"
+  },
+  "weeklyMaleTournament10000Description": "Premium Männerturnier - 100 Teilnehmer Kapazität",
+  "@weeklyMaleTournament10000Description": {
+    "description": "Beschreibung für wöchentliches Männerturnier mit 10000 Münzen Eintrittsgebühr"
+  },
+  "weeklyFemaleTournament1000": "Wöchentliches Frauenturnier (1000 Münzen)",
+  "@weeklyFemaleTournament1000": {
+    "description": "Name für wöchentliches Frauenturnier mit 1000 Münzen Eintrittsgebühr"
+  },
+  "weeklyFemaleTournament1000Description": "Wöchentliches Frauenturnier - 300 Teilnehmer Kapazität",
+  "@weeklyFemaleTournament1000Description": {
+    "description": "Beschreibung für wöchentliches Frauenturnier mit 1000 Münzen Eintrittsgebühr"
+  },
+  "weeklyFemaleTournament10000": "Wöchentliches Frauenturnier (10000 Münzen)",
+  "@weeklyFemaleTournament10000": {
+    "description": "Name für wöchentliches Frauenturnier mit 10000 Münzen Eintrittsgebühr"
+  },
+  "weeklyFemaleTournament10000Description": "Premium Frauenturnier - 100 Teilnehmer Kapazität",
+  "@weeklyFemaleTournament10000Description": {
+    "description": "Beschreibung für wöchentliches Frauenturnier mit 10000 Münzen Eintrittsgebühr"
+  }
 }

@@ -189,12 +189,6 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
             Tab(text: AppLocalizations.of(context)!.highestWinRate),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadLeaderboardData,
-          ),
-        ],
       ),
       body: TabBarView(
         controller: _tabController,

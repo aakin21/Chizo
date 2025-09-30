@@ -176,6 +176,14 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<void> _refreshAllData() async {
+    // Tüm verileri yenile
+    await _checkDailyStreak();
+    setState(() {
+      _profileRefreshKey++;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -243,14 +251,17 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: Column(
-        children: [
+      body: RefreshIndicator(
+        onRefresh: _refreshAllData,
+        child: Column(
+          children: [
 
-          // Altta tam ekran Voting
-          Expanded(
-            child: VotingTab(onVoteCompleted: _refreshProfile),
-          ),
-        ],
+            // Altta tam ekran Voting
+            Expanded(
+              child: VotingTab(onVoteCompleted: _refreshProfile),
+            ),
+          ],
+        ),
       ),
     );
   }
