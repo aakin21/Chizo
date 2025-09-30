@@ -958,7 +958,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get lightPinkTheme => 'Tema de color rosa claro';
 
   @override
-  String get notificationSettings => '🔔 Configuración de Notificaciones';
+  String get notificationSettings => 'Configuración de Notificaciones';
 
   @override
   String get allNotifications => 'Todas las Notificaciones';
@@ -1202,7 +1202,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se pudieron cargar las estadísticas de fotos';
 
   @override
-  String get tournamentNotifications => 'Notificaciones de Torneo';
+  String get tournamentNotifications => 'Notificaciones de Torneos';
 
   @override
   String get newTournamentInvitations => 'Nuevas invitaciones de torneo';
@@ -1380,4 +1380,119 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get weeklyFemaleTournament10000Description =>
       'Torneo femenino premium - capacidad de 100 participantes';
+
+  @override
+  String get dataPrivacy => 'Data Privacy';
+
+  @override
+  String get dataPrivacyDescription => 'Manage your data and privacy settings';
+
+  @override
+  String get profileVisibility => 'Profile Visibility';
+
+  @override
+  String get profileVisibilityDescription => 'Control who can see your profile';
+
+  @override
+  String get dataCollection => 'Data Collection';
+
+  @override
+  String get dataCollectionDescription => 'Allow data collection for analytics';
+
+  @override
+  String get marketingEmails => 'Marketing Emails';
+
+  @override
+  String get marketingEmailsDescription =>
+      'Receive promotional emails and updates';
+
+  @override
+  String get locationTracking => 'Location Tracking';
+
+  @override
+  String get locationTrackingDescription => 'Allow location-based features';
+
+  @override
+  String get reportContent => 'Report Content';
+
+  @override
+  String get reportInappropriate => 'Report Inappropriate';
+
+  @override
+  String get reportReason => 'Report Reason';
+
+  @override
+  String get nudity => 'Nudity';
+
+  @override
+  String get inappropriateContent => 'Inappropriate Content';
+
+  @override
+  String get harassment => 'Harassment';
+
+  @override
+  String get spam => 'Spam';
+
+  @override
+  String get other => 'Other';
+
+  @override
+  String get reportSubmitted => 'Report submitted successfully';
+
+  @override
+  String get reportError => 'Failed to submit report';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get profileVisible => 'Profile is now visible';
+
+  @override
+  String get profileHidden => 'Profile is now hidden';
+
+  @override
+  String get notificationCenter => 'Notificaciones';
+
+  @override
+  String get allNotificationsDescription =>
+      'Activar/desactivar todos los tipos de notificaciones';
+
+  @override
+  String get tournamentNotificationsDescription =>
+      'Nuevas invitaciones y actualizaciones de torneos';
+
+  @override
+  String get voteReminderNotifications => 'Recordatorios de Votación';
+
+  @override
+  String get voteReminderNotificationsDescription =>
+      'Notificaciones de recordatorio de votación';
+
+  @override
+  String get winCelebrationNotifications => 'Celebraciones de Victoria';
+
+  @override
+  String get winCelebrationNotificationsDescription =>
+      'Notificaciones de victoria';
+
+  @override
+  String get streakReminderNotifications => 'Recordatorios de Racha';
+
+  @override
+  String get streakReminderNotificationsDescription =>
+      'Recordatorios de racha diaria';
+
+  @override
+  String get notificationsList => 'Notificaciones';
+
+  @override
+  String get noNotificationsYet => 'Aún no hay notificaciones';
+
+  @override
+  String get newNotificationsWillAppearHere =>
+      'Las nuevas notificaciones aparecerán aquí';
+
+  @override
+  String get markAllAsRead => 'Marcar Todo como Leído';
 }

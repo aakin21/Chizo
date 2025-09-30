@@ -31,18 +31,17 @@ class _CompactLanguageSelectorState extends State<CompactLanguageSelector> {
   }
 
   Future<void> _changeLanguage(Locale locale) async {
-    await LanguageService.setLanguage(locale);
-    setState(() {
-      _selectedLocale = locale;
-    });
-    // Parent widget'a dil değişikliğini bildir
+    // Önce parent'a bildir
     widget.onLanguageChanged(locale);
     
-    // Dil değişikliği sonrası otomatik refresh için kısa bir gecikme
-    await Future.delayed(const Duration(milliseconds: 100));
-    // Parent widget'ın setState'ini tetiklemek için
+    // Sonra dil ayarını kaydet
+    await LanguageService.setLanguage(locale);
+    
+    // UI'ı güncelle
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _selectedLocale = locale;
+      });
     }
   }
 

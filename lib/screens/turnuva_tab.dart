@@ -446,14 +446,59 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 const Icon(Icons.emoji_events, color: Colors.amber),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Text(
-                    tournament.name,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _getTournamentName(tournament),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      // Creator name display
+                      if (tournament.creatorId != null)
+                        FutureBuilder<UserModel?>(
+                          future: UserService.getUserById(tournament.creatorId!),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData && snapshot.data != null) {
+                              return Text(
+                                'Oluşturan: ${snapshot.data!.username}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          },
+                        ),
+                    ],
                   ),
                 ),
+                // 3-dot menu for tournament details
+                PopupMenuButton<String>(
+                  onSelected: (value) {
+                    if (value == 'details') {
+                      _showTournamentDetails(tournament);
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 'details',
+                      child: Row(
+                        children: [
+                          Icon(Icons.info_outline, size: 16),
+                          SizedBox(width: 8),
+                          Text('Detaylar'),
+                        ],
+                      ),
+                    ),
+                  ],
+                  child: const Icon(Icons.more_vert, color: Colors.grey),
+                ),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
@@ -1378,5 +1423,340 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       );
     }
   }
+
+  // Turnuva detaylarını göster
+  Future<void> _showTournamentDetails(TournamentModel tournament) async {
+    try {
+      // Turnuva detaylarını ve katılımcıları getir
+      final leaderboard = await TournamentService.getTournamentLeaderboard(tournament.id);
+      final creator = tournament.creatorId != null 
+          ? await UserService.getUserById(tournament.creatorId!)
+          : null;
+      
+      if (!mounted) return;
+      
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Row(
+            children: [
+              const Icon(Icons.info_outline, color: Colors.blue),
+              const SizedBox(width: 8),
+              const Text('Turnuva Detayları'),
+            ],
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 500,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Turnuva bilgileri
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Turnuva Bilgileri',
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 12),
+                          _buildInfoRow('Ad', tournament.name),
+                          _buildInfoRow('Açıklama', tournament.description),
+                          _buildInfoRow('Durum', _getStatusText(tournament.status)),
+                          _buildInfoRow('Aşama', _getPhaseText(tournament.currentPhase)),
+                          _buildInfoRow('Katılımcı', '${tournament.currentParticipants}/${tournament.maxParticipants}'),
+                          _buildInfoRow('Entry Fee', '${tournament.entryFee} coin'),
+                          _buildInfoRow('Ödül Havuzu', '${tournament.prizePool} coin'),
+                          _buildInfoRow('Format', _getFormatText(tournament.tournamentFormat)),
+                          if (tournament.customRules != null && tournament.customRules!.isNotEmpty)
+                            _buildInfoRow('Özel Kurallar', tournament.customRules!),
+                          if (creator != null)
+                            _buildInfoRow('Oluşturan', creator.username),
+                          const SizedBox(height: 12),
+                          // Private Key (sadece oluşturan için)
+                          if (tournament.isPrivate && currentUser != null && tournament.creatorId == currentUser?.id) ...[
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.purple.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.purple),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Private Key',
+                                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.purple),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          tournament.privateKey ?? 'N/A',
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 2,
+                                          ),
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          // Private key'i kopyala
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Private Key kopyalandı: ${tournament.privateKey}'),
+                                              backgroundColor: Colors.green,
+                                            ),
+                                          );
+                                        },
+                                        icon: const Icon(Icons.copy, color: Colors.purple),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // Turnuva programı ve sıralama
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Turnuva Programı ve Sıralama',
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 12),
+                          
+                          // Turnuva formatına göre farklı bilgiler göster
+                          if (tournament.tournamentFormat == 'league') ...[
+                            // Sadece lig usulü - sıralama göster
+                            Text(
+                              'Lig Usulü Turnuva',
+                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+                            ),
+                            const SizedBox(height: 8),
+                            Text('Herkes herkesle oynar. En yüksek win rate kazanır.'),
+                            const SizedBox(height: 12),
+                            if (leaderboard.isNotEmpty) ...[
+                              Text(
+                                'Anlık Sıralama (${leaderboard.length} katılımcı)',
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 8),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: leaderboard.length,
+                                itemBuilder: (context, index) {
+                                  final participant = leaderboard[index];
+                                  final rank = index + 1;
+                                  
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor: rank <= 3 ? Colors.amber : Colors.grey,
+                                      child: Text(
+                                        rank.toString(),
+                                        style: TextStyle(
+                                          color: rank <= 3 ? Colors.white : Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    title: Text(participant['profiles']['username'] ?? 'Bilinmeyen'),
+                                    subtitle: Text('Skor: ${participant['score']}'),
+                                    trailing: participant['is_eliminated'] 
+                                        ? const Icon(Icons.close, color: Colors.red)
+                                        : const Icon(Icons.check, color: Colors.green),
+                                  );
+                                },
+                              ),
+                            ] else
+                              const Text('Henüz katılımcı yok'),
+                          ] else if (tournament.tournamentFormat == 'elimination') ...[
+                            // Sadece eleme usulü - program göster
+                            Text(
+                              'Eleme Usulü Turnuva',
+                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                            ),
+                            const SizedBox(height: 8),
+                            Text('Tek maçlık eleme sistemi. Maksimum 8 kişi.'),
+                            const SizedBox(height: 12),
+                            _buildScheduleInfo('Çeyrek Final', tournament.startDate),
+                            _buildScheduleInfo('Yarı Final', tournament.startDate.add(const Duration(days: 1))),
+                            _buildScheduleInfo('Final', tournament.startDate.add(const Duration(days: 2))),
+                          ] else if (tournament.tournamentFormat == 'hybrid') ...[
+                            // Lig + Eleme - her ikisini göster
+                            Text(
+                              'Lig + Eleme Turnuva',
+                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.purple),
+                            ),
+                            const SizedBox(height: 8),
+                            Text('Önce lig usulü, sonra en iyi 8 kişi eleme usulü.'),
+                            const SizedBox(height: 12),
+                            
+                            // Lig aşaması
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.blue),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Lig Aşaması',
+                                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text('Bitiş Tarihi: ${_formatDate(tournament.startDate.add(const Duration(days: 3)))}'),
+                                  if (leaderboard.isNotEmpty) ...[
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Anlık Sıralama (${leaderboard.length} katılımcı)',
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      itemCount: leaderboard.length > 8 ? 8 : leaderboard.length,
+                                      itemBuilder: (context, index) {
+                                        final participant = leaderboard[index];
+                                        final rank = index + 1;
+                                        
+                                        return ListTile(
+                                          leading: CircleAvatar(
+                                            backgroundColor: rank <= 3 ? Colors.amber : Colors.grey,
+                                            child: Text(
+                                              rank.toString(),
+                                              style: TextStyle(
+                                                color: rank <= 3 ? Colors.white : Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                          title: Text(participant['profiles']['username'] ?? 'Bilinmeyen'),
+                                          subtitle: Text('Skor: ${participant['score']}'),
+                                          trailing: participant['is_eliminated'] 
+                                              ? const Icon(Icons.close, color: Colors.red)
+                                              : const Icon(Icons.check, color: Colors.green),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                            
+                            const SizedBox(height: 12),
+                            
+                            // Eleme aşaması
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.red.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.red),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Eleme Aşaması',
+                                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text('Başlangıç Tarihi: ${_formatDate(tournament.startDate.add(const Duration(days: 4)))}'),
+                                  _buildScheduleInfo('Çeyrek Final', tournament.startDate.add(const Duration(days: 4))),
+                                  _buildScheduleInfo('Yarı Final', tournament.startDate.add(const Duration(days: 5))),
+                                  _buildScheduleInfo('Final', tournament.startDate.add(const Duration(days: 6))),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Kapat'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Turnuva detayları yüklenirken hata: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Widget _buildScheduleInfo(String phase, DateTime date) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              '$phase:',
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ),
+          Text(_formatDate(date)),
+        ],
+      ),
+    );
+  }
+
+  // Turnuva adını getir (sistem turnuvaları için localization)
+  String _getTournamentName(TournamentModel tournament) {
+    if (tournament.isSystemTournament && tournament.nameKey != null) {
+      // Sistem turnuvası için localization key kullan
+      final l10n = AppLocalizations.of(context)!;
+      switch (tournament.nameKey) {
+        case 'weeklyMaleTournament1000':
+          return l10n.weeklyMaleTournament1000;
+        case 'weeklyMaleTournament10000':
+          return l10n.weeklyMaleTournament10000;
+        case 'weeklyFemaleTournament1000':
+          return l10n.weeklyFemaleTournament1000;
+        case 'weeklyFemaleTournament10000':
+          return l10n.weeklyFemaleTournament10000;
+        default:
+          return tournament.name;
+      }
+    }
+    return tournament.name;
+  }
+
 
 }

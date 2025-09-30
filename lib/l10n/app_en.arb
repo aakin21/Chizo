@@ -1516,5 +1516,163 @@
   "weeklyFemaleTournament10000Description": "Premium female tournament - 100 participant capacity",
   "@weeklyFemaleTournament10000Description": {
     "description": "Description for weekly female tournament with 10000 coin entry fee"
+  },
+  
+  "dataPrivacy": "Data Privacy",
+  "@dataPrivacy": {
+    "description": "Data privacy section title"
+  },
+  "dataPrivacyDescription": "Manage your data and privacy settings",
+  "@dataPrivacyDescription": {
+    "description": "Data privacy section description"
+  },
+  "profileVisibility": "Profile Visibility",
+  "@profileVisibility": {
+    "description": "Profile visibility setting"
+  },
+  "profileVisibilityDescription": "Control who can see your profile",
+  "@profileVisibilityDescription": {
+    "description": "Profile visibility description"
+  },
+  "dataCollection": "Data Collection",
+  "@dataCollection": {
+    "description": "Data collection setting"
+  },
+  "dataCollectionDescription": "Allow data collection for analytics",
+  "@dataCollectionDescription": {
+    "description": "Data collection description"
+  },
+  "marketingEmails": "Marketing Emails",
+  "@marketingEmails": {
+    "description": "Marketing emails setting"
+  },
+  "marketingEmailsDescription": "Receive promotional emails and updates",
+  "@marketingEmailsDescription": {
+    "description": "Marketing emails description"
+  },
+  "locationTracking": "Location Tracking",
+  "@locationTracking": {
+    "description": "Location tracking setting"
+  },
+  "locationTrackingDescription": "Allow location-based features",
+  "@locationTrackingDescription": {
+    "description": "Location tracking description"
+  },
+  "reportContent": "Report Content",
+  "@reportContent": {
+    "description": "Report content button"
+  },
+  "reportInappropriate": "Report Inappropriate",
+  "@reportInappropriate": {
+    "description": "Report inappropriate content"
+  },
+  "reportReason": "Report Reason",
+  "@reportReason": {
+    "description": "Report reason label"
+  },
+  "nudity": "Nudity",
+  "@nudity": {
+    "description": "Nudity report reason"
+  },
+  "inappropriateContent": "Inappropriate Content",
+  "@inappropriateContent": {
+    "description": "Inappropriate content report reason"
+  },
+  "harassment": "Harassment",
+  "@harassment": {
+    "description": "Harassment report reason"
+  },
+  "spam": "Spam",
+  "@spam": {
+    "description": "Spam report reason"
+  },
+  "other": "Other",
+  "@other": {
+    "description": "Other report reason"
+  },
+  "reportSubmitted": "Report submitted successfully",
+  "@reportSubmitted": {
+    "description": "Report submitted message"
+  },
+  "reportError": "Failed to submit report",
+  "@reportError": {
+    "description": "Report error message"
+  },
+  "submit": "Submit",
+  "@submit": {
+    "description": "Submit button text"
+  },
+  "profileVisible": "Profile is now visible",
+  "@profileVisible": {
+    "description": "Profile visible message"
+  },
+  "profileHidden": "Profile is now hidden",
+  "@profileHidden": {
+    "description": "Profile hidden message"
+  },
+  
+  "notificationCenter": "Notifications",
+  "@notificationCenter": {
+    "description": "Notification center title"
+  },
+  "notificationSettings": "Notification Settings",
+  "@notificationSettings": {
+    "description": "Notification settings title"
+  },
+  "allNotifications": "All Notifications",
+  "@allNotifications": {
+    "description": "All notifications toggle"
+  },
+  "allNotificationsDescription": "Enable/disable all notification types",
+  "@allNotificationsDescription": {
+    "description": "All notifications description"
+  },
+  "tournamentNotifications": "Tournament Notifications",
+  "@tournamentNotifications": {
+    "description": "Tournament notifications toggle"
+  },
+  "tournamentNotificationsDescription": "New tournament invitations and updates",
+  "@tournamentNotificationsDescription": {
+    "description": "Tournament notifications description"
+  },
+  "voteReminderNotifications": "Vote Reminders",
+  "@voteReminderNotifications": {
+    "description": "Vote reminder notifications toggle"
+  },
+  "voteReminderNotificationsDescription": "Vote reminder notifications",
+  "@voteReminderNotificationsDescription": {
+    "description": "Vote reminder notifications description"
+  },
+  "winCelebrationNotifications": "Victory Celebrations",
+  "@winCelebrationNotifications": {
+    "description": "Win celebration notifications toggle"
+  },
+  "winCelebrationNotificationsDescription": "Victory notifications",
+  "@winCelebrationNotificationsDescription": {
+    "description": "Win celebration notifications description"
+  },
+  "streakReminderNotifications": "Streak Reminders",
+  "@streakReminderNotifications": {
+    "description": "Streak reminder notifications toggle"
+  },
+  "streakReminderNotificationsDescription": "Daily streak reminders",
+  "@streakReminderNotificationsDescription": {
+    "description": "Streak reminder notifications description"
+  },
+  "notificationsList": "Notifications",
+  "@notificationsList": {
+    "description": "Notifications list title"
+  },
+  "noNotificationsYet": "No notifications yet",
+  "@noNotificationsYet": {
+    "description": "No notifications message"
+  },
+  "newNotificationsWillAppearHere": "New notifications will appear here",
+  "@newNotificationsWillAppearHere": {
+    "description": "No notifications description"
+  },
+  "markAllAsRead": "Mark All as Read",
+  "@markAllAsRead": {
+    "description": "Mark all as read button"
   }
 }

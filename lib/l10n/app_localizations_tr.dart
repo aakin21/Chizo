@@ -940,7 +940,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get lightPinkTheme => 'Açık pembe renk tema';
 
   @override
-  String get notificationSettings => '🔔 Bildirim Ayarları';
+  String get notificationSettings => 'Bildirim Ayarları';
 
   @override
   String get allNotifications => 'Tüm Bildirimler';
@@ -1357,4 +1357,121 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get weeklyFemaleTournament10000Description =>
       'Premium kadın turnuvası - 100 kişi kapasiteli';
+
+  @override
+  String get dataPrivacy => 'Veri Gizliliği';
+
+  @override
+  String get dataPrivacyDescription => 'Veri ve gizlilik ayarlarınızı yönetin';
+
+  @override
+  String get profileVisibility => 'Profil Görünürlüğü';
+
+  @override
+  String get profileVisibilityDescription =>
+      'Profilinizi kimlerin görebileceğini kontrol edin';
+
+  @override
+  String get dataCollection => 'Veri Toplama';
+
+  @override
+  String get dataCollectionDescription =>
+      'Analitik için veri toplamaya izin ver';
+
+  @override
+  String get marketingEmails => 'Pazarlama E-postaları';
+
+  @override
+  String get marketingEmailsDescription =>
+      'Promosyon e-postaları ve güncellemeleri al';
+
+  @override
+  String get locationTracking => 'Konum Takibi';
+
+  @override
+  String get locationTrackingDescription =>
+      'Konum tabanlı özelliklere izin ver';
+
+  @override
+  String get reportContent => 'İçerik Bildir';
+
+  @override
+  String get reportInappropriate => 'Uygunsuz İçerik Bildir';
+
+  @override
+  String get reportReason => 'Bildirim Sebebi';
+
+  @override
+  String get nudity => 'Çıplaklık';
+
+  @override
+  String get inappropriateContent => 'Uygunsuz İçerik';
+
+  @override
+  String get harassment => 'Taciz';
+
+  @override
+  String get spam => 'Spam';
+
+  @override
+  String get other => 'Diğer';
+
+  @override
+  String get reportSubmitted => 'Bildirim başarıyla gönderildi';
+
+  @override
+  String get reportError => 'Bildirim gönderilemedi';
+
+  @override
+  String get submit => 'Gönder';
+
+  @override
+  String get profileVisible => 'Profil artık görünür';
+
+  @override
+  String get profileHidden => 'Profil artık gizli';
+
+  @override
+  String get notificationCenter => 'Bildirimler';
+
+  @override
+  String get allNotificationsDescription =>
+      'Tüm bildirim türlerini etkinleştir/devre dışı bırak';
+
+  @override
+  String get tournamentNotificationsDescription =>
+      'Yeni turnuva davetleri ve güncellemeleri';
+
+  @override
+  String get voteReminderNotifications => 'Oylama Hatırlatmaları';
+
+  @override
+  String get voteReminderNotificationsDescription =>
+      'Oylama hatırlatma bildirimleri';
+
+  @override
+  String get winCelebrationNotifications => 'Zafer Kutlamaları';
+
+  @override
+  String get winCelebrationNotificationsDescription => 'Kazanma bildirimleri';
+
+  @override
+  String get streakReminderNotifications => 'Streak Hatırlatmaları';
+
+  @override
+  String get streakReminderNotificationsDescription =>
+      'Günlük streak hatırlatmaları';
+
+  @override
+  String get notificationsList => 'Bildirimler';
+
+  @override
+  String get noNotificationsYet => 'Henüz bildirim yok';
+
+  @override
+  String get newNotificationsWillAppearHere =>
+      'Yeni bildirimler burada görünecek';
+
+  @override
+  String get markAllAsRead => 'Tümünü Okundu İşaretle';
 }

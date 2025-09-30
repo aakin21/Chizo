@@ -643,5 +643,70 @@
   "weeklyFemaleTournament10000Description": "Premium Frauenturnier - 100 Teilnehmer Kapazität",
   "@weeklyFemaleTournament10000Description": {
     "description": "Beschreibung für wöchentliches Frauenturnier mit 10000 Münzen Eintrittsgebühr"
+  },
+  
+  "notificationCenter": "Benachrichtigungen",
+  "@notificationCenter": {
+    "description": "Benachrichtigungszentrum Titel"
+  },
+  "notificationSettings": "Benachrichtigungseinstellungen",
+  "@notificationSettings": {
+    "description": "Benachrichtigungseinstellungen Titel"
+  },
+  "allNotifications": "Alle Benachrichtigungen",
+  "@allNotifications": {
+    "description": "Alle Benachrichtigungen Schalter"
+  },
+  "allNotificationsDescription": "Alle Benachrichtigungstypen aktivieren/deaktivieren",
+  "@allNotificationsDescription": {
+    "description": "Alle Benachrichtigungen Beschreibung"
+  },
+  "tournamentNotifications": "Turnier-Benachrichtigungen",
+  "@tournamentNotifications": {
+    "description": "Turnier-Benachrichtigungen Schalter"
+  },
+  "tournamentNotificationsDescription": "Neue Turnier-Einladungen und Updates",
+  "@tournamentNotificationsDescription": {
+    "description": "Turnier-Benachrichtigungen Beschreibung"
+  },
+  "voteReminderNotifications": "Abstimmungserinnerungen",
+  "@voteReminderNotifications": {
+    "description": "Abstimmungserinnerungs-Benachrichtigungen Schalter"
+  },
+  "voteReminderNotificationsDescription": "Abstimmungserinnerungs-Benachrichtigungen",
+  "@voteReminderNotificationsDescription": {
+    "description": "Abstimmungserinnerungs-Benachrichtigungen Beschreibung"
+  },
+  "winCelebrationNotifications": "Siegfeiern",
+  "@winCelebrationNotifications": {
+    "description": "Siegfeier-Benachrichtigungen Schalter"
+  },
+  "winCelebrationNotificationsDescription": "Sieg-Benachrichtigungen",
+  "@winCelebrationNotificationsDescription": {
+    "description": "Siegfeier-Benachrichtigungen Beschreibung"
+  },
+  "streakReminderNotifications": "Streak-Erinnerungen",
+  "@streakReminderNotifications": {
+    "description": "Streak-Erinnerungs-Benachrichtigungen Schalter"
+  },
+  "streakReminderNotificationsDescription": "Tägliche Streak-Erinnerungen",
+  "@streakReminderNotificationsDescription": {
+    "description": "Streak-Erinnerungs-Benachrichtigungen Beschreibung"
+  },
+  "notificationsList": "Benachrichtigungen",
+  "@notificationsList": {
+    "description": "Benachrichtigungen Liste Titel"
+  },
+  "noNotificationsYet": "Noch keine Benachrichtigungen",
+  "@noNotificationsYet": {
+    "description": "Keine Benachrichtigungen Nachricht"
+  },
+  "newNotificationsWillAppearHere": "Neue Benachrichtigungen erscheinen hier",
+  "@newNotificationsWillAppearHere": {
+    "description": "Keine Benachrichtigungen Beschreibung"
+  },
+  "markAllAsRead": "Alle als gelesen markieren",
+  "@markAllAsRead": {
+    "description": "Alle als gelesen markieren Button"
   }
 }

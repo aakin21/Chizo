@@ -4,6 +4,7 @@ import 'turnuva_tab.dart';
 import 'settings_tab.dart';
 import 'voting_tab.dart';
 import 'leaderboard_tab.dart';
+import 'notification_center_screen.dart';
 import '../services/streak_service.dart';
 import '../l10n/app_localizations.dart';
 
@@ -176,6 +177,15 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _openNotificationCenter(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const NotificationCenterScreen(),
+      ),
+    );
+  }
+
   Future<void> _refreshAllData() async {
     // Tüm verileri yenile
     await _checkDailyStreak();
@@ -230,6 +240,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: const Icon(Icons.leaderboard, size: 20),
                   style: IconButton.styleFrom(
                     backgroundColor: Colors.orange.withOpacity(0.1),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                    minimumSize: const Size(32, 32),
+                    padding: const EdgeInsets.all(4),
+                  ),
+                ),
+                // Bildirimler
+                IconButton(
+                  onPressed: () => _openNotificationCenter(context),
+                  icon: const Icon(Icons.notifications, size: 20),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.purple.withOpacity(0.1),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                     minimumSize: const Size(32, 32),
                     padding: const EdgeInsets.all(4),

@@ -11,6 +11,7 @@ import '../services/prediction_service.dart';
 import '../services/photo_upload_service.dart';
 import '../l10n/app_localizations.dart';
 import '../services/tournament_service.dart';
+import '../services/report_service.dart';
 import '../widgets/vs_image_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
@@ -698,6 +699,12 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                                       Colors.blue,
                                       () => _showPremiumInfo(user1.profession!, AppLocalizations.of(context)!.profession),
                                     ),
+                                  // Report button
+                                  _buildOverlayButton(
+                                    Icons.report,
+                                    Colors.red,
+                                    () => _showReportDialog(user1.id, match.id),
+                                  ),
                                 ],
                               ),
                             ),
@@ -783,6 +790,12 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                                       Colors.blue,
                                       () => _showPremiumInfo(user2.profession!, AppLocalizations.of(context)!.profession),
                                     ),
+                                  // Report button
+                                  _buildOverlayButton(
+                                    Icons.report,
+                                    Colors.red,
+                                    () => _showReportDialog(user2.id, match.id),
+                                  ),
                                 ],
                               ),
                             ),
@@ -1630,4 +1643,144 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     return color;
   }
 
+  // Report Dialog
+  void _showReportDialog(String reportedUserId, String matchId) {
+    showDialog(
+      context: context,
+      builder: (context) => ReportDialog(
+        reportedUserId: reportedUserId,
+        matchId: matchId,
+        onReportSubmitted: (success) {
+          if (success) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('Bildirim başarıyla gönderildi'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('Bildirim gönderilemedi'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+}
+
+// Report Dialog Widget
+class ReportDialog extends StatefulWidget {
+  final String reportedUserId;
+  final String matchId;
+  final Function(bool) onReportSubmitted;
+
+  const ReportDialog({
+    super.key,
+    required this.reportedUserId,
+    required this.matchId,
+    required this.onReportSubmitted,
+  });
+
+  @override
+  State<ReportDialog> createState() => _ReportDialogState();
+}
+
+class _ReportDialogState extends State<ReportDialog> {
+  String? selectedReason;
+  final TextEditingController _descriptionController = TextEditingController();
+  bool _isSubmitting = false;
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final reportReasons = ReportService.getReportReasons();
+    
+    return AlertDialog(
+      title: const Text('Uygunsuz İçerik Bildir'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('Bildirim Sebebi'),
+          const SizedBox(height: 16),
+          
+          // Reason selection
+          ...reportReasons.map((reason) => RadioListTile<String>(
+            title: Text(reason['name']!),
+            value: reason['key']!,
+            groupValue: selectedReason,
+            onChanged: (value) {
+              setState(() {
+                selectedReason = value;
+              });
+            },
+          )).toList(),
+          
+          const SizedBox(height: 16),
+          
+          // Description field
+          TextField(
+            controller: _descriptionController,
+            decoration: InputDecoration(
+              labelText: 'Additional details (optional)',
+              border: const OutlineInputBorder(),
+            ),
+            maxLines: 3,
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: _isSubmitting ? null : () => Navigator.pop(context),
+          child: Text(AppLocalizations.of(context)!.cancel),
+        ),
+        ElevatedButton(
+          onPressed: _isSubmitting || selectedReason == null 
+            ? null 
+            : _submitReport,
+          child: _isSubmitting 
+            ? const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Text('Gönder'),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _submitReport() async {
+    if (selectedReason == null) return;
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      final success = await ReportService.reportMatch(
+        matchId: widget.matchId,
+        reportedUserId: widget.reportedUserId,
+        reason: selectedReason!,
+        description: _descriptionController.text.trim().isEmpty 
+          ? null 
+          : _descriptionController.text.trim(),
+      );
+
+      Navigator.pop(context);
+      widget.onReportSubmitted(success);
+    } catch (e) {
+      Navigator.pop(context);
+      widget.onReportSubmitted(false);
+    }
+  }
 }

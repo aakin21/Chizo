@@ -5,7 +5,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../widgets/compact_language_selector.dart';
 import '../utils/constants.dart';
 import '../l10n/app_localizations.dart';
-import '../services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';
@@ -21,13 +20,12 @@ class SettingsTab extends StatefulWidget {
 }
 
 class _SettingsTabState extends State<SettingsTab> {
-  bool _notificationsEnabled = true;
-  bool _tournamentNotifications = true;
-  bool _voteReminderNotifications = true;
-  bool _winCelebrationNotifications = true;
-  bool _streakReminderNotifications = true;
   UserModel? _currentUser;
   bool _isLoggingOut = false;
+  
+  
+  // Marketing Settings
+  bool _marketingEmailsEnabled = true;
 
   final List<String> _themeOptions = ['Beyaz', 'Koyu', 'Pembemsi'];
   String _selectedTheme = 'Beyaz';
@@ -37,21 +35,19 @@ class _SettingsTabState extends State<SettingsTab> {
     super.initState();
     _loadUserData();
     _loadSavedTheme();
-    _loadNotificationPreferences();
+    _loadMarketingSettings();
   }
 
-  Future<void> _loadNotificationPreferences() async {
+
+  Future<void> _loadMarketingSettings() async {
     try {
-      // Load notification preferences from database
-      _notificationsEnabled = await NotificationService.isNotificationEnabled('all') ?? true;
-      _tournamentNotifications = await NotificationService.isNotificationEnabled('tournament') ?? true;
-      _voteReminderNotifications = await NotificationService.isNotificationEnabled('vote_reminder') ?? true;
-      _winCelebrationNotifications = await NotificationService.isNotificationEnabled('win_celebration') ?? true;
-      _streakReminderNotifications = await NotificationService.isNotificationEnabled('streak_reminder') ?? true;
+      // Load marketing settings
+      final prefs = await SharedPreferences.getInstance();
+      _marketingEmailsEnabled = prefs.getBool('marketing_emails_enabled') ?? true;
       
       setState(() {});
     } catch (e) {
-      print('Error loading notification preferences: $e');
+      print('Error loading marketing settings: $e');
       setState(() {}); // still show default preferences
     }
   }
@@ -273,6 +269,7 @@ class _SettingsTabState extends State<SettingsTab> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
+          
           // Tema ve Görünüm
           _buildSectionCard(
             title: AppLocalizations.of(context)!.themeSelection,
@@ -295,75 +292,6 @@ class _SettingsTabState extends State<SettingsTab> {
 
           const SizedBox(height: 24),
 
-          // Bildirimler
-          _buildSectionCard(
-            title: AppLocalizations.of(context)!.notificationSettings,
-            children: [
-              SwitchListTile(
-                title: Text(AppLocalizations.of(context)!.allNotifications),
-                subtitle: Text(AppLocalizations.of(context)!.allNotificationsSubtitle),
-                value: _notificationsEnabled,
-                onChanged: (value) async {
-                  setState(() {
-                    _notificationsEnabled = value;
-                  });
-                  await NotificationService.updateNotificationPreference('all', value);
-                },
-                secondary: const Icon(Icons.notifications),
-              ),
-              const Divider(),
-              SwitchListTile(
-                title: Text(AppLocalizations.of(context)!.tournamentNotifications),
-                subtitle: Text(AppLocalizations.of(context)!.newTournamentInvitations),
-                value: _tournamentNotifications,
-                onChanged: !_notificationsEnabled ? null : (value) async {
-                  setState(() {
-                    _tournamentNotifications = value;
-                  });
-                  await NotificationService.updateNotificationPreference('tournament', value);
-                },
-                secondary: const Icon(Icons.emoji_events),
-              ),
-              SwitchListTile(
-                title: Text(AppLocalizations.of(context)!.voteReminder),
-                subtitle: Text(AppLocalizations.of(context)!.voteReminder),
-                value: _voteReminderNotifications,
-                onChanged: !_notificationsEnabled ? null : (value) async {
-                  setState(() {
-                    _voteReminderNotifications = value;
-                  });
-                  await NotificationService.updateNotificationPreference('vote_reminder', value);
-                },
-                secondary: const Icon(Icons.how_to_vote),
-              ),
-              SwitchListTile(
-                title: Text(AppLocalizations.of(context)!.winCelebration),
-                subtitle: Text(AppLocalizations.of(context)!.victoryNotifications),
-                value: _winCelebrationNotifications,
-                onChanged: !_notificationsEnabled ? null : (value) async {
-                  setState(() {
-                    _winCelebrationNotifications = value;
-                  });
-                  await NotificationService.updateNotificationPreference('win_celebration', value);
-                },
-                secondary: const Icon(Icons.celebration),
-              ),
-              SwitchListTile(
-                title: Text(AppLocalizations.of(context)!.streakReminder),
-                subtitle: Text(AppLocalizations.of(context)!.streakReminderSubtitle),
-                value: _streakReminderNotifications,
-                onChanged: !_notificationsEnabled ? null : (value) async {
-                  setState(() {
-                    _streakReminderNotifications = value;
-                  });
-                  await NotificationService.updateNotificationPreference('streak_reminder', value);
-                },
-                secondary: const Icon(Icons.local_fire_department),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 24),
           
           // Uygulama Ayarları
           _buildSectionCard(
@@ -392,7 +320,7 @@ class _SettingsTabState extends State<SettingsTab> {
           
           // Dil Ayarları
           _buildSectionCard(
-            title: '🌍 Dil / Language',
+            title: '🌍 ${AppLocalizations.of(context)!.language}',
             children: [
               ListTile(
                 leading: const Icon(Icons.language, color: Colors.blue),
@@ -400,21 +328,38 @@ class _SettingsTabState extends State<SettingsTab> {
                 subtitle: Text('Select your preferred language'),
                 trailing: CompactLanguageSelector(
                   onLanguageChanged: (locale) async {
-                    // CompactLanguageSelector zaten LanguageService.setLanguage() çağırıyor
-                    // Parent'a bildir ve sayfayı yeniden build et
+                    // Parent'a bildir
                     if (widget.onLanguageChanged != null) {
                       widget.onLanguageChanged!(locale);
                     }
-                    // Sayfayı yeniden build et
-                    setState(() {});
                     
-                    // Dil değişikliği sonrası otomatik refresh
-                    await Future.delayed(const Duration(milliseconds: 300));
+                    // Dil değişikliği sonrası kısa bir gecikme
+                    await Future.delayed(const Duration(milliseconds: 100));
+                    
+                    // Sadece bir kez restart
                     if (mounted) {
-                      setState(() {});
-                      // Dil değişikliği için de restart
                       _restartApp();
                     }
+                  },
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 24),
+
+          // Pazarlama Ayarları
+          _buildSectionCard(
+            title: '📧 Pazarlama Ayarları',
+            children: [
+              ListTile(
+                leading: const Icon(Icons.email, color: Colors.orange),
+                title: const Text('Pazarlama E-postaları'),
+                subtitle: const Text('Promosyon e-postaları ve güncellemeleri al'),
+                trailing: Switch(
+                  value: _marketingEmailsEnabled,
+                  onChanged: (value) async {
+                    await _updateMarketingEmails(value);
                   },
                 ),
               ),
@@ -530,4 +475,30 @@ class _SettingsTabState extends State<SettingsTab> {
       ],
     );
   }
+
+
+  // Marketing Functions
+
+
+  Future<void> _updateMarketingEmails(bool value) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('marketing_emails_enabled', value);
+      setState(() {
+        _marketingEmailsEnabled = value;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(value 
+          ? 'Marketing emails enabled' 
+          : 'Marketing emails disabled'),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
 }

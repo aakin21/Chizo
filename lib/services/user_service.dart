@@ -268,4 +268,66 @@ class UserService {
       print('Error updating user stats: $e');
     }
   }
+
+  // ID ile kullanıcı bilgilerini getir
+  static Future<UserModel?> getUserById(String userId) async {
+    try {
+      final response = await _client
+          .from('users')
+          .select()
+          .eq('id', userId)
+          .maybeSingle();
+
+      if (response == null) {
+        return null;
+      }
+
+      return UserModel.fromJson(response);
+    } catch (e) {
+      print('Error getting user by ID: $e');
+      return null;
+    }
+  }
+
+  // Coin bildirimleri
+  static Future<void> sendCoinRewardNotification(String userId, int coins, String reason) async {
+    try {
+      await _sendNotificationToUser(
+        userId,
+        'coin_reward',
+        '💰 Coin Ödülü!',
+        '$coins coin kazandınız: $reason',
+      );
+    } catch (e) {
+      print('Error sending coin reward notification: $e');
+    }
+  }
+
+  static Future<void> sendStreakRewardNotification(String userId, int streak, int coins) async {
+    try {
+      await _sendNotificationToUser(
+        userId,
+        'streak_reward',
+        '🔥 Streak Ödülü!',
+        '$streak günlük streak ile $coins coin kazandınız!',
+      );
+    } catch (e) {
+      print('Error sending streak reward notification: $e');
+    }
+  }
+
+  static Future<void> _sendNotificationToUser(String userId, String type, String title, String body) async {
+    try {
+      await _client.from('notifications').insert({
+        'user_id': userId,
+        'type': type,
+        'title': title,
+        'body': body,
+        'is_read': false,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      print('Error sending notification to user: $e');
+    }
+  }
 }

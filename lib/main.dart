@@ -147,21 +147,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   void changeLanguage(Locale locale) async {
     print('🌍 MAIN: Language change requested to $locale');
-    await LanguageService.setLanguage(locale);
+    
     if (mounted) {
       setState(() {
         _currentLocale = locale;
         _appKey = UniqueKey(); // Yeni key ile tüm uygulamayı yeniden build et
       });
       print('🌍 MAIN: Language changed successfully to $locale');
-      
-      // Dil değişikliği sonrası otomatik refresh
-      await Future.delayed(const Duration(milliseconds: 300));
-      if (mounted) {
-        setState(() {
-          _appKey = UniqueKey(); // Ekstra refresh için yeni key
-        });
-      }
     }
   }
 

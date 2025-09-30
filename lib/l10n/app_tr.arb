@@ -616,5 +616,163 @@
   "weeklyFemaleTournament10000Description": "Premium kadın turnuvası - 100 kişi kapasiteli",
   "@weeklyFemaleTournament10000Description": {
     "description": "10000 coin giriş ücretli haftalık kadın turnuvası açıklaması"
+  },
+  
+  "dataPrivacy": "Veri Gizliliği",
+  "@dataPrivacy": {
+    "description": "Veri gizliliği bölüm başlığı"
+  },
+  "dataPrivacyDescription": "Veri ve gizlilik ayarlarınızı yönetin",
+  "@dataPrivacyDescription": {
+    "description": "Veri gizliliği bölüm açıklaması"
+  },
+  "profileVisibility": "Profil Görünürlüğü",
+  "@profileVisibility": {
+    "description": "Profil görünürlüğü ayarı"
+  },
+  "profileVisibilityDescription": "Profilinizi kimlerin görebileceğini kontrol edin",
+  "@profileVisibilityDescription": {
+    "description": "Profil görünürlüğü açıklaması"
+  },
+  "dataCollection": "Veri Toplama",
+  "@dataCollection": {
+    "description": "Veri toplama ayarı"
+  },
+  "dataCollectionDescription": "Analitik için veri toplamaya izin ver",
+  "@dataCollectionDescription": {
+    "description": "Veri toplama açıklaması"
+  },
+  "marketingEmails": "Pazarlama E-postaları",
+  "@marketingEmails": {
+    "description": "Pazarlama e-postaları ayarı"
+  },
+  "marketingEmailsDescription": "Promosyon e-postaları ve güncellemeleri al",
+  "@marketingEmailsDescription": {
+    "description": "Pazarlama e-postaları açıklaması"
+  },
+  "locationTracking": "Konum Takibi",
+  "@locationTracking": {
+    "description": "Konum takibi ayarı"
+  },
+  "locationTrackingDescription": "Konum tabanlı özelliklere izin ver",
+  "@locationTrackingDescription": {
+    "description": "Konum takibi açıklaması"
+  },
+  "reportContent": "İçerik Bildir",
+  "@reportContent": {
+    "description": "İçerik bildir butonu"
+  },
+  "reportInappropriate": "Uygunsuz İçerik Bildir",
+  "@reportInappropriate": {
+    "description": "Uygunsuz içerik bildir"
+  },
+  "reportReason": "Bildirim Sebebi",
+  "@reportReason": {
+    "description": "Bildirim sebebi etiketi"
+  },
+  "nudity": "Çıplaklık",
+  "@nudity": {
+    "description": "Çıplaklık bildirim sebebi"
+  },
+  "inappropriateContent": "Uygunsuz İçerik",
+  "@inappropriateContent": {
+    "description": "Uygunsuz içerik bildirim sebebi"
+  },
+  "harassment": "Taciz",
+  "@harassment": {
+    "description": "Taciz bildirim sebebi"
+  },
+  "spam": "Spam",
+  "@spam": {
+    "description": "Spam bildirim sebebi"
+  },
+  "other": "Diğer",
+  "@other": {
+    "description": "Diğer bildirim sebebi"
+  },
+  "reportSubmitted": "Bildirim başarıyla gönderildi",
+  "@reportSubmitted": {
+    "description": "Bildirim gönderildi mesajı"
+  },
+  "reportError": "Bildirim gönderilemedi",
+  "@reportError": {
+    "description": "Bildirim hata mesajı"
+  },
+  "submit": "Gönder",
+  "@submit": {
+    "description": "Gönder butonu metni"
+  },
+  "profileVisible": "Profil artık görünür",
+  "@profileVisible": {
+    "description": "Profil görünür mesajı"
+  },
+  "profileHidden": "Profil artık gizli",
+  "@profileHidden": {
+    "description": "Profil gizli mesajı"
+  },
+  
+  "notificationCenter": "Bildirimler",
+  "@notificationCenter": {
+    "description": "Bildirim merkezi başlığı"
+  },
+  "notificationSettings": "Bildirim Ayarları",
+  "@notificationSettings": {
+    "description": "Bildirim ayarları başlığı"
+  },
+  "allNotifications": "Tüm Bildirimler",
+  "@allNotifications": {
+    "description": "Tüm bildirimler anahtarı"
+  },
+  "allNotificationsDescription": "Tüm bildirim türlerini etkinleştir/devre dışı bırak",
+  "@allNotificationsDescription": {
+    "description": "Tüm bildirimler açıklaması"
+  },
+  "tournamentNotifications": "Turnuva Bildirimleri",
+  "@tournamentNotifications": {
+    "description": "Turnuva bildirimleri anahtarı"
+  },
+  "tournamentNotificationsDescription": "Yeni turnuva davetleri ve güncellemeleri",
+  "@tournamentNotificationsDescription": {
+    "description": "Turnuva bildirimleri açıklaması"
+  },
+  "voteReminderNotifications": "Oylama Hatırlatmaları",
+  "@voteReminderNotifications": {
+    "description": "Oylama hatırlatma bildirimleri anahtarı"
+  },
+  "voteReminderNotificationsDescription": "Oylama hatırlatma bildirimleri",
+  "@voteReminderNotificationsDescription": {
+    "description": "Oylama hatırlatma bildirimleri açıklaması"
+  },
+  "winCelebrationNotifications": "Zafer Kutlamaları",
+  "@winCelebrationNotifications": {
+    "description": "Zafer kutlama bildirimleri anahtarı"
+  },
+  "winCelebrationNotificationsDescription": "Kazanma bildirimleri",
+  "@winCelebrationNotificationsDescription": {
+    "description": "Zafer kutlama bildirimleri açıklaması"
+  },
+  "streakReminderNotifications": "Streak Hatırlatmaları",
+  "@streakReminderNotifications": {
+    "description": "Streak hatırlatma bildirimleri anahtarı"
+  },
+  "streakReminderNotificationsDescription": "Günlük streak hatırlatmaları",
+  "@streakReminderNotificationsDescription": {
+    "description": "Streak hatırlatma bildirimleri açıklaması"
+  },
+  "notificationsList": "Bildirimler",
+  "@notificationsList": {
+    "description": "Bildirimler listesi başlığı"
+  },
+  "noNotificationsYet": "Henüz bildirim yok",
+  "@noNotificationsYet": {
+    "description": "Bildirim yok mesajı"
+  },
+  "newNotificationsWillAppearHere": "Yeni bildirimler burada görünecek",
+  "@newNotificationsWillAppearHere": {
+    "description": "Bildirim yok açıklaması"
+  },
+  "markAllAsRead": "Tümünü Okundu İşaretle",
+  "@markAllAsRead": {
+    "description": "Tümünü okundu işaretle butonu"
   }
 }

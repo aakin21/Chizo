@@ -644,6 +644,71 @@
   "weeklyFemaleTournament10000Description": "Torneo femenino premium - capacidad de 100 participantes",
   "@weeklyFemaleTournament10000Description": {
     "description": "Descripción para torneo femenino semanal con cuota de entrada de 10000 monedas"
+  },
+  
+  "notificationCenter": "Notificaciones",
+  "@notificationCenter": {
+    "description": "Título del centro de notificaciones"
+  },
+  "notificationSettings": "Configuración de Notificaciones",
+  "@notificationSettings": {
+    "description": "Título de configuración de notificaciones"
+  },
+  "allNotifications": "Todas las Notificaciones",
+  "@allNotifications": {
+    "description": "Interruptor de todas las notificaciones"
+  },
+  "allNotificationsDescription": "Activar/desactivar todos los tipos de notificaciones",
+  "@allNotificationsDescription": {
+    "description": "Descripción de todas las notificaciones"
+  },
+  "tournamentNotifications": "Notificaciones de Torneos",
+  "@tournamentNotifications": {
+    "description": "Interruptor de notificaciones de torneos"
+  },
+  "tournamentNotificationsDescription": "Nuevas invitaciones y actualizaciones de torneos",
+  "@tournamentNotificationsDescription": {
+    "description": "Descripción de notificaciones de torneos"
+  },
+  "voteReminderNotifications": "Recordatorios de Votación",
+  "@voteReminderNotifications": {
+    "description": "Interruptor de notificaciones de recordatorio de votación"
+  },
+  "voteReminderNotificationsDescription": "Notificaciones de recordatorio de votación",
+  "@voteReminderNotificationsDescription": {
+    "description": "Descripción de notificaciones de recordatorio de votación"
+  },
+  "winCelebrationNotifications": "Celebraciones de Victoria",
+  "@winCelebrationNotifications": {
+    "description": "Interruptor de notificaciones de celebración de victoria"
+  },
+  "winCelebrationNotificationsDescription": "Notificaciones de victoria",
+  "@winCelebrationNotificationsDescription": {
+    "description": "Descripción de notificaciones de celebración de victoria"
+  },
+  "streakReminderNotifications": "Recordatorios de Racha",
+  "@streakReminderNotifications": {
+    "description": "Interruptor de notificaciones de recordatorio de racha"
+  },
+  "streakReminderNotificationsDescription": "Recordatorios de racha diaria",
+  "@streakReminderNotificationsDescription": {
+    "description": "Descripción de notificaciones de recordatorio de racha"
+  },
+  "notificationsList": "Notificaciones",
+  "@notificationsList": {
+    "description": "Título de lista de notificaciones"
+  },
+  "noNotificationsYet": "Aún no hay notificaciones",
+  "@noNotificationsYet": {
+    "description": "Mensaje de no hay notificaciones"
+  },
+  "newNotificationsWillAppearHere": "Las nuevas notificaciones aparecerán aquí",
+  "@newNotificationsWillAppearHere": {
+    "description": "Descripción de no hay notificaciones"
+  },
+  "markAllAsRead": "Marcar Todo como Leído",
+  "@markAllAsRead": {
+    "description": "Botón de marcar todo como leído"
   }
 }
 

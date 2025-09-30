@@ -1758,13 +1758,13 @@ abstract class AppLocalizations {
   /// **'Light pink color theme'**
   String get lightPinkTheme;
 
-  /// No description provided for @notificationSettings.
+  /// Notification settings title
   ///
   /// In en, this message translates to:
-  /// **'🔔 Notification Settings'**
+  /// **'Notification Settings'**
   String get notificationSettings;
 
-  /// No description provided for @allNotifications.
+  /// All notifications toggle
   ///
   /// In en, this message translates to:
   /// **'All Notifications'**
@@ -2190,7 +2190,7 @@ abstract class AppLocalizations {
   /// **'Could not load photo statistics'**
   String get photoStatsLoadError;
 
-  /// No description provided for @tournamentNotifications.
+  /// Tournament notifications toggle
   ///
   /// In en, this message translates to:
   /// **'Tournament Notifications'**
@@ -2531,6 +2531,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Premium female tournament - 100 participant capacity'**
   String get weeklyFemaleTournament10000Description;
+
+  /// Data privacy section title
+  ///
+  /// In en, this message translates to:
+  /// **'Data Privacy'**
+  String get dataPrivacy;
+
+  /// Data privacy section description
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your data and privacy settings'**
+  String get dataPrivacyDescription;
+
+  /// Profile visibility setting
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Visibility'**
+  String get profileVisibility;
+
+  /// Profile visibility description
+  ///
+  /// In en, this message translates to:
+  /// **'Control who can see your profile'**
+  String get profileVisibilityDescription;
+
+  /// Data collection setting
+  ///
+  /// In en, this message translates to:
+  /// **'Data Collection'**
+  String get dataCollection;
+
+  /// Data collection description
+  ///
+  /// In en, this message translates to:
+  /// **'Allow data collection for analytics'**
+  String get dataCollectionDescription;
+
+  /// Marketing emails setting
+  ///
+  /// In en, this message translates to:
+  /// **'Marketing Emails'**
+  String get marketingEmails;
+
+  /// Marketing emails description
+  ///
+  /// In en, this message translates to:
+  /// **'Receive promotional emails and updates'**
+  String get marketingEmailsDescription;
+
+  /// Location tracking setting
+  ///
+  /// In en, this message translates to:
+  /// **'Location Tracking'**
+  String get locationTracking;
+
+  /// Location tracking description
+  ///
+  /// In en, this message translates to:
+  /// **'Allow location-based features'**
+  String get locationTrackingDescription;
+
+  /// Report content button
+  ///
+  /// In en, this message translates to:
+  /// **'Report Content'**
+  String get reportContent;
+
+  /// Report inappropriate content
+  ///
+  /// In en, this message translates to:
+  /// **'Report Inappropriate'**
+  String get reportInappropriate;
+
+  /// Report reason label
+  ///
+  /// In en, this message translates to:
+  /// **'Report Reason'**
+  String get reportReason;
+
+  /// Nudity report reason
+  ///
+  /// In en, this message translates to:
+  /// **'Nudity'**
+  String get nudity;
+
+  /// Inappropriate content report reason
+  ///
+  /// In en, this message translates to:
+  /// **'Inappropriate Content'**
+  String get inappropriateContent;
+
+  /// Harassment report reason
+  ///
+  /// In en, this message translates to:
+  /// **'Harassment'**
+  String get harassment;
+
+  /// Spam report reason
+  ///
+  /// In en, this message translates to:
+  /// **'Spam'**
+  String get spam;
+
+  /// Other report reason
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get other;
+
+  /// Report submitted message
+  ///
+  /// In en, this message translates to:
+  /// **'Report submitted successfully'**
+  String get reportSubmitted;
+
+  /// Report error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to submit report'**
+  String get reportError;
+
+  /// Submit button text
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// Profile visible message
+  ///
+  /// In en, this message translates to:
+  /// **'Profile is now visible'**
+  String get profileVisible;
+
+  /// Profile hidden message
+  ///
+  /// In en, this message translates to:
+  /// **'Profile is now hidden'**
+  String get profileHidden;
+
+  /// Notification center title
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationCenter;
+
+  /// All notifications description
+  ///
+  /// In en, this message translates to:
+  /// **'Enable/disable all notification types'**
+  String get allNotificationsDescription;
+
+  /// Tournament notifications description
+  ///
+  /// In en, this message translates to:
+  /// **'New tournament invitations and updates'**
+  String get tournamentNotificationsDescription;
+
+  /// Vote reminder notifications toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Vote Reminders'**
+  String get voteReminderNotifications;
+
+  /// Vote reminder notifications description
+  ///
+  /// In en, this message translates to:
+  /// **'Vote reminder notifications'**
+  String get voteReminderNotificationsDescription;
+
+  /// Win celebration notifications toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Victory Celebrations'**
+  String get winCelebrationNotifications;
+
+  /// Win celebration notifications description
+  ///
+  /// In en, this message translates to:
+  /// **'Victory notifications'**
+  String get winCelebrationNotificationsDescription;
+
+  /// Streak reminder notifications toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Streak Reminders'**
+  String get streakReminderNotifications;
+
+  /// Streak reminder notifications description
+  ///
+  /// In en, this message translates to:
+  /// **'Daily streak reminders'**
+  String get streakReminderNotificationsDescription;
+
+  /// Notifications list title
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsList;
+
+  /// No notifications message
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet'**
+  String get noNotificationsYet;
+
+  /// No notifications description
+  ///
+  /// In en, this message translates to:
+  /// **'New notifications will appear here'**
+  String get newNotificationsWillAppearHere;
+
+  /// Mark all as read button
+  ///
+  /// In en, this message translates to:
+  /// **'Mark All as Read'**
+  String get markAllAsRead;
 }
 
 class _AppLocalizationsDelegate

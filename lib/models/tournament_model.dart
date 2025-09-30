@@ -25,6 +25,10 @@ class TournamentModel {
   final String? creatorId; // Turnuva oluşturan kullanıcı ID'si
   final String tournamentFormat; // 'league', 'elimination', 'hybrid'
   final String? customRules; // Özel kurallar
+  final String language; // Turnuva dili
+  final bool isSystemTournament; // Sistem turnuvası mı?
+  final String? nameKey; // Localization key for name
+  final String? descriptionKey; // Localization key for description
 
   TournamentModel({
     required this.id,
@@ -51,6 +55,10 @@ class TournamentModel {
     this.creatorId,
     this.tournamentFormat = 'league',
     this.customRules,
+    this.language = 'tr',
+    this.isSystemTournament = false,
+    this.nameKey,
+    this.descriptionKey,
   });
 
   factory TournamentModel.fromJson(Map<String, dynamic> json) {
@@ -79,6 +87,10 @@ class TournamentModel {
       creatorId: json['creator_id'],
       tournamentFormat: json['tournament_format'] ?? 'league',
       customRules: json['custom_rules'],
+      language: json['language'] ?? 'tr',
+      isSystemTournament: json['is_system_tournament'] ?? false,
+      nameKey: json['name_key'],
+      descriptionKey: json['description_key'],
     );
   }
 
@@ -108,6 +120,10 @@ class TournamentModel {
       'creator_id': creatorId,
       'tournament_format': tournamentFormat,
       'custom_rules': customRules,
+      'language': language,
+      'is_system_tournament': isSystemTournament,
+      'name_key': nameKey,
+      'description_key': descriptionKey,
     };
   }
 }
