@@ -61,6 +61,7 @@
   "emailNotConfirmed": "❌ E-posta adresinizi onaylamanız gerekiyor!",
   "tooManyRequests": "❌ Çok fazla deneme! Lütfen birkaç dakika sonra tekrar deneyin.",
   "accountDisabled": "❌ Hesabınız devre dışı bırakılmış!",
+  "accountDeletedPleaseRegister": "❌ Hesabınız silinmiş. Lütfen yeni bir hesap açınız.",
   "duplicateData": "❌ Bu bilgiler zaten kullanılıyor! Farklı bilgiler deneyin.",
   "invalidData": "❌ Girdiğiniz bilgilerde hata var! Lütfen kontrol edin.",
   "invalidCredentials": "❌ E-posta veya şifre hatalı!",

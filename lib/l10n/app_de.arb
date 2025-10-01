@@ -66,6 +66,7 @@
   "emailNotConfirmed": "❌ Sie müssen Ihre E-Mail-Adresse bestätigen!",
   "tooManyRequests": "❌ Zu viele Versuche! Bitte warten Sie ein paar Minuten und versuchen Sie es erneut.",
   "accountDisabled": "❌ Ihr Konto wurde deaktiviert!",
+  "accountDeletedPleaseRegister": "❌ Ihr Konto wurde gelöscht. Bitte erstellen Sie ein neues Konto.",
   "duplicateData": "❌ Diese Informationen werden bereits verwendet! Versuchen Sie andere Informationen.",
   "invalidData": "❌ Es gibt einen Fehler in den eingegebenen Informationen! Bitte überprüfen Sie.",
   "invalidCredentials": "❌ E-Mail oder Passwort ist falsch!",

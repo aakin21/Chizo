@@ -6,8 +6,11 @@ import '../widgets/compact_language_selector.dart';
 import '../utils/constants.dart';
 import '../l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';
+import '../utils/navigation.dart';
+import '../services/account_service.dart';
+import '../services/global_language_service.dart';
+import '../services/global_theme_service.dart';
 
 class SettingsTab extends StatefulWidget {
   final Function(Locale)? onLanguageChanged;
@@ -100,100 +103,92 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
   Future<void> _applyTheme(String theme) async {
-    // Save theme preference
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selected_theme', theme);
-    // // print('Save theme: $theme to SharedPreferences'); // Debug
+    // Global theme servisini kullan - restart atmıyor
+    await GlobalThemeService().changeTheme(theme);
     
     setState(() {
       _selectedTheme = theme;
     });
     
-    // Call the theme change callback if provided
-    if (widget.onThemeChanged != null) {
-      widget.onThemeChanged!(theme);
-    }
-    
-    // Verify save was successful
-    final verifyTheme = prefs.getString('selected_theme');
-    // // print('Saved theme verify: $verifyTheme'); // Debug
-    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(AppLocalizations.of(context)!.themeChanged(_getThemeName(theme))),
         backgroundColor: Colors.green,
-        duration: const Duration(seconds: 3),
+        duration: const Duration(seconds: 2),
       ),
     );
-    
-    // Verify the save once more before restart
-    final currentSavedTheme = prefs.getString('selected_theme');
-    // // print('Final verification - theme in storage: $currentSavedTheme');
-    
-    // Force immediate restart for reliable theme change  
-    await Future.delayed(const Duration(milliseconds: 200));
-    _restartApp();
   }
 
-  void _restartApp() {
-    // Force complete app restart for theme change
-    // // print('🔄 RESTARTING APP for theme change: $_selectedTheme');
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
-      ),
-      (route) => false,
-    );
-  }
 
 
   Future<void> _deleteAccount() async {
-    showDialog(
+    String? selectedReason;
+    final reasons = <String>[
+      'Sıkıldım',
+      'Yetersiz uygulama',
+      'Biraz araya ihtiyacım var',
+      'Daha iyi bir uygulama buldum',
+    ];
+
+    await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.deleteAccount),
-        content: Text(AppLocalizations.of(context)!.deleteAccountWarning),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              if (_currentUser != null) {
-                try {
-                  // Delete user account
-                  await Supabase.instance.client.from('users').delete().eq('id', _currentUser!.id);
-                  
-                  // Sign out
-                  await Supabase.instance.client.auth.signOut();
-                  
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(AppLocalizations.of(context)!.accountDeleted)),
-                  );
-                  
-                  // Navigate to login screen and clear all previous routes
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
-                    (route) => false,
-                  );
-                  
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
-                  );
-                }
-              }
-            },
-            child: Text(
-              AppLocalizations.of(context)!.delete,
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setInnerState) {
+            return AlertDialog(
+              title: Text(AppLocalizations.of(context)!.deleteAccount),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(AppLocalizations.of(context)!.deleteAccountWarning),
+                  const SizedBox(height: 12),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('Hesabı silme sebebiniz nedir?', style: Theme.of(context).textTheme.bodyMedium),
+                  ),
+                  const SizedBox(height: 8),
+                  ...reasons.map((r) => RadioListTile<String>(
+                        title: Text(r),
+                        value: r,
+                        groupValue: selectedReason,
+                        onChanged: (val) => setInnerState(() => selectedReason = val),
+                      )),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(AppLocalizations.of(context)!.cancel),
+                ),
+                TextButton(
+                  onPressed: selectedReason == null
+                      ? null
+                      : () async {
+                          Navigator.pop(context);
+                          if (_currentUser == null) return;
+                          try {
+                            await AccountService.deleteAccountCompletely(
+                              reason: selectedReason!,
+                            );
+                          } catch (_) {}
+                          // Redirect to login
+                          final nav = rootNavigatorKey.currentState;
+                          nav?.pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
+                            (route) => false,
+                          );
+                        },
+                  child: Text(
+                    AppLocalizations.of(context)!.delete,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -224,27 +219,28 @@ class _SettingsTabState extends State<SettingsTab> {
               try {
                 // Sign out
                 await Supabase.instance.client.auth.signOut();
-                
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${AppLocalizations.of(context)!.logout} successful!')),
-                  );
-                  
-                  // Navigate to login screen and clear all previous routes
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
-                    (route) => false,
-                  );
-                }
+                // Global navigator ile anında yönlendir
+                final nav = rootNavigatorKey.currentState;
+                nav?.pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged),
+                  ),
+                  (route) => false,
+                );
               } catch (e) {
                 if (mounted) {
                   setState(() {
                     _isLoggingOut = false;
                   });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
-                  );
+                  // Hata durumunda basit fallback
+                  // (SnackBar kullanımı deactivated context hatasına yol açabiliyor)
+                }
+              } finally {
+                // Güvenlik için flag'i sıfırla (navigasyon başarısız olsa da)
+                if (mounted) {
+                  setState(() {
+                    _isLoggingOut = false;
+                  });
                 }
               }
             },
@@ -329,18 +325,8 @@ class _SettingsTabState extends State<SettingsTab> {
                 subtitle: Text('Select your preferred language'),
                 trailing: CompactLanguageSelector(
                   onLanguageChanged: (locale) async {
-                    // Parent'a bildir
-                    if (widget.onLanguageChanged != null) {
-                      widget.onLanguageChanged!(locale);
-                    }
-                    
-                    // Dil değişikliği sonrası kısa bir gecikme
-                    await Future.delayed(const Duration(milliseconds: 100));
-                    
-                    // Sadece bir kez restart
-                    if (mounted) {
-                      _restartApp();
-                    }
+                    // Global dil servisini kullan
+                    await GlobalLanguageService().changeLanguage(locale);
                   },
                 ),
               ),

@@ -71,6 +71,7 @@
   "emailNotConfirmed": "❌ ¡Necesita confirmar su dirección de correo electrónico!",
   "tooManyRequests": "❌ ¡Demasiados intentos! Por favor espere unos minutos e intente de nuevo.",
   "accountDisabled": "❌ ¡Su cuenta ha sido deshabilitada!",
+  "accountDeletedPleaseRegister": "❌ Su cuenta ha sido eliminada. Por favor cree una cuenta nueva.",
   "duplicateData": "❌ ¡Esta información ya está en uso! Intente con información diferente.",
   "invalidData": "❌ ¡Hay un error en la información que ingresó! Por favor verifique.",
   "invalidCredentials": "❌ ¡El correo electrónico o la contraseña son incorrectos!",

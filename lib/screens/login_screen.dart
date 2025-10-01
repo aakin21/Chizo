@@ -4,6 +4,7 @@ import 'home_screen.dart';
 import 'register_screen.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/compact_language_selector.dart';
+import '../services/global_language_service.dart';
 
 class LoginScreen extends StatefulWidget {
   final Function(Locale)? onLanguageChanged;
@@ -50,6 +51,26 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = response.user;
 
       if (user != null) {
+        // Ensure corresponding users row exists; otherwise treat as deleted account
+        final usersRow = await Supabase.instance.client
+            .from('users')
+            .select('id')
+            .eq('auth_id', user.id)
+            .maybeSingle();
+
+        if (usersRow == null) {
+          // Sign out and inform user
+          await Supabase.instance.client.auth.signOut();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.accountDeletedPleaseRegister),
+              backgroundColor: Colors.red,
+            ),
+          );
+          setState(() { _isLoading = false; });
+          return;
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(l10n.loginSuccessful)),
         );
@@ -157,11 +178,8 @@ class _LoginScreenState extends State<LoginScreen> {
         actions: [
           CompactLanguageSelector(
             onLanguageChanged: (locale) async {
-              // CompactLanguageSelector zaten LanguageService.setLanguage() çağırıyor
-              // Sadece parent'a bildir yeterli
-              if (widget.onLanguageChanged != null) {
-                widget.onLanguageChanged!(locale);
-              }
+              // Global dil servisini kullan
+              await GlobalLanguageService().changeLanguage(locale);
             },
           ),
         ],

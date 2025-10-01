@@ -207,6 +207,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get accountDisabled => '❌ Ihr Konto wurde deaktiviert!';
 
   @override
+  String get accountDeletedPleaseRegister =>
+      '❌ Ihr Konto wurde gelöscht. Bitte erstellen Sie ein neues Konto.';
+
+  @override
   String get duplicateData =>
       '❌ Diese Informationen werden bereits verwendet! Versuchen Sie andere Informationen.';
 

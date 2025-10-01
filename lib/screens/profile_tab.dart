@@ -3,7 +3,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 import '../models/user_model.dart';
 import '../services/user_service.dart';
-import '../services/prediction_service.dart';
 import '../services/photo_upload_service.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/constants.dart';
@@ -29,7 +28,6 @@ class _ProfileTabState extends State<ProfileTab> {
   UserModel? currentUser;
   bool isLoading = true;
   bool isUpdating = false;
-  Map<String, dynamic> predictionStats = {};
   List<Map<String, dynamic>> userPhotos = [];
 
   @override
@@ -128,7 +126,6 @@ class _ProfileTabState extends State<ProfileTab> {
     
     try {
       final user = await UserService.getCurrentUser();
-      final stats = await PredictionService.getUserPredictionStats();
       List<Map<String, dynamic>> photos = [];
       
       if (user != null) {
@@ -159,7 +156,6 @@ class _ProfileTabState extends State<ProfileTab> {
       if (mounted) {
         setState(() {
           currentUser = user;
-          predictionStats = stats;
           userPhotos = photos;
           isLoading = false;
         });
@@ -543,92 +539,6 @@ class _ProfileTabState extends State<ProfileTab> {
                                     ],
                                   ),
                                 ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Prediction İstatistikleri
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.predictionStatistics,
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  Column(
-                                    children: [
-                                      Text(
-                                        '${predictionStats['total_predictions'] ?? 0}',
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.purple,
-                                        ),
-                                      ),
-                                      Text(AppLocalizations.of(context)!.totalPredictions),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      Text(
-                                        '${predictionStats['correct_predictions'] ?? 0}',
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.green,
-                                        ),
-                                      ),
-                                      Text(AppLocalizations.of(context)!.correctPredictions),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      Text(
-                                        '${(predictionStats['accuracy'] ?? 0.0).toStringAsFixed(1)}%',
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.orange,
-                                        ),
-                                      ),
-                                      Text(AppLocalizations.of(context)!.accuracy),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.amber[50],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(Icons.monetization_on, color: Colors.amber),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      AppLocalizations.of(context)!.coinsEarnedFromPredictions(predictionStats['total_coins_earned'] ?? 0),
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.amber,
-                                      ),
-                                    ),
-                                  ],
-                                ),
                               ),
                             ],
                           ),
