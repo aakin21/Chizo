@@ -1723,7 +1723,7 @@ class _ReportDialogState extends State<ReportDialog> {
                 selectedReason = value;
               });
             },
-          )).toList(),
+          )),
           
           const SizedBox(height: 16),
           
