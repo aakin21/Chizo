@@ -74,7 +74,7 @@ class NotificationService {
   /// Request notification permissions
   static Future<void> _requestPermissions() async {
     // Request FCM permissions
-    NotificationSettings settings = await _firebaseMessaging.requestPermission(
+    await _firebaseMessaging.requestPermission(
       alert: true,
       announcement: false,
       badge: true,

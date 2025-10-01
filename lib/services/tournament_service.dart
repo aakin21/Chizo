@@ -406,24 +406,6 @@ class TournamentService {
     }
   }
 
-  // Turnuvayı başlat (10000 coin turnuvaları için)
-  static Future<void> _startTournament(String tournamentId) async {
-    try {
-      await _client
-          .from('tournaments')
-          .update({
-            'status': 'active',
-            'current_phase': 'qualifying',
-            'current_round': 1,
-            'phase_start_date': DateTime.now().toIso8601String(),
-          })
-          .eq('id', tournamentId);
-      
-      // // print('Tournament $tournamentId started');
-    } catch (e) {
-      // // print('Error starting tournament: $e');
-    }
-  }
 
   // Kullanıcının katıldığı turnuvaları getir
   static Future<List<TournamentModel>> getUserTournaments() async {

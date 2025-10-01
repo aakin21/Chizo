@@ -462,6 +462,12 @@ abstract class AppLocalizations {
   /// **'❌ Your account has been disabled!'**
   String get accountDisabled;
 
+  /// No description provided for @accountDeletedPleaseRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'❌ Your account has been deleted. Please create a new account.'**
+  String get accountDeletedPleaseRegister;
+
   /// No description provided for @duplicateData.
   ///
   /// In en, this message translates to:

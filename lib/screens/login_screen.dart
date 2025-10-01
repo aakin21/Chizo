@@ -50,6 +50,26 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = response.user;
 
       if (user != null) {
+        // Ensure corresponding users row exists; otherwise treat as deleted account
+        final usersRow = await Supabase.instance.client
+            .from('users')
+            .select('id')
+            .eq('auth_id', user.id)
+            .maybeSingle();
+
+        if (usersRow == null) {
+          // Sign out and inform user
+          await Supabase.instance.client.auth.signOut();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.accountDeletedPleaseRegister),
+              backgroundColor: Colors.red,
+            ),
+          );
+          setState(() { _isLoading = false; });
+          return;
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(l10n.loginSuccessful)),
         );

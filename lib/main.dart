@@ -8,6 +8,7 @@ import 'screens/home_screen.dart';
 import 'services/language_service.dart';
 import 'services/notification_service.dart';
 import 'l10n/app_localizations.dart';
+import 'utils/navigation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -232,6 +233,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
 
     return MaterialApp(
+      navigatorKey: rootNavigatorKey,
       key: _appKey, // Dil değişikliği için key
       title: 'Chizo',
       theme: ThemeData(

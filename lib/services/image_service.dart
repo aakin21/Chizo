@@ -78,7 +78,7 @@ class ImageService {
       // print('About to upload to storage...');
       
       // Storage'a yükle
-      final uploadResult = await _client.storage
+      await _client.storage
           .from('profile-images')
           .uploadBinary(uniqueFileName, fileBytes);
 

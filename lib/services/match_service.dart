@@ -318,7 +318,7 @@ class MatchService {
       
       // // print('Updating with data: $updateData');
       
-      final result = await _client
+      await _client
           .from('users')
           .update(updateData)
           .eq('id', userId);
@@ -430,11 +430,11 @@ class MatchService {
       // // print('Female users with is_visible=true: ${femaleUsers.length}');
       
       // Debug: Tüm kullanıcıları göster
-      final allUsers = await _client.from('users').select();
+      // final allUsers = await _client.from('users').select();
       // // print('Total users in database: ${allUsers.length}');
-      for (var user in allUsers) {
-        // // print('User: ${user['username']}, is_visible: ${user['is_visible']}, gender: ${user['gender']}, country: ${user['country']}');
-      }
+      // for (var user in allUsers) {
+      //   // // print('User: ${user['username']}, is_visible: ${user['is_visible']}, gender: ${user['gender']}, country: ${user['country']}');
+      // }
 
 
       List<MatchModel> createdMatches = [];

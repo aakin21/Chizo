@@ -253,7 +253,7 @@ class UserService {
       // // print('Updating with data: {total_matches: $newMatches, wins: $newWins, updated_at: ${DateTime.now().toIso8601String()}}');
       
       // İstatistikleri güncelle
-      final updateResult = await _client
+      await _client
           .from('users')
           .update({
             'total_matches': newMatches,

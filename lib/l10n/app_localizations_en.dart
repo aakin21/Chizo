@@ -202,6 +202,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountDisabled => '❌ Your account has been disabled!';
 
   @override
+  String get accountDeletedPleaseRegister =>
+      '❌ Your account has been deleted. Please create a new account.';
+
+  @override
   String get duplicateData =>
       '❌ This information is already in use! Try different information.';
 

@@ -240,6 +240,7 @@
   "emailNotConfirmed": "❌ You need to confirm your email address!",
   "tooManyRequests": "❌ Too many attempts! Please wait a few minutes and try again.",
   "accountDisabled": "❌ Your account has been disabled!",
+  "accountDeletedPleaseRegister": "❌ Your account has been deleted. Please create a new account.",
   "duplicateData": "❌ This information is already in use! Try different information.",
   "invalidData": "❌ There is an error in the information you entered! Please check.",
   "invalidCredentials": "❌ Email or password is incorrect!",

@@ -203,6 +203,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get accountDisabled => '❌ Hesabınız devre dışı bırakılmış!';
 
   @override
+  String get accountDeletedPleaseRegister =>
+      '❌ Hesabınız silinmiş. Lütfen yeni bir hesap açınız.';
+
+  @override
   String get duplicateData =>
       '❌ Bu bilgiler zaten kullanılıyor! Farklı bilgiler deneyin.';
 

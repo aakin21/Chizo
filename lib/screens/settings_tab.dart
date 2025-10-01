@@ -8,6 +8,8 @@ import '../l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';
+import '../utils/navigation.dart';
+import '../services/account_service.dart';
 
 class SettingsTab extends StatefulWidget {
   final Function(Locale)? onLanguageChanged;
@@ -115,8 +117,7 @@ class _SettingsTabState extends State<SettingsTab> {
     }
     
     // Verify save was successful
-    final verifyTheme = prefs.getString('selected_theme');
-    // // print('Saved theme verify: $verifyTheme'); // Debug
+    // // print('Saved theme verify: ${prefs.getString('selected_theme')}'); // Debug
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -127,8 +128,7 @@ class _SettingsTabState extends State<SettingsTab> {
     );
     
     // Verify the save once more before restart
-    final currentSavedTheme = prefs.getString('selected_theme');
-    // // print('Final verification - theme in storage: $currentSavedTheme');
+    // // print('Final verification - theme in storage: ${prefs.getString('selected_theme')}');
     
     // Force immediate restart for reliable theme change  
     await Future.delayed(const Duration(milliseconds: 200));
@@ -148,52 +148,73 @@ class _SettingsTabState extends State<SettingsTab> {
 
 
   Future<void> _deleteAccount() async {
-    showDialog(
+    String? selectedReason;
+    final reasons = <String>[
+      'Sıkıldım',
+      'Yetersiz uygulama',
+      'Biraz araya ihtiyacım var',
+      'Daha iyi bir uygulama buldum',
+    ];
+
+    await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.deleteAccount),
-        content: Text(AppLocalizations.of(context)!.deleteAccountWarning),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              if (_currentUser != null) {
-                try {
-                  // Delete user account
-                  await Supabase.instance.client.from('users').delete().eq('id', _currentUser!.id);
-                  
-                  // Sign out
-                  await Supabase.instance.client.auth.signOut();
-                  
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(AppLocalizations.of(context)!.accountDeleted)),
-                  );
-                  
-                  // Navigate to login screen and clear all previous routes
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
-                    (route) => false,
-                  );
-                  
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
-                  );
-                }
-              }
-            },
-            child: Text(
-              AppLocalizations.of(context)!.delete,
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setInnerState) {
+            return AlertDialog(
+              title: Text(AppLocalizations.of(context)!.deleteAccount),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(AppLocalizations.of(context)!.deleteAccountWarning),
+                  const SizedBox(height: 12),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('Hesabı silme sebebiniz nedir?', style: Theme.of(context).textTheme.bodyMedium),
+                  ),
+                  const SizedBox(height: 8),
+                  ...reasons.map((r) => RadioListTile<String>(
+                        title: Text(r),
+                        value: r,
+                        groupValue: selectedReason,
+                        onChanged: (val) => setInnerState(() => selectedReason = val),
+                      )),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(AppLocalizations.of(context)!.cancel),
+                ),
+                TextButton(
+                  onPressed: selectedReason == null
+                      ? null
+                      : () async {
+                          Navigator.pop(context);
+                          if (_currentUser == null) return;
+                          try {
+                            await AccountService.deleteAccountCompletely(
+                              reason: selectedReason!,
+                            );
+                          } catch (_) {}
+                          // Redirect to login
+                          final nav = rootNavigatorKey.currentState;
+                          nav?.pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
+                            (route) => false,
+                          );
+                        },
+                  child: Text(
+                    AppLocalizations.of(context)!.delete,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -224,27 +245,28 @@ class _SettingsTabState extends State<SettingsTab> {
               try {
                 // Sign out
                 await Supabase.instance.client.auth.signOut();
-                
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${AppLocalizations.of(context)!.logout} successful!')),
-                  );
-                  
-                  // Navigate to login screen and clear all previous routes
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
-                    (route) => false,
-                  );
-                }
+                // Global navigator ile anında yönlendir
+                final nav = rootNavigatorKey.currentState;
+                nav?.pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged),
+                  ),
+                  (route) => false,
+                );
               } catch (e) {
                 if (mounted) {
                   setState(() {
                     _isLoggingOut = false;
                   });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
-                  );
+                  // Hata durumunda basit fallback
+                  // (SnackBar kullanımı deactivated context hatasına yol açabiliyor)
+                }
+              } finally {
+                // Güvenlik için flag'i sıfırla (navigasyon başarısız olsa da)
+                if (mounted) {
+                  setState(() {
+                    _isLoggingOut = false;
+                  });
                 }
               }
             },
