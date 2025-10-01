@@ -119,5 +119,55 @@ class UserModel {
   String get winRateString {
     return '${winRate.toStringAsFixed(1)}%';
   }
+
+  UserModel copyWith({
+    String? id,
+    String? username,
+    String? email,
+    int? coins,
+    int? age,
+    String? countryCode,
+    String? genderCode,
+    String? instagramHandle,
+    String? profession,
+    bool? isVisible,
+    bool? showInstagram,
+    bool? showProfession,
+    int? totalMatches,
+    int? wins,
+    int? currentStreak,
+    int? totalStreakDays,
+    DateTime? lastLoginDate,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    List<Map<String, dynamic>>? matchPhotos,
+    List<String>? countryPreferences,
+    List<String>? ageRangePreferences,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      username: username ?? this.username,
+      email: email ?? this.email,
+      coins: coins ?? this.coins,
+      age: age ?? this.age,
+      countryCode: countryCode ?? this.countryCode,
+      genderCode: genderCode ?? this.genderCode,
+      instagramHandle: instagramHandle ?? this.instagramHandle,
+      profession: profession ?? this.profession,
+      isVisible: isVisible ?? this.isVisible,
+      showInstagram: showInstagram ?? this.showInstagram,
+      showProfession: showProfession ?? this.showProfession,
+      totalMatches: totalMatches ?? this.totalMatches,
+      wins: wins ?? this.wins,
+      currentStreak: currentStreak ?? this.currentStreak,
+      totalStreakDays: totalStreakDays ?? this.totalStreakDays,
+      lastLoginDate: lastLoginDate ?? this.lastLoginDate,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      matchPhotos: matchPhotos ?? this.matchPhotos,
+      countryPreferences: countryPreferences ?? this.countryPreferences,
+      ageRangePreferences: ageRangePreferences ?? this.ageRangePreferences,
+    );
+  }
 }
 

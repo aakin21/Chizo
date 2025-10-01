@@ -73,6 +73,8 @@ class UserService {
     String? instagramHandle,
     String? profession,
     bool? isVisible,
+    bool? showInstagram,
+    bool? showProfession,
   }) async {
     try {
       final authUser = _client.auth.currentUser;
@@ -89,6 +91,8 @@ class UserService {
       if (instagramHandle != null) updateData['instagram_handle'] = instagramHandle;
       if (profession != null) updateData['profession'] = profession;
       if (isVisible != null) updateData['is_visible'] = isVisible;
+      if (showInstagram != null) updateData['show_instagram'] = showInstagram;
+      if (showProfession != null) updateData['show_profession'] = showProfession;
 
       await _client
           .from('users')

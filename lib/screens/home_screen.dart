@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'profile_tab.dart';
 import 'turnuva_tab.dart';
 import 'settings_tab.dart';
+import 'store_tab.dart';
 import 'voting_tab.dart';
 import 'leaderboard_tab.dart';
 import 'notification_center_screen.dart';
@@ -251,6 +252,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: const Icon(Icons.notifications, size: 20),
                   style: IconButton.styleFrom(
                     backgroundColor: Colors.purple.withOpacity(0.1),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                    minimumSize: const Size(32, 32),
+                    padding: const EdgeInsets.all(4),
+                  ),
+                ),
+                // Mağaza
+                IconButton(
+                  onPressed: () => _openPage(context, const StoreTab(), "Mağaza"),
+                  icon: const Icon(Icons.store, size: 20),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.orange.withOpacity(0.1),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                     minimumSize: const Size(32, 32),
                     padding: const EdgeInsets.all(4),

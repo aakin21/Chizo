@@ -5,15 +5,11 @@ import '../models/user_model.dart';
 import '../services/user_service.dart';
 import '../services/photo_upload_service.dart';
 import '../l10n/app_localizations.dart';
-import '../utils/constants.dart';
-import '../utils/beautiful_snackbar.dart';
+import 'match_history_screen.dart';
+import 'country_ranking_screen.dart';
 import '../widgets/country_selector.dart';
 import '../widgets/gender_selector.dart';
 import '../services/country_service.dart';
-import '../models/country_model.dart';
-import 'match_history_screen.dart';
-import 'coin_purchase_screen.dart';
-import 'country_ranking_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   final VoidCallback? onRefresh;
@@ -45,81 +41,8 @@ class _ProfileTabState extends State<ProfileTab> {
     }
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Dil değişiminde ülke ismini yeniden yükle
-    if (currentUser?.countryCode != null) {
-      _loadCountryName();
-    }
-  }
 
-  Future<void> _loadCountryName() async {
-    if (currentUser?.countryCode != null) {
-      try {
-        await CountryService.getCountryByCode(
-          currentUser!.countryCode!,
-          Localizations.localeOf(context).languageCode
-        );
-        if (mounted) {
-          setState(() {
-            // Country name loaded
-          });
-        }
-      } catch (e) {
-        // // print('Error loading country name: $e');
-      }
-    }
-  }
 
-  Future<String?> _getCountryName(String countryCode) async {
-    try {
-      final country = await CountryService.getCountryByCode(
-        countryCode,
-        Localizations.localeOf(context).languageCode
-      );
-      return country?.name;
-    } catch (e) {
-      // // print('Error loading country name: $e');
-      return countryCode;
-    }
-  }
-
-  Future<String?> _getGenderName(String genderCode) async {
-    try {
-      // Geçici olarak hardcoded gender names kullan
-      final currentLanguage = Localizations.localeOf(context).languageCode;
-      
-      switch (genderCode) {
-        case 'M':
-          switch (currentLanguage) {
-            case 'tr': return 'Erkek';
-            case 'de': return 'Männlich';
-            case 'es': return 'Masculino';
-            default: return 'Male';
-          }
-        case 'F':
-          switch (currentLanguage) {
-            case 'tr': return 'Kadın';
-            case 'de': return 'Weiblich';
-            case 'es': return 'Femenino';
-            default: return 'Female';
-          }
-        case 'O':
-          switch (currentLanguage) {
-            case 'tr': return 'Diğer';
-            case 'de': return 'Andere';
-            case 'es': return 'Otro';
-            default: return 'Other';
-          }
-        default:
-          return genderCode;
-      }
-    } catch (e) {
-      // // print('Error loading gender name: $e');
-      return genderCode;
-    }
-  }
 
   Future<void> loadUserData() async {
     setState(() => isLoading = true);
@@ -140,17 +63,6 @@ class _ProfileTabState extends State<ProfileTab> {
           return bWinRate.compareTo(aWinRate);
         });
         
-        // Kullanıcının ülke ismini yükle
-        if (user.countryCode != null) {
-          try {
-            await CountryService.getCountryByCode(
-              user.countryCode!,
-              Localizations.localeOf(context).languageCode
-            );
-          } catch (e) {
-            // // print('Error loading country name: $e');
-          }
-        }
       }
       
       if (mounted) {
@@ -243,20 +155,26 @@ class _ProfileTabState extends State<ProfileTab> {
       
       if (result['success']) {
         await loadUserData();
-        BeautifulSnackBar.showSuccess(
-          context,
-          message: '✅ ${AppLocalizations.of(context)!.photoUploaded(result['coinsSpent'])}',
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('✅ ${AppLocalizations.of(context)!.photoUploaded(result['coinsSpent'])}'),
+            backgroundColor: Colors.green,
+          ),
         );
       } else {
-        BeautifulSnackBar.showError(
-          context,
-          message: '${AppLocalizations.of(context)!.error}: ${result['message']}',
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${AppLocalizations.of(context)!.error}: ${result['message']}'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } catch (e) {
-      BeautifulSnackBar.showError(
-        context,
-        message: '${AppLocalizations.of(context)!.error}: $e',
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${AppLocalizations.of(context)!.error}: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
       setState(() => isUpdating = false);
@@ -284,20 +202,26 @@ class _ProfileTabState extends State<ProfileTab> {
                 
                 if (result['success']) {
                   await loadUserData();
-                  BeautifulSnackBar.showSuccess(
-                    context,
-                    message: AppLocalizations.of(context)!.photoDeleted,
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(AppLocalizations.of(context)!.photoDeleted),
+                      backgroundColor: Colors.green,
+                    ),
                   );
                 } else {
-                  BeautifulSnackBar.showError(
-                    context,
-                    message: '${AppLocalizations.of(context)!.error}: ${result['message']}',
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('${AppLocalizations.of(context)!.error}: ${result['message']}'),
+                      backgroundColor: Colors.red,
+                    ),
                   );
                 }
               } catch (e) {
-                BeautifulSnackBar.showError(
-                  context,
-                  message: '${AppLocalizations.of(context)!.error}: $e',
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('${AppLocalizations.of(context)!.error}: $e'),
+                    backgroundColor: Colors.red,
+                  ),
                 );
               } finally {
                 setState(() => isUpdating = false);
@@ -401,89 +325,6 @@ class _ProfileTabState extends State<ProfileTab> {
 
                       const SizedBox(height: 24),
 
-                      // Kullanıcı Bilgileri
-                      _buildEditableInfoCard(AppLocalizations.of(context)!.username, currentUser!.username, 'username'),
-                      _buildEditableInfoCard(AppLocalizations.of(context)!.email, currentUser!.email, 'email'),
-
-                      if (currentUser!.age != null)
-                        _buildEditableInfoCard(AppLocalizations.of(context)!.age, '${currentUser!.age}', 'age'),
-                      if (currentUser!.age == null)
-                        _buildAddInfoButton(AppLocalizations.of(context)!.addAge, Icons.cake, Colors.orange, () => _showEditDialog('age', '')),
-
-                      if (currentUser!.countryCode != null)
-                        FutureBuilder<String?>(
-                          future: _getCountryName(currentUser!.countryCode!),
-                          builder: (context, snapshot) {
-                            final countryName = snapshot.data ?? currentUser!.countryCode!;
-                            return _buildEditableInfoCard(AppLocalizations.of(context)!.country, countryName, 'country');
-                          },
-                        ),
-                      if (currentUser!.countryCode == null)
-                        _buildAddInfoButton(AppLocalizations.of(context)!.addCountry, Icons.public, Colors.blue, () => _showEditDialog('country', '')),
-
-                      if (currentUser!.genderCode != null)
-                        FutureBuilder<String?>(
-                          future: _getGenderName(currentUser!.genderCode!),
-                          builder: (context, snapshot) {
-                            final genderName = snapshot.data ?? currentUser!.genderCode!;
-                            return _buildEditableInfoCard('Gender', genderName, 'gender');
-                          },
-                        ),
-                      if (currentUser!.genderCode == null)
-                        _buildAddInfoButton('Add Gender', Icons.person, Colors.purple, () => _showEditDialog('gender', '')),
-
-                      // Coin Bilgisi ve İşlemleri - Gender'dan sonra
-                      _buildInfoCard(AppLocalizations.of(context)!.coin, '${currentUser!.coins}'),
-
-                      // Coin İşlemleri
-                      Card(
-                        child: ListTile(
-                          leading: const Icon(
-                            Icons.local_activity,
-                            color: Colors.amber,
-                            size: 28,
-                          ),
-                          title: Text(
-                            AppLocalizations.of(context)!.purchaseCoinPackage,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          subtitle: Text(
-                            AppLocalizations.of(context)!.purchaseCoinPackageSubtitle,
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                          trailing: const Icon(Icons.arrow_forward_ios),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const CoinPurchaseScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Instagram ve Meslek Bilgileri
-                      if (currentUser!.instagramHandle != null)
-                        _buildEditableInfoCard(AppLocalizations.of(context)!.instagramAccount, '@${currentUser!.instagramHandle!}', 'instagram'),
-                      if (currentUser!.instagramHandle == null)
-                        _buildAddInfoButton(AppLocalizations.of(context)!.addInstagram, Icons.camera_alt, Colors.pink, () => _showEditDialog('instagram', '')),
-
-                      if (currentUser!.profession != null)
-                        _buildEditableInfoCard(AppLocalizations.of(context)!.profession, currentUser!.profession!, 'profession'),
-                      if (currentUser!.profession == null)
-                        _buildAddInfoButton(AppLocalizations.of(context)!.addProfession, Icons.work, Colors.blue, () => _showEditDialog('profession', '')),
-
-                      const SizedBox(height: 24),
-
-
-                      const SizedBox(height: 24),
-
                       // İstatistikler
                       Card(
                         child: Padding(
@@ -493,9 +334,12 @@ class _ProfileTabState extends State<ProfileTab> {
                             children: [
                               Text(
                                 AppLocalizations.of(context)!.statistics,
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: 16),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
@@ -544,6 +388,195 @@ class _ProfileTabState extends State<ProfileTab> {
                           ),
                         ),
                       ),
+
+                      const SizedBox(height: 24),
+
+                      // Kullanıcı Adı
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.person,
+                            color: Colors.blue,
+                            size: 28,
+                          ),
+                          title: Text(AppLocalizations.of(context)!.username),
+                          subtitle: Text(currentUser!.username),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit, size: 20),
+                                onPressed: () => _showEditDialog('username', currentUser!.username),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // E-posta
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.email,
+                            color: Colors.green,
+                            size: 28,
+                          ),
+                          title: Text(AppLocalizations.of(context)!.email),
+                          subtitle: Text(currentUser!.email),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit, size: 20),
+                                onPressed: () => _showEditDialog('email', currentUser!.email),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Coin Bilgisi
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.monetization_on,
+                            color: Colors.amber,
+                            size: 28,
+                          ),
+                          title: Text(AppLocalizations.of(context)!.coin),
+                          subtitle: Text('${currentUser!.coins}'),
+                          trailing: const Icon(Icons.info_outline),
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Yaş Seçimi
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.cake,
+                            color: Colors.orange,
+                            size: 28,
+                          ),
+                          title: const Text('Yaş'),
+                          subtitle: Text(currentUser!.age?.toString() ?? 'Yaşınızı seçin'),
+                          trailing: const Icon(Icons.arrow_forward_ios),
+                          onTap: () => _showAgeSelector(),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Ülke Seçimi
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.public,
+                            color: Colors.blue,
+                            size: 28,
+                          ),
+                          title: const Text('Ülke'),
+                          subtitle: FutureBuilder<String?>(
+                            future: _getCountryName(currentUser!.countryCode),
+                            builder: (context, snapshot) {
+                              return Text(snapshot.data ?? 'Ülkenizi seçin');
+                            },
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios),
+                          onTap: () => _showCountrySelector(),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Cinsiyet Seçimi
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.person,
+                            color: Colors.purple,
+                            size: 28,
+                          ),
+                          title: const Text('Cinsiyet'),
+                          subtitle: FutureBuilder<String?>(
+                            future: _getGenderName(currentUser!.genderCode),
+                            builder: (context, snapshot) {
+                              return Text(snapshot.data ?? 'Cinsiyetinizi seçin');
+                            },
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios),
+                          onTap: () => _showGenderSelector(),
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Instagram Hesabı
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.camera_alt,
+                            color: Colors.pink,
+                            size: 28,
+                          ),
+                          title: Text(AppLocalizations.of(context)!.instagramAccount),
+                          subtitle: Text(currentUser!.instagramHandle != null ? '@${currentUser!.instagramHandle!}' : 'Instagram hesabınızı ekleyin'),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Switch(
+                                value: _getFieldVisibility('instagram'),
+                                onChanged: (value) => _toggleFieldVisibility('instagram', value),
+                                activeColor: Colors.green,
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                icon: const Icon(Icons.edit, size: 20),
+                                onPressed: () => _showEditDialog('instagram', currentUser!.instagramHandle ?? ''),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Meslek
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.work,
+                            color: Colors.blue,
+                            size: 28,
+                          ),
+                          title: Text(AppLocalizations.of(context)!.profession),
+                          subtitle: Text(currentUser!.profession ?? 'Mesleğinizi ekleyin'),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Switch(
+                                value: _getFieldVisibility('profession'),
+                                onChanged: (value) => _toggleFieldVisibility('profession', value),
+                                activeColor: Colors.green,
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                icon: const Icon(Icons.edit, size: 20),
+                                onPressed: () => _showEditDialog('profession', currentUser!.profession ?? ''),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+
 
                       const SizedBox(height: 24),
 
@@ -611,85 +644,6 @@ class _ProfileTabState extends State<ProfileTab> {
                         ),
                       ),
 
-                      const SizedBox(height: 16),
-
-                      // Ülke Seçimi Butonu
-                      Card(
-                        child: ListTile(
-                          leading: const Icon(
-                            Icons.public,
-                            color: Colors.blue,
-                            size: 28,
-                          ),
-                          title: Text(
-                            AppLocalizations.of(context)!.countrySelection,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          trailing: const Icon(Icons.arrow_forward_ios),
-                          onTap: isUpdating ? null : _showCountrySelectionDialog,
-                        ),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // Yaş Aralığı Seçimi Butonu
-                      Card(
-                        child: ListTile(
-                          leading: const Icon(
-                            Icons.cake,
-                            color: Colors.orange,
-                            size: 28,
-                          ),
-                          title: Text(
-                            AppLocalizations.of(context)!.ageRangeSelection,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          trailing: const Icon(Icons.arrow_forward_ios),
-                          onTap: isUpdating ? null : _showAgeRangeSelectionDialog,
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Matchlere Açık Toggle
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.visibleInMatches,
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                              ),
-                              Switch(
-                                value: currentUser?.isVisible ?? false,
-                                onChanged: (value) async {
-                                  final success = await UserService.updateProfile(isVisible: value);
-                                  if (success) {
-                                    await loadUserData();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          value
-                                            ? AppLocalizations.of(context)!.nowVisibleInMatches
-                                            : AppLocalizations.of(context)!.removedFromMatches
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
 
                       const SizedBox(height: 24),
 
@@ -700,44 +654,59 @@ class _ProfileTabState extends State<ProfileTab> {
     );
   }
 
-  Widget _buildInfoCard(String label, String value) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        title: Text(label),
-        subtitle: Text(value),
-      ),
-    );
+
+
+  // Instagram ve meslek görünürlük durumunu kontrol et
+  bool _getFieldVisibility(String field) {
+    if (field == 'instagram') {
+      return currentUser?.showInstagram ?? false;
+    } else if (field == 'profession') {
+      return currentUser?.showProfession ?? false;
+    }
+    return true;
   }
 
-  Widget _buildEditableInfoCard(String label, String value, String field) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        title: Text(label),
-        subtitle: Text(value),
-        trailing: IconButton(
-          icon: const Icon(Icons.edit, size: 20),
-          onPressed: () => _showEditDialog(field, value),
-        ),
-      ),
-    );
-  }
+  // Instagram ve meslek görünürlüğünü değiştir
+  Future<void> _toggleFieldVisibility(String field, bool value) async {
+    try {
+      setState(() {
+        isUpdating = true;
+      });
 
-  Widget _buildAddInfoButton(String title, IconData icon, Color color, VoidCallback onTap) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ElevatedButton.icon(
-        onPressed: onTap,
-        icon: Icon(icon, size: 20),
-        label: Text(title),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          foregroundColor: Theme.of(context).colorScheme.onPrimary,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      if (field == 'instagram') {
+        await UserService.updateProfile(showInstagram: value);
+        setState(() {
+          currentUser = currentUser?.copyWith(showInstagram: value);
+        });
+      } else if (field == 'profession') {
+        await UserService.updateProfile(showProfession: value);
+        setState(() {
+          currentUser = currentUser?.copyWith(showProfession: value);
+        });
+      }
+
+      setState(() {
+        isUpdating = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(value ? '${field == 'instagram' ? 'Instagram' : 'Meslek'} bilgisi matchlerde görünür' : '${field == 'instagram' ? 'Instagram' : 'Meslek'} bilgisi matchlerde gizli'),
+          backgroundColor: Colors.green,
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      setState(() {
+        isUpdating = false;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Güncelleme sırasında hata oluştu'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void _showEditDialog(String field, String currentValue) {
@@ -753,22 +722,6 @@ class _ProfileTabState extends State<ProfileTab> {
       case 'username':
         title = AppLocalizations.of(context)!.editUsername;
         hint = AppLocalizations.of(context)!.enterUsername;
-        icon = Icons.person;
-        break;
-      case 'age':
-        title = AppLocalizations.of(context)!.editAge;
-        hint = AppLocalizations.of(context)!.enterAge;
-        icon = Icons.cake;
-        keyboardType = TextInputType.number;
-        break;
-      case 'country':
-        title = AppLocalizations.of(context)!.selectCountry;
-        hint = AppLocalizations.of(context)!.selectYourCountry;
-        icon = Icons.public;
-        break;
-      case 'gender':
-        title = 'Select Gender';
-        hint = 'Select your gender';
         icon = Icons.person;
         break;
       case 'instagram':
@@ -791,22 +744,8 @@ class _ProfileTabState extends State<ProfileTab> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-            if (field == 'country')
-              CountrySelector(
-                key: ValueKey(Localizations.localeOf(context).languageCode),
-                selectedCountryCode: currentValue.isNotEmpty ? currentValue : null,
-                onCountrySelected: (countryCode) {
-                  controller.text = countryCode ?? '';
-                },
-              )
-            else if (field == 'gender')
-              GenderSelector(
-                key: ValueKey(Localizations.localeOf(context).languageCode),
-                selectedGenderCode: currentValue.isNotEmpty ? currentValue : null,
-                onGenderSelected: (genderCode) {
-                  controller.text = genderCode ?? '';
-                },
-              )
+            if (field == 'country' || field == 'gender')
+              const Text('Bu özellik ayarlar sayfasından yönetilebilir')
             else
               TextField(
                 controller: controller,
@@ -846,18 +785,6 @@ class _ProfileTabState extends State<ProfileTab> {
       switch (field) {
         case 'username':
           success = await UserService.updateProfile(username: value);
-          break;
-        case 'age':
-          final age = int.tryParse(value);
-          if (age != null) {
-            success = await UserService.updateProfile(age: age);
-          }
-          break;
-        case 'country':
-          success = await UserService.updateProfile(countryCode: value);
-          break;
-        case 'gender':
-          success = await UserService.updateProfile(genderCode: value);
           break;
         case 'instagram':
           success = await UserService.updateProfile(instagramHandle: value);
@@ -989,361 +916,8 @@ class _ProfileTabState extends State<ProfileTab> {
     await loadUserData();
   }
 
-  // Ülke seçimi dialog'u
-  Future<void> _showCountrySelectionDialog() async {
-    if (currentUser == null) return;
-    
-    // Mevcut dilde ülke listesini al
-    final countries = await CountryService.getCountriesByLanguage(
-      Localizations.localeOf(context).languageCode
-    );
-    final countryCodes = countries.map((c) => c.code).toList();
-    
-    // Mevcut seçili ülkeleri al (eğer yoksa tüm ülkeler seçili olsun)
-    List<String> selectedCountries = currentUser!.countryPreferences ?? countryCodes;
-    
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: Text(AppLocalizations.of(context)!.countrySelection),
-          content: SizedBox(
-            width: double.maxFinite,
-            height: 400,
-            child: Column(
-              children: [
-                Text(
-                  AppLocalizations.of(context)!.countrySelection,
-                  style: const TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: FutureBuilder<List<Country>>(
-                    future: CountryService.getCountriesByLanguage(
-                      Localizations.localeOf(context).languageCode
-                    ),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      
-                      if (!snapshot.hasData) {
-                        return const Center(child: Text('Ülkeler yüklenemedi'));
-                      }
-                      
-                      final countries = snapshot.data!;
-                      return ListView.builder(
-                        itemCount: countries.length,
-                        itemBuilder: (context, index) {
-                          final country = countries[index];
-                          final isSelected = selectedCountries.contains(country.code);
-                          
-                          return CheckboxListTile(
-                            title: Text(country.name),
-                            value: isSelected,
-                            onChanged: (value) {
-                              setDialogState(() {
-                                if (value == true) {
-                                  selectedCountries.add(country.code);
-                                } else {
-                                  selectedCountries.remove(country.code);
-                                }
-                              });
-                            },
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(AppLocalizations.of(context)!.cancel),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.pop(context);
-                await _updateCountryPreferences(selectedCountries);
-              },
-              child: Text(AppLocalizations.of(context)!.save),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
-  // Ülke tercihlerini güncelle
-  Future<void> _updateCountryPreferences(List<String> countries) async {
-    setState(() => isUpdating = true);
-    
-    try {
-      final success = await UserService.updateCountryPreferences(countries);
-      
-      if (success) {
-        await loadUserData();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.countryPreferencesUpdated),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.countryPreferencesUpdateFailed),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
-      );
-    } finally {
-      setState(() => isUpdating = false);
-    }
-  }
 
-  // Yaş aralığı seçimi dialog'u
-  Future<void> _showAgeRangeSelectionDialog() async {
-    if (currentUser == null) return;
-    
-    // Mevcut seçili yaş aralıklarını al (eğer yoksa tüm yaş aralıkları seçili olsun)
-    List<String> selectedAgeRanges = currentUser!.ageRangePreferences ?? AppConstants.ageRanges;
-    
-    // Mevcut seçili yaş aralıklarından min ve max yaşları hesapla
-    int minAge = 18;
-    int maxAge = 100;
-    
-    if (selectedAgeRanges.isNotEmpty && selectedAgeRanges.length < AppConstants.ageRanges.length) {
-      // Seçili yaş aralıklarından min ve max hesapla
-      List<int> selectedAges = [];
-      for (String range in selectedAgeRanges) {
-        if (range.contains('-')) {
-          final parts = range.split('-');
-          if (parts.length == 2) {
-            final start = int.tryParse(parts[0].trim());
-            final end = int.tryParse(parts[1].trim());
-            if (start != null && end != null) {
-              selectedAges.addAll(List.generate(end - start + 1, (i) => start + i));
-            }
-          }
-        }
-      }
-      if (selectedAges.isNotEmpty) {
-        selectedAges.sort();
-        minAge = selectedAges.first;
-        maxAge = selectedAges.last;
-      }
-    }
-    
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: Text(AppLocalizations.of(context)!.ageRangeSelection),
-          content: SizedBox(
-            width: double.maxFinite,
-            height: 250,
-            child: SingleChildScrollView(
-              child: Column(
-              children: [
-                const SizedBox(height: 20),
-                // Süper şık RangeSlider ile yaş aralığı seçimi
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Theme.of(context).colorScheme.surface,
-                        Theme.of(context).colorScheme.surface.withOpacity(0.8),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                      width: 1.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      // Yaş aralığı göstergesi - daha şık
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Theme.of(context).colorScheme.primary,
-                              Theme.of(context).colorScheme.primary.withOpacity(0.8),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(25),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.cake,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '$minAge - $maxAge',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 25),
-                      // Süper şık RangeSlider
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: RangeSlider(
-                          values: RangeValues(minAge.toDouble(), maxAge.toDouble()),
-                          min: 18,
-                          max: 100,
-                          divisions: 82,
-                          activeColor: Theme.of(context).colorScheme.primary,
-                          inactiveColor: Theme.of(context).colorScheme.outline.withOpacity(0.2),
-                          overlayColor: MaterialStateProperty.all(
-                            Theme.of(context).colorScheme.primary.withOpacity(0.15),
-                          ),
-                          onChanged: (values) {
-                            setDialogState(() {
-                              minAge = values.start.round();
-                              maxAge = values.end.round();
-                            });
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      // Min ve max yaş göstergeleri - daha şık
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              '18',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              '100',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(AppLocalizations.of(context)!.cancel),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.pop(context);
-                // Yaş aralığını string listesine çevir
-                List<String> newAgeRanges = [];
-                for (int age = minAge; age <= maxAge; age++) {
-                  newAgeRanges.add('$age-$age');
-                }
-                await _updateAgeRangePreferences(newAgeRanges);
-              },
-              child: Text(AppLocalizations.of(context)!.save),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Yaş aralığı tercihlerini güncelle
-  Future<void> _updateAgeRangePreferences(List<String> ageRanges) async {
-    setState(() => isUpdating = true);
-    
-    try {
-      final success = await UserService.updateAgeRangePreferences(ageRanges);
-      
-      if (success) {
-        await loadUserData();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.ageRangePreferencesUpdated),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.ageRangePreferencesUpdateFailed),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
-      );
-    } finally {
-      setState(() => isUpdating = false);
-    }
-  }
 
   /// Build photo grid showing only existing photos and next available slot
   Widget _buildPhotoGrid() {
@@ -1657,5 +1231,136 @@ class _ProfileTabState extends State<ProfileTab> {
         ],
       ),
     );
+  }
+
+  // Yaş seçici
+  void _showAgeSelector() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Yaşınızı Seçin'),
+        content: SizedBox(
+          width: 300,
+          height: 400,
+          child: ListView.builder(
+            itemCount: 50,
+            itemBuilder: (context, index) {
+              final age = index + 18;
+              return ListTile(
+                title: Text('$age yaş'),
+                selected: currentUser?.age == age,
+                onTap: () async {
+                  Navigator.pop(context);
+                  await _updateAge(age);
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Ülke seçici
+  void _showCountrySelector() {
+    showDialog(
+      context: context,
+      builder: (context) => CountrySelector(
+        onCountrySelected: (country) async {
+          Navigator.pop(context);
+          await _updateCountry(country ?? '');
+        },
+      ),
+    );
+  }
+
+  // Cinsiyet seçici
+  void _showGenderSelector() {
+    showDialog(
+      context: context,
+      builder: (context) => GenderSelector(
+        onGenderSelected: (gender) async {
+          Navigator.pop(context);
+          await _updateGender(gender ?? '');
+        },
+      ),
+    );
+  }
+
+  // Yaş güncelleme
+  Future<void> _updateAge(int age) async {
+    try {
+      final success = await UserService.updateProfile(age: age);
+      if (success) {
+        await loadUserData();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Yaş bilgisi güncellendi')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Güncelleme sırasında hata oluştu')),
+      );
+    }
+  }
+
+  // Ülke güncelleme
+  Future<void> _updateCountry(String countryCode) async {
+    try {
+      final success = await UserService.updateProfile(countryCode: countryCode);
+      if (success) {
+        await loadUserData();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ülke bilgisi güncellendi')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Güncelleme sırasında hata oluştu')),
+      );
+    }
+  }
+
+  // Cinsiyet güncelleme
+  Future<void> _updateGender(String genderCode) async {
+    try {
+      final success = await UserService.updateProfile(genderCode: genderCode);
+      if (success) {
+        await loadUserData();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Cinsiyet bilgisi güncellendi')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Güncelleme sırasında hata oluştu')),
+      );
+    }
+  }
+
+  // Ülke adını getir
+  Future<String?> _getCountryName(String? countryCode) async {
+    if (countryCode == null) return null;
+    try {
+      final country = await CountryService.getCountryByCode(countryCode, 'tr');
+      return country?.name ?? countryCode;
+    } catch (e) {
+      return countryCode;
+    }
+  }
+
+  // Cinsiyet adını getir
+  Future<String?> _getGenderName(String? genderCode) async {
+    if (genderCode == null) return null;
+    switch (genderCode) {
+      case 'M':
+        return 'Erkek';
+      case 'F':
+        return 'Kadın';
+      case 'O':
+        return 'Diğer';
+      default:
+        return genderCode;
+    }
   }
 }

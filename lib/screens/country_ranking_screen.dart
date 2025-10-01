@@ -53,11 +53,10 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.countryRanking),
+        title: Text(AppLocalizations.of(context)!.countryRanking),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         elevation: 0,

@@ -155,33 +155,6 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
               );
             }),
             
-            const SizedBox(height: 24),
-            
-            // Bilgi kartı
-            Card(
-              color: Colors.blue[50],
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.coinUsage,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text('• ${AppLocalizations.of(context)!.instagramView}'),
-                    Text('• ${AppLocalizations.of(context)!.professionView}'),
-                    Text('• ${AppLocalizations.of(context)!.statsView}'),
-                    Text('• ${AppLocalizations.of(context)!.tournamentFees}'),
-                    Text('• ${AppLocalizations.of(context)!.premiumFilters}'),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),

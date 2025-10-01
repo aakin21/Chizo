@@ -775,5 +775,26 @@
   "markAllAsRead": "Tümünü Okundu İşaretle",
   "@markAllAsRead": {
     "description": "Tümünü okundu işaretle butonu"
-  }
+  },
+  "visibleInMatchesSubtitle": "Diğer kullanıcılar sizi görebilir",
+  "store": "Mağaza",
+  "purchaseCoins": "Coin Satın Al",
+  "watchAds": "Reklam İzle",
+  "watchAdForCoins": "Reklam İzleyerek Coin Kazan",
+  "watchAdForCoinsSubtitle": "Reklam izleyerek ücretsiz coin kazanın",
+  "watchAdForCoinsDialog": "Reklam izleyerek 5 coin kazanabilirsiniz. Devam etmek istiyor musunuz?",
+  "watchAd": "Reklam İzle",
+  "adWatchedSuccess": "Reklam izlendi! 5 coin kazandınız",
+  "specialPackages": "Özel Paketler",
+  "starterPackage": "Başlangıç Paketi",
+  "starterPackageDescription": "Yeni başlayanlar için ideal",
+  "premiumPackage": "Premium Paket",
+  "premiumPackageDescription": "Daha fazla coin, daha fazla eğlence",
+  "vipPackage": "VIP Paket",
+  "vipPackageDescription": "En iyi değer, maksimum coin",
+  "purchasePackage": "Paket Satın Al",
+  "purchasePackageDescription": "Bu paketi satın almak istediğinizden emin misiniz?",
+  "package": "Paket",
+  "price": "Fiyat",
+  "packagePurchasedSuccess": "Paket başarıyla satın alındı!"
 }

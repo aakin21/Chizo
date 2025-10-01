@@ -8,22 +8,22 @@ class PaymentService {
   static const Map<String, Map<String, dynamic>> coinPackages = {
     'small': {
       'coins': 100,
-      'price': 9.99,
+      'price': 0.99,
       'description': '100 Coin',
     },
     'medium': {
       'coins': 250,
-      'price': 19.99,
+      'price': 1.99,
       'description': '250 Coin',
     },
     'large': {
       'coins': 500,
-      'price': 34.99,
+      'price': 3.49,
       'description': '500 Coin',
     },
     'xlarge': {
       'coins': 1000,
-      'price': 59.99,
+      'price': 5.99,
       'description': '1000 Coin',
     },
   };
