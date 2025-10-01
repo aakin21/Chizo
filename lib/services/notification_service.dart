@@ -24,7 +24,7 @@ class NotificationService {
       try {
         await Firebase.initializeApp();
       } catch (e) {
-        print('Firebase initialization failed (web platform): $e');
+        // // print('Firebase initialization failed (web platform): $e');
         // Web'de Firebase olmadan devam et
         _isInitialized = true;
         return;
@@ -44,7 +44,7 @@ class NotificationService {
       
       _isInitialized = true;
     } catch (e) {
-      print('❌ NotificationService initialization failed: $e');
+      // // print('❌ NotificationService initialization failed: $e');
     }
   }
 
@@ -84,7 +84,7 @@ class NotificationService {
       sound: true,
     );
 
-    print('Notification permission status: ${settings.authorizationStatus}');
+    // // print('Notification permission status: ${settings.authorizationStatus}');
 
     // Request local notification permissions for Android
     await _localNotifications
@@ -96,12 +96,12 @@ class NotificationService {
   static Future<void> _getFCMToken() async {
     try {
       _fcmToken = await _firebaseMessaging.getToken();
-      print('FCM Token: $_fcmToken');
+      // // print('FCM Token: $_fcmToken');
       
       // Save token to Supabase
       await _saveTokenToDatabase(_fcmToken);
     } catch (e) {
-      print('❌ Failed to get FCM token: $e');
+      // // print('❌ Failed to get FCM token: $e');
     }
   }
 
@@ -120,7 +120,7 @@ class NotificationService {
       });
 
     } catch (e) {
-      print('❌ Failed to save FCM token: $e');
+      // // print('❌ Failed to save FCM token: $e');
     }
   }
 
@@ -138,7 +138,7 @@ class NotificationService {
 
   /// Handle foreground messages
   static Future<void> _handleForegroundMessage(RemoteMessage message) async {
-    print('📱 Foreground message received: ${message.messageId}');
+    // // print('📱 Foreground message received: ${message.messageId}');
     
     // Show local notification
     await _showLocalNotification(message);
@@ -149,7 +149,7 @@ class NotificationService {
 
   /// Handle notification tap
   static Future<void> _handleNotificationTap(RemoteMessage message) async {
-    print('👆 Notification tapped: ${message.messageId}');
+    // // print('👆 Notification tapped: ${message.messageId}');
     
     // Handle navigation based on notification data
     _handleNotificationNavigation(message.data);
@@ -157,7 +157,7 @@ class NotificationService {
 
   /// Handle local notification tap
   static void _onNotificationTapped(NotificationResponse response) {
-    print('👆 Local notification tapped: ${response.id}');
+    // // print('👆 Local notification tapped: ${response.id}');
     
     // Handle navigation based on notification data
     if (response.payload != null) {
@@ -173,18 +173,18 @@ class NotificationService {
     switch (type) {
       case NotificationTypes.tournamentUpdate:
         // Navigate to tournament tab
-        print('Navigate to tournament');
+        // // print('Navigate to tournament');
         break;
       case NotificationTypes.votingResult:
         // Navigate to voting tab
-        print('Navigate to voting');
+        // // print('Navigate to voting');
         break;
       case NotificationTypes.coinReward:
         // Navigate to profile tab
-        print('Navigate to profile');
+        // // print('Navigate to profile');
         break;
       default:
-        print('Navigate to home');
+        // // print('Navigate to home');
         break;
     }
   }
@@ -242,7 +242,7 @@ class NotificationService {
 
       await _supabase.from('notifications').insert(notification.toJson());
     } catch (e) {
-      print('❌ Failed to save notification: $e');
+      // // print('❌ Failed to save notification: $e');
     }
   }
 
@@ -266,7 +266,7 @@ class NotificationService {
           .map((json) => NotificationModel.fromJson(json))
           .toList();
     } catch (e) {
-      print('❌ Failed to get notifications: $e');
+      // // print('❌ Failed to get notifications: $e');
       return [];
     }
   }
@@ -284,7 +284,7 @@ class NotificationService {
 
       return true;
     } catch (e) {
-      print('❌ Failed to mark notification as read: $e');
+      // // print('❌ Failed to mark notification as read: $e');
       return false;
     }
   }
@@ -306,7 +306,7 @@ class NotificationService {
 
       return true;
     } catch (e) {
-      print('❌ Failed to mark all notifications as read: $e');
+      // // print('❌ Failed to mark all notifications as read: $e');
       return false;
     }
   }
@@ -325,7 +325,7 @@ class NotificationService {
 
       return (response as List).length;
     } catch (e) {
-      print('❌ Failed to get unread count: $e');
+      // // print('❌ Failed to get unread count: $e');
       return 0;
     }
   }
@@ -364,7 +364,7 @@ class NotificationService {
       );
 
     } catch (e) {
-      print('❌ Failed to send test notification: $e');
+      // // print('❌ Failed to send test notification: $e');
     }
   }
 
@@ -373,7 +373,7 @@ class NotificationService {
     try {
       await _firebaseMessaging.subscribeToTopic(topic);
     } catch (e) {
-      print('❌ Failed to subscribe to topic: $e');
+      // // print('❌ Failed to subscribe to topic: $e');
     }
   }
 
@@ -382,7 +382,7 @@ class NotificationService {
     try {
       await _firebaseMessaging.unsubscribeFromTopic(topic);
     } catch (e) {
-      print('❌ Failed to unsubscribe from topic: $e');
+      // // print('❌ Failed to unsubscribe from topic: $e');
     }
   }
 
@@ -392,7 +392,7 @@ class NotificationService {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getBool('notification_$type');
     } catch (e) {
-      print('❌ Failed to get notification preference: $e');
+      // // print('❌ Failed to get notification preference: $e');
       return null;
     }
   }
@@ -403,7 +403,7 @@ class NotificationService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('notification_$type', enabled);
     } catch (e) {
-      print('❌ Failed to update notification preference: $e');
+      // // print('❌ Failed to update notification preference: $e');
     }
   }
 }
@@ -412,5 +412,5 @@ class NotificationService {
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  print('📱 Background message received: ${message.messageId}');
+  // // print('📱 Background message received: ${message.messageId}');
 }

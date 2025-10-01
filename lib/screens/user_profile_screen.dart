@@ -39,7 +39,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Error loading photo stats: $e');
+      // print('Error loading photo stats: $e');
       setState(() {
         _isLoading = false;
       });

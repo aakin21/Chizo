@@ -22,7 +22,7 @@ class GenderService {
       }
       return uniqueGenders.values.toList();
     } catch (e) {
-      print('Error fetching genders: $e');
+      // print('Error fetching genders: $e');
       return [];
     }
   }
@@ -36,7 +36,7 @@ class GenderService {
         orElse: () => Gender(code: code, name: code),
       );
     } catch (e) {
-      print('Error fetching gender by code: $e');
+      // print('Error fetching gender by code: $e');
       return Gender(code: code, name: code);
     }
   }

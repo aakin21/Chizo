@@ -50,7 +50,7 @@ class MatchHistoryService {
 
       return matchHistory;
     } catch (e) {
-      print('Error getting match history: $e');
+      // print('Error getting match history: $e');
       return [];
     }
   }
@@ -92,7 +92,7 @@ class MatchHistoryService {
         'most_frequent_count': maxCount,
       };
     } catch (e) {
-      print('Error getting match stats: $e');
+      // print('Error getting match stats: $e');
       return {
         'total_matches': 0,
         'wins': 0,

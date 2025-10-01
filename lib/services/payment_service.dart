@@ -65,7 +65,7 @@ class PaymentService {
 
       return false;
     } catch (e) {
-      print('Error purchasing coins: $e');
+      // print('Error purchasing coins: $e');
       return false;
     }
   }
@@ -93,7 +93,7 @@ class PaymentService {
 
       return (response as List).cast<Map<String, dynamic>>();
     } catch (e) {
-      print('Error getting payment history: $e');
+      // print('Error getting payment history: $e');
       return [];
     }
   }
@@ -108,7 +108,7 @@ class PaymentService {
       // Şimdilik simüle ediyoruz
       return await _simulatePayment(package['price']!, 'stripe');
     } catch (e) {
-      print('Error processing Stripe payment: $e');
+      // print('Error processing Stripe payment: $e');
       return false;
     }
   }
@@ -123,7 +123,7 @@ class PaymentService {
       // Şimdilik simüle ediyoruz
       return await _simulatePayment(package['price']!, 'paypal');
     } catch (e) {
-      print('Error processing PayPal payment: $e');
+      // print('Error processing PayPal payment: $e');
       return false;
     }
   }

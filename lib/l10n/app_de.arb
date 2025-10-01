@@ -45,6 +45,11 @@
   "congratulations": "Glückwunsch!",
   "correctPredictionMessage": "Sie haben richtig vorhergesagt und 1 Münze verdient!",
   "wrongPredictionMessage": "Falsche Vorhersage. Die tatsächliche Gewinnrate war {winRate}%",
+  "@wrongPredictionMessage": {
+    "placeholders": {
+      "winRate": {}
+    }
+  },
   "correctPredictionWithReward": "Sie haben richtig vorhergesagt und 1 Münze verdient!",
   "wrongPredictionWithRate": "Falsche Vorhersage. Die tatsächliche Gewinnrate war {winRate}%",
   "error": "Fehler",

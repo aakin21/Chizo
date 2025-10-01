@@ -44,7 +44,7 @@ class CountryRankingService {
 
       return result;
     } catch (e) {
-      print('Error fetching country stats: $e');
+      // print('Error fetching country stats: $e');
       return [];
     }
   }

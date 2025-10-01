@@ -16,7 +16,7 @@ void main() async {
   try {
     await Firebase.initializeApp();
   } catch (e) {
-    print('Firebase initialization failed (web platform): $e');
+    // Firebase initialization failed (web platform): $e
   }
 
   // Supabase başlat - Environment variables should be used in production
@@ -26,7 +26,7 @@ void main() async {
       anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdXB0d3NnbnBnc3ZscWlnaXRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5NjMzODUsImV4cCI6MjA3MzUzOTM4NX0.KiLkHJ22FhJkc8BnkLrTZpk-_gM81bTiCfe0gh3-DfM',
     );
   } catch (e) {
-    print('❌ Supabase initialization failed: $e');
+    // Supabase initialization failed: $e
   }
 
   // Notification service'i initialize et
@@ -135,7 +135,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         });
       }
     } catch (e) {
-      print('❌ THEME ERROR: Failed to load theme - $e');
+      // THEME ERROR: Failed to load theme - $e
       if (mounted) {
         setState(() {
           _selectedTheme = 'Beyaz';
@@ -146,19 +146,19 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   void changeLanguage(Locale locale) async {
-    print('🌍 MAIN: Language change requested to $locale');
+    // Language change requested to $locale
     
     if (mounted) {
       setState(() {
         _currentLocale = locale;
         _appKey = UniqueKey(); // Yeni key ile tüm uygulamayı yeniden build et
       });
-      print('🌍 MAIN: Language changed successfully to $locale');
+      // Language changed successfully to $locale
     }
   }
 
   void changeTheme(String theme) async {
-    print('🎨 THEME CHANGE REQUESTED: $theme');
+    // THEME CHANGE REQUESTED: $theme
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('selected_theme', theme);
@@ -178,34 +178,34 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         }
       }
     } catch (e) {
-      print('❌ THEME CHANGE ERROR: $e');
+      // THEME CHANGE ERROR: $e
     }
   }
 
   ColorScheme _getThemeColorScheme() {
-    print('🎨 THEME SYSTEM: $_selectedTheme');
+    // THEME SYSTEM: $_selectedTheme
     
     switch (_selectedTheme) {
       case 'Beyaz':
-        print('  ↳ BEYAZ light theme active');
+        // BEYAZ light theme active
         return ColorScheme.fromSeed(
           seedColor: Colors.white, 
           brightness: Brightness.light
         );
       case 'Koyu':
-        print('  ↳ KOYU dark theme active');
+        // KOYU dark theme active
         return ColorScheme.fromSeed(
           seedColor: Colors.grey.shade900, 
           brightness: Brightness.dark
         );
       case 'Pembemsi':
-        print('  ↳ PEMBE light theme active');
+        // PEMBE light theme active
         return ColorScheme.fromSeed(
           seedColor: const Color(0xFFC2185B), 
           brightness: Brightness.light
         );
       default:
-        print('  ↳ DEFAULT beyaz theme');
+        // DEFAULT beyaz theme
         return ColorScheme.fromSeed(
           seedColor: Colors.white, 
           brightness: Brightness.light

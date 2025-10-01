@@ -48,7 +48,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
         _isLoading = false;
       });
     } catch (e) {
-      print('Error loading leaderboard data: $e');
+      // print('Error loading leaderboard data: $e');
       setState(() {
         _isLoading = false;
       });
@@ -80,7 +80,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
           : Text(AppLocalizations.of(context)!.winsAndMatches(user.wins, user.totalMatches)),
          trailing: GestureDetector(
            onTap: () {
-             print('🎯 Avatar tapped for user: ${user.username}');
+             // print('🎯 Avatar tapped for user: ${user.username}');
              _navigateToUserProfile(user);
            },
            child: user.matchPhotos != null && user.matchPhotos!.isNotEmpty
@@ -98,7 +98,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
   }
 
   void _navigateToUserProfile(UserModel user) {
-    print('🎯 Navigating to profile for user: ${user.username}');
+    // print('🎯 Navigating to profile for user: ${user.username}');
     
     Navigator.push(
       context,

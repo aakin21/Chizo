@@ -29,7 +29,7 @@ class PhotoUploadService {
 
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
-      print('Error getting user photos: $e');
+      // print('Error getting user photos: $e');
       return [];
     }
   }
@@ -71,7 +71,7 @@ class PhotoUploadService {
       
       return null;
     } catch (e) {
-      print('Error uploading tournament photo: $e');
+      // print('Error uploading tournament photo: $e');
       return null;
     }
   }
@@ -90,7 +90,7 @@ class PhotoUploadService {
       
       return null; // All slots are full
     } catch (e) {
-      print('Error getting next available slot: $e');
+      // print('Error getting next available slot: $e');
       return null;
     }
   }
@@ -131,7 +131,7 @@ class PhotoUploadService {
         'message': 'Can upload photo'
       };
     } catch (e) {
-      print('Error checking photo upload: $e');
+      // print('Error checking photo upload: $e');
       return {'canUpload': false, 'message': 'Error checking upload permission'};
     }
   }
@@ -248,7 +248,7 @@ class PhotoUploadService {
         'coinsSpent': requiredCoins,
       };
     } catch (e) {
-      print('Error uploading photo: $e');
+      // print('Error uploading photo: $e');
       return {'success': false, 'message': 'Error uploading photo: $e'};
     }
   }
@@ -290,7 +290,7 @@ class PhotoUploadService {
         'slot': slot,
       };
     } catch (e) {
-      print('Error deleting photo: $e');
+      // print('Error deleting photo: $e');
       return {'success': false, 'message': 'Error deleting photo: $e'};
     }
   }
@@ -327,7 +327,7 @@ class PhotoUploadService {
         'message': 'Photos reordered successfully',
       };
     } catch (e) {
-      print('Error reordering photos: $e');
+      // print('Error reordering photos: $e');
       return {'success': false, 'message': 'Error reordering photos: $e'};
     }
   }
@@ -343,7 +343,7 @@ class PhotoUploadService {
       final photos = await getUserPhotos(userId);
       return photos.length;
     } catch (e) {
-      print('Error getting photo count: $e');
+      // print('Error getting photo count: $e');
       return 0;
     }
   }
@@ -364,7 +364,7 @@ class PhotoUploadService {
 
       return response;
     } catch (e) {
-      print('Error getting photo stats: $e');
+      // print('Error getting photo stats: $e');
       return null;
     }
   }
@@ -384,7 +384,7 @@ class PhotoUploadService {
 
       return response;
     } catch (e) {
-      print('Error creating initial photo stats: $e');
+      // print('Error creating initial photo stats: $e');
       return null;
     }
   }
@@ -412,7 +412,7 @@ class PhotoUploadService {
 
       return true;
     } catch (e) {
-      print('Error updating photo stats: $e');
+      // print('Error updating photo stats: $e');
       return false;
     }
   }
@@ -425,7 +425,7 @@ class PhotoUploadService {
 
       return currentUser.coins >= 50;
     } catch (e) {
-      print('Error checking photo stats view permission: $e');
+      // print('Error checking photo stats view permission: $e');
       return false;
     }
   }
@@ -444,7 +444,7 @@ class PhotoUploadService {
         'Photo statistics view'
       );
     } catch (e) {
-      print('Error paying for photo stats view: $e');
+      // print('Error paying for photo stats view: $e');
       return false;
     }
   }
@@ -475,7 +475,7 @@ class PhotoUploadService {
 
       return photoStats;
     } catch (e) {
-      print('Error getting user photo stats: $e');
+      // print('Error getting user photo stats: $e');
       return [];
     }
   }

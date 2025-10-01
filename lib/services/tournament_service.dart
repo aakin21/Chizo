@@ -6,13 +6,16 @@ import 'user_service.dart';
 
 class TournamentService {
   static final SupabaseClient _client = Supabase.instance.client;
+  
+  // Client getter'ı ekle
+  static SupabaseClient get client => _client;
 
   // Supabase client'ın API anahtarını test et
   static Future<void> testSupabaseConnection() async {
     try {
-      print('🧪 Testing Supabase connection...');
-      print('🔑 Supabase URL: https://rsuptwsgnpgsvlqigitq.supabase.co');
-      print('🔑 Supabase Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...');
+      // Testing Supabase connection...
+      // Supabase URL: https://rsuptwsgnpgsvlqigitq.supabase.co
+      // Supabase Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
       
       // Basit bir test sorgusu
       await _client
@@ -21,9 +24,9 @@ class TournamentService {
           .limit(1);
       
     } catch (e) {
-      print('❌ Supabase connection test failed: $e');
+      // Supabase connection test failed: $e
       if (e.toString().contains('apikey')) {
-        print('❌ API Key issue detected in connection test');
+        // API Key issue detected in connection test
       }
     }
   }
@@ -31,7 +34,7 @@ class TournamentService {
   // Aktif turnuvaları getir (yeni sistem) - dil desteği ile
   static Future<List<TournamentModel>> getActiveTournaments({String? language}) async {
     try {
-      print('🔑 Supabase client URL: https://rsuptwsgnpgsvlqigitq.supabase.co');
+      // // print('🔑 Supabase client URL: https://rsuptwsgnpgsvlqigitq.supabase.co');
       
       var query = _client
           .from('tournaments')
@@ -77,9 +80,9 @@ class TournamentService {
                 .then((result) => (result as List).map((t) => t['id']).toList())
           );
       
-      print('Test tournaments cleaned up!');
+      // // print('Test tournaments cleaned up!');
     } catch (e) {
-      print('Error cleaning up test tournaments: $e');
+      // // print('Error cleaning up test tournaments: $e');
     }
   }
 
@@ -95,23 +98,26 @@ class TournamentService {
           .lt('registration_start_date', lastWeek.toIso8601String())
           .like('name', '%Haftalık%');
       
-      print('Old weekly tournaments cleaned up!');
+      // // print('Old weekly tournaments cleaned up!');
     } catch (e) {
-      print('Error cleaning up old tournaments: $e');
+      // // print('Error cleaning up old tournaments: $e');
     }
   }
 
-  // Otomatik haftalık turnuva sistemi - çok dilli (her gün çalışır)
+  // Otomatik haftalık turnuva sistemi - düzeltilmiş zamanlama
   static Future<void> createWeeklyTournaments() async {
     try {
       final now = DateTime.now();
       
-      // Bu haftanın Pazartesi gününü bul
+      // Bu haftanın Pazartesi gününü bul (00:01'de kayıt başlar)
       final thisWeekMonday = _getThisWeekMonday(now);
+      // Çarşamba 00:01'de kayıt kapanır, turnuva başlar
       final thisWeekWednesday = thisWeekMonday.add(const Duration(days: 2));
-      final thisWeekThursday = thisWeekMonday.add(const Duration(days: 3));
+      // Cuma 00:01'de çeyrek final
       final thisWeekFriday = thisWeekMonday.add(const Duration(days: 4));
+      // Cumartesi 00:01'de yarı final
       final thisWeekSaturday = thisWeekMonday.add(const Duration(days: 5));
+      // Pazar 00:01'de final
       final thisWeekSunday = thisWeekMonday.add(const Duration(days: 6));
       
       // Bu hafta için turnuva var mı kontrol et (sadece sistem turnuvaları)
@@ -126,23 +132,23 @@ class TournamentService {
       if ((existingTournaments as List).isEmpty) {
         await _cleanupOldTournaments();
         
-        // Çok dilli turnuva oluştur
+        // Düzeltilmiş zamanlama ile turnuva oluştur
         await _createMultiLanguageTournaments(
-          thisWeekMonday,
-          thisWeekWednesday,
-          thisWeekWednesday,
-          thisWeekThursday,
-          thisWeekFriday,
-          thisWeekSaturday,
-          thisWeekSunday,
+          thisWeekMonday,        // Pazartesi 00:01 - Kayıt başlar
+          thisWeekWednesday,     // Çarşamba 00:01 - Kayıt kapanır, turnuva başlar
+          thisWeekWednesday,     // Çarşamba 00:01 - Oylama başlar
+          thisWeekFriday,        // Cuma 00:01 - Oylama biter
+          thisWeekFriday,        // Cuma 00:01 - Çeyrek final
+          thisWeekSaturday,      // Cumartesi 00:01 - Yarı final
+          thisWeekSunday,        // Pazar 00:01 - Final
         );
 
-        print('Weekly tournaments created successfully');
+        // // print('Weekly tournaments created successfully');
       } else {
-        print('Weekly tournaments already exist for this week');
+        // // print('Weekly tournaments already exist for this week');
       }
     } catch (e) {
-      print('Error creating weekly tournaments: $e');
+      // // print('Error creating weekly tournaments: $e');
     }
   }
 
@@ -251,9 +257,9 @@ class TournamentService {
         'created_at': DateTime.now().toIso8601String(),
       });
 
-      print('System tournament created: $nameKey');
+      // // print('System tournament created: $nameKey');
     } catch (e) {
-      print('Error creating system tournament: $e');
+      // // print('Error creating system tournament: $e');
     }
   }
 
@@ -271,22 +277,22 @@ class TournamentService {
   // Turnuvaya katıl (yeni sistem)
   static Future<bool> joinTournament(String tournamentId) async {
     try {
-      print('🎯 JOIN TOURNAMENT: Starting join process for tournament $tournamentId');
+      // // print('🎯 JOIN TOURNAMENT: Starting join process for tournament $tournamentId');
       
       final user = _client.auth.currentUser;
       if (user == null) {
-        print('❌ JOIN TOURNAMENT: No authenticated user');
+        // // print('❌ JOIN TOURNAMENT: No authenticated user');
         return false;
       }
-      print('✅ JOIN TOURNAMENT: User authenticated: ${user.id}');
+      // // print('✅ JOIN TOURNAMENT: User authenticated: ${user.id}');
 
       // Kullanıcı bilgilerini al
       final currentUser = await UserService.getCurrentUser();
       if (currentUser == null) {
-        print('❌ JOIN TOURNAMENT: Current user not found in database');
+        // // print('❌ JOIN TOURNAMENT: Current user not found in database');
         return false;
       }
-      print('✅ JOIN TOURNAMENT: Current user found: ${currentUser.username}, coins: ${currentUser.coins}');
+      // // print('✅ JOIN TOURNAMENT: Current user found: ${currentUser.username}, coins: ${currentUser.coins}');
 
       // Turnuva bilgilerini al
       final tournament = await _client
@@ -294,7 +300,7 @@ class TournamentService {
           .select()
           .eq('id', tournamentId)
           .single();
-      print('✅ JOIN TOURNAMENT: Tournament found: ${tournament['name']}, status: ${tournament['status']}, entry_fee: ${tournament['entry_fee']}');
+      // // print('✅ JOIN TOURNAMENT: Tournament found: ${tournament['name']}, status: ${tournament['status']}, entry_fee: ${tournament['entry_fee']}');
 
       // Cinsiyet kontrolü - M/F ile Erkek/Kadın karşılaştırması
       final tournamentGender = tournament['gender'];
@@ -307,32 +313,32 @@ class TournamentService {
         }
         
         if (!canJoin) {
-          print('❌ JOIN TOURNAMENT: Gender mismatch. User: ${currentUser.genderCode}, Required: $tournamentGender');
+          // // print('❌ JOIN TOURNAMENT: Gender mismatch. User: ${currentUser.genderCode}, Required: $tournamentGender');
           return false; // Cinsiyet uyumsuzluğu
         }
       }
-      print('✅ JOIN TOURNAMENT: Gender check passed');
+      // // print('✅ JOIN TOURNAMENT: Gender check passed');
 
       // Turnuva durumu kontrolü - upcoming veya active olabilir
       if (tournament['status'] != 'upcoming' && tournament['status'] != 'active') {
-        print('❌ JOIN TOURNAMENT: Tournament status is ${tournament['status']}, not joinable');
+        // // print('❌ JOIN TOURNAMENT: Tournament status is ${tournament['status']}, not joinable');
         return false; // Kayıt kapalı
       }
-      print('✅ JOIN TOURNAMENT: Tournament status is valid');
+      // // print('✅ JOIN TOURNAMENT: Tournament status is valid');
 
       // Kullanıcının coin kontrolü
       if (currentUser.coins < tournament['entry_fee']) {
-        print('❌ JOIN TOURNAMENT: Insufficient coins. User has ${currentUser.coins}, needs ${tournament['entry_fee']}');
+        // // print('❌ JOIN TOURNAMENT: Insufficient coins. User has ${currentUser.coins}, needs ${tournament['entry_fee']}');
         return false; // Yetersiz coin
       }
-      print('✅ JOIN TOURNAMENT: User has sufficient coins');
+      // // print('✅ JOIN TOURNAMENT: User has sufficient coins');
 
       // Turnuva dolu mu kontrol et
       if (tournament['current_participants'] >= tournament['max_participants']) {
-        print('❌ JOIN TOURNAMENT: Tournament is full. Current: ${tournament['current_participants']}, Max: ${tournament['max_participants']}');
+        // // print('❌ JOIN TOURNAMENT: Tournament is full. Current: ${tournament['current_participants']}, Max: ${tournament['max_participants']}');
         return false; // Turnuva dolu
       }
-      print('✅ JOIN TOURNAMENT: Tournament has space');
+      // // print('✅ JOIN TOURNAMENT: Tournament has space');
 
       // Zaten katılmış mı kontrol et
       final existingParticipation = await _client
@@ -343,13 +349,13 @@ class TournamentService {
           .maybeSingle();
 
       if (existingParticipation != null) {
-        print('❌ JOIN TOURNAMENT: User already participating');
+        // // print('❌ JOIN TOURNAMENT: User already participating');
         return false; // Zaten katılmış
       }
-      print('✅ JOIN TOURNAMENT: User not already participating');
+      // // print('✅ JOIN TOURNAMENT: User not already participating');
 
       // Turnuvaya katıl
-      print('🎯 JOIN TOURNAMENT: Inserting into tournament_participants...');
+      // // print('🎯 JOIN TOURNAMENT: Inserting into tournament_participants...');
       await _client.from('tournament_participants').insert({
         'tournament_id': tournamentId,
         'user_id': currentUser.id,
@@ -359,59 +365,43 @@ class TournamentService {
         'tournament_photo_url': null, // Turnuva fotoğrafı henüz yüklenmedi
         // 'photo_uploaded': false, // Bu kolon veritabanında yok, kaldırıldı
       });
-      print('✅ JOIN TOURNAMENT: Successfully inserted into tournament_participants');
+      // // print('✅ JOIN TOURNAMENT: Successfully inserted into tournament_participants');
 
       // Entry fee'yi düş
-      print('🎯 JOIN TOURNAMENT: Updating user coins...');
+      // // print('🎯 JOIN TOURNAMENT: Updating user coins...');
       await UserService.updateCoins(
         -tournament['entry_fee'], 
         'spent', 
         'Turnuva katılım ücreti'
       );
-      print('✅ JOIN TOURNAMENT: User coins updated');
+      // // print('✅ JOIN TOURNAMENT: User coins updated');
 
       // Turnuva katılımcı sayısını güncelle
-      print('🎯 JOIN TOURNAMENT: Updating tournament participant count...');
+      // // print('🎯 JOIN TOURNAMENT: Updating tournament participant count...');
       try {
         await _client.rpc('increment_tournament_participants', params: {
           'tournament_id': tournamentId,
         });
-        print('✅ JOIN TOURNAMENT: Tournament participant count updated via RPC');
+        // // print('✅ JOIN TOURNAMENT: Tournament participant count updated via RPC');
       } catch (rpcError) {
-        print('⚠️ JOIN TOURNAMENT: RPC failed, trying manual update: $rpcError');
+        // // print('⚠️ JOIN TOURNAMENT: RPC failed, trying manual update: $rpcError');
         // RPC başarısız olursa manuel güncelleme yap
         await _client
             .from('tournaments')
             .update({'current_participants': tournament['current_participants'] + 1})
             .eq('id', tournamentId);
-        print('✅ JOIN TOURNAMENT: Tournament participant count updated manually');
+        // // print('✅ JOIN TOURNAMENT: Tournament participant count updated manually');
       }
 
-      // Turnuva başlatma mantığı:
-      // - 100 kişi turnuvaları: 100 kişi dolunca otomatik başlar
-      // - 300 kişi turnuvaları: Belirlenen tarihte başlar
-      if (tournament['max_participants'] == 100 && 
-          tournament['current_participants'] + 1 >= tournament['max_participants']) {
-        // 100 kişi turnuvaları dolunca otomatik başlat
-        print('🎯 JOIN TOURNAMENT: Starting 100-person tournament...');
-        await _startTournament(tournamentId);
-      } else if (tournament['max_participants'] == 300) {
-        // 300 kişi turnuvaları için özel kontrol
-        final now = DateTime.now();
-        final startDate = DateTime.parse(tournament['start_date']);
-        
-        // Eğer başlangıç tarihi gelmişse ve yeterli katılımcı varsa başlat
-        if (now.isAfter(startDate) && tournament['current_participants'] + 1 >= 100) {
-          print('🎯 JOIN TOURNAMENT: Starting 300-person tournament...');
-          await _startTournament(tournamentId);
-        }
-      }
+      // Turnuva başlatma mantığı - YENİ SİSTEM:
+      // Çarşamba 00:01'de otomatik olarak başlar (zamanlama sistemi ile)
+      // Manuel başlatma kaldırıldı - sadece zamanlama sistemi çalışacak
 
-      print('✅ JOIN TOURNAMENT: Successfully joined tournament!');
+      // // print('✅ JOIN TOURNAMENT: Successfully joined tournament!');
       return true;
     } catch (e) {
-      print('❌ JOIN TOURNAMENT ERROR: $e');
-      print('❌ JOIN TOURNAMENT ERROR TYPE: ${e.runtimeType}');
+      // // print('❌ JOIN TOURNAMENT ERROR: $e');
+      // // print('❌ JOIN TOURNAMENT ERROR TYPE: ${e.runtimeType}');
       return false;
     }
   }
@@ -429,9 +419,9 @@ class TournamentService {
           })
           .eq('id', tournamentId);
       
-      print('Tournament $tournamentId started');
+      // // print('Tournament $tournamentId started');
     } catch (e) {
-      print('Error starting tournament: $e');
+      // // print('Error starting tournament: $e');
     }
   }
 
@@ -453,7 +443,7 @@ class TournamentService {
           .map((json) => TournamentModel.fromJson(json['tournament']))
           .toList();
     } catch (e) {
-      print('Error getting user tournaments: $e');
+      // // print('Error getting user tournaments: $e');
       return [];
     }
   }
@@ -469,7 +459,7 @@ class TournamentService {
 
       return TournamentModel.fromJson(response);
     } catch (e) {
-      print('Error getting tournament details: $e');
+      // // print('Error getting tournament details: $e');
       return null;
     }
   }
@@ -498,7 +488,7 @@ class TournamentService {
 
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
-      print('Error getting tournament participants: $e');
+      // // print('Error getting tournament participants: $e');
       return [];
     }
   }
@@ -528,7 +518,7 @@ class TournamentService {
 
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
-      print('Error getting tournament leaderboard: $e');
+      // // print('Error getting tournament leaderboard: $e');
       return [];
     }
   }
@@ -566,7 +556,7 @@ class TournamentService {
 
       return true;
     } catch (e) {
-      print('Error voting in tournament: $e');
+      // // print('Error voting in tournament: $e');
       return false;
     }
   }
@@ -590,7 +580,7 @@ class TournamentService {
         }
       }
     } catch (e) {
-      print('Error processing quarter finals: $e');
+      // // print('Error processing quarter finals: $e');
     }
   }
 
@@ -625,7 +615,7 @@ class TournamentService {
             .eq('id', tournamentId);
       }
     } catch (e) {
-      print('Error advancing to quarter finals: $e');
+      // // print('Error advancing to quarter finals: $e');
     }
   }
 
@@ -646,7 +636,7 @@ class TournamentService {
         }
       }
     } catch (e) {
-      print('Error processing semi finals: $e');
+      // // print('Error processing semi finals: $e');
     }
   }
 
@@ -681,7 +671,7 @@ class TournamentService {
             .eq('id', tournamentId);
       }
     } catch (e) {
-      print('Error advancing to semi finals: $e');
+      // // print('Error advancing to semi finals: $e');
     }
   }
 
@@ -702,7 +692,7 @@ class TournamentService {
         }
       }
     } catch (e) {
-      print('Error processing finals: $e');
+      // // print('Error processing finals: $e');
     }
   }
 
@@ -737,28 +727,28 @@ class TournamentService {
             .eq('id', tournamentId);
       }
     } catch (e) {
-      print('Error advancing to finals: $e');
+      // // print('Error advancing to finals: $e');
     }
   }
 
   // Turnuva katılımını iptal et ve coin iadesi yap
   static Future<bool> refundTournamentEntry(String tournamentId) async {
     try {
-      print('🔄 REFUND: Starting refund process for tournament $tournamentId');
+      // // print('🔄 REFUND: Starting refund process for tournament $tournamentId');
       
       final user = _client.auth.currentUser;
       if (user == null) {
-        print('❌ REFUND: No authenticated user');
+        // // print('❌ REFUND: No authenticated user');
         return false;
       }
 
       // Kullanıcı bilgilerini al
       final currentUser = await UserService.getCurrentUser();
       if (currentUser == null) {
-        print('❌ REFUND: Current user not found');
+        // // print('❌ REFUND: Current user not found');
         return false;
       }
-      print('✅ REFUND: Current user found: ${currentUser.username}, coins: ${currentUser.coins}');
+      // // print('✅ REFUND: Current user found: ${currentUser.username}, coins: ${currentUser.coins}');
 
       // Turnuva bilgilerini al
       final tournament = await _client
@@ -766,20 +756,20 @@ class TournamentService {
           .select('entry_fee')
           .eq('id', tournamentId)
           .single();
-      print('✅ REFUND: Tournament found, entry_fee: ${tournament['entry_fee']}');
+      // // print('✅ REFUND: Tournament found, entry_fee: ${tournament['entry_fee']}');
 
       // Turnuva katılımını sil
-      print('🔄 REFUND: Deleting tournament participation...');
+      // // print('🔄 REFUND: Deleting tournament participation...');
       await _client
           .from('tournament_participants')
           .delete()
           .eq('tournament_id', tournamentId)
           .eq('user_id', currentUser.id);
-      print('✅ REFUND: Tournament participation deleted');
+      // // print('✅ REFUND: Tournament participation deleted');
 
       // Coin iadesi yap
       final newCoinAmount = currentUser.coins + tournament['entry_fee'];
-      print('🔄 REFUND: Refunding ${tournament['entry_fee']} coins, new total: $newCoinAmount');
+      // // print('🔄 REFUND: Refunding ${tournament['entry_fee']} coins, new total: $newCoinAmount');
       await _client
           .from('users')
           .update({
@@ -787,10 +777,10 @@ class TournamentService {
             'updated_at': DateTime.now().toIso8601String(),
           })
           .eq('id', currentUser.id);
-      print('✅ REFUND: Coins updated in database');
+      // // print('✅ REFUND: Coins updated in database');
 
       // Turnuva katılımcı sayısını manuel olarak güncelle (RPC yerine)
-      print('🔄 REFUND: Updating tournament participant count...');
+      // // print('🔄 REFUND: Updating tournament participant count...');
       final currentCount = await _client
           .from('tournaments')
           .select('current_participants')
@@ -802,12 +792,12 @@ class TournamentService {
           .from('tournaments')
           .update({'current_participants': newCount})
           .eq('id', tournamentId);
-      print('✅ REFUND: Tournament participant count updated to $newCount');
+      // // print('✅ REFUND: Tournament participant count updated to $newCount');
 
-      print('✅ REFUND: Tournament entry refunded successfully');
+      // // print('✅ REFUND: Tournament entry refunded successfully');
       return true;
     } catch (e) {
-      print('❌ REFUND ERROR: $e');
+      // // print('❌ REFUND ERROR: $e');
       return false;
     }
   }
@@ -840,7 +830,7 @@ class TournamentService {
 
       return true;
     } catch (e) {
-      print('Error uploading tournament photo: $e');
+      // // print('Error uploading tournament photo: $e');
       return false;
     }
   }
@@ -932,7 +922,7 @@ class TournamentService {
         },
       }];
     } catch (e) {
-      print('Error getting tournament matches for voting: $e');
+      // // print('Error getting tournament matches for voting: $e');
       return [];
     }
   }
@@ -971,39 +961,104 @@ class TournamentService {
 
       return true;
     } catch (e) {
-      print('Error voting for tournament match: $e');
+      // // print('Error voting for tournament match: $e');
       return false;
     }
   }
 
-  // Haftalık turnuva fazlarını güncelle
+  // Haftalık turnuva fazlarını güncelle - DÜZELTİLMİŞ SİSTEM
   static Future<void> updateTournamentPhases() async {
     try {
       final now = DateTime.now();
       final dayOfWeek = now.weekday;
+      final hour = now.hour;
 
-      // Aktif turnuvaları getir
+      // Çarşamba 00:01'de kayıt kapanır, turnuva başlar
+      if (dayOfWeek == 3 && hour == 0) {
+        await _startWeeklyTournaments();
+      }
+      // Cuma 00:01'de çeyrek final
+      else if (dayOfWeek == 5 && hour == 0) {
+        await _advanceAllToQuarterFinals();
+      }
+      // Cumartesi 00:01'de yarı final
+      else if (dayOfWeek == 6 && hour == 0) {
+        await _advanceAllToSemiFinals();
+      }
+      // Pazar 00:01'de final
+      else if (dayOfWeek == 7 && hour == 0) {
+        await _completeTournament();
+      }
+    } catch (e) {
+      // // print('Error updating tournament phases: $e');
+    }
+  }
+
+  // Çarşamba 00:01'de turnuvaları başlat
+  static Future<void> _startWeeklyTournaments() async {
+    try {
+      // Bu haftanın turnuvalarını getir
+      final thisWeekMonday = _getThisWeekMonday(DateTime.now());
+      final thisWeekSunday = thisWeekMonday.add(const Duration(days: 6));
+      
       final tournaments = await _client
           .from('tournaments')
-          .select('id')
-          .eq('status', 'active');
+          .select('id, name, current_participants')
+          .gte('registration_start_date', thisWeekMonday.toIso8601String())
+          .lte('registration_start_date', thisWeekSunday.toIso8601String())
+          .eq('status', 'upcoming')
+          .eq('is_system_tournament', true);
 
       for (var tournament in tournaments) {
-        // Cuma günü (5) - Qualifying'den Quarter Final'e geç
-        if (dayOfWeek == 5) {
-          await _advanceToQuarterFinals(tournament['id']);
-        }
-        // Cumartesi günü (6) - Quarter Final'den Semi Final'e geç
-        else if (dayOfWeek == 6) {
-          await _advanceToSemiFinals(tournament['id']);
-        }
-        // Pazar günü (7) - Semi Final'den Final'e geç, 3.lük maçı ve kazananı belirle
-        else if (dayOfWeek == 7) {
-          await _completeTournament();
+        // En az 2 katılımcı varsa turnuvayı başlat
+        if (tournament['current_participants'] >= 2) {
+          await _client
+              .from('tournaments')
+              .update({
+                'status': 'active',
+                'current_phase': 'qualifying',
+                'current_round': 1,
+                'phase_start_date': DateTime.now().toIso8601String(),
+              })
+              .eq('id', tournament['id']);
         }
       }
     } catch (e) {
-      print('Error updating tournament phases: $e');
+      // // print('Error starting weekly tournaments: $e');
+    }
+  }
+
+  // Tüm aktif turnuvaları çeyrek finale geçir
+  static Future<void> _advanceAllToQuarterFinals() async {
+    try {
+      final tournaments = await _client
+          .from('tournaments')
+          .select('id')
+          .eq('status', 'active')
+          .eq('current_phase', 'qualifying');
+      
+      for (var tournament in tournaments) {
+        await _advanceToQuarterFinals(tournament['id']);
+      }
+    } catch (e) {
+      // // print('Error advancing all to quarter finals: $e');
+    }
+  }
+
+  // Tüm aktif turnuvaları yarı finale geçir
+  static Future<void> _advanceAllToSemiFinals() async {
+    try {
+      final tournaments = await _client
+          .from('tournaments')
+          .select('id')
+          .eq('status', 'active')
+          .eq('current_phase', 'quarter_finals');
+      
+      for (var tournament in tournaments) {
+        await _advanceToSemiFinals(tournament['id']);
+      }
+    } catch (e) {
+      // // print('Error advancing all to semi finals: $e');
     }
   }
 
@@ -1074,10 +1129,10 @@ class TournamentService {
             })
             .eq('id', tournament['id']);
 
-        print('Tournament ${tournament['id']} completed: 1st=${winner['user_id']}, 2nd=${runnerUp['user_id']}, 3rd=${thirdPlace['user_id']}');
+        // // print('Tournament ${tournament['id']} completed: 1st=${winner['user_id']}, 2nd=${runnerUp['user_id']}, 3rd=${thirdPlace['user_id']}');
       }
     } catch (e) {
-      print('Error completing tournament: $e');
+      // // print('Error completing tournament: $e');
     }
   }
 
@@ -1109,7 +1164,7 @@ class TournamentService {
 
       return true;
     } catch (e) {
-      print('Error completing tournament: $e');
+      // // print('Error completing tournament: $e');
       return false;
     }
   }
@@ -1193,8 +1248,8 @@ class TournamentService {
         'message': 'Private turnuva başarıyla oluşturuldu'
       };
     } catch (e) {
-      print('Error creating private tournament: $e');
-      print('Error details: ${e.toString()}');
+      // // print('Error creating private tournament: $e');
+      // // print('Error details: ${e.toString()}');
       return {'success': false, 'message': 'Turnuva oluşturulamadı: ${e.toString()}'};
     }
   }
@@ -1202,15 +1257,15 @@ class TournamentService {
   // Private key ile turnuvaya katıl
   static Future<Map<String, dynamic>> joinPrivateTournament(String privateKey) async {
     try {
-      print('🔑 Joining private tournament with key: $privateKey');
+      // // print('🔑 Joining private tournament with key: $privateKey');
       
       final currentUser = await UserService.getCurrentUser();
       if (currentUser == null) {
-        print('❌ User not found');
+        // // print('❌ User not found');
         return {'success': false, 'message': 'Kullanıcı bulunamadı'};
       }
 
-      print('👤 Current user: ${currentUser.id}');
+      // // print('👤 Current user: ${currentUser.id}');
 
       // Private key ile turnuva bul
       final tournament = await _client
@@ -1220,24 +1275,24 @@ class TournamentService {
           .eq('is_private', true)
           .maybeSingle();
 
-      print('🏆 Tournament found: $tournament');
+      // // print('🏆 Tournament found: $tournament');
 
       if (tournament == null) {
-        print('❌ Tournament not found with private key: $privateKey');
+        // // print('❌ Tournament not found with private key: $privateKey');
         return {'success': false, 'message': 'Geçersiz private key'};
       }
 
       // Turnuva durumu kontrolü
-      print('📊 Tournament status: ${tournament['status']}');
+      // // print('📊 Tournament status: ${tournament['status']}');
       if (tournament['status'] != 'upcoming') {
-        print('❌ Tournament status is not upcoming: ${tournament['status']}');
+        // // print('❌ Tournament status is not upcoming: ${tournament['status']}');
         return {'success': false, 'message': 'Kayıt kapalı'};
       }
 
       // Dolu mu kontrol et
-      print('👥 Current participants: ${tournament['current_participants']}/${tournament['max_participants']}');
+      // // print('👥 Current participants: ${tournament['current_participants']}/${tournament['max_participants']}');
       if (tournament['current_participants'] >= tournament['max_participants']) {
-        print('❌ Tournament is full');
+        // // print('❌ Tournament is full');
         return {'success': false, 'message': 'Turnuva dolu'};
       }
 
@@ -1284,7 +1339,7 @@ class TournamentService {
         'tournament_name': tournament['name']
       };
     } catch (e) {
-      print('Error joining private tournament: $e');
+      // // print('Error joining private tournament: $e');
       return {'success': false, 'message': 'Katılım başarısız: $e'};
     }
   }
@@ -1313,7 +1368,7 @@ class TournamentService {
           .map((json) => TournamentModel.fromJson(json))
           .toList();
     } catch (e) {
-      print('Error getting my private tournaments: $e');
+      // // print('Error getting my private tournaments: $e');
       return [];
     }
   }
@@ -1337,7 +1392,7 @@ class TournamentService {
         );
       }
     } catch (e) {
-      print('Error sending tournament start notification: $e');
+      // // print('Error sending tournament start notification: $e');
     }
   }
 
@@ -1359,7 +1414,7 @@ class TournamentService {
         );
       }
     } catch (e) {
-      print('Error sending tournament end notification: $e');
+      // // print('Error sending tournament end notification: $e');
     }
   }
 
@@ -1375,7 +1430,7 @@ class TournamentService {
         '$tournamentName turnuvasına başarıyla katıldınız!',
       );
     } catch (e) {
-      print('Error sending tournament join notification: $e');
+      // // print('Error sending tournament join notification: $e');
     }
   }
 
@@ -1390,7 +1445,7 @@ class TournamentService {
         'created_at': DateTime.now().toIso8601String(),
       });
     } catch (e) {
-      print('Error sending notification to user: $e');
+      // // print('Error sending notification to user: $e');
     }
   }
 }

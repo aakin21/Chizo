@@ -59,7 +59,7 @@ class PredictionService {
             : 'Maalesef yanlış tahmin ettin. Gerçek kazanma oranı: ${actualWinRate.toStringAsFixed(1)}%',
       };
     } catch (e) {
-      print('Error submitting prediction: $e');
+      // print('Error submitting prediction: $e');
       return {'success': false, 'message': 'Tahmin kaydedilirken hata oluştu'};
     }
   }
@@ -83,7 +83,7 @@ class PredictionService {
 
       return (response as List).cast<Map<String, dynamic>>();
     } catch (e) {
-      print('Error getting user predictions: $e');
+      // print('Error getting user predictions: $e');
       return [];
     }
   }
@@ -113,7 +113,7 @@ class PredictionService {
         'accuracy': accuracy,
       };
     } catch (e) {
-      print('Error getting prediction stats: $e');
+      // print('Error getting prediction stats: $e');
       return {'total_predictions': 0, 'correct_predictions': 0, 'total_coins_earned': 0, 'accuracy': 0.0};
     }
   }
@@ -153,7 +153,7 @@ class PredictionService {
 
       return sortedUsers.take(limit).toList();
     } catch (e) {
-      print('Error getting top predictors: $e');
+      // print('Error getting top predictors: $e');
       return [];
     }
   }

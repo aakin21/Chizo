@@ -39,12 +39,22 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       final currentLanguage = Localizations.localeOf(context).languageCode;
       final activeTournaments = await TournamentService.getActiveTournaments(language: currentLanguage);
       final user = await UserService.getCurrentUser();
+      
+      if (!mounted) return;
+      
+      // Her turnuva için kullanıcının katılım durumunu kontrol et
+      for (var tournament in activeTournaments) {
+        tournament.isUserParticipating = await _checkUserParticipation(tournament.id);
+      }
+      
       setState(() {
         tournaments = activeTournaments;
         currentUser = user;
         isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
+      
       setState(() => isLoading = false);
       BeautifulSnackBar.showError(
         context,
@@ -53,9 +63,51 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     }
   }
 
+  // Kullanıcının turnuvaya katılıp katılmadığını kontrol et
+  Future<bool> _checkUserParticipation(String tournamentId) async {
+    try {
+      // currentUser null ise tekrar al
+      UserModel? user = currentUser;
+      if (user == null) {
+        user = await UserService.getCurrentUser();
+        if (user == null) return false;
+      }
+      
+      final participation = await TournamentService.client
+          .from('tournament_participants')
+          .select('id')
+          .eq('tournament_id', tournamentId)
+          .eq('user_id', user.id)
+          .maybeSingle();
+      
+      return participation != null;
+    } catch (e) {
+      return false;
+    }
+  }
+
 
   Future<void> _joinTournament(TournamentModel tournament) async {
     if (currentUser == null) return;
+
+    // Çarşamba günü kayıtlar kapalı kontrolü
+    final now = DateTime.now();
+    if (now.weekday >= 3) {
+      BeautifulSnackBar.showWarning(
+        context,
+        message: "Çarşamba günü kayıtlar kapanmıştır. Gelecek hafta tekrar deneyin.",
+      );
+      return;
+    }
+
+    // Zaten katılmış mı kontrolü
+    if (tournament.isUserParticipating) {
+      BeautifulSnackBar.showInfo(
+        context,
+        message: "Bu turnuvaya zaten katıldınız.",
+      );
+      return;
+    }
 
     if (currentUser!.coins < tournament.entryFee) {
       BeautifulSnackBar.showWarning(
@@ -68,25 +120,34 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     // Cinsiyet kontrolü kaldırıldı - herkes tüm turnuvalara katılabilir
 
     final success = await TournamentService.joinTournament(tournament.id);
+    if (!mounted) return;
+    
     if (success) {
       BeautifulSnackBar.showSuccess(
         context,
         message: AppLocalizations.of(context)!.joinedTournament,
       );
-      await loadTournaments();
+      
+      // Turnuva durumunu güncelle
+      tournament.isUserParticipating = true;
+      
+      // UI'yi güncelle
+      setState(() {});
       
       // Turnuva fotoğrafı yükleme dialog'unu göster
       _showTournamentPhotoDialog(tournament.id);
     } else {
       BeautifulSnackBar.showError(
         context,
-        message: AppLocalizations.of(context)!.tournamentJoinFailed,
+        message: "Turnuvaya katılım başarısız. Lütfen tekrar deneyin.",
       );
     }
   }
 
   // Turnuva fotoğrafı yükleme dialog'u
   Future<void> _showTournamentPhotoDialog(String tournamentId) async {
+    if (!mounted) return;
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -128,6 +189,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
           // Turnuva fotoğrafını kaydet
           final success = await TournamentService.uploadTournamentPhoto(tournamentId, photoUrl);
           
+          if (!mounted) return;
+          
           if (success) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -146,6 +209,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
         }
       }
     } catch (e) {
+      if (!mounted) return;
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${AppLocalizations.of(context)!.error}: $e'),
@@ -173,6 +238,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       }
       
       if (specificMatch == null) {
+        if (!mounted) return;
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.noVotingForTournament)),
         );
@@ -182,6 +249,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       // Oylama ekranını aç
       await _showTournamentVotingDialog(specificMatch);
     } catch (e) {
+      if (!mounted) return;
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context)!.votingLoadError(e.toString()))),
       );
@@ -191,6 +260,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
 
 
   Future<void> _showTournamentVotingDialog(Map<String, dynamic> tournamentMatch) async {
+    if (!mounted) return;
+    
     final user1 = tournamentMatch['user1'];
     final user2 = tournamentMatch['user2'];
     String? selectedWinner;
@@ -339,6 +410,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
         loserId,
       );
       
+      if (!mounted) return;
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)!.voteSavedSuccessfully),
@@ -346,6 +419,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
         ),
       );
     } catch (e) {
+      if (!mounted) return;
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)!.votingError(e.toString())),
@@ -477,26 +552,17 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                     ],
                   ),
                 ),
-                // 3-dot menu for tournament details
-                PopupMenuButton<String>(
-                  onSelected: (value) {
-                    if (value == 'details') {
-                      _showTournamentDetails(tournament);
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 'details',
-                      child: Row(
-                        children: [
-                          Icon(Icons.info_outline, size: 16),
-                          SizedBox(width: 8),
-                          Text('Detaylar'),
-                        ],
-                      ),
+                // Turnuva kuralları butonu
+                TextButton(
+                  onPressed: () => _showTournamentDetails(tournament),
+                  child: const Text(
+                    'Turnuva Kuralları',
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
                     ),
-                  ],
-                  child: const Icon(Icons.more_vert, color: Colors.grey),
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Container(
@@ -553,6 +619,33 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                   Icons.stars,
                   AppLocalizations.of(context)!.coinPrize(tournament.prizePool),
                 ),
+                const SizedBox(width: 8),
+                // Katılımcı listesi butonu
+                GestureDetector(
+                  onTap: () => _showParticipantsList(tournament.id),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.blue[100],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.list, size: 14, color: Colors.blue[700]),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Katılımcılar',
+                          style: TextStyle(
+                            color: Colors.blue[700],
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
             
@@ -594,20 +687,18 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                   // Normal katılım butonu
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: (tournament.status == 'upcoming' || tournament.status == 'active') && tournament.currentParticipants < tournament.maxParticipants
+                      onPressed: _getJoinButtonEnabled(tournament)
                           ? () => _joinTournament(tournament)
                           : null,
-                      child: Text(
-                        tournament.status == 'completed'
-                            ? AppLocalizations.of(context)!.completed
-                            : tournament.status == 'active'
-                            ? AppLocalizations.of(context)!.ongoing
-                            : tournament.status == 'upcoming'
-                            ? AppLocalizations.of(context)!.join
-                            : tournament.currentParticipants >= tournament.maxParticipants
-                        ? AppLocalizations.of(context)!.tournamentFull
-                        : AppLocalizations.of(context)!.join,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _getJoinButtonEnabled(tournament) 
+                            ? null 
+                            : Colors.grey[300],
+                        foregroundColor: _getJoinButtonEnabled(tournament) 
+                            ? null 
+                            : Colors.grey[600],
                       ),
+                      child: Text(_getJoinButtonText(tournament)),
                     ),
                   ),
                 ],
@@ -997,6 +1088,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       );
 
       if (result['success']) {
+        if (!mounted) return;
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(result['message']),
@@ -1007,6 +1100,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
               textColor: Colors.white,
               onPressed: () {
                 // Private key'i kopyala
+                if (!mounted) return;
+                
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Private Key: ${result['private_key']}'),
@@ -1530,6 +1625,30 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                   ),
                   const SizedBox(height: 16),
                   
+                  // Zaman kuralları
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Turnuva Zaman Kuralları',
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 12),
+                          _buildTimeRule('Pazartesi 00:01', 'Kayıtlar açılır'),
+                          _buildTimeRule('Çarşamba 00:01', 'Kayıtlar kapanır, turnuva başlar'),
+                          _buildTimeRule('Cuma 00:01', 'Çeyrek final'),
+                          _buildTimeRule('Cumartesi 00:01', 'Yarı final'),
+                          _buildTimeRule('Pazar 00:01', 'Final'),
+                          _buildTimeRule('Pazartesi 00:01', 'Yeni turnuvalar açılır'),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  
                   // Turnuva programı ve sıralama
                   Card(
                     child: Padding(
@@ -1586,8 +1705,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                                   );
                                 },
                               ),
-                            ] else
-                              const Text('Henüz katılımcı yok'),
+                            ],
                           ] else if (tournament.tournamentFormat == 'elimination') ...[
                             // Sadece eleme usulü - program göster
                             Text(
@@ -1735,6 +1853,150 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
         ],
       ),
     );
+  }
+
+  Widget _buildTimeRule(String time, String description) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Container(
+            width: 120,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.blue[100],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              time,
+              style: TextStyle(
+                color: Colors.blue[800],
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              description,
+              style: const TextStyle(fontSize: 14),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Katılım butonunun aktif olup olmadığını kontrol et
+  bool _getJoinButtonEnabled(TournamentModel tournament) {
+    // Eğer kullanıcı zaten katılmışsa buton pasif
+    if (tournament.isUserParticipating) return false;
+    
+    // Çarşamba günü kayıtlar kapalı
+    final now = DateTime.now();
+    if (now.weekday >= 3) return false; // Çarşamba ve sonrası
+    
+    // Turnuva durumu kontrolü
+    if (tournament.status != 'upcoming') return false;
+    
+    // Turnuva dolu mu kontrol et
+    if (tournament.currentParticipants >= tournament.maxParticipants) return false;
+    
+    return true;
+  }
+
+  // Katılım butonunun metnini getir
+  String _getJoinButtonText(TournamentModel tournament) {
+    // Eğer kullanıcı zaten katılmışsa
+    if (tournament.isUserParticipating) {
+      return "Katıldınız";
+    }
+    
+    // Çarşamba günü kayıtlar kapalı
+    final now = DateTime.now();
+    if (now.weekday >= 3) {
+      return "Kayıt Kapalı";
+    }
+    
+    // Turnuva durumuna göre metin
+    if (tournament.status == 'completed') {
+      return AppLocalizations.of(context)!.completed;
+    } else if (tournament.status == 'active') {
+      return "Turnuva Başladı";
+    } else if (tournament.currentParticipants >= tournament.maxParticipants) {
+      return AppLocalizations.of(context)!.tournamentFull;
+    } else {
+      return AppLocalizations.of(context)!.join;
+    }
+  }
+
+  // Katılımcı listesini göster
+  Future<void> _showParticipantsList(String tournamentId) async {
+    try {
+      final participants = await TournamentService.getTournamentParticipants(tournamentId);
+      
+      if (!mounted) return;
+      
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.people, color: Colors.blue),
+              SizedBox(width: 8),
+              Text('Turnuva Katılımcıları'),
+            ],
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 400,
+            child: participants.isEmpty
+                ? const Center(
+                    child: Text('Henüz katılımcı yok'),
+                  )
+                : ListView.builder(
+                    itemCount: participants.length,
+                    itemBuilder: (context, index) {
+                      final participant = participants[index];
+                      final user = participant['user'];
+                      
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: user['profile_image_url'] != null 
+                              ? NetworkImage(user['profile_image_url']) 
+                              : null,
+                          child: user['profile_image_url'] == null 
+                              ? const Icon(Icons.person) 
+                              : null,
+                        ),
+                        title: Text(user['username'] ?? 'Bilinmeyen'),
+                        subtitle: Text('Katılım: ${_formatDate(DateTime.parse(participant['joined_at']))}'),
+                        trailing: participant['is_eliminated'] 
+                            ? const Icon(Icons.close, color: Colors.red)
+                            : const Icon(Icons.check, color: Colors.green),
+                      );
+                    },
+                  ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Kapat'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Katılımcı listesi yüklenirken hata: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   // Turnuva adını getir (sistem turnuvaları için localization)
