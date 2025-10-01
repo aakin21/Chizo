@@ -32,6 +32,11 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       // Önce Supabase bağlantısını test et
       await TournamentService.testSupabaseConnection();
       
+      // Turnuva fazlarını güncelle (status kontrolü)
+      print('🔄 DEBUG: updateTournamentPhases çağrılıyor...');
+      await TournamentService.updateTournamentPhases();
+      print('✅ DEBUG: updateTournamentPhases tamamlandı');
+      
       // Önce haftalık turnuvaları oluşturmayı dene
       await TournamentService.createWeeklyTournaments();
       
@@ -90,16 +95,6 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   Future<void> _joinTournament(TournamentModel tournament) async {
     if (currentUser == null) return;
 
-    // Çarşamba günü kayıtlar kapalı kontrolü
-    final now = DateTime.now();
-    if (now.weekday >= 3) {
-      BeautifulSnackBar.showWarning(
-        context,
-        message: "Çarşamba günü kayıtlar kapanmıştır. Gelecek hafta tekrar deneyin.",
-      );
-      return;
-    }
-
     // Zaten katılmış mı kontrolü
     if (tournament.isUserParticipating) {
       BeautifulSnackBar.showInfo(
@@ -109,6 +104,23 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       return;
     }
 
+    // Private turnuva için özel join fonksiyonu
+    if (tournament.isPrivate) {
+      await _joinPrivateTournamentById(tournament);
+      return;
+    }
+
+    // Sistem turnuvaları için çarşamba günü kontrolü
+    final now = DateTime.now();
+    if (now.weekday >= 3) {
+      BeautifulSnackBar.showWarning(
+        context,
+        message: "Çarşamba günü kayıtlar kapanmıştır. Gelecek hafta tekrar deneyin.",
+      );
+      return;
+    }
+
+    // Sistem turnuvaları için entry fee kontrolü
     if (currentUser!.coins < tournament.entryFee) {
       BeautifulSnackBar.showWarning(
         context,
@@ -117,8 +129,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       return;
     }
 
-    // Cinsiyet kontrolü kaldırıldı - herkes tüm turnuvalara katılabilir
-
+    // Sistem turnuvaları için normal join
     final success = await TournamentService.joinTournament(tournament.id);
     if (!mounted) return;
     
@@ -140,6 +151,109 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       BeautifulSnackBar.showError(
         context,
         message: "Turnuvaya katılım başarısız. Lütfen tekrar deneyin.",
+      );
+    }
+  }
+
+  // Private turnuva için özel join fonksiyonu
+  Future<void> _joinPrivateTournamentById(TournamentModel tournament) async {
+    final success = await TournamentService.joinPrivateTournamentById(tournament.id);
+    if (!mounted) return;
+    
+    if (success) {
+      BeautifulSnackBar.showSuccess(
+        context,
+        message: "Private turnuvaya başarıyla katıldınız!",
+      );
+      
+      // Turnuva durumunu güncelle
+      tournament.isUserParticipating = true;
+      
+      // UI'yi güncelle
+      setState(() {});
+      
+      // Turnuva fotoğrafı yükleme dialog'unu göster
+      _showTournamentPhotoDialog(tournament.id);
+    } else {
+      BeautifulSnackBar.showError(
+        context,
+        message: "Private turnuvaya katılım başarısız. Turnuva dolu olabilir veya kayıt süresi dolmuş olabilir.",
+      );
+    }
+  }
+
+  // Private turnuva silme dialog'u
+  Future<void> _showDeleteTournamentDialog(TournamentModel tournament) async {
+    if (!mounted) return;
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.warning, color: Colors.red),
+            const SizedBox(width: 8),
+            const Text('Turnuvayı Sil'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('${tournament.name} turnuvasını silmek istediğinizden emin misiniz?'),
+            const SizedBox(height: 8),
+            const Text(
+              'Bu işlem geri alınamaz ve tüm katılımcılar turnuvadan çıkarılacaktır.',
+              style: TextStyle(color: Colors.red, fontSize: 12),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('İptal'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _deletePrivateTournament(tournament);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Sil'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Private turnuva silme fonksiyonu
+  Future<void> _deletePrivateTournament(TournamentModel tournament) async {
+    try {
+      final success = await TournamentService.deletePrivateTournament(tournament.id);
+      if (!mounted) return;
+      
+      if (success) {
+        BeautifulSnackBar.showSuccess(
+          context,
+          message: "Turnuva başarıyla silindi!",
+        );
+        
+        // Turnuvaları yenile
+        loadTournaments();
+      } else {
+        BeautifulSnackBar.showError(
+          context,
+          message: "Turnuva silinemedi. Sadece oluşturan kişi ve upcoming durumundaki turnuvalar silinebilir.",
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      BeautifulSnackBar.showError(
+        context,
+        message: "Hata: $e",
       );
     }
   }
@@ -610,16 +724,19 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                   '${tournament.currentParticipants}/${tournament.maxParticipants}',
                 ),
                 const SizedBox(width: 8),
-                _buildInfoChip(
-                  Icons.monetization_on,
-                  '${tournament.entryFee} coin',
-                ),
-                const SizedBox(width: 8),
-                _buildInfoChip(
-                  Icons.stars,
-                  AppLocalizations.of(context)!.coinPrize(tournament.prizePool),
-                ),
-                const SizedBox(width: 8),
+                // Sadece sistem turnuvaları için entry fee ve prize pool göster
+                if (!tournament.isPrivate) ...[
+                  _buildInfoChip(
+                    Icons.monetization_on,
+                    '${tournament.entryFee} coin',
+                  ),
+                  const SizedBox(width: 8),
+                  _buildInfoChip(
+                    Icons.stars,
+                    AppLocalizations.of(context)!.coinPrize(tournament.prizePool),
+                  ),
+                  const SizedBox(width: 8),
+                ],
                 // Katılımcı listesi butonu
                 GestureDetector(
                   onTap: () => _showParticipantsList(tournament.id),
@@ -669,18 +786,45 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
             
             Row(
               children: [
-                // Admin kontrolü - sadece turnuva oluşturan kişi için
+                // Private turnuva creator kontrolü
                 if (tournament.isPrivate && currentUser != null && tournament.creatorId == currentUser?.id) ...[
-                  // Turnuvayı İncele butonu (Admin için)
+                  // Creator için hem join hem incele butonu
                   Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => _showTournamentInspectDialog(tournament),
-                      icon: const Icon(Icons.admin_panel_settings),
-                      label: const Text('Turnuvayı İncele'),
+                    child: ElevatedButton(
+                      onPressed: _getJoinButtonEnabled(tournament)
+                          ? () => _joinTournament(tournament)
+                          : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple,
-                        foregroundColor: Colors.white,
+                        backgroundColor: _getJoinButtonEnabled(tournament) 
+                            ? Colors.green
+                            : Colors.grey[300],
+                        foregroundColor: _getJoinButtonEnabled(tournament) 
+                            ? Colors.white
+                            : Colors.grey[600],
                       ),
+                      child: Text(_getJoinButtonText(tournament)),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Turnuvayı İncele butonu (Creator için)
+                  ElevatedButton.icon(
+                    onPressed: () => _showTournamentInspectDialog(tournament),
+                    icon: const Icon(Icons.admin_panel_settings),
+                    label: const Text('İncele'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.purple,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Turnuvayı Sil butonu (Creator için)
+                  ElevatedButton.icon(
+                    onPressed: () => _showDeleteTournamentDialog(tournament),
+                    icon: const Icon(Icons.delete),
+                    label: const Text('Sil'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
                     ),
                   ),
                 ] else ...[
@@ -769,8 +913,6 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
         return 'Lig Usulü: Herkes herkesle oynar, en yüksek win rate kazanır. Sınırsız katılımcı.';
       case 'elimination':
         return 'Eleme Usulü: Tek maçlık eleme sistemi. Maksimum 8 kişi (Çeyrek final, Yarı final, Final).';
-      case 'hybrid':
-        return 'Lig + Eleme: Önce lig usulü, sonra en iyi 8 kişi eleme usulü. Maksimum 8 kişi eleme aşaması için.';
       default:
         return 'Turnuva formatı seçin';
     }
@@ -778,11 +920,28 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
 
   // Private turnuva oluşturma dialog'u
   Future<void> _showCreatePrivateTournamentDialog() async {
+    // Önce kullanıcının coin'ini kontrol et
+    final currentUser = await UserService.getCurrentUser();
+    if (currentUser == null) {
+      BeautifulSnackBar.showError(
+        context,
+        message: 'Kullanıcı bilgileri alınamadı',
+      );
+      return;
+    }
+
+    const requiredCoins = 5000;
+    if (currentUser.coins < requiredCoins) {
+      BeautifulSnackBar.showWarning(
+        context,
+        message: 'Private turnuva oluşturmak için $requiredCoins coin gerekli. Mevcut coin: ${currentUser.coins}',
+      );
+      return;
+    }
+
     final nameController = TextEditingController();
     final descriptionController = TextEditingController();
-    final entryFeeController = TextEditingController(text: '1000');
     final maxParticipantsController = TextEditingController(text: '8');
-    final customRulesController = TextEditingController();
     
     String selectedFormat = 'league';
     String selectedGender = 'Erkek';
@@ -793,11 +952,25 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: Row(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.add_circle, color: Colors.purple),
-              const SizedBox(width: 8),
-              Text(AppLocalizations.of(context)!.createPrivateTournament),
+              Row(
+                children: [
+                  const Icon(Icons.add_circle, color: Colors.purple),
+                  const SizedBox(width: 8),
+                  Text(AppLocalizations.of(context)!.createPrivateTournament),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Private turnuva oluşturmak için 5000 coin gereklidir',
+                style: TextStyle(
+                  color: Colors.orange[700],
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ],
           ),
           content: SingleChildScrollView(
@@ -828,52 +1001,19 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 ),
                 const SizedBox(height: 16),
                 
-                // Entry fee ve max participants
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: entryFeeController,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Entry Fee (Coin)',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.monetization_on),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: TextField(
-                        controller: maxParticipantsController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.maxParticipants,
-                          border: const OutlineInputBorder(),
-                          prefixIcon: const Icon(Icons.people),
-                          suffixIcon: selectedFormat == 'elimination' 
-                            ? Tooltip(
-                                message: AppLocalizations.of(context)!.eliminationMaxParticipants,
-                                child: Icon(Icons.warning, color: Colors.orange, size: 16),
-                              )
-                            : null,
-                        ),
-                        onChanged: (value) {
-                          // Eleme usulü için maksimum 8 kişi kontrolü
-                          if (selectedFormat == 'elimination' && int.tryParse(value) != null && int.parse(value) > 8) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(AppLocalizations.of(context)!.eliminationMaxParticipantsWarning),
-                                backgroundColor: Colors.orange,
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                            maxParticipantsController.text = '8';
-                          }
-                        },
-                      ),
-                    ),
-                  ],
+                // Max participants
+                TextField(
+                  controller: maxParticipantsController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.maxParticipants,
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.people),
+                    // Private turnuvalar için eleme usulü sınırı yok
+                  ),
+                  onChanged: (value) {
+                    // Private turnuvalar için eleme usulü sınırı yok
+                  },
                 ),
                 const SizedBox(height: 16),
                 
@@ -891,15 +1031,11 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                         items: [
                           DropdownMenuItem(value: 'league', child: Text(AppLocalizations.of(context)!.leagueFormat)),
                           DropdownMenuItem(value: 'elimination', child: Text(AppLocalizations.of(context)!.eliminationFormat)),
-                          DropdownMenuItem(value: 'hybrid', child: Text(AppLocalizations.of(context)!.hybridFormat)),
                         ],
                         onChanged: (value) {
                           setDialogState(() {
                             selectedFormat = value!;
-                            // Eleme usulü seçilirse maksimum 8 kişi
-                            if (value == 'elimination' && int.parse(maxParticipantsController.text) > 8) {
-                              maxParticipantsController.text = '8';
-                            }
+                            // Private turnuvalar için eleme usulü sınırı yok
                           });
                         },
                       ),
@@ -976,18 +1112,6 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                     }
                   },
                 ),
-                const SizedBox(height: 16),
-                
-                // Özel kurallar
-                TextField(
-                  controller: customRulesController,
-                  decoration: const InputDecoration(
-                    labelText: 'Özel Kurallar (Opsiyonel)',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.rule),
-                  ),
-                  maxLines: 2,
-                ),
               ],
             ),
           ),
@@ -1000,7 +1124,6 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
               onPressed: () async {
                 if (nameController.text.isEmpty || 
                     descriptionController.text.isEmpty ||
-                    entryFeeController.text.isEmpty ||
                     maxParticipantsController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -1011,28 +1134,16 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                   return;
                 }
 
-                // Eleme usulü için maksimum 8 kişi kontrolü
-                final maxParticipants = int.tryParse(maxParticipantsController.text);
-                if (selectedFormat == 'elimination' && (maxParticipants == null || maxParticipants > 8)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Eleme usulü için maksimum 8 kişi olabilir'),
-                      backgroundColor: Colors.orange,
-                    ),
-                  );
-                  return;
-                }
+                // Private turnuvalar için eleme usulü sınırı yok
                 
                 Navigator.pop(context);
                 await _createPrivateTournament(
                   name: nameController.text,
                   description: descriptionController.text,
-                  entryFee: int.parse(entryFeeController.text),
                   maxParticipants: int.parse(maxParticipantsController.text),
                   startDate: startDate,
                   endDate: endDate,
                   tournamentFormat: selectedFormat,
-                  customRules: customRulesController.text.isEmpty ? null : customRulesController.text,
                   gender: selectedGender,
                 );
               },
@@ -1052,12 +1163,10 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   Future<void> _createPrivateTournament({
     required String name,
     required String description,
-    required int entryFee,
     required int maxParticipants,
     required DateTime startDate,
     required DateTime endDate,
     required String tournamentFormat,
-    String? customRules,
     required String gender,
   }) async {
     try {
@@ -1066,12 +1175,10 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       final result = await TournamentService.createPrivateTournament(
         name: name,
         description: description,
-        entryFee: entryFee,
         maxParticipants: maxParticipants,
         startDate: startDate,
         endDate: endDate,
         tournamentFormat: tournamentFormat,
-        customRules: customRules,
         gender: gender,
         language: currentLanguage,
       );
@@ -1234,8 +1341,11 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                           _buildInfoRow('Durum', _getStatusText(tournament.status)),
                           _buildInfoRow('Aşama', _getPhaseText(tournament.currentPhase)),
                           _buildInfoRow('Katılımcı', '${tournament.currentParticipants}/${tournament.maxParticipants}'),
-                          _buildInfoRow('Entry Fee', '${tournament.entryFee} coin'),
-                          _buildInfoRow('Ödül Havuzu', '${tournament.prizePool} coin'),
+                          // Sadece sistem turnuvaları için entry fee ve prize pool göster
+                          if (!tournament.isPrivate) ...[
+                            _buildInfoRow('Entry Fee', '${tournament.entryFee} coin'),
+                            _buildInfoRow('Ödül Havuzu', '${tournament.prizePool} coin'),
+                          ],
                           _buildInfoRow('Format', _getFormatText(tournament.tournamentFormat)),
                           if (tournament.customRules != null && tournament.customRules!.isNotEmpty)
                             _buildInfoRow('Özel Kurallar', tournament.customRules!),
@@ -1407,7 +1517,6 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     switch (format) {
       case 'league': return 'Lig Usulü';
       case 'elimination': return 'Eleme Usulü';
-      case 'hybrid': return 'Lig + Eleme';
       default: return format;
     }
   }
@@ -1553,8 +1662,11 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                           _buildInfoRow('Durum', _getStatusText(tournament.status)),
                           _buildInfoRow('Aşama', _getPhaseText(tournament.currentPhase)),
                           _buildInfoRow('Katılımcı', '${tournament.currentParticipants}/${tournament.maxParticipants}'),
-                          _buildInfoRow('Entry Fee', '${tournament.entryFee} coin'),
-                          _buildInfoRow('Ödül Havuzu', '${tournament.prizePool} coin'),
+                          // Sadece sistem turnuvaları için entry fee ve prize pool göster
+                          if (!tournament.isPrivate) ...[
+                            _buildInfoRow('Entry Fee', '${tournament.entryFee} coin'),
+                            _buildInfoRow('Ödül Havuzu', '${tournament.prizePool} coin'),
+                          ],
                           _buildInfoRow('Format', _getFormatText(tournament.tournamentFormat)),
                           if (tournament.customRules != null && tournament.customRules!.isNotEmpty)
                             _buildInfoRow('Özel Kurallar', tournament.customRules!),
@@ -1707,97 +1819,6 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                             _buildScheduleInfo('Çeyrek Final', tournament.startDate),
                             _buildScheduleInfo('Yarı Final', tournament.startDate.add(const Duration(days: 1))),
                             _buildScheduleInfo('Final', tournament.startDate.add(const Duration(days: 2))),
-                          ] else if (tournament.tournamentFormat == 'hybrid') ...[
-                            // Lig + Eleme - her ikisini göster
-                            Text(
-                              'Lig + Eleme Turnuva',
-                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.purple),
-                            ),
-                            const SizedBox(height: 8),
-                            Text('Önce lig usulü, sonra en iyi 8 kişi eleme usulü.'),
-                            const SizedBox(height: 12),
-                            
-                            // Lig aşaması
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.blue.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.blue),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Lig Aşaması',
-                                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text('Bitiş Tarihi: ${_formatDate(tournament.startDate.add(const Duration(days: 3)))}'),
-                                  if (leaderboard.isNotEmpty) ...[
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'Anlık Sıralama (${leaderboard.length} katılımcı)',
-                                      style: const TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: const NeverScrollableScrollPhysics(),
-                                      itemCount: leaderboard.length > 8 ? 8 : leaderboard.length,
-                                      itemBuilder: (context, index) {
-                                        final participant = leaderboard[index];
-                                        final rank = index + 1;
-                                        
-                                        return ListTile(
-                                          leading: CircleAvatar(
-                                            backgroundColor: rank <= 3 ? Colors.amber : Colors.grey,
-                                            child: Text(
-                                              rank.toString(),
-                                              style: TextStyle(
-                                                color: rank <= 3 ? Colors.white : Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                          title: Text(participant['profiles']['username'] ?? 'Bilinmeyen'),
-                                          subtitle: Text('Skor: ${participant['score']}'),
-                                          trailing: participant['is_eliminated'] 
-                                              ? const Icon(Icons.close, color: Colors.red)
-                                              : const Icon(Icons.check, color: Colors.green),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                            
-                            const SizedBox(height: 12),
-                            
-                            // Eleme aşaması
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.red),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Eleme Aşaması',
-                                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text('Başlangıç Tarihi: ${_formatDate(tournament.startDate.add(const Duration(days: 4)))}'),
-                                  _buildScheduleInfo('Çeyrek Final', tournament.startDate.add(const Duration(days: 4))),
-                                  _buildScheduleInfo('Yarı Final', tournament.startDate.add(const Duration(days: 5))),
-                                  _buildScheduleInfo('Final', tournament.startDate.add(const Duration(days: 6))),
-                                ],
-                              ),
-                            ),
                           ],
                         ],
                       ),
@@ -1882,9 +1903,14 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     // Eğer kullanıcı zaten katılmışsa buton pasif
     if (tournament.isUserParticipating) return false;
     
-    // Çarşamba günü kayıtlar kapalı
+    // Çarşamba günü kayıtlar kapalı (sadece sistem turnuvaları için)
     final now = DateTime.now();
-    if (now.weekday >= 3) return false; // Çarşamba ve sonrası
+    if (!tournament.isPrivate && now.weekday >= 3) return false; // Çarşamba ve sonrası
+    
+    // Private turnuvalar için start date kontrolü
+    if (tournament.isPrivate && tournament.status == 'upcoming') {
+      if (now.isAfter(tournament.startDate)) return false; // Start date geçmiş
+    }
     
     // Turnuva durumu kontrolü
     if (tournament.status != 'upcoming') return false;
@@ -1902,9 +1928,22 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       return "Katıldınız";
     }
     
-    // Çarşamba günü kayıtlar kapalı
+    // Private turnuva creator için özel metin
+    if (tournament.isPrivate && currentUser != null && tournament.creatorId == currentUser?.id) {
+      return "Turnuvaya Katıl";
+    }
+    
+    // Private turnuvalar için start date kontrolü
+    if (tournament.isPrivate && tournament.status == 'upcoming') {
+      final now = DateTime.now();
+      if (now.isAfter(tournament.startDate)) {
+        return "Kayıt Kapalı";
+      }
+    }
+    
+    // Çarşamba günü kayıtlar kapalı (sadece sistem turnuvaları için)
     final now = DateTime.now();
-    if (now.weekday >= 3) {
+    if (!tournament.isPrivate && now.weekday >= 3) {
       return "Kayıt Kapalı";
     }
     

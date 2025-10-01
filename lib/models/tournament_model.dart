@@ -70,8 +70,12 @@ class TournamentModel {
       description: json['description'],
       entryFee: json['entry_fee'],
       prizePool: json['prize_pool'],
-      maxParticipants: json['max_participants'],
-      currentParticipants: json['current_participants'],
+      maxParticipants: json['max_participants'] is int 
+          ? json['max_participants'] 
+          : int.tryParse(json['max_participants'].toString()) ?? 0,
+      currentParticipants: json['current_participants'] is int 
+          ? json['current_participants'] 
+          : int.tryParse(json['current_participants'].toString()) ?? 0,
       startDate: DateTime.parse(json['start_date']),
       endDate: DateTime.parse(json['end_date']),
       status: json['status'],
