@@ -93,11 +93,17 @@ class TournamentService {
       final allTournaments = [...systemTournaments, ...privateTournaments];
       print('📋 DEBUG: Toplam turnuva: ${allTournaments.length} adet');
       
-      final tournaments = (allTournaments as List)
-          .map((json) => TournamentModel.fromJson(json))
+      final tournaments = allTournaments
+          .map((json) {
+            print('🔍 DEBUG: Turnuva JSON: ${json['name']} - current_participants: ${json['current_participants']}');
+            return TournamentModel.fromJson(json);
+          })
           .toList();
       
       print('🎯 DEBUG: ${tournaments.length} turnuva işlendi');
+      for (var tournament in tournaments) {
+        print('📊 DEBUG: ${tournament.name} - currentParticipants: ${tournament.currentParticipants}');
+      }
       return tournaments;
     } catch (e) {
       print('❌ DEBUG: getActiveTournaments hatası: $e');
@@ -403,15 +409,24 @@ class TournamentService {
       }
       // // print('✅ JOIN TOURNAMENT: Gender check passed');
 
-      // Turnuva durumu kontrolü - upcoming veya active olabilir
+      // Turnuva durumu kontrolü
       if (tournament['status'] != 'upcoming' && tournament['status'] != 'active') {
         // // print('❌ JOIN TOURNAMENT: Tournament status is ${tournament['status']}, not joinable');
         return false; // Kayıt kapalı
       }
+      
+      // Private turnuvalar için start date kontrolü
+      if (tournament['is_private'] && tournament['status'] == 'upcoming') {
+        final startDate = DateTime.parse(tournament['start_date']);
+        if (DateTime.now().isAfter(startDate)) {
+          // // print('❌ JOIN TOURNAMENT: Private tournament start date has passed');
+          return false; // Start date geçmiş, kayıt kapalı
+        }
+      }
       // // print('✅ JOIN TOURNAMENT: Tournament status is valid');
 
-      // Kullanıcının coin kontrolü
-      if (currentUser.coins < tournament['entry_fee']) {
+      // Sistem turnuvaları için coin kontrolü
+      if (!tournament['is_private'] && currentUser.coins < tournament['entry_fee']) {
         // // print('❌ JOIN TOURNAMENT: Insufficient coins. User has ${currentUser.coins}, needs ${tournament['entry_fee']}');
         return false; // Yetersiz coin
       }
@@ -451,14 +466,16 @@ class TournamentService {
       });
       // // print('✅ JOIN TOURNAMENT: Successfully inserted into tournament_participants');
 
-      // Entry fee'yi düş
-      // // print('🎯 JOIN TOURNAMENT: Updating user coins...');
-      await UserService.updateCoins(
-        -tournament['entry_fee'], 
-        'spent', 
-        'Turnuva katılım ücreti'
-      );
-      // // print('✅ JOIN TOURNAMENT: User coins updated');
+      // Entry fee'yi düş (sadece sistem turnuvaları için)
+      if (!tournament['is_private']) {
+        // // print('🎯 JOIN TOURNAMENT: Updating user coins...');
+        await UserService.updateCoins(
+          -tournament['entry_fee'], 
+          'spent', 
+          'Turnuva katılım ücreti'
+        );
+        // // print('✅ JOIN TOURNAMENT: User coins updated');
+      }
 
       // Turnuva katılımcı sayısını güncelle
       // // print('🎯 JOIN TOURNAMENT: Updating tournament participant count...');
@@ -552,7 +569,15 @@ class TournamentService {
           .eq('tournament_id', tournamentId)
           .order('joined_at', ascending: true);
 
-      return List<Map<String, dynamic>>.from(response);
+      // Katılımcıları alfabetik sırala (username'e göre)
+      final participants = List<Map<String, dynamic>>.from(response);
+      participants.sort((a, b) {
+        final usernameA = a['user']['username']?.toString().toLowerCase() ?? '';
+        final usernameB = b['user']['username']?.toString().toLowerCase() ?? '';
+        return usernameA.compareTo(usernameB);
+      });
+
+      return participants;
     } catch (e) {
       // // print('Error getting tournament participants: $e');
       return [];
@@ -582,7 +607,15 @@ class TournamentService {
           .order('score', ascending: false)
           .order('joined_at', ascending: true);
 
-      return List<Map<String, dynamic>>.from(response);
+      // Katılımcıları alfabetik sırala (username'e göre)
+      final participants = List<Map<String, dynamic>>.from(response);
+      participants.sort((a, b) {
+        final usernameA = a['profiles']['username']?.toString().toLowerCase() ?? '';
+        final usernameB = b['profiles']['username']?.toString().toLowerCase() ?? '';
+        return usernameA.compareTo(usernameB);
+      });
+
+      return participants;
     } catch (e) {
       // // print('Error getting tournament leaderboard: $e');
       return [];
@@ -1035,9 +1068,11 @@ class TournamentService {
   // Haftalık turnuva fazlarını güncelle - DÜZELTİLMİŞ SİSTEM
   static Future<void> updateTournamentPhases() async {
     try {
+      print('🔄 DEBUG: updateTournamentPhases başladı');
       final now = DateTime.now();
       final dayOfWeek = now.weekday;
       final hour = now.hour;
+      print('📅 DEBUG: Şimdi: $now, Gün: $dayOfWeek, Saat: $hour');
 
       // Çarşamba 00:01'de kayıt kapanır, turnuva başlar
       if (dayOfWeek == 3 && hour == 0) {
@@ -1055,8 +1090,21 @@ class TournamentService {
       else if (dayOfWeek == 7 && hour == 0) {
         await _completeTournament();
       }
+      
+      // Private turnuvaları start date'e göre başlat (sürekli kontrol)
+      print('🔍 DEBUG: Private turnuva start date kontrolü başlıyor...');
+      await _startPrivateTournamentsByStartDate();
+      
+      // Private turnuvaları end date'e göre tamamla (sürekli kontrol)
+      print('🔍 DEBUG: Private turnuva end date kontrolü başlıyor...');
+      await _completePrivateTournamentsByEndDate();
+      
+      // Haftalık turnuvaları çarşamba sonrası başlat (sürekli kontrol)
+      print('🔍 DEBUG: Haftalık turnuva kontrolü başlıyor...');
+      await _startWeeklyTournamentsByDate();
+      
     } catch (e) {
-      // // print('Error updating tournament phases: $e');
+      print('❌ DEBUG: Error updating tournament phases: $e');
     }
   }
 
@@ -1091,6 +1139,51 @@ class TournamentService {
       }
     } catch (e) {
       // // print('Error starting weekly tournaments: $e');
+    }
+  }
+
+  // Haftalık turnuvaları çarşamba sonrası başlat (sürekli kontrol)
+  static Future<void> _startWeeklyTournamentsByDate() async {
+    try {
+      final now = DateTime.now();
+      print('🔍 DEBUG: Haftalık turnuva kontrolü - Şimdi: $now');
+      
+      // Çarşamba sonrası upcoming durumundaki sistem turnuvalarını getir
+      final tournaments = await _client
+          .from('tournaments')
+          .select('id, name, current_participants, registration_start_date')
+          .eq('status', 'upcoming')
+          .eq('is_system_tournament', true)
+          .eq('is_private', false);
+      
+      print('📋 DEBUG: Upcoming sistem turnuvalar: ${tournaments.length} adet');
+
+      for (var tournament in tournaments) {
+        final registrationStartDate = DateTime.parse(tournament['registration_start_date']);
+        final wednesday = registrationStartDate.add(const Duration(days: 2)); // Pazartesi + 2 = Çarşamba
+        
+        print('🔍 DEBUG: ${tournament['name']} - Registration: $registrationStartDate, Çarşamba: $wednesday, Katılımcı: ${tournament['current_participants']}');
+        print('🔍 DEBUG: Çarşamba geçmiş mi? ${now.isAfter(wednesday)}');
+        
+        // Çarşamba geçmişse turnuvayı başlat (katılımcı kontrolü yok)
+        if (now.isAfter(wednesday)) {
+          await _client
+              .from('tournaments')
+              .update({
+                'status': 'active',
+                'current_phase': 'qualifying',
+                'current_round': 1,
+                'phase_start_date': DateTime.now().toIso8601String(),
+              })
+              .eq('id', tournament['id']);
+          
+          print('✅ DEBUG: Haftalık turnuva ${tournament['name']} başlatıldı (katılımcı: ${tournament['current_participants']})');
+        } else {
+          print('❌ DEBUG: ${tournament['name']} başlatılamadı - Çarşamba henüz gelmedi: ${now.isAfter(wednesday)}');
+        }
+      }
+    } catch (e) {
+      print('❌ DEBUG: Error starting weekly tournaments by date: $e');
     }
   }
 
@@ -1202,6 +1295,99 @@ class TournamentService {
     }
   }
 
+  // Private turnuvaları start date'e göre başlat
+  static Future<void> _startPrivateTournamentsByStartDate() async {
+    try {
+      final now = DateTime.now();
+      print('🔍 DEBUG: Private turnuva start date kontrolü - Şimdi: $now');
+      
+      // Start date'i gelmiş private turnuvaları getir
+      final readyTournaments = await _client
+          .from('tournaments')
+          .select('id, name, start_date, current_participants')
+          .eq('is_private', true)
+          .eq('status', 'upcoming')
+          .lte('start_date', now.toIso8601String());
+      
+      print('🔍 DEBUG: Sorgu: start_date <= $now');
+      print('🔍 DEBUG: ISO String: ${now.toIso8601String()}');
+      
+      // Manuel test - tüm private turnuvaları getir
+      final allPrivateTournaments = await _client
+          .from('tournaments')
+          .select('id, name, start_date, current_participants, status')
+          .eq('is_private', true);
+      
+      print('🔍 DEBUG: Tüm private turnuvalar: ${allPrivateTournaments.length} adet');
+      for (var tournament in allPrivateTournaments) {
+        print('  - ${tournament['name']} - Start: ${tournament['start_date']}, Status: ${tournament['status']}');
+      }
+      
+      print('📋 DEBUG: Start date geçmiş private turnuvalar: ${readyTournaments.length} adet');
+      
+      for (var tournament in readyTournaments) {
+        print('🔍 DEBUG: ${tournament['name']} - Start: ${tournament['start_date']}, Katılımcı: ${tournament['current_participants']}');
+        // En az 2 katılımcı varsa turnuvayı başlat
+        if (tournament['current_participants'] >= 2) {
+          await _client
+              .from('tournaments')
+              .update({
+                'status': 'active',
+                'current_phase': 'qualifying',
+                'current_round': 1,
+                'phase_start_date': DateTime.now().toIso8601String(),
+              })
+              .eq('id', tournament['id']);
+          
+          print('✅ DEBUG: Private tournament ${tournament['name']} started by start date');
+        } else {
+          // Yeterli katılımcı yoksa turnuvayı iptal et
+          await _client
+              .from('tournaments')
+              .update({
+                'status': 'cancelled',
+                'current_phase': 'cancelled',
+              })
+              .eq('id', tournament['id']);
+          
+          print('❌ DEBUG: Private tournament ${tournament['name']} cancelled due to insufficient participants');
+        }
+      }
+    } catch (e) {
+      print('❌ DEBUG: Error starting private tournaments by start date: $e');
+    }
+  }
+
+  // Private turnuvaları end date'e göre tamamla
+  static Future<void> _completePrivateTournamentsByEndDate() async {
+    try {
+      final now = DateTime.now();
+      
+      // End date'i geçmiş private turnuvaları getir
+      final expiredTournaments = await _client
+          .from('tournaments')
+          .select('id, name, end_date, current_phase')
+          .eq('is_private', true)
+          .eq('status', 'active')
+          .lt('end_date', now.toIso8601String());
+      
+      for (var tournament in expiredTournaments) {
+        // Turnuvayı tamamla
+        await _client
+            .from('tournaments')
+            .update({
+              'status': 'completed',
+              'current_phase': 'completed',
+            })
+            .eq('id', tournament['id']);
+        
+        // // print('Private tournament ${tournament['name']} completed by end date');
+      }
+    } catch (e) {
+      // // print('Error completing private tournaments by end date: $e');
+    }
+  }
+
   // Turnuva kazananını belirle ve ödülü ver (eski fonksiyon - artık kullanılmıyor)
   static Future<bool> completeTournament(String tournamentId, String winnerId) async {
     try {
@@ -1239,12 +1425,10 @@ class TournamentService {
   static Future<Map<String, dynamic>> createPrivateTournament({
     required String name,
     required String description,
-    required int entryFee,
     required int maxParticipants,
     required DateTime startDate,
     required DateTime endDate,
     required String tournamentFormat,
-    String? customRules,
     String gender = 'Erkek',
     String language = 'tr',
   }) async {
@@ -1254,9 +1438,10 @@ class TournamentService {
         return {'success': false, 'message': 'Kullanıcı bulunamadı'};
       }
 
-      // Coin kontrolü
-      if (currentUser.coins < entryFee) {
-        return {'success': false, 'message': 'Yetersiz coin'};
+      // 5000 coin oluşturma ücreti kontrolü
+      const creationFee = 5000;
+      if (currentUser.coins < creationFee) {
+        return {'success': false, 'message': 'Turnuva oluşturmak için 5000 coin gerekli'};
       }
 
       // Private key oluştur
@@ -1268,8 +1453,8 @@ class TournamentService {
         'id': tournamentId,
         'name': name,
         'description': description,
-        'entry_fee': entryFee,
-        'prize_pool': entryFee * maxParticipants,
+        'entry_fee': 0, // Entry fee kaldırıldı
+        'prize_pool': 0, // Prize pool kaldırıldı
         'max_participants': maxParticipants,
         'current_participants': 0,
         'start_date': startDate.toIso8601String(),
@@ -1282,30 +1467,18 @@ class TournamentService {
         'private_key': privateKey,
         'creator_id': currentUser.id, // Creator ID'yi ekle
         'tournament_format': tournamentFormat,
-        'custom_rules': customRules,
         'language': language,
         'created_at': DateTime.now().toIso8601String(),
       }).select().single();
 
-      // Creator'ı otomatik katılımcı yap
-      await _client.from('tournament_participants').insert({
-        'tournament_id': tournamentId,
-        'user_id': currentUser.id,
-        'joined_at': DateTime.now().toIso8601String(),
-      });
-
-      // Turnuva oluşturma ücretini düş
+      // Turnuva oluşturma ücretini düş (5000 coin)
       await UserService.updateCoins(
-        -entryFee,
+        -creationFee,
         'spent',
         'Private turnuva oluşturma ücreti'
       );
 
-      // Current participants'ı güncelle
-      await _client
-          .from('tournaments')
-          .update({'current_participants': 1})
-          .eq('id', tournamentId);
+      // Creator otomatik katılımcı olmuyor, current_participants 0 olarak başlıyor
 
       return {
         'success': true,
@@ -1346,6 +1519,12 @@ class TournamentService {
         // // print('❌ Tournament status is not upcoming: ${tournament['status']}');
         return {'success': false, 'message': 'Kayıt kapalı'};
       }
+      
+      // Start date kontrolü
+      final startDate = DateTime.parse(tournament['start_date']);
+      if (DateTime.now().isAfter(startDate)) {
+        return {'success': false, 'message': 'Turnuva başlangıç tarihi geçmiş'};
+      }
 
       // Dolu mu kontrol et
       // // print('👥 Current participants: ${tournament['current_participants']}/${tournament['max_participants']}');
@@ -1366,10 +1545,7 @@ class TournamentService {
         return {'success': false, 'message': 'Zaten katılmışsınız'};
       }
 
-      // Coin kontrolü
-      if (currentUser.coins < tournament['entry_fee']) {
-        return {'success': false, 'message': 'Yetersiz coin'};
-      }
+      // Private turnuvalar için entry fee yok
 
       // Turnuvaya katıl
       await _client.from('tournament_participants').insert({
@@ -1378,12 +1554,7 @@ class TournamentService {
         'joined_at': DateTime.now().toIso8601String(),
       });
 
-      // Entry fee düş
-      await UserService.updateCoins(
-        -tournament['entry_fee'],
-        'spent',
-        'Private turnuva katılım ücreti'
-      );
+      // Private turnuvalar için entry fee yok
 
       // Current participants'ı güncelle
       await _client
@@ -1399,6 +1570,131 @@ class TournamentService {
     } catch (e) {
       // // print('Error joining private tournament: $e');
       return {'success': false, 'message': 'Katılım başarısız: $e'};
+    }
+  }
+
+  // Private turnuva için özel join fonksiyonu
+  static Future<bool> joinPrivateTournamentById(String tournamentId) async {
+    try {
+      final user = _client.auth.currentUser;
+      if (user == null) {
+        return false;
+      }
+
+      // Kullanıcı bilgilerini al
+      final currentUser = await UserService.getCurrentUser();
+      if (currentUser == null) {
+        return false;
+      }
+
+      // Turnuva bilgilerini al
+      final tournament = await _client
+          .from('tournaments')
+          .select()
+          .eq('id', tournamentId)
+          .eq('is_private', true)
+          .single();
+
+      // Turnuva durumu kontrolü
+      if (tournament['status'] != 'upcoming') {
+        return false; // Kayıt kapalı
+      }
+      
+      // Private turnuvalar için start date kontrolü
+      final startDate = DateTime.parse(tournament['start_date']);
+      if (DateTime.now().isAfter(startDate)) {
+        return false; // Start date geçmiş, kayıt kapalı
+      }
+
+      // Turnuva dolu mu kontrol et
+      if (tournament['current_participants'] >= tournament['max_participants']) {
+        return false; // Turnuva dolu
+      }
+
+      // Zaten katılmış mı kontrol et
+      final existingParticipation = await _client
+          .from('tournament_participants')
+          .select('id')
+          .eq('tournament_id', tournamentId)
+          .eq('user_id', currentUser.id)
+          .maybeSingle();
+
+      if (existingParticipation != null) {
+        return false; // Zaten katılmış
+      }
+
+      // Turnuvaya katıl
+      await _client.from('tournament_participants').insert({
+        'tournament_id': tournamentId,
+        'user_id': currentUser.id,
+        'joined_at': DateTime.now().toIso8601String(),
+        'is_eliminated': false,
+        'score': 0,
+        'tournament_photo_url': null,
+      });
+
+      // Private turnuvalar için entry fee yok
+
+      // Turnuva katılımcı sayısını güncelle
+      try {
+        await _client.rpc('increment_tournament_participants', params: {
+          'tournament_id': tournamentId,
+        });
+      } catch (rpcError) {
+        // RPC başarısız olursa manuel güncelleme yap
+        await _client
+            .from('tournaments')
+            .update({'current_participants': tournament['current_participants'] + 1})
+            .eq('id', tournamentId);
+      }
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Private turnuva silme fonksiyonu
+  static Future<bool> deletePrivateTournament(String tournamentId) async {
+    try {
+      final currentUser = await UserService.getCurrentUser();
+      if (currentUser == null) {
+        return false;
+      }
+
+      // Turnuva bilgilerini al ve creator kontrolü yap
+      final tournament = await _client
+          .from('tournaments')
+          .select('creator_id, is_private, status')
+          .eq('id', tournamentId)
+          .single();
+
+      // Sadece private turnuva ve creator olabilir
+      if (!tournament['is_private'] || tournament['creator_id'] != currentUser.id) {
+        return false;
+      }
+
+      // Sadece upcoming durumundaki turnuvalar silinebilir
+      if (tournament['status'] != 'upcoming') {
+        return false;
+      }
+
+      // Önce katılımcıları sil
+      await _client
+          .from('tournament_participants')
+          .delete()
+          .eq('tournament_id', tournamentId);
+
+      // Sonra turnuvayı sil
+      await _client
+          .from('tournaments')
+          .delete()
+          .eq('id', tournamentId);
+
+      return true;
+    } catch (e) {
+      print('❌ DEBUG: deletePrivateTournament hatası: $e');
+      return false;
     }
   }
 
