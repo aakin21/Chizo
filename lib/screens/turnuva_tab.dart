@@ -703,17 +703,6 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                   ),
                 ],
                 const SizedBox(width: 8),
-                if ((tournament.status == 'upcoming' || tournament.status == 'active') && tournament.currentParticipants < tournament.maxParticipants)
-                  ElevatedButton.icon(
-                    onPressed: () => _showTournamentPhotoDialog(tournament.id),
-                    icon: const Icon(Icons.photo_camera),
-                    label: Text(AppLocalizations.of(context)!.photo),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                const SizedBox(width: 8),
                 if (tournament.status == 'active') ...[
                   // Turnuva oyla butonu - sadece aktif turnuvalar için
                   ElevatedButton.icon(
