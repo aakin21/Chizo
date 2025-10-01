@@ -628,12 +628,6 @@ class _ProfileTabState extends State<ProfileTab> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          subtitle: Text(
-                            currentUser!.countryPreferences != null 
-                                ? AppLocalizations.of(context)!.countriesSelected(currentUser!.countryPreferences!.length)
-                                : AppLocalizations.of(context)!.allCountriesSelected,
-                            style: const TextStyle(fontSize: 14),
-                          ),
                           trailing: const Icon(Icons.arrow_forward_ios),
                           onTap: isUpdating ? null : _showCountrySelectionDialog,
                         ),
@@ -655,12 +649,6 @@ class _ProfileTabState extends State<ProfileTab> {
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
-                          ),
-                          subtitle: Text(
-                            currentUser!.ageRangePreferences != null 
-                                ? AppLocalizations.of(context)!.ageRangesSelected(currentUser!.ageRangePreferences!.length)
-                                : AppLocalizations.of(context)!.allAgeRangesSelected,
-                            style: const TextStyle(fontSize: 14),
                           ),
                           trailing: const Icon(Icons.arrow_forward_ios),
                           onTap: isUpdating ? null : _showAgeRangeSelectionDialog,
@@ -1161,67 +1149,145 @@ class _ProfileTabState extends State<ProfileTab> {
           title: Text(AppLocalizations.of(context)!.ageRangeSelection),
           content: SizedBox(
             width: double.maxFinite,
-            height: 200,
-            child: Column(
+            height: 250,
+            child: SingleChildScrollView(
+              child: Column(
               children: [
-                Text(
-                  'Seçmek istediğiniz yaş aralığını belirleyin',
-                  style: const TextStyle(fontSize: 14, color: Colors.grey),
-                ),
                 const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
+                // Süper şık RangeSlider ile yaş aralığı seçimi
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Theme.of(context).colorScheme.surface,
+                        Theme.of(context).colorScheme.surface.withOpacity(0.8),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                      width: 1.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      // Yaş aralığı göstergesi - daha şık
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Theme.of(context).colorScheme.primary,
+                              Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(25),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.cake,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '$minAge - $maxAge',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 25),
+                      // Süper şık RangeSlider
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: RangeSlider(
+                          values: RangeValues(minAge.toDouble(), maxAge.toDouble()),
+                          min: 18,
+                          max: 100,
+                          divisions: 82,
+                          activeColor: Theme.of(context).colorScheme.primary,
+                          inactiveColor: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                          overlayColor: MaterialStateProperty.all(
+                            Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                          ),
+                          onChanged: (values) {
+                            setDialogState(() {
+                              minAge = values.start.round();
+                              maxAge = values.end.round();
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      // Min ve max yaş göstergeleri - daha şık
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Min Yaş: $minAge', style: const TextStyle(fontWeight: FontWeight.bold)),
-                          Slider(
-                            value: minAge.toDouble(),
-                            min: 18,
-                            max: 100,
-                            divisions: 82,
-                            onChanged: (value) {
-                              setDialogState(() {
-                                minAge = value.round();
-                                if (minAge >= maxAge) {
-                                  maxAge = minAge;
-                                }
-                              });
-                            },
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              '18',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              '100',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Text('Max Yaş: $maxAge', style: const TextStyle(fontWeight: FontWeight.bold)),
-                          Slider(
-                            value: maxAge.toDouble(),
-                            min: 18,
-                            max: 100,
-                            divisions: 82,
-                            onChanged: (value) {
-                              setDialogState(() {
-                                maxAge = value.round();
-                                if (maxAge <= minAge) {
-                                  minAge = maxAge;
-                                }
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Seçilen yaş aralığı: $minAge - $maxAge',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue),
+                    ],
+                  ),
                 ),
               ],
+              ),
             ),
           ),
           actions: [

@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class NotificationModel {
   final String id;
   final String userId;
@@ -77,10 +79,18 @@ class NotificationModel {
 // Notification Types
 class NotificationTypes {
   static const String tournamentUpdate = 'tournament_update';
+  static const String tournamentLeagueReminder = 'tournament_league_reminder';
+  static const String tournamentMatchStartReminder = 'tournament_match_start_reminder';
+  static const String tournamentMatchEndReminder = 'tournament_match_end_reminder';
   static const String votingResult = 'voting_result';
   static const String coinReward = 'coin_reward';
   static const String streakReminder = 'streak_reminder';
+  static const String streakDailyReminder = 'streak_daily_reminder';
+  static const String streakRewardReminder = 'streak_reward_reminder';
   static const String matchCreated = 'match_created';
+  static const String matchWon = 'match_won';
+  static const String photoMilestone = 'photo_milestone';
+  static const String totalMilestone = 'total_milestone';
   static const String profileUpdate = 'profile_update';
   static const String systemAnnouncement = 'system_announcement';
 }
@@ -100,20 +110,50 @@ class NotificationIcons {
 String getNotificationIcon(String type) {
   switch (type) {
     case NotificationTypes.tournamentUpdate:
+    case NotificationTypes.tournamentLeagueReminder:
+    case NotificationTypes.tournamentMatchStartReminder:
+    case NotificationTypes.tournamentMatchEndReminder:
       return NotificationIcons.tournament;
     case NotificationTypes.votingResult:
       return NotificationIcons.vote;
     case NotificationTypes.coinReward:
       return NotificationIcons.coin;
     case NotificationTypes.streakReminder:
+    case NotificationTypes.streakDailyReminder:
+    case NotificationTypes.streakRewardReminder:
       return NotificationIcons.fire;
     case NotificationTypes.matchCreated:
       return NotificationIcons.match;
+    case NotificationTypes.matchWon:
+    case NotificationTypes.photoMilestone:
+    case NotificationTypes.totalMilestone:
+      return '🎉';
     case NotificationTypes.profileUpdate:
       return NotificationIcons.profile;
     case NotificationTypes.systemAnnouncement:
       return NotificationIcons.system;
     default:
       return '🔔';
+  }
+}
+
+// Get color for notification type
+Color getNotificationColor(String type) {
+  switch (type) {
+    case NotificationTypes.matchWon:
+    case NotificationTypes.photoMilestone:
+    case NotificationTypes.totalMilestone:
+      return Colors.green;
+    case NotificationTypes.tournamentUpdate:
+    case NotificationTypes.tournamentLeagueReminder:
+    case NotificationTypes.tournamentMatchStartReminder:
+    case NotificationTypes.tournamentMatchEndReminder:
+      return Colors.blue;
+    case NotificationTypes.coinReward:
+      return Colors.amber;
+    case NotificationTypes.streakReminder:
+      return Colors.orange;
+    default:
+      return Colors.grey;
   }
 }
