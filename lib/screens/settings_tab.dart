@@ -11,6 +11,7 @@ import '../utils/navigation.dart';
 import '../services/account_service.dart';
 import '../services/global_language_service.dart';
 import '../services/global_theme_service.dart';
+import '../services/notification_service.dart';
 
 class SettingsTab extends StatefulWidget {
   final Function(Locale)? onLanguageChanged;
@@ -308,6 +309,23 @@ class _SettingsTabState extends State<SettingsTab> {
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
                   _showAboutDialog();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.notifications, color: Colors.orange),
+                title: const Text('Test Notification'),
+                subtitle: const Text('Send a test notification'),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () async {
+                  await NotificationService.sendTestNotification();
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Test notification sent!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
                 },
               ),
             ],
