@@ -951,11 +951,12 @@ class TournamentService {
 
       final currentUserId = currentUserRecord['id'];
 
-      // Aktif turnuvaları getir (cinsiyet kontrolü yok - herkes herkesi oylayabilir)
+      // Aktif haftalık turnuvaları getir (sadece sistem turnuvaları)
       final tournaments = await _client
           .from('tournaments')
           .select('id, gender')
           .eq('status', 'active')
+          .eq('is_private', false)  // Sadece haftalık turnuvalar
           .inFilter('current_phase', ['qualifying', 'quarter_final', 'semi_final', 'final']);
 
       if (tournaments.isEmpty) return [];
@@ -971,7 +972,7 @@ class TournamentService {
           .map((p) => p['tournament_id'] as String)
           .toList();
 
-      // Kendisinin katıldığı turnuvaları filtrele (cinsiyet kontrolü yok)
+      // Kendisinin katıldığı turnuvaları filtrele (sadece katıldığı turnuvalardan oylayamaz)
       final votableTournaments = tournaments
           .where((t) => !userTournamentIds.contains(t['id']))
           .toList();
@@ -1650,6 +1651,57 @@ class TournamentService {
 
       return true;
     } catch (e) {
+      return false;
+    }
+  }
+
+  // Turnuvadan ayrılma fonksiyonu
+  static Future<bool> leaveTournament(String tournamentId) async {
+    try {
+      final currentUser = await UserService.getCurrentUser();
+      if (currentUser == null) {
+        return false;
+      }
+
+      // Turnuva bilgilerini al
+      final tournament = await _client
+          .from('tournaments')
+          .select('id, name, is_private, status, entry_fee, current_participants')
+          .eq('id', tournamentId)
+          .single();
+
+      // Sadece upcoming ve active turnuvalardan ayrılabilir
+      if (tournament['status'] != 'upcoming' && tournament['status'] != 'active') {
+        return false;
+      }
+
+      // Katılımcı kaydını sil
+      await _client
+          .from('tournament_participants')
+          .delete()
+          .eq('tournament_id', tournamentId)
+          .eq('user_id', currentUser.id);
+
+      // Turnuva katılımcı sayısını güncelle
+      final newCount = (tournament['current_participants'] as int) - 1;
+      await _client
+          .from('tournaments')
+          .update({'current_participants': newCount})
+          .eq('id', tournamentId);
+
+      // Sistem turnuvaları için entry fee iadesi
+      if (!tournament['is_private'] && tournament['entry_fee'] > 0) {
+        await UserService.updateCoins(
+          tournament['entry_fee'], 
+          'earned', 
+          'Turnuva ayrılım iadesi'
+        );
+      }
+
+      print('✅ DEBUG: Kullanıcı ${tournament['name']} turnuvasından ayrıldı');
+      return true;
+    } catch (e) {
+      print('❌ DEBUG: leaveTournament hatası: $e');
       return false;
     }
   }

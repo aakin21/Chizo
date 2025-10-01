@@ -258,6 +258,98 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     }
   }
 
+  // Turnuvadan ayrılma dialog'u
+  Future<void> _showLeaveTournamentDialog(TournamentModel tournament) async {
+    if (!mounted) return;
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.exit_to_app, color: Colors.red),
+            const SizedBox(width: 8),
+            const Text('Turnuvadan Ayrıl'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('${tournament.name} turnuvasından ayrılmak istediğinizden emin misiniz?'),
+            const SizedBox(height: 8),
+            if (!tournament.isPrivate) ...[
+              const Text(
+                'Entry fee iadesi yapılacaktır.',
+                style: TextStyle(color: Colors.green, fontSize: 12),
+              ),
+            ],
+            if (tournament.isPrivate) ...[
+              const Text(
+                'Private turnuvadan ayrıldıktan sonra tekrar göremezsiniz.',
+                style: TextStyle(color: Colors.orange, fontSize: 12),
+              ),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('İptal'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _leaveTournament(tournament);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Ayrıl'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Turnuvadan ayrılma fonksiyonu
+  Future<void> _leaveTournament(TournamentModel tournament) async {
+    try {
+      final success = await TournamentService.leaveTournament(tournament.id);
+      if (!mounted) return;
+      
+      if (success) {
+        BeautifulSnackBar.showSuccess(
+          context,
+          message: tournament.isPrivate 
+              ? "Private turnuvadan ayrıldınız!"
+              : "Turnuvadan ayrıldınız! Entry fee iadesi yapıldı.",
+        );
+        
+        // Turnuva durumunu güncelle
+        tournament.isUserParticipating = false;
+        
+        // UI'yi güncelle
+        setState(() {});
+        
+        // Turnuvaları yenile (private turnuva görünmez olacak)
+        loadTournaments();
+      } else {
+        BeautifulSnackBar.showError(
+          context,
+          message: "Turnuvadan ayrılamadı. Lütfen tekrar deneyin.",
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      BeautifulSnackBar.showError(
+        context,
+        message: "Hata: $e",
+      );
+    }
+  }
+
   // Turnuva fotoğrafı yükleme dialog'u
   Future<void> _showTournamentPhotoDialog(String tournamentId) async {
     if (!mounted) return;
@@ -828,23 +920,38 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                     ),
                   ),
                 ] else ...[
-                  // Normal katılım butonu
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _getJoinButtonEnabled(tournament)
-                          ? () => _joinTournament(tournament)
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _getJoinButtonEnabled(tournament) 
-                            ? null 
-                            : Colors.grey[300],
-                        foregroundColor: _getJoinButtonEnabled(tournament) 
-                            ? null 
-                            : Colors.grey[600],
+                  // Katılım/Ayrılma butonu
+                  if (tournament.isUserParticipating) ...[
+                    // Ayrılma butonu (katıldıysa)
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => _showLeaveTournamentDialog(tournament),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Turnuvadan Ayrıl'),
                       ),
-                      child: Text(_getJoinButtonText(tournament)),
                     ),
-                  ),
+                  ] else ...[
+                    // Katılım butonu (katılmadıysa)
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _getJoinButtonEnabled(tournament)
+                            ? () => _joinTournament(tournament)
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: _getJoinButtonEnabled(tournament) 
+                              ? null 
+                              : Colors.grey[300],
+                          foregroundColor: _getJoinButtonEnabled(tournament) 
+                              ? null 
+                              : Colors.grey[600],
+                        ),
+                        child: Text(_getJoinButtonText(tournament)),
+                      ),
+                    ),
+                  ],
                 ],
                 const SizedBox(width: 8),
                 if (tournament.status == 'active') ...[
