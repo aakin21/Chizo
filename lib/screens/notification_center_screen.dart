@@ -41,7 +41,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
       
       setState(() {});
     } catch (e) {
-      print('Error loading notification preferences: $e');
+      // print('Error loading notification preferences: $e');
     }
   }
 

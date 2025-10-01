@@ -41,7 +41,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
         });
       }
     } catch (e) {
-      print('Error loading match history: $e');
+      // print('Error loading match history: $e');
       setState(() {
         isLoading = false;
       });

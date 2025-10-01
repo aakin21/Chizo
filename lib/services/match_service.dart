@@ -20,7 +20,7 @@ class MatchService {
 
       return MatchModel.fromJson(response);
     } catch (e) {
-      print('Error creating match: $e');
+      // // print('Error creating match: $e');
       return null;
     }
   }
@@ -80,7 +80,7 @@ class MatchService {
 
       return users;
     } catch (e) {
-      print('Error getting random users: $e');
+      // // print('Error getting random users: $e');
       return [];
     }
   }
@@ -102,7 +102,7 @@ class MatchService {
 
       return true;
     } catch (e) {
-      print('Error completing match: $e');
+      // // print('Error completing match: $e');
       return false;
     }
   }
@@ -121,7 +121,7 @@ class MatchService {
           .maybeSingle();
       
       if (currentUserRecord == null) {
-        print('Current user not found in users table');
+        // // print('Current user not found in users table');
         return [];
       }
       
@@ -174,7 +174,7 @@ class MatchService {
           if (user1AllowsCurrentUser && user2AllowsCurrentUser) {
             validMatches.add(MatchModel.fromJson(matchData));
           } else {
-            print('Match filtered out due to country preferences: User1 allows: $user1AllowsCurrentUser, User2 allows: $user2AllowsCurrentUser, Current user country: $currentUserCountry');
+            // // print('Match filtered out due to country preferences: User1 allows: $user1AllowsCurrentUser, User2 allows: $user2AllowsCurrentUser, Current user country: $currentUserCountry');
           }
         } else {
           // Geçersiz match'i işaretle
@@ -188,12 +188,12 @@ class MatchService {
             .from('matches')
             .delete()
             .eq('id', matchId);
-        print('Invalid match deleted: $matchId');
+        // // print('Invalid match deleted: $matchId');
       }
 
       return validMatches;
     } catch (e) {
-      print('Error getting votable matches: $e');
+      // // print('Error getting votable matches: $e');
       return [];
     }
   }
@@ -213,7 +213,7 @@ class MatchService {
           .maybeSingle();
 
       if (userExists == null) {
-        print('User not found in users table: ${user.id}');
+        // // print('User not found in users table: ${user.id}');
         // Kullanıcıyı users tablosuna ekle (sadece temel bilgiler)
         await _client.from('users').insert({
           'auth_id': user.id,
@@ -228,7 +228,7 @@ class MatchService {
           'created_at': DateTime.now().toIso8601String(),
           'updated_at': DateTime.now().toIso8601String(),
         });
-        print('User added to users table: ${user.id}');
+        // // print('User added to users table: ${user.id}');
         
         // Yeni oluşturulan kullanıcının ID'sini al
         userExists = await _client
@@ -282,7 +282,7 @@ class MatchService {
 
       return true;
     } catch (e) {
-      print('Error voting for match: $e');
+      // // print('Error voting for match: $e');
       return false;
     }
   }
@@ -290,7 +290,7 @@ class MatchService {
   // Kullanıcı istatistiklerini güncelle
   static Future<void> _updateUserStats(String userId, bool isWinner) async {
     try {
-      print('Updating stats for user: $userId, isWinner: $isWinner');
+      // // print('Updating stats for user: $userId, isWinner: $isWinner');
       
       // Kullanıcının mevcut istatistiklerini al
       final user = await _client
@@ -300,14 +300,14 @@ class MatchService {
           .maybeSingle();
 
       if (user == null) {
-        print('User not found for stats update: $userId');
+        // // print('User not found for stats update: $userId');
         return;
       }
 
-      print('Current user data: $user');
+      // // print('Current user data: $user');
       final currentMatches = user['total_matches'] ?? 0;
       final currentWins = user['wins'] ?? 0;
-      print('Current matches: $currentMatches, current wins: $currentWins');
+      // // print('Current matches: $currentMatches, current wins: $currentWins');
 
       // İstatistikleri güncelle
       final updateData = {
@@ -316,18 +316,18 @@ class MatchService {
         'updated_at': DateTime.now().toIso8601String(),
       };
       
-      print('Updating with data: $updateData');
+      // // print('Updating with data: $updateData');
       
       final result = await _client
           .from('users')
           .update(updateData)
           .eq('id', userId);
 
-      print('Update result: $result');
-      print('User stats updated: $userId, matches: ${currentMatches + 1}, wins: ${isWinner ? currentWins + 1 : currentWins}');
+      // // print('Update result: $result');
+      // // print('User stats updated: $userId, matches: ${currentMatches + 1}, wins: ${isWinner ? currentWins + 1 : currentWins}');
     } catch (e) {
-      print('Error updating user stats: $e');
-      print('Error type: ${e.runtimeType}');
+      // // print('Error updating user stats: $e');
+      // // print('Error type: ${e.runtimeType}');
       // Eğer total_matches veya wins kolonları yoksa, sadece updated_at'i güncelle
       try {
         await _client
@@ -336,9 +336,9 @@ class MatchService {
               'updated_at': DateTime.now().toIso8601String(),
             })
             .eq('id', userId);
-        print('User updated_at updated: $userId');
+        // // print('User updated_at updated: $userId');
       } catch (e2) {
-        print('Error updating user updated_at: $e2');
+        // // print('Error updating user updated_at: $e2');
       }
     }
   }
@@ -365,7 +365,7 @@ class MatchService {
         // Coin kazanmak için win rate prediction sistemi kullanılıyor
       }
     } catch (e) {
-      print('Error checking votes: $e');
+      // // print('Error checking votes: $e');
     }
   }
 
@@ -381,7 +381,7 @@ class MatchService {
           .map((json) => UserModel.fromJson(json))
           .toList();
     } catch (e) {
-      print('Error getting match users: $e');
+      // // print('Error getting match users: $e');
       return [];
     }
   }
@@ -404,7 +404,7 @@ class MatchService {
           .maybeSingle();
       
       if (currentUserRecord == null) {
-        print('Current user not found in users table');
+        // // print('Current user not found in users table');
         return [];
       }
       
@@ -426,14 +426,14 @@ class MatchService {
           .eq('gender', 'Kadın')
           .neq('id', currentUserId); // Exclude current user
 
-      print('Male users with is_visible=true: ${maleUsers.length}');
-      print('Female users with is_visible=true: ${femaleUsers.length}');
+      // // print('Male users with is_visible=true: ${maleUsers.length}');
+      // // print('Female users with is_visible=true: ${femaleUsers.length}');
       
       // Debug: Tüm kullanıcıları göster
       final allUsers = await _client.from('users').select();
-      print('Total users in database: ${allUsers.length}');
+      // // print('Total users in database: ${allUsers.length}');
       for (var user in allUsers) {
-        print('User: ${user['username']}, is_visible: ${user['is_visible']}, gender: ${user['gender']}, country: ${user['country']}');
+        // // print('User: ${user['username']}, is_visible: ${user['is_visible']}, gender: ${user['gender']}, country: ${user['country']}');
       }
 
 
@@ -450,7 +450,7 @@ class MatchService {
           }
         }
         
-        print('Male users with photos: ${maleUsersWithPhotos.length}');
+        // // print('Male users with photos: ${maleUsersWithPhotos.length}');
         
         if (maleUsersWithPhotos.length >= 2) {
           // Convert to UserModel list for better handling
@@ -500,7 +500,7 @@ class MatchService {
           }
         }
         
-        print('Female users with photos: ${femaleUsersWithPhotos.length}');
+        // // print('Female users with photos: ${femaleUsersWithPhotos.length}');
         
         if (femaleUsersWithPhotos.length >= 2) {
           // Convert to UserModel list for better handling
@@ -540,10 +540,10 @@ class MatchService {
       }
 
 
-      print('Generated ${createdMatches.length} random matches');
+      // // print('Generated ${createdMatches.length} random matches');
       return createdMatches;
     } catch (e) {
-      print('Error generating random matches: $e');
+      // // print('Error generating random matches: $e');
       return [];
     }
   }

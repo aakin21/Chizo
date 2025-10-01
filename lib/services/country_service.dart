@@ -22,7 +22,7 @@ class CountryService {
       }
       return uniqueCountries.values.toList();
     } catch (e) {
-      print('Error fetching countries: $e');
+      // print('Error fetching countries: $e');
       return [];
     }
   }
@@ -36,7 +36,7 @@ class CountryService {
         orElse: () => Country(code: code, name: code),
       );
     } catch (e) {
-      print('Error fetching country by code: $e');
+      // print('Error fetching country by code: $e');
       return Country(code: code, name: code);
     }
   }

@@ -29,6 +29,7 @@ class TournamentModel {
   final bool isSystemTournament; // Sistem turnuvası mı?
   final String? nameKey; // Localization key for name
   final String? descriptionKey; // Localization key for description
+  bool isUserParticipating; // Kullanıcı bu turnuvaya katılmış mı?
 
   TournamentModel({
     required this.id,
@@ -59,6 +60,7 @@ class TournamentModel {
     this.isSystemTournament = false,
     this.nameKey,
     this.descriptionKey,
+    this.isUserParticipating = false,
   });
 
   factory TournamentModel.fromJson(Map<String, dynamic> json) {
@@ -91,6 +93,7 @@ class TournamentModel {
       isSystemTournament: json['is_system_tournament'] ?? false,
       nameKey: json['name_key'],
       descriptionKey: json['description_key'],
+      isUserParticipating: false, // Default olarak false, sonra güncellenecek
     );
   }
 

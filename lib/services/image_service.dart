@@ -19,7 +19,7 @@ class ImageService {
       
       return image;
     } catch (e) {
-      print('Error picking image from gallery: $e');
+      // print('Error picking image from gallery: $e');
       return null;
     }
   }
@@ -36,7 +36,7 @@ class ImageService {
       
       return image;
     } catch (e) {
-      print('Error picking image from camera: $e');
+      // print('Error picking image from camera: $e');
       return null;
     }
   }
@@ -46,12 +46,12 @@ class ImageService {
     try {
       final user = _client.auth.currentUser;
       if (user == null) {
-        print('No authenticated user');
+        // print('No authenticated user');
         return null;
       }
 
-      print('User email: ${user.email}');
-      print('File path: ${imageFile.path}');
+      // print('User email: ${user.email}');
+      // print('File path: ${imageFile.path}');
 
       // Dosya uzantısını kontrol et ve düzelt
       String finalFileName = fileName;
@@ -64,36 +64,36 @@ class ImageService {
       // Kullanıcı ID'si ile dosya adı oluştur (RLS policy için gerekli)
       final uniqueFileName = '${user.id}_${DateTime.now().millisecondsSinceEpoch}_$finalFileName';
       
-      print('Final file name: $uniqueFileName');
+      // print('Final file name: $uniqueFileName');
       
       // XFile'dan bytes al
       final Uint8List fileBytes = await imageFile.readAsBytes();
-      print('File bytes length: ${fileBytes.length}');
+      // print('File bytes length: ${fileBytes.length}');
       
       // İlk birkaç byte'ı kontrol et (dosya tipi için)
       if (fileBytes.isNotEmpty) {
-        print('First bytes: ${fileBytes.take(10).toList()}');
+        // print('First bytes: ${fileBytes.take(10).toList()}');
       }
       
-      print('About to upload to storage...');
+      // print('About to upload to storage...');
       
       // Storage'a yükle
       final uploadResult = await _client.storage
           .from('profile-images')
           .uploadBinary(uniqueFileName, fileBytes);
 
-      print('Upload result: $uploadResult');
+      // print('Upload result: $uploadResult');
 
       // Public URL'i al
       final imageUrl = _client.storage
           .from('profile-images')
           .getPublicUrl(uniqueFileName);
 
-      print('Image URL: $imageUrl');
+      // print('Image URL: $imageUrl');
       return imageUrl;
     } catch (e) {
-      print('Error uploading image: $e');
-      print('Error type: ${e.runtimeType}');
+      // print('Error uploading image: $e');
+      // print('Error type: ${e.runtimeType}');
       return null;
     }
   }
@@ -110,7 +110,7 @@ class ImageService {
       
       return true;
     } catch (e) {
-      print('Error deleting image: $e');
+      // print('Error deleting image: $e');
       return false;
     }
   }

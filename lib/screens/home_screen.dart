@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
     } catch (e) {
-      print('Error checking streak: $e');
+      // print('Error checking streak: $e');
     }
   }
 

@@ -67,7 +67,7 @@ class _ProfileTabState extends State<ProfileTab> {
           });
         }
       } catch (e) {
-        print('Error loading country name: $e');
+        // // print('Error loading country name: $e');
       }
     }
   }
@@ -80,7 +80,7 @@ class _ProfileTabState extends State<ProfileTab> {
       );
       return country?.name;
     } catch (e) {
-      print('Error loading country name: $e');
+      // // print('Error loading country name: $e');
       return countryCode;
     }
   }
@@ -116,7 +116,7 @@ class _ProfileTabState extends State<ProfileTab> {
           return genderCode;
       }
     } catch (e) {
-      print('Error loading gender name: $e');
+      // // print('Error loading gender name: $e');
       return genderCode;
     }
   }
@@ -148,7 +148,7 @@ class _ProfileTabState extends State<ProfileTab> {
               Localizations.localeOf(context).languageCode
             );
           } catch (e) {
-            print('Error loading country name: $e');
+            // // print('Error loading country name: $e');
           }
         }
       }
@@ -161,7 +161,7 @@ class _ProfileTabState extends State<ProfileTab> {
         });
       }
     } catch (e) {
-      print('ProfileTab: Error loading user data: $e');
+      // // print('ProfileTab: Error loading user data: $e');
       if (mounted) {
         setState(() => isLoading = false);
       }

@@ -276,7 +276,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         return users.firstWhere((user) => user.id == winnerId);
       }
     } catch (e) {
-      print('Error getting winner user: $e');
+      // // print('Error getting winner user: $e');
       return null;
     }
   }
@@ -874,7 +874,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
       
       return usersWithPhotos;
     } catch (e) {
-      print('Error getting match users with photos: $e');
+      // // print('Error getting match users with photos: $e');
       return [];
     }
   }
@@ -1377,14 +1377,14 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         }
       }
     } catch (e) {
-      print('Error updating photo stats for match: $e');
+      // // print('Error updating photo stats for match: $e');
     }
   }
 
   /// Get the photo that was displayed for a user in a specific match
   Map<String, dynamic>? _getDisplayedPhotoForUser(UserModel user, String matchId) {
     if (user.matchPhotos == null || user.matchPhotos!.isEmpty) {
-      print('Warning: No match photos for user ${user.id}');
+      // // print('Warning: No match photos for user ${user.id}');
       return null;
     }
 
@@ -1396,9 +1396,9 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     final selectedPhoto = photos[photoIndex];
     
     // Debug için fotoğraf bilgilerini yazdır
-    print('Selected photo for user ${user.id}: ${selectedPhoto['photo_url']}');
-    print('Photo ID: ${selectedPhoto['id']}');
-    print('Photo order: ${selectedPhoto['photo_order']}');
+    // // print('Selected photo for user ${user.id}: ${selectedPhoto['photo_url']}');
+    // // print('Photo ID: ${selectedPhoto['id']}');
+    // // print('Photo order: ${selectedPhoto['photo_order']}');
     
     return selectedPhoto;
   }

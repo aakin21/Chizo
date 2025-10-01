@@ -47,7 +47,7 @@ class _SettingsTabState extends State<SettingsTab> {
       
       setState(() {});
     } catch (e) {
-      print('Error loading marketing settings: $e');
+      // // print('Error loading marketing settings: $e');
       setState(() {}); // still show default preferences
     }
   }
@@ -68,7 +68,7 @@ class _SettingsTabState extends State<SettingsTab> {
         _currentUser = user;
       });
     } catch (e) {
-      print('Error loading user data: $e');
+      // // print('Error loading user data: $e');
     }
   }
 
@@ -103,7 +103,7 @@ class _SettingsTabState extends State<SettingsTab> {
     // Save theme preference
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('selected_theme', theme);
-    print('Save theme: $theme to SharedPreferences'); // Debug
+    // // print('Save theme: $theme to SharedPreferences'); // Debug
     
     setState(() {
       _selectedTheme = theme;
@@ -116,7 +116,7 @@ class _SettingsTabState extends State<SettingsTab> {
     
     // Verify save was successful
     final verifyTheme = prefs.getString('selected_theme');
-    print('Saved theme verify: $verifyTheme'); // Debug
+    // // print('Saved theme verify: $verifyTheme'); // Debug
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -128,7 +128,7 @@ class _SettingsTabState extends State<SettingsTab> {
     
     // Verify the save once more before restart
     final currentSavedTheme = prefs.getString('selected_theme');
-    print('Final verification - theme in storage: $currentSavedTheme');
+    // // print('Final verification - theme in storage: $currentSavedTheme');
     
     // Force immediate restart for reliable theme change  
     await Future.delayed(const Duration(milliseconds: 200));
@@ -137,7 +137,7 @@ class _SettingsTabState extends State<SettingsTab> {
 
   void _restartApp() {
     // Force complete app restart for theme change
-    print('🔄 RESTARTING APP for theme change: $_selectedTheme');
+    // // print('🔄 RESTARTING APP for theme change: $_selectedTheme');
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) => const HomeScreen(),

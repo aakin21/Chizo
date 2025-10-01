@@ -19,18 +19,18 @@ class LeaderboardService {
           .order('wins', ascending: false)
           .limit(limit);
 
-      print('📊 Query response count: ${(response as List).length}');
+      // print('📊 Query response count: ${(response as List).length}');
       
       final users = (response as List)
           .map((json) {
-            print('👤 User: ${json['username']}, wins: ${json['wins']}, photos: ${json['user_photos']?.length ?? 0}');
+            // print('👤 User: ${json['username']}, wins: ${json['wins']}, photos: ${json['user_photos']?.length ?? 0}');
             return UserModel.fromJson(json);
           })
           .toList();
           
       return users;
     } catch (e) {
-      print('Error getting top winners: $e');
+      // print('Error getting top winners: $e');
       return [];
     }
   }
@@ -50,11 +50,11 @@ class LeaderboardService {
           .gt('total_matches', 0) // En az 1 maç yapmış olmalı
           .limit(limit * 2); // Daha fazla alıp kazanma oranına göre sıralayacağız
 
-      print('📊 Query response count: ${(response as List).length}');
+      // print('📊 Query response count: ${(response as List).length}');
 
       final users = (response as List)
           .map((json) {
-            print('👤 User: ${json['username']}, wins: ${json['wins']}, photos: ${json['user_photos']?.length ?? 0}');
+            // print('👤 User: ${json['username']}, wins: ${json['wins']}, photos: ${json['user_photos']?.length ?? 0}');
             return UserModel.fromJson(json);
           })
           .toList();
@@ -65,7 +65,7 @@ class LeaderboardService {
       final topUsers = users.take(limit).toList();
       return topUsers;
     } catch (e) {
-      print('❌ Error getting top win rate: $e');
+      // print('❌ Error getting top win rate: $e');
       return [];
     }
   }
@@ -116,7 +116,7 @@ class LeaderboardService {
         'winrate_rank': winRateRank,
       };
     } catch (e) {
-      print('Error getting user rankings: $e');
+      // print('Error getting user rankings: $e');
       return {'wins_rank': 0, 'winrate_rank': 0};
     }
   }

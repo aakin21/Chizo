@@ -14,11 +14,11 @@ class UserService {
     try {
       final authUser = _client.auth.currentUser;
       if (authUser == null) {
-        print('No authenticated user');
+        // // print('No authenticated user');
         return null;
       }
 
-      print('Getting current user - Auth ID: ${authUser.id}, Email: ${authUser.email}');
+      // // print('Getting current user - Auth ID: ${authUser.id}, Email: ${authUser.email}');
 
       // Auth ID ile kullanıcıyı bul
       final response = await _client
@@ -28,7 +28,7 @@ class UserService {
           .maybeSingle();
 
       if (response == null) {
-        print('User not found, creating new user record');
+        // // print('User not found, creating new user record');
         // Yeni kullanıcı oluştur
         final newUserData = {
           'auth_id': authUser.id,
@@ -52,14 +52,14 @@ class UserService {
             .select()
             .single();
         
-        print('New user created with ID: ${insertResponse['id']}');
+        // // print('New user created with ID: ${insertResponse['id']}');
         return UserModel.fromJson(insertResponse);
       }
 
-      print('User found - ID: ${response['id']}, Matches: ${response['total_matches']}, Wins: ${response['wins']}');
+      // // print('User found - ID: ${response['id']}, Matches: ${response['total_matches']}, Wins: ${response['wins']}');
       return UserModel.fromJson(response);
     } catch (e) {
-      print('Error getting current user: $e');
+      // // print('Error getting current user: $e');
       return null;
     }
   }
@@ -97,7 +97,7 @@ class UserService {
 
       return true;
     } catch (e) {
-      print('Error updating profile: $e');
+      // // print('Error updating profile: $e');
       return false;
     }
   }
@@ -125,7 +125,7 @@ class UserService {
 
       return true;
     } catch (e) {
-      print('Error updating premium visibility: $e');
+      // // print('Error updating premium visibility: $e');
       return false;
     }
   }
@@ -160,7 +160,7 @@ class UserService {
 
       return true;
     } catch (e) {
-      print('Error updating coins: $e');
+      // // print('Error updating coins: $e');
       return false;
     }
   }
@@ -181,7 +181,7 @@ class UserService {
           .map((json) => CoinTransactionModel.fromJson(json))
           .toList();
     } catch (e) {
-      print('Error getting coin transactions: $e');
+      // // print('Error getting coin transactions: $e');
       return [];
     }
   }
@@ -202,7 +202,7 @@ class UserService {
 
       return true;
     } catch (e) {
-      print('Error updating country preferences: $e');
+      // // print('Error updating country preferences: $e');
       return false;
     }
   }
@@ -223,7 +223,7 @@ class UserService {
 
       return true;
     } catch (e) {
-      print('Error updating age range preferences: $e');
+      // // print('Error updating age range preferences: $e');
       return false;
     }
   }
@@ -231,7 +231,7 @@ class UserService {
   // Kullanıcı istatistiklerini güncelle (oy verdikten sonra)
   static Future<void> updateUserStats(String userId, bool isWinner) async {
     try {
-      print('Updating stats for user: $userId, isWinner: $isWinner');
+      // // print('Updating stats for user: $userId, isWinner: $isWinner');
       
       // Mevcut istatistikleri al
       final currentUserResponse = await _client
@@ -243,14 +243,14 @@ class UserService {
       final currentMatches = currentUserResponse['total_matches'] ?? 0;
       final currentWins = currentUserResponse['wins'] ?? 0;
       
-      print('Current user data: {total_matches: $currentMatches, wins: $currentWins}');
+      // // print('Current user data: {total_matches: $currentMatches, wins: $currentWins}');
       
       // Yeni istatistikleri hesapla
       final newMatches = currentMatches + 1;
       final newWins = isWinner ? currentWins + 1 : currentWins;
       
-      print('Current matches: $currentMatches, current wins: $currentWins');
-      print('Updating with data: {total_matches: $newMatches, wins: $newWins, updated_at: ${DateTime.now().toIso8601String()}}');
+      // // print('Current matches: $currentMatches, current wins: $currentWins');
+      // // print('Updating with data: {total_matches: $newMatches, wins: $newWins, updated_at: ${DateTime.now().toIso8601String()}}');
       
       // İstatistikleri güncelle
       final updateResult = await _client
@@ -262,10 +262,10 @@ class UserService {
           })
           .eq('id', userId);
       
-      print('Update result: $updateResult');
-      print('User stats updated: $userId, matches: $newMatches, wins: $newWins');
+      // // print('Update result: $updateResult');
+      // // print('User stats updated: $userId, matches: $newMatches, wins: $newWins');
     } catch (e) {
-      print('Error updating user stats: $e');
+      // // print('Error updating user stats: $e');
     }
   }
 
@@ -284,7 +284,7 @@ class UserService {
 
       return UserModel.fromJson(response);
     } catch (e) {
-      print('Error getting user by ID: $e');
+      // // print('Error getting user by ID: $e');
       return null;
     }
   }
@@ -299,7 +299,7 @@ class UserService {
         '$coins coin kazandınız: $reason',
       );
     } catch (e) {
-      print('Error sending coin reward notification: $e');
+      // // print('Error sending coin reward notification: $e');
     }
   }
 
@@ -312,7 +312,7 @@ class UserService {
         '$streak günlük streak ile $coins coin kazandınız!',
       );
     } catch (e) {
-      print('Error sending streak reward notification: $e');
+      // // print('Error sending streak reward notification: $e');
     }
   }
 
@@ -327,7 +327,7 @@ class UserService {
         'created_at': DateTime.now().toIso8601String(),
       });
     } catch (e) {
-      print('Error sending notification to user: $e');
+      // // print('Error sending notification to user: $e');
     }
   }
 }
