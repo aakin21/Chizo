@@ -31,11 +31,8 @@ class _CompactLanguageSelectorState extends State<CompactLanguageSelector> {
   }
 
   Future<void> _changeLanguage(Locale locale) async {
-    // Önce parent'a bildir
+    // Parent'a bildir - main.dart'ta kaydetme ve restart yapılacak
     widget.onLanguageChanged(locale);
-    
-    // Sonra dil ayarını kaydet
-    await LanguageService.setLanguage(locale);
     
     // UI'ı güncelle
     if (mounted) {
@@ -43,6 +40,9 @@ class _CompactLanguageSelectorState extends State<CompactLanguageSelector> {
         _selectedLocale = locale;
       });
     }
+    
+    // Dil değişikliğinden sonra mevcut dili tekrar yükle
+    await _loadCurrentLanguage();
   }
 
   @override

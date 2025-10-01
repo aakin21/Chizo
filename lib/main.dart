@@ -6,6 +6,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'services/language_service.dart';
+import 'services/global_language_service.dart';
+import 'services/global_theme_service.dart';
 import 'services/notification_service.dart';
 import 'l10n/app_localizations.dart';
 import 'utils/navigation.dart';
@@ -98,6 +100,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _loadCurrentLocale();
     _loadTheme();
+    
+    // Global dil servisini initialize et
+    GlobalLanguageService().setLanguageChangeCallback(changeLanguage);
+    
+    // Global theme servisini initialize et
+    GlobalThemeService().setThemeChangeCallback(changeTheme);
   }
 
   @override
@@ -149,37 +157,37 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void changeLanguage(Locale locale) async {
     // Language change requested to $locale
     
+    // Önce dil ayarını kaydet
+    await LanguageService.setLanguage(locale);
+    
+    // Dil ayarını tekrar yükle - kaydedilen ayarı doğrula
+    final savedLocale = await LanguageService.getCurrentLocale();
+    
     if (mounted) {
       setState(() {
-        _currentLocale = locale;
+        _currentLocale = savedLocale; // Kaydedilen dil ayarını kullan
         _appKey = UniqueKey(); // Yeni key ile tüm uygulamayı yeniden build et
       });
-      // Language changed successfully to $locale
+      // Language changed successfully to $savedLocale
     }
   }
 
   void changeTheme(String theme) async {
     // THEME CHANGE REQUESTED: $theme
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('selected_theme', theme);
-      
-      if (mounted) {
-        setState(() {
-          _selectedTheme = theme;
-          _appKey = UniqueKey(); // Theme değişikliği için yeni key
-        });
-        
-        // Theme değişikliği sonrası otomatik refresh
-        await Future.delayed(const Duration(milliseconds: 200));
-        if (mounted) {
-          setState(() {
-            _appKey = UniqueKey(); // Ekstra refresh için yeni key
-          });
-        }
-      }
-    } catch (e) {
-      // THEME CHANGE ERROR: $e
+    
+    // Theme ayarını kaydet
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selected_theme', theme);
+    
+    // Kısa bir gecikme - theme ayarının kaydedilmesi için
+    await Future.delayed(const Duration(milliseconds: 50));
+    
+    if (mounted) {
+      setState(() {
+        _selectedTheme = theme;
+        // UniqueKey kaldırıldı - refresh atmıyor, sadece state güncelleniyor
+      });
+      // Theme changed successfully to $theme
     }
   }
 

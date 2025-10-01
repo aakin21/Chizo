@@ -6,10 +6,11 @@ import '../widgets/compact_language_selector.dart';
 import '../utils/constants.dart';
 import '../l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';
 import '../utils/navigation.dart';
 import '../services/account_service.dart';
+import '../services/global_language_service.dart';
+import '../services/global_theme_service.dart';
 
 class SettingsTab extends StatefulWidget {
   final Function(Locale)? onLanguageChanged;
@@ -102,49 +103,22 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
   Future<void> _applyTheme(String theme) async {
-    // Save theme preference
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selected_theme', theme);
-    // // print('Save theme: $theme to SharedPreferences'); // Debug
+    // Global theme servisini kullan - restart atmıyor
+    await GlobalThemeService().changeTheme(theme);
     
     setState(() {
       _selectedTheme = theme;
     });
     
-    // Call the theme change callback if provided
-    if (widget.onThemeChanged != null) {
-      widget.onThemeChanged!(theme);
-    }
-    
-    // Verify save was successful
-    // // print('Saved theme verify: ${prefs.getString('selected_theme')}'); // Debug
-    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(AppLocalizations.of(context)!.themeChanged(_getThemeName(theme))),
         backgroundColor: Colors.green,
-        duration: const Duration(seconds: 3),
+        duration: const Duration(seconds: 2),
       ),
     );
-    
-    // Verify the save once more before restart
-    // // print('Final verification - theme in storage: ${prefs.getString('selected_theme')}');
-    
-    // Force immediate restart for reliable theme change  
-    await Future.delayed(const Duration(milliseconds: 200));
-    _restartApp();
   }
 
-  void _restartApp() {
-    // Force complete app restart for theme change
-    // // print('🔄 RESTARTING APP for theme change: $_selectedTheme');
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
-      ),
-      (route) => false,
-    );
-  }
 
 
   Future<void> _deleteAccount() async {
@@ -351,18 +325,8 @@ class _SettingsTabState extends State<SettingsTab> {
                 subtitle: Text('Select your preferred language'),
                 trailing: CompactLanguageSelector(
                   onLanguageChanged: (locale) async {
-                    // Parent'a bildir
-                    if (widget.onLanguageChanged != null) {
-                      widget.onLanguageChanged!(locale);
-                    }
-                    
-                    // Dil değişikliği sonrası kısa bir gecikme
-                    await Future.delayed(const Duration(milliseconds: 100));
-                    
-                    // Sadece bir kez restart
-                    if (mounted) {
-                      _restartApp();
-                    }
+                    // Global dil servisini kullan
+                    await GlobalLanguageService().changeLanguage(locale);
                   },
                 ),
               ),

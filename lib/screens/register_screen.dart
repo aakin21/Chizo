@@ -5,6 +5,7 @@ import '../l10n/app_localizations.dart';
 import '../widgets/compact_language_selector.dart';
 import '../widgets/country_selector.dart';
 import '../widgets/gender_selector.dart';
+import '../services/global_language_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   final Function(Locale)? onLanguageChanged;
@@ -191,11 +192,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         actions: [
           CompactLanguageSelector(
             onLanguageChanged: (locale) async {
-              // CompactLanguageSelector zaten LanguageService.setLanguage() çağırıyor
-              // Sadece parent'a bildir yeterli
-              if (widget.onLanguageChanged != null) {
-                widget.onLanguageChanged!(locale);
-              }
+              // Global dil servisini kullan
+              await GlobalLanguageService().changeLanguage(locale);
             },
           ),
         ],
