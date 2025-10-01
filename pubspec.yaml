@@ -65,6 +65,7 @@ dependencies:
   # UUID generation
   uuid: ^4.4.0
   
+  
   # Internationalization  
   flutter_localizations:
     sdk: flutter

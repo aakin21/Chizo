@@ -202,6 +202,7 @@ class _SettingsTabState extends State<SettingsTab> {
     
     showDialog(
       context: context,
+      barrierDismissible: false, // Dialog dışına tıklayarak kapatmayı engelle
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context)!.logout),
         content: Text(AppLocalizations.of(context)!.logoutConfirmation),
@@ -383,7 +384,8 @@ class _SettingsTabState extends State<SettingsTab> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.arrow_forward_ios),
-                onTap: _isLoggingOut ? null : _logout,
+                enabled: !_isLoggingOut, // Loading sırasında disable et
+                onTap: _logout,
               ),
               ListTile(
                 leading: const Icon(Icons.delete_forever, color: Colors.red),
