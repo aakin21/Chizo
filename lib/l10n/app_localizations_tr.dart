@@ -362,7 +362,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get predictionStatistics => 'Tahmin İstatistikleri';
 
   @override
-  String get matchHistory => '📊 Match Geçmişi';
+  String get matchHistory => 'Match Geçmişi';
 
   @override
   String get viewLastFiveMatches =>

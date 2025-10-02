@@ -360,7 +360,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get predictionStatistics => 'Prediction Statistics';
 
   @override
-  String get matchHistory => '📊 Match History';
+  String get matchHistory => 'Match History';
 
   @override
   String get viewLastFiveMatches =>

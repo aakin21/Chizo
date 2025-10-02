@@ -89,6 +89,38 @@ class _ProfileTabState extends State<ProfileTab> {
     return ((wins / totalMatches) * 100).round();
   }
 
+  Widget _buildStatItem(String value, String label, Color color) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
   Future<void> _showPhotoUploadDialog() async {
     if (currentUser == null) return;
     final l10n = AppLocalizations.of(context)!;
@@ -199,11 +231,24 @@ class _ProfileTabState extends State<ProfileTab> {
                     children: [
                       // Avatar ve Progress Bar Sistemi
                       Card(
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                         child: Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Text(
+                                'Fotoğraflarım',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
                               // Avatar ve Progress Bar Listesi
                               _buildProfileAvatarList(),
                             ],
@@ -215,60 +260,41 @@ class _ProfileTabState extends State<ProfileTab> {
 
                       // İstatistikler
                       Card(
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                         child: Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 AppLocalizations.of(context)!.statistics,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
+                                  color: Colors.grey[800],
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 20),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
-                                  Column(
-                                    children: [
-                                      Text(
-                                        '${currentUser!.totalMatches}',
-                                        style: const TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.blue,
-                                        ),
-                                      ),
-                                      Text(AppLocalizations.of(context)!.totalMatches),
-                                    ],
+                                  _buildStatItem(
+                                    '${currentUser!.totalMatches}',
+                                    AppLocalizations.of(context)!.totalMatches,
+                                    Colors.blue,
                                   ),
-                                  Column(
-                                    children: [
-                                      Text(
-                                        '${currentUser!.wins}',
-                                        style: const TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.green,
-                                        ),
-                                      ),
-                                      Text(AppLocalizations.of(context)!.wins),
-                                    ],
+                                  _buildStatItem(
+                                    '${currentUser!.wins}',
+                                    AppLocalizations.of(context)!.wins,
+                                    Colors.green,
                                   ),
-                                  Column(
-                                    children: [
-                                      Text(
-                                        '${_calculateWinRate(currentUser!.totalMatches, currentUser!.wins)}%',
-                                        style: const TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.orange,
-                                        ),
-                                      ),
-                                      Text(AppLocalizations.of(context)!.winRatePercentage),
-                                    ],
+                                  _buildStatItem(
+                                    '${_calculateWinRate(currentUser!.totalMatches, currentUser!.wins)}%',
+                                    AppLocalizations.of(context)!.winRatePercentage,
+                                    Colors.orange,
                                   ),
                                 ],
                               ),
@@ -281,24 +307,39 @@ class _ProfileTabState extends State<ProfileTab> {
 
                       // Match History Butonu
                       Card(
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                         child: ListTile(
-                          leading: const Icon(
-                            Icons.history,
-                            color: Colors.purple,
-                            size: 28,
+                          contentPadding: const EdgeInsets.all(20),
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.purple.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.history,
+                              color: Colors.purple,
+                              size: 24,
+                            ),
                           ),
                           title: Text(
                             AppLocalizations.of(context)!.matchHistory,
                             style: const TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           subtitle: Text(
                             AppLocalizations.of(context)!.viewRecentMatches,
-                            style: const TextStyle(fontSize: 14),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
                           ),
-                          trailing: const Icon(Icons.arrow_forward_ios),
+                          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -314,24 +355,32 @@ class _ProfileTabState extends State<ProfileTab> {
 
                       // Ülke Sıralaması Butonu
                       Card(
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                         child: ListTile(
-                          leading: const Icon(
-                            Icons.flag,
-                            color: Colors.blue,
-                            size: 28,
+                          contentPadding: const EdgeInsets.all(20),
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.flag,
+                              color: Colors.blue,
+                              size: 24,
+                            ),
                           ),
                           title: Text(
-                            AppLocalizations.of(context)!.countryRanking,
+                            'Ülkelere Göre İstatistikler',
                             style: const TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          subtitle: Text(
-                            AppLocalizations.of(context)!.countryRankingSubtitle,
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                          trailing: const Icon(Icons.arrow_forward_ios),
+                          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -772,20 +821,27 @@ class _ProfileTabState extends State<ProfileTab> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: Colors.grey[400]!,
+                color: Colors.grey[300]!,
                 width: 2,
                 style: BorderStyle.solid,
               ),
-              color: Colors.grey[100],
+              color: Colors.grey[50],
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Icon(
               Icons.add,
-              color: Colors.grey[600],
-              size: 30,
+              color: Colors.grey[500],
+              size: 24,
             ),
           ),
           
-          const SizedBox(width: 12),
+          const SizedBox(width: 16),
           
           // Progress bar placeholder
           Expanded(
@@ -793,7 +849,11 @@ class _ProfileTabState extends State<ProfileTab> {
               height: 24,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: Colors.grey[300],
+                color: Colors.grey[200],
+                border: Border.all(
+                  color: Colors.grey[300]!,
+                  width: 1,
+                ),
               ),
               child: Center(
                 child: Text(
@@ -801,7 +861,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 12,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),

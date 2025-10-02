@@ -741,7 +741,7 @@ abstract class AppLocalizations {
   /// Match history section title
   ///
   /// In en, this message translates to:
-  /// **'📊 Match History'**
+  /// **'Match History'**
   String get matchHistory;
 
   /// View match history message

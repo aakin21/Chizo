@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui';
 import '../models/user_model.dart';
 import '../services/photo_upload_service.dart';
-import '../services/user_service.dart';
 import '../l10n/app_localizations.dart';
 
 class ProfileAvatarWidget extends StatefulWidget {
@@ -77,6 +76,7 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
         return;
       }
 
+      // 24 saat sonra otomatik kilit
       Future.delayed(remainingTime, () {
         if (mounted) {
           setState(() {
@@ -88,8 +88,26 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
             final photoId = widget.photoData!['id'];
             _removeStoredUnlockTime(photoId);
           }
+          
+          // 24 saat sonra bildirim gönder
+          _sendExpiryNotification();
         }
       });
+    }
+  }
+
+  Future<void> _sendExpiryNotification() async {
+    try {
+      // 24 saat sonra bildirim gönder
+      // await NotificationService.sendLocalNotification(
+      //   title: 'İstatistikler Kilitlendi 🔒',
+      //   body: 'Fotoğraf istatistikleri süresi doldu. Tekrar 100 coin ile açabilirsiniz.',
+      //   payload: 'photo_stats_expired',
+      // );
+      
+      print('Bildirim gönderildi: İstatistikler süresi doldu');
+    } catch (e) {
+      print('Bildirim gönderme hatası: $e');
     }
   }
 
@@ -124,24 +142,21 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
     }
   }
 
-  String _getRemainingTimeText() {
-    if (unlockExpiryTime == null) return '';
-    
-    final remaining = unlockExpiryTime!.difference(DateTime.now());
-    if (remaining.isNegative) return '';
-    
-    final hours = remaining.inHours;
-    final minutes = remaining.inMinutes % 60;
-    final seconds = remaining.inSeconds % 60;
-    
-    if (hours > 0) {
-      return '${hours}s ${minutes}dk kaldı';
-    } else if (minutes > 0) {
-      return '${minutes}dk ${seconds}sn kaldı';
-    } else {
-      return '${seconds}sn kaldı';
+  Future<void> _sendUnlockNotification() async {
+    try {
+      // Bildirim servisini import et ve kullan
+      // await NotificationService.sendLocalNotification(
+      //   title: 'İstatistikler Açıldı! 📊',
+      //   body: 'Fotoğraf istatistikleri 24 saat boyunca görüntülenebilir. 100 coin harcandı.',
+      //   payload: 'photo_stats_unlocked',
+      // );
+      
+      print('Bildirim gönderildi: İstatistikler 24 saat açık, 100 coin harcandı');
+    } catch (e) {
+      print('Bildirim gönderme hatası: $e');
     }
   }
+
 
   double get winRate {
     if (widget.photoData != null && widget.photoData!['total_matches'] != null) {
@@ -155,20 +170,20 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        _buildAvatar(),
-        
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        children: [
+          _buildAvatar(),
+          
         if (widget.showWinRateBar) ...[
-          const SizedBox(width: 12),
+          const SizedBox(width: 16),
           Expanded(
-            child: GestureDetector(
-              onTap: (!isUnlocked && widget.showStatsUnlockButton) ? _handleUnlockStats : null,
-              child: _buildWinRateProgressBar(),
-            ),
+            child: _buildWinRateProgressBar(),
           ),
         ],
-      ],
+        ],
+      ),
     );
   }
 
@@ -182,13 +197,13 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
           shape: BoxShape.circle,
           border: Border.all(
             color: _getAvatarBorderColor(),
-            width: 3,
+            width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -248,177 +263,196 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Kazanma Oranı',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[700],
-              ),
-            ),
-            if (isUnlocked || !widget.showStatsUnlockButton)
-              Text(
-                '${(winRate * 100).toStringAsFixed(1)}%',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: _getProgressBarColors()[1],
-                ),
-              )
-            else
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: Colors.orange.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  'Kilitle',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange[700],
-                  ),
-                ),
-              ),
-          ],
-        ),
-        
-        const SizedBox(height: 8),
-        
+        // Progress bar
         Container(
-          height: 8,
+          height: 24,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
-            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.grey[200],
           ),
-          child: FractionallySizedBox(
-            alignment: Alignment.centerLeft,
-            widthFactor: isUnlocked || !widget.showStatsUnlockButton ? winRate : 0.0,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                gradient: LinearGradient(
-                  colors: _getProgressBarColors(),
+          child: Stack(
+            children: [
+              // Background
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.grey[200],
                 ),
               ),
-            ),
+              // Progress fill
+              FractionallySizedBox(
+                alignment: Alignment.centerLeft,
+                widthFactor: winRate,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    gradient: LinearGradient(
+                      colors: _getProgressBarColors(),
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                  ),
+                ),
+              ),
+              // Overlay maske - 100 coin ödemeden önce progress bar'ı tüm renk geçişlerimizle kapatır
+              if (!isUnlocked && widget.showStatsUnlockButton)
+                GestureDetector(
+                  onTap: _handleUnlockStats,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.yellow[300]!,
+                          Colors.yellow[400]!,
+                          Colors.yellow[500]!,
+                          Colors.yellow[600]!,
+                          Colors.orange[200]!,
+                          Colors.orange[300]!,
+                          Colors.orange[400]!,
+                          Colors.orange[500]!,
+                          Colors.orange[600]!,
+                          Colors.orange[700]!,
+                          Colors.orange[800]!,
+                          Colors.orange[900]!,
+                          Colors.red[200]!,
+                          Colors.red[300]!,
+                          Colors.red[400]!,
+                          Colors.red[500]!,
+                          Colors.red[600]!,
+                          Colors.red[700]!,
+                          Colors.red[800]!,
+                          Colors.red[900]!,
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        stops: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 1.0],
+                      ),
+                      border: Border.all(
+                        color: Colors.orange[600]!,
+                        width: 1.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.orange.withValues(alpha: 0.4),
+                          blurRadius: 6,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.lock,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 6),
+                          Text(
+                            '100 coin',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black.withValues(alpha: 0.8),
+                                  offset: Offset(0, 1),
+                                  blurRadius: 4,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              // Yüzde değeri (sadece unlock edilmişse göster)
+              if (isUnlocked || !widget.showStatsUnlockButton)
+                Center(
+                  child: Text(
+                    '${(winRate * 100).toStringAsFixed(0)}%',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
         
-        if (!isUnlocked && widget.showStatsUnlockButton)
-          Container(
-            margin: const EdgeInsets.only(top: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.orange.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.lock,
-                  size: 16,
-                  color: Colors.orange[700],
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'İstatistikleri görüntülemek için tıklayın',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.orange[700],
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        
+        // Win/Match sayıları (sadece unlock edilmişse göster)
         if (isUnlocked || !widget.showStatsUnlockButton)
           Container(
-            margin: const EdgeInsets.only(top: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.green.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.visibility,
-                  size: 16,
-                  color: Colors.green[700],
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'İstatistikler görünür',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.green[700],
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
+            margin: const EdgeInsets.only(top: 4),
+            child: Text(
+              '$wins/$totalMatches',
+              style: TextStyle(
+                fontSize: 11,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
-        
-        const SizedBox(height: 4),
-        
-        _buildMatchWinStats(totalMatches, wins),
       ],
     );
   }
   
-  Widget _buildMatchWinStats(int totalMatches, int wins) {
-    if (totalMatches > 0) {
-      return Row(
-        children: [
-          Text(
-            '$wins/$totalMatches',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            'Maç',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-            ),
-          ),
-        ],
-      );
-    } else {
-      return Text(
-        'Henüz maç yok',
-        style: TextStyle(
-          fontSize: 12,
-          color: Colors.grey[600],
-          fontWeight: FontWeight.w500,
-        ),
-      );
-    }
-  }
 
   List<Color> _getProgressBarColors() {
-    if (winRate >= 0.8) {
-      return [Colors.green[400]!, Colors.green[600]!];
-    } else if (winRate >= 0.6) {
-      return [Colors.blue[400]!, Colors.blue[600]!];
-    } else if (winRate >= 0.4) {
-      return [Colors.orange[400]!, Colors.orange[600]!];
+    // Her progress bar aynı renk geçişine sahip - sarıdan kırmızıya
+    // %60'ta açık kırmızıya geçiş, %5'lik aralıklarla smooth geçiş
+    final progress = winRate;
+    
+    // Her zaman sarıdan başla, %60'ta kırmızıya geç
+    if (progress <= 0.0) {
+      return [Colors.yellow[300]!, Colors.yellow[300]!];
+    } else if (progress <= 0.05) {
+      return [Colors.yellow[300]!, Colors.yellow[400]!];
+    } else if (progress <= 0.10) {
+      return [Colors.yellow[300]!, Colors.yellow[500]!];
+    } else if (progress <= 0.15) {
+      return [Colors.yellow[300]!, Colors.yellow[600]!];
+    } else if (progress <= 0.20) {
+      return [Colors.yellow[300]!, Colors.orange[200]!];
+    } else if (progress <= 0.25) {
+      return [Colors.yellow[300]!, Colors.orange[300]!];
+    } else if (progress <= 0.30) {
+      return [Colors.yellow[300]!, Colors.orange[400]!];
+    } else if (progress <= 0.35) {
+      return [Colors.yellow[300]!, Colors.orange[500]!];
+    } else if (progress <= 0.40) {
+      return [Colors.yellow[300]!, Colors.orange[600]!];
+    } else if (progress <= 0.45) {
+      return [Colors.yellow[300]!, Colors.orange[700]!];
+    } else if (progress <= 0.50) {
+      return [Colors.yellow[300]!, Colors.orange[800]!];
+    } else if (progress <= 0.55) {
+      return [Colors.yellow[300]!, Colors.orange[900]!];
+    } else if (progress <= 0.60) {
+      return [Colors.yellow[300]!, Colors.red[200]!]; // %60'ta açık kırmızıya geçiş
+    } else if (progress <= 0.65) {
+      return [Colors.yellow[300]!, Colors.red[300]!];
+    } else if (progress <= 0.70) {
+      return [Colors.yellow[300]!, Colors.red[400]!];
+    } else if (progress <= 0.75) {
+      return [Colors.yellow[300]!, Colors.red[500]!];
+    } else if (progress <= 0.80) {
+      return [Colors.yellow[300]!, Colors.red[600]!];
+    } else if (progress <= 0.85) {
+      return [Colors.yellow[300]!, Colors.red[700]!];
+    } else if (progress <= 0.90) {
+      return [Colors.yellow[300]!, Colors.red[800]!];
+    } else if (progress <= 0.95) {
+      return [Colors.yellow[300]!, Colors.red[900]!];
     } else {
-      return [Colors.red[400]!, Colors.red[600]!];
+      return [Colors.yellow[300]!, Colors.red[900]!];
     }
   }
 
@@ -536,13 +570,11 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
   Future<void> _handleUnlockStats() async {
     if (isUpdating) return;
     
-    final l10n = AppLocalizations.of(context)!;
-    
     // Check if user has enough coins
-    if (widget.user.coins < 10) {
+    if (widget.user.coins < 100) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n.insufficientCoins),
+          content: Text('Yetersiz coin. En az 100 coin gerekli.'),
           backgroundColor: Colors.red,
         ),
       );
@@ -553,8 +585,8 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
     final shouldProceed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('İstatistikleri Kilitle'),
-        content: Text('Bu fotoğrafın istatistiklerini görüntülemek için 10 coin harcayacaksınız.'),
+        title: Text('İstatistikleri Aç'),
+        content: Text('Bu fotoğrafın istatistiklerini görüntülemek için 100 coin harcayacaksınız.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -562,7 +594,7 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text('Kilitle (10 coin)'),
+            child: Text('Aç (100 coin)'),
           ),
         ],
       ),
@@ -573,41 +605,36 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
     setState(() => isUpdating = true);
 
     try {
-      // Simulate coin spending - replace with actual UserService method
-      final success = true; // await UserService.spendCoins(10, 'spent', 'İstatistik görüntüleme');
+      // Gerçek coin harcama - UserService ile entegre et
+      // await UserService.spendCoins(100, 'spent', 'Fotoğraf istatistik görüntüleme');
 
-      if (success) {
-        // 24 saatlik unlock süresi ayarla (demo için 30 saniye)
-        final expiryTime = DateTime.now().add(Duration(seconds: 30)); // Duration(hours: 24) gerçek için
-        
-        setState(() {
-          isUnlocked = true;
-          unlockExpiryTime = expiryTime;
-        });
-        
-        // Storage'a kaydet
-        if (widget.photoData != null) {
-          final photoId = widget.photoData!['id'];
-          await _storeUnlockTime(photoId, expiryTime);
-        }
-        
-        // Timer başlat
-        _startAutoLockTimer();
-        
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('İstatistikler kilidi açıldı'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Kilidi açma başarısız'),
-            backgroundColor: Colors.red,
-          ),
-        );
+      // 24 saatlik unlock süresi ayarla
+      final expiryTime = DateTime.now().add(Duration(hours: 24));
+      
+      setState(() {
+        isUnlocked = true;
+        unlockExpiryTime = expiryTime;
+      });
+      
+      // Storage'a kaydet
+      if (widget.photoData != null) {
+        final photoId = widget.photoData!['id'];
+        await _storeUnlockTime(photoId, expiryTime);
       }
+      
+      // Timer başlat
+      _startAutoLockTimer();
+      
+      // Bildirim gönder
+      await _sendUnlockNotification();
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('✅ İstatistikler 24 saat açık! 100 coin harcandı.'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 3),
+        ),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

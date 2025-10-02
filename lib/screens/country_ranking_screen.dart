@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/country_ranking_service.dart';
 import '../l10n/app_localizations.dart';
 
@@ -14,11 +15,14 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
   List<Map<String, dynamic>> countryStats = [];
   bool isLoading = true;
   String? errorMessage;
+  bool isUnlocked = false; // Progress bar'ların açık olup olmadığını kontrol eder
+  DateTime? unlockExpiryTime; // 24 saatlik unlock süresi
 
   @override
   void initState() {
     super.initState();
     _loadCountryStats();
+    _checkUnlockStatus();
   }
 
   Future<void> _loadCountryStats() async {
@@ -51,15 +55,132 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
     }
   }
 
+  void _showPurchaseDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Ülke İstatistiklerini Görüntüle'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('İptal'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _purchaseCountryStats();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange[600],
+              foregroundColor: Colors.white,
+            ),
+            child: Text('Satın Al (500)'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _checkUnlockStatus() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final timeString = prefs.getString('country_stats_unlock');
+      if (timeString != null) {
+        final savedTime = DateTime.parse(timeString);
+        if (DateTime.now().isBefore(savedTime)) {
+          setState(() {
+            isUnlocked = true;
+            unlockExpiryTime = savedTime;
+          });
+          _startAutoLockTimer();
+        } else {
+          await prefs.remove('country_stats_unlock');
+        }
+      }
+    } catch (e) {
+      print('Error checking unlock status: $e');
+    }
+  }
+
+  void _startAutoLockTimer() {
+    if (unlockExpiryTime != null) {
+      final remainingTime = unlockExpiryTime!.difference(DateTime.now());
+      if (remainingTime.isNegative) {
+        setState(() {
+          isUnlocked = false;
+          unlockExpiryTime = null;
+        });
+        return;
+      }
+
+      // 24 saat sonra otomatik kilit
+      Future.delayed(remainingTime, () {
+        if (mounted) {
+          setState(() {
+            isUnlocked = false;
+            unlockExpiryTime = null;
+          });
+          _removeStoredUnlockTime();
+        }
+      });
+    }
+  }
+
+  Future<void> _storeUnlockTime(DateTime expiryTime) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('country_stats_unlock', expiryTime.toIso8601String());
+    } catch (e) {
+      print('Error storing unlock time: $e');
+    }
+  }
+
+  Future<void> _removeStoredUnlockTime() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('country_stats_unlock');
+    } catch (e) {
+      print('Error removing unlock time: $e');
+    }
+  }
+
+  void _purchaseCountryStats() {
+    // TODO: Gerçek coin harcama sistemi entegre et
+    // await UserService.spendCoins(500, 'spent', 'Ülke istatistikleri görüntüleme');
+    
+    // 24 saatlik unlock süresi ayarla
+    final expiryTime = DateTime.now().add(Duration(hours: 24));
+    
+    // Progress bar'ları aç
+    setState(() {
+      isUnlocked = true;
+      unlockExpiryTime = expiryTime;
+    });
+    
+    // Storage'a kaydet
+    _storeUnlockTime(expiryTime);
+    
+    // Timer başlat
+    _startAutoLockTimer();
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('✅ Ülke istatistikleri 24 saat açık! 500 coin harcandı.'),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.countryRanking),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
+        title: Text('Ülkelere Göre İstatistikler'),
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
       ),
       body: isLoading
           ? _buildLoadingState()
@@ -152,109 +273,209 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
     final winRate = stat['winRate'] as double;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        children: [
+          // Ülke Bayrağı Avatar (Profil fotoğrafı gibi)
+          _buildCountryAvatar(country, rank, winRate),
+          
+          const SizedBox(width: 16),
+          
+          // Progress Bar (Profil fotoğrafları gibi)
+          Expanded(
+            child: _buildCountryProgressBar(winRate, wins, totalMatches),
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            // Rank with Flag
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: _getRankColor(rank),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      _getCountryFlag(country),
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    Text(
-                      '$rank',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
+    );
+  }
 
-            // Country Info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    country,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '$totalMatches ${l10n.totalMatches.toLowerCase()}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Stats
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+  Widget _buildCountryAvatar(String country, int rank, double winRate) {
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: _getCountryBorderColor(winRate),
+          width: 2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipOval(
+        child: Container(
+          color: Colors.grey[100],
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '${winRate.toStringAsFixed(1)}%',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: _getWinRateColor(winRate),
-                  ),
+                  _getCountryFlag(country),
+                  style: const TextStyle(fontSize: 20),
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildStatChip(
-                      '${l10n.winsAgainst}: $wins',
-                      Colors.green,
-                    ),
-                    const SizedBox(width: 8),
-                    _buildStatChip(
-                      '${l10n.lossesAgainst}: $losses',
-                      Colors.red,
-                    ),
-                  ],
+                Text(
+                  '$rank',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[700],
+                  ),
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildCountryProgressBar(double winRate, int wins, int totalMatches) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Progress bar
+        Container(
+          height: 24,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.grey[200],
+          ),
+          child: Stack(
+            children: [
+              // Background
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.grey[200],
+                ),
+              ),
+              // Progress fill
+              FractionallySizedBox(
+                alignment: Alignment.centerLeft,
+                widthFactor: winRate / 100.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    gradient: LinearGradient(
+                      colors: _getCountryProgressBarColors(winRate),
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                  ),
+                ),
+              ),
+              // Kilitli overlay - sadece kilitliyken göster
+              if (!isUnlocked)
+                GestureDetector(
+                  onTap: _showPurchaseDialog,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.yellow[300]!,
+                          Colors.yellow[400]!,
+                          Colors.yellow[500]!,
+                          Colors.yellow[600]!,
+                          Colors.orange[200]!,
+                          Colors.orange[300]!,
+                          Colors.orange[400]!,
+                          Colors.orange[500]!,
+                          Colors.orange[600]!,
+                          Colors.orange[700]!,
+                          Colors.orange[800]!,
+                          Colors.orange[900]!,
+                          Colors.red[200]!,
+                          Colors.red[300]!,
+                          Colors.red[400]!,
+                          Colors.red[500]!,
+                          Colors.red[600]!,
+                          Colors.red[700]!,
+                          Colors.red[800]!,
+                          Colors.red[900]!,
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        stops: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 1.0],
+                      ),
+                      border: Border.all(
+                        color: Colors.orange[600]!,
+                        width: 1.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.orange.withValues(alpha: 0.4),
+                          blurRadius: 6,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.lock,
+                            size: 14,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            '500 coin',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black.withValues(alpha: 0.8),
+                                  offset: Offset(0, 1),
+                                  blurRadius: 4,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              // Yüzde değeri - sadece açıksa göster
+              if (isUnlocked)
+                Center(
+                  child: Text(
+                    '${winRate.toStringAsFixed(0)}%',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        
+        // Win/Match sayıları
+        Container(
+          margin: const EdgeInsets.only(top: 4),
+          child: Text(
+            isUnlocked ? '$wins/$totalMatches' : 'Kilitli - 500 coin ile aç',
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -277,17 +498,60 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
     );
   }
 
-  Color _getRankColor(int rank) {
-    if (rank == 1) return Colors.amber;
-    if (rank == 2) return Colors.grey.shade400;
-    if (rank == 3) return Colors.orange.shade300;
-    return Colors.blue;
+  Color _getCountryBorderColor(double winRate) {
+    if (winRate >= 80) return Colors.amber;
+    if (winRate >= 60) return Colors.grey[400]!;
+    if (winRate >= 40) return Colors.orange;
+    return Colors.grey;
   }
 
-  Color _getWinRateColor(double winRate) {
-    if (winRate >= 70) return Colors.green;
-    if (winRate >= 50) return Colors.orange;
-    return Colors.red;
+  List<Color> _getCountryProgressBarColors(double winRate) {
+    // Aynı renk geçişleri - sarıdan kırmızıya
+    final progress = winRate / 100.0;
+    
+    if (progress <= 0.0) {
+      return [Colors.yellow[300]!, Colors.yellow[300]!];
+    } else if (progress <= 0.05) {
+      return [Colors.yellow[300]!, Colors.yellow[400]!];
+    } else if (progress <= 0.10) {
+      return [Colors.yellow[300]!, Colors.yellow[500]!];
+    } else if (progress <= 0.15) {
+      return [Colors.yellow[300]!, Colors.yellow[600]!];
+    } else if (progress <= 0.20) {
+      return [Colors.yellow[300]!, Colors.orange[200]!];
+    } else if (progress <= 0.25) {
+      return [Colors.yellow[300]!, Colors.orange[300]!];
+    } else if (progress <= 0.30) {
+      return [Colors.yellow[300]!, Colors.orange[400]!];
+    } else if (progress <= 0.35) {
+      return [Colors.yellow[300]!, Colors.orange[500]!];
+    } else if (progress <= 0.40) {
+      return [Colors.yellow[300]!, Colors.orange[600]!];
+    } else if (progress <= 0.45) {
+      return [Colors.yellow[300]!, Colors.orange[700]!];
+    } else if (progress <= 0.50) {
+      return [Colors.yellow[300]!, Colors.orange[800]!];
+    } else if (progress <= 0.55) {
+      return [Colors.yellow[300]!, Colors.orange[900]!];
+    } else if (progress <= 0.60) {
+      return [Colors.yellow[300]!, Colors.red[200]!]; // %60'ta açık kırmızıya geçiş
+    } else if (progress <= 0.65) {
+      return [Colors.yellow[300]!, Colors.red[300]!];
+    } else if (progress <= 0.70) {
+      return [Colors.yellow[300]!, Colors.red[400]!];
+    } else if (progress <= 0.75) {
+      return [Colors.yellow[300]!, Colors.red[500]!];
+    } else if (progress <= 0.80) {
+      return [Colors.yellow[300]!, Colors.red[600]!];
+    } else if (progress <= 0.85) {
+      return [Colors.yellow[300]!, Colors.red[700]!];
+    } else if (progress <= 0.90) {
+      return [Colors.yellow[300]!, Colors.red[800]!];
+    } else if (progress <= 0.95) {
+      return [Colors.yellow[300]!, Colors.red[900]!];
+    } else {
+      return [Colors.yellow[300]!, Colors.red[900]!];
+    }
   }
 
   String _getCountryFlag(String country) {
@@ -592,3 +856,4 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
     }
   }
 }
+

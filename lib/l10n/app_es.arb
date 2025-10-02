@@ -170,7 +170,7 @@
       }
     }
   },
-  "matchHistory": "📊 Historial de Partidos",
+  "matchHistory": "Historial de Partidos",
   "viewLastFiveMatches": "Ver tus últimos 5 partidos y oponentes (5 monedas)",
   "visibleInMatches": "Visible en Partidos",
   "nowVisibleInMatches": "¡Ahora aparecerás en los partidos!",
@@ -529,7 +529,7 @@
   "youWon": "Ganaste",
   "youLost": "Perdiste",
   "lastFiveMatchStats": "📊 Estadísticas de los Últimos 5 Partidos",
-  "matchHistory": "📊 Historial de Partidos",
+  "matchHistory": "Historial de Partidos",
   "noMatchHistoryYet": "¡Aún no hay historial de partidos!\n¡Juega tu primer partido!",
   "premiumFeature": "🔒 Característica Premium",
   "spendFiveCoinsForHistory": "Gastar 5 monedas para ver tus últimos 5 partidos y oponentes",

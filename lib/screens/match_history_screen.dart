@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
@@ -469,34 +470,6 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
               ),
             ),
           
-          // Normal unlock durumu
-          if (!hasWeeklyAccess && unlockExpiry != null)
-            Container(
-              padding: const EdgeInsets.all(12),
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.blue),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.access_time, color: Colors.blue),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('$unlockedMatches Maç Açık', 
-                             style: const TextStyle(fontWeight: FontWeight.bold)),
-                        Text('Bitiş: ${_formatDateTime(unlockExpiry!)}',
-                             style: const TextStyle(fontSize: 12)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
           
           if (!hasWeeklyAccess) ...[
             
@@ -572,6 +545,55 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
     );
   }
 
+  Widget _buildTimeCounter(String label, DateTime expiryTime) {
+    return Container(
+      margin: const EdgeInsets.only(right: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              color: Colors.grey[700],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(width: 4),
+          Text(
+            _formatTimeRemaining(expiryTime),
+            style: TextStyle(
+              fontSize: 10,
+              color: Colors.grey[800],
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatTimeRemaining(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = dateTime.difference(now);
+    
+    if (difference.inDays > 0) {
+      return '${difference.inDays}d ${difference.inHours % 24}h';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h ${difference.inMinutes % 60}m';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m';
+    } else {
+      return 'Bitiyor';
+    }
+  }
+
   String _formatDateTime(DateTime dateTime) {
     final now = DateTime.now();
     final difference = dateTime.difference(now);
@@ -626,8 +648,16 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.matchHistory),
-        backgroundColor: Colors.blue[600],
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        actions: [
+          if (hasWeeklyAccess && weeklyAccessExpiry != null)
+            _buildTimeCounter('Bitiş:', weeklyAccessExpiry!)
+          else if (!hasWeeklyAccess && unlockExpiry != null)
+            _buildTimeCounter('Bitiş:', unlockExpiry!),
+        ],
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())

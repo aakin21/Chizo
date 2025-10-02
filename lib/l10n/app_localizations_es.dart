@@ -371,7 +371,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get predictionStatistics => '🎯 Estadísticas de Predicción';
 
   @override
-  String get matchHistory => '📊 Historial de Partidos';
+  String get matchHistory => 'Historial de Partidos';
 
   @override
   String get viewLastFiveMatches =>

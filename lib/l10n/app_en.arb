@@ -546,7 +546,7 @@
     }
   },
   
-  "matchHistory": "📊 Match History",
+  "matchHistory": "Match History",
   "@matchHistory": {
     "description": "Match history section title"
   },
@@ -1310,7 +1310,7 @@
   "youWon": "You Won",
   "youLost": "You Lost",
   "lastFiveMatchStats": "📊 Last 5 Match Statistics",
-  "matchHistory": "📊 Match History",
+  "matchHistory": "Match History",
   "noMatchHistoryYet": "No match history yet!\nPlay your first match!",
   "premiumFeature": "🔒 Premium Feature",
   "spendFiveCoinsForHistory": "Spend 5 coins to see your last 5 matches and opponents",
