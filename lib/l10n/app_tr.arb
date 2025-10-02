@@ -217,6 +217,7 @@
   "coinsEarnedFromPredictions": "Tahminlerden Kazanılan: {coins} coin",
   "matchHistory": "Match Geçmişi",
   "viewLastFiveMatches": "Son 5 matchinizi ve rakiplerinizi görün (5 coin)",
+  "viewRecentMatches": "Son maçlarını gör",
   "visibleInMatches": "Matchlere Açık",
   "nowVisibleInMatches": "Artık matchlerde görüneceksiniz!",
   "removedFromMatches": "Matchlerden çıkarıldınız!",

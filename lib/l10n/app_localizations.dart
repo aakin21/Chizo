@@ -750,6 +750,12 @@ abstract class AppLocalizations {
   /// **'View your last 5 matches and opponents (5 coins)'**
   String get viewLastFiveMatches;
 
+  /// View recent matches button text
+  ///
+  /// In en, this message translates to:
+  /// **'View your recent matches'**
+  String get viewRecentMatches;
+
   /// Visible in matches toggle label
   ///
   /// In en, this message translates to:

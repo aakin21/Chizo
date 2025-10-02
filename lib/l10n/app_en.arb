@@ -556,6 +556,11 @@
     "description": "View match history message"
   },
   
+  "viewRecentMatches": "View your recent matches",
+  "@viewRecentMatches": {
+    "description": "View recent matches button text"
+  },
+  
   "visibleInMatches": "Visible in Matches",
   "@visibleInMatches": {
     "description": "Visible in matches toggle label"

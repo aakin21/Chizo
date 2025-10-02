@@ -369,6 +369,9 @@ class AppLocalizationsTr extends AppLocalizations {
       'Son 5 matchinizi ve rakiplerinizi görün (5 coin)';
 
   @override
+  String get viewRecentMatches => 'Son maçlarını gör';
+
+  @override
   String get visibleInMatches => 'Matchlere Açık';
 
   @override

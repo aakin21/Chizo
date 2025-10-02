@@ -19,7 +19,7 @@ class MatchHistoryService {
           .eq('is_completed', true)
           .or('user1_id.eq.$userId,user2_id.eq.$userId')
           .order('completed_at', ascending: false)
-          .limit(5);
+          .limit(50);
 
       List<Map<String, dynamic>> matchHistory = [];
 
@@ -28,7 +28,7 @@ class MatchHistoryService {
         final user2 = match['user2'];
         final winnerId = match['winner_id'];
         
-        // Rakip kullanıcıyı belirle
+        // Rakip kullanıcıyı belirle (fotoğraflar olmadan)
         UserModel? opponent;
         bool isWinner = false;
         
@@ -39,6 +39,9 @@ class MatchHistoryService {
           opponent = UserModel.fromJson(user1);
           isWinner = winnerId == userId;
         }
+
+        // Fotoğrafları şimdilik yükleme - lazy loading yapacağız
+        print('👤 Added opponent: ${opponent.username} (photos will be loaded on demand)');
 
         matchHistory.add({
           'match': MatchModel.fromJson(match),
@@ -103,4 +106,34 @@ class MatchHistoryService {
       };
     }
   }
+
+  /// Load photos for a specific user (lazy loading)
+  static Future<UserModel?> loadUserPhotos(UserModel user) async {
+    try {
+      print('🔍 Lazy loading photos for: ${user.id}');
+      
+      final photosResponse = await _client
+          .from('user_photos')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('is_active', true)
+          .order('photo_order');
+      
+      if (photosResponse.isNotEmpty) {
+        // UserModel'i fotoğraflarla birlikte yeniden oluştur
+        final userData = user.toJson();
+        userData['match_photos'] = photosResponse;
+        final updatedUser = UserModel.fromJson(userData);
+        print('✅ Lazy loaded ${photosResponse.length} photos for ${user.username}');
+        return updatedUser;
+      } else {
+        print('❌ No photos found for ${user.username}');
+        return user;
+      }
+    } catch (e) {
+      print('❌ Error lazy loading photos: $e');
+      return user;
+    }
+  }
+
 }

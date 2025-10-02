@@ -7,6 +7,7 @@ import '../services/photo_upload_service.dart';
 import '../l10n/app_localizations.dart';
 import 'match_history_screen.dart';
 import 'country_ranking_screen.dart';
+import 'store_tab.dart';
 import '../widgets/country_selector.dart';
 import '../widgets/gender_selector.dart';
 import '../services/country_service.dart';
@@ -391,6 +392,72 @@ class _ProfileTabState extends State<ProfileTab> {
 
                       const SizedBox(height: 24),
 
+                      // Match History Butonu
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.history,
+                            color: Colors.purple,
+                            size: 28,
+                          ),
+                          title: Text(
+                            AppLocalizations.of(context)!.matchHistory,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text(
+                            AppLocalizations.of(context)!.viewRecentMatches,
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const MatchHistoryScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Ülke Sıralaması Butonu
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.flag,
+                            color: Colors.blue,
+                            size: 28,
+                          ),
+                          title: Text(
+                            AppLocalizations.of(context)!.countryRanking,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text(
+                            AppLocalizations.of(context)!.countryRankingSubtitle,
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          trailing: const Icon(Icons.arrow_forward_ios),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CountryRankingScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
                       // Kullanıcı Adı
                       Card(
                         child: ListTile(
@@ -449,7 +516,25 @@ class _ProfileTabState extends State<ProfileTab> {
                           ),
                           title: Text(AppLocalizations.of(context)!.coin),
                           subtitle: Text('${currentUser!.coins}'),
-                          trailing: const Icon(Icons.info_outline),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.store),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Scaffold(
+                                    appBar: AppBar(
+                                      title: const Text("Mağaza"),
+                                      leading: BackButton(
+                                        onPressed: () => Navigator.pop(context),
+                                      ),
+                                    ),
+                                    body: const StoreTab(),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
 
@@ -573,77 +658,6 @@ class _ProfileTabState extends State<ProfileTab> {
                           ),
                         ),
                       ),
-
-                      const SizedBox(height: 24),
-
-
-
-                      const SizedBox(height: 24),
-
-                      // Match History Butonu
-                      Card(
-                        child: ListTile(
-                          leading: const Icon(
-                            Icons.history,
-                            color: Colors.purple,
-                            size: 28,
-                          ),
-                          title: Text(
-                            AppLocalizations.of(context)!.matchHistory,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          subtitle: Text(
-                            AppLocalizations.of(context)!.viewLastFiveMatches,
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          trailing: const Icon(Icons.arrow_forward_ios),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const MatchHistoryScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // Ülke Sıralaması Butonu
-                      Card(
-                        child: ListTile(
-                          leading: const Icon(
-                            Icons.flag,
-                            color: Colors.blue,
-                            size: 28,
-                          ),
-                          title: Text(
-                            AppLocalizations.of(context)!.countryRanking,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          subtitle: Text(
-                            AppLocalizations.of(context)!.countryRankingSubtitle,
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                          trailing: const Icon(Icons.arrow_forward_ios),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const CountryRankingScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-
 
                       const SizedBox(height: 24),
 

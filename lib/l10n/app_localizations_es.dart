@@ -378,6 +378,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Ver tus últimos 5 partidos y oponentes (5 monedas)';
 
   @override
+  String get viewRecentMatches => 'View your recent matches';
+
+  @override
   String get visibleInMatches => 'Visible en Partidos';
 
   @override

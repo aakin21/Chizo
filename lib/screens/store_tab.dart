@@ -93,11 +93,11 @@ class _StoreTabState extends State<StoreTab> {
             _buildSectionCard(
               title: '💰 Coin Paketleri',
               children: [
-                _buildCoinPackage('100 Coin', '₺9.99', 100, Colors.blue),
-                _buildCoinPackage('250 Coin', '₺19.99', 250, Colors.green),
-                _buildCoinPackage('500 Coin', '₺34.99', 500, Colors.orange),
-                _buildCoinPackage('1000 Coin', '₺59.99', 1000, Colors.purple),
-                _buildCoinPackage('2500 Coin', '₺99.99', 2500, Colors.red),
+                _buildCoinPackage('100 Coin', '₺0.99', 100, Colors.blue),
+                _buildCoinPackage('250 Coin', '₺1.99', 250, Colors.green),
+                _buildCoinPackage('500 Coin', '₺3.49', 500, Colors.orange),
+                _buildCoinPackage('1000 Coin', '₺5.99', 1000, Colors.purple),
+                _buildCoinPackage('2500 Coin', '₺9.99', 2500, Colors.red),
               ],
             ),
 

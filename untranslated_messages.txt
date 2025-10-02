@@ -1,5 +1,6 @@
 {
   "de": [
+    "viewRecentMatches",
     "dataPrivacy",
     "dataPrivacyDescription",
     "profileVisibility",
@@ -26,6 +27,7 @@
   ],
 
   "es": [
+    "viewRecentMatches",
     "dataPrivacy",
     "dataPrivacyDescription",
     "profileVisibility",

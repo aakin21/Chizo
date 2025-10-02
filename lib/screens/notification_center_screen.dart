@@ -196,42 +196,46 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
             ),
         ],
       ),
-      body: Column(
-        children: [
-          // Notification Settings
-          _buildNotificationSettings(),
-          
-          // Divider
-          Divider(height: 1),
-          
-          // Bildirim işlem butonları
-          Container(
-            padding: EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
+      body: _buildScrollableContent(),
+    );
+  }
+
+  Widget _buildScrollableContent() {
+    return CustomScrollView(
+      slivers: [
+        // Notification Settings
+        SliverToBoxAdapter(
+          child: _buildNotificationSettings(),
+        ),
+        
+        // Divider
+        SliverToBoxAdapter(
+          child: Divider(height: 1),
+        ),
+        
+        // Çöp kutusu ikonu
+        if (notifications.isNotEmpty)
+          SliverToBoxAdapter(
+            child: Container(
+              padding: EdgeInsets.only(right: 8, top: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.delete_outline),
                     onPressed: _deleteAllNotifications,
-                    icon: Icon(Icons.delete_sweep),
-                    label: Text('Tümünü Sil'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                    ),
+                    tooltip: 'Tümünü sil',
+                    color: Colors.grey[600],
+                    iconSize: 20,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-          Divider(height: 1),
-          
-          // Notifications List
-          Expanded(
-            child: _buildNotificationsList(),
-          ),
-          
-        ],
-      ),
+        
+        // Notifications List
+        _buildNotificationsSliverList(),
+      ],
     );
   }
 
@@ -304,50 +308,63 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
     );
   }
 
-  Widget _buildNotificationsList() {
+  Widget _buildNotificationsSliverList() {
     if (isLoading) {
-      return Center(child: CircularProgressIndicator());
-    }
-
-    if (notifications.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.notifications_none,
-              size: 64,
-              color: Colors.grey,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Henüz bildirim yok',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Yeni bildirimler burada görünecek',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
+      return SliverToBoxAdapter(
+        child: Container(
+          height: 200,
+          child: Center(child: CircularProgressIndicator()),
         ),
       );
     }
 
-    return ListView.builder(
-      itemCount: notifications.length,
-      itemBuilder: (context, index) {
-        final notification = notifications[index];
-        return _buildNotificationItem(notification);
-      },
+    if (notifications.isEmpty) {
+      return SliverToBoxAdapter(
+        child: Container(
+          height: 300,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.notifications_none,
+                  size: 64,
+                  color: Colors.grey,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Henüz bildirim yok',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Yeni bildirimler burada görünecek',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          final notification = notifications[index];
+          return _buildNotificationItem(notification);
+        },
+        childCount: notifications.length,
+      ),
     );
   }
+
 
   Widget _buildNotificationItem(NotificationModel notification) {
     return Dismissible(

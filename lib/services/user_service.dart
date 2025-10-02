@@ -51,7 +51,7 @@ class UserService {
             .insert(newUserData)
             .select()
             .single();
-        
+      
         // // print('New user created with ID: ${insertResponse['id']}');
         return UserModel.fromJson(insertResponse);
       }
@@ -161,6 +161,25 @@ class UserService {
         'description': description,
         'created_at': DateTime.now().toIso8601String(),
       });
+
+      // Bildirim gönder
+      String notificationTitle;
+      String notificationBody;
+      
+      if (amount > 0) {
+        notificationTitle = '💰 Coin Kazandınız!';
+        notificationBody = '+$amount coin kazandınız. $description';
+      } else {
+        notificationTitle = '💸 Coin Harcandı';
+        notificationBody = '${amount.abs()} coin harcandı. $description';
+      }
+      
+      await _sendNotificationToUser(
+        currentUser.id,
+        'coin_transaction',
+        notificationTitle,
+        notificationBody,
+      );
 
       return true;
     } catch (e) {
