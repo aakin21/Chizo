@@ -15,24 +15,24 @@ import 'utils/navigation.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Firebase initialize (sadece mobile için)
+  // Firebase initialize
   try {
     await Firebase.initializeApp();
   } catch (e) {
-    // Firebase initialization failed (web platform): $e
+    // Firebase initialization failed
   }
 
-  // Supabase başlat - Environment variables should be used in production
+  // Supabase initialize
   try {
     await Supabase.initialize(
       url: 'https://rsuptwsgnpgsvlqigitq.supabase.co',
       anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdXB0d3NnbnBnc3ZscWlnaXRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5NjMzODUsImV4cCI6MjA3MzUzOTM4NX0.KiLkHJ22FhJkc8BnkLrTZpk-_gM81bTiCfe0gh3-DfM',
     );
   } catch (e) {
-    // Supabase initialization failed: $e
+    // Supabase initialization failed
   }
 
-  // Notification service'i initialize et
+  // Initialize notification service
   await NotificationService.initialize();
 
   runApp(const MyApp());
@@ -67,13 +67,11 @@ class AuthWrapper extends StatelessWidget {
         final session = snapshot.hasData ? snapshot.data!.session : null;
         
         if (session != null) {
-          // User is logged in, go to home screen
           return HomeScreen(
             onLanguageChanged: onLanguageChanged,
             onThemeChanged: onThemeChanged,
           );
         } else {
-          // User is not logged in, go to login screen  
           return LoginScreen(onLanguageChanged: onLanguageChanged);
         }
       },
@@ -92,7 +90,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Locale _currentLocale = const Locale('tr', 'TR');
   String _selectedTheme = 'Beyaz';
   bool _isThemeLoaded = false;
-  Key _appKey = UniqueKey(); // Dil değişikliği için key
+  Key _appKey = UniqueKey();
 
   @override
   void initState() {
@@ -101,10 +99,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _loadCurrentLocale();
     _loadTheme();
     
-    // Global dil servisini initialize et
     GlobalLanguageService().setLanguageChangeCallback(changeLanguage);
-    
-    // Global theme servisini initialize et
     GlobalThemeService().setThemeChangeCallback(changeTheme);
   }
 
@@ -117,7 +112,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    // Refresh theme when app becomes active
     if (state == AppLifecycleState.resumed) {
       _loadTheme();
     }
@@ -144,7 +138,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         });
       }
     } catch (e) {
-      // THEME ERROR: Failed to load theme - $e
       if (mounted) {
         setState(() {
           _selectedTheme = 'Beyaz';
@@ -155,66 +148,47 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   void changeLanguage(Locale locale) async {
-    // Language change requested to $locale
-    
-    // Önce dil ayarını kaydet
     await LanguageService.setLanguage(locale);
-    
-    // Dil ayarını tekrar yükle - kaydedilen ayarı doğrula
     final savedLocale = await LanguageService.getCurrentLocale();
     
     if (mounted) {
       setState(() {
-        _currentLocale = savedLocale; // Kaydedilen dil ayarını kullan
-        _appKey = UniqueKey(); // Yeni key ile tüm uygulamayı yeniden build et
+        _currentLocale = savedLocale;
+        _appKey = UniqueKey();
       });
-      // Language changed successfully to $savedLocale
     }
   }
 
   void changeTheme(String theme) async {
-    // THEME CHANGE REQUESTED: $theme
-    
-    // Theme ayarını kaydet
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('selected_theme', theme);
-    
-    // Kısa bir gecikme - theme ayarının kaydedilmesi için
     await Future.delayed(const Duration(milliseconds: 50));
     
     if (mounted) {
       setState(() {
         _selectedTheme = theme;
-        // UniqueKey kaldırıldı - refresh atmıyor, sadece state güncelleniyor
       });
-      // Theme changed successfully to $theme
     }
   }
 
   ColorScheme _getThemeColorScheme() {
-    // THEME SYSTEM: $_selectedTheme
-    
     switch (_selectedTheme) {
       case 'Beyaz':
-        // BEYAZ light theme active
         return ColorScheme.fromSeed(
           seedColor: Colors.white, 
           brightness: Brightness.light
         );
       case 'Koyu':
-        // KOYU dark theme active
         return ColorScheme.fromSeed(
           seedColor: Colors.grey.shade900, 
           brightness: Brightness.dark
         );
       case 'Pembemsi':
-        // PEMBE light theme active
         return ColorScheme.fromSeed(
           seedColor: const Color(0xFFC2185B), 
           brightness: Brightness.light
         );
       default:
-        // DEFAULT beyaz theme
         return ColorScheme.fromSeed(
           seedColor: Colors.white, 
           brightness: Brightness.light
@@ -224,7 +198,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    // Theme yüklenene kadar loading göster
     if (!_isThemeLoaded) {
       return MaterialApp(
         title: 'Chizo',
@@ -242,7 +215,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     return MaterialApp(
       navigatorKey: rootNavigatorKey,
-      key: _appKey, // Dil değişikliği için key
+      key: _appKey,
       title: 'Chizo',
       theme: ThemeData(
         colorScheme: _getThemeColorScheme(),
@@ -264,10 +237,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       debugShowCheckedModeBanner: false,
       home: AuthWrapper(
         onLanguageChanged: changeLanguage,
-        onThemeChanged: changeTheme, // Theme değişikliği callback'i ekle
+        onThemeChanged: changeTheme,
       ),
       
-      // Localization configuration
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

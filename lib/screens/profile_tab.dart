@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 import '../models/user_model.dart';
 import '../services/user_service.dart';
@@ -10,6 +9,7 @@ import 'country_ranking_screen.dart';
 import 'store_tab.dart';
 import '../widgets/country_selector.dart';
 import '../widgets/gender_selector.dart';
+import '../widgets/profile_avatar_widget.dart';
 import '../services/country_service.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -182,65 +182,11 @@ class _ProfileTabState extends State<ProfileTab> {
     }
   }
 
-  Future<void> _deletePhoto(int slot) async {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.deletePhoto),
-        content: Text(AppLocalizations.of(context)!.confirmDeletePhoto),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              setState(() => isUpdating = true);
-              
-              try {
-                final result = await PhotoUploadService.deletePhoto(slot);
-                
-                if (result['success']) {
-                  await loadUserData();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(AppLocalizations.of(context)!.photoDeleted),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('${AppLocalizations.of(context)!.error}: ${result['message']}'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('${AppLocalizations.of(context)!.error}: $e'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              } finally {
-                setState(() => isUpdating = false);
-              }
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: Text(AppLocalizations.of(context)!.delete),
-          ),
-        ],
-      ),
-    );
-  }
 
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: isLoading
+    return isLoading
           ? _buildProfileSkeletonScreen()
           : currentUser == null
               ? Center(child: Text(AppLocalizations.of(context)!.userInfoNotLoaded))
@@ -248,77 +194,18 @@ class _ProfileTabState extends State<ProfileTab> {
                   onRefresh: loadUserData,
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(16),
-                  child: Column(
+                    child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Fotoğraf Yönetimi (5 Slot)
+                      // Avatar ve Progress Bar Sistemi
                       Card(
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    AppLocalizations.of(context)!.myPhotos(userPhotos.length),
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                  ),
-                                  Row(
-                                    children: [
-                                      if (userPhotos.length < 5)
-                                        ElevatedButton.icon(
-                                          onPressed: isUpdating ? null : _showPhotoUploadDialog,
-                                          icon: const Icon(Icons.add, size: 16),
-                                          label: Text(AppLocalizations.of(context)!.addPhoto),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.green,
-                                            foregroundColor: Colors.white,
-                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                AppLocalizations.of(context)!.photoCostInfo,
-                                style: const TextStyle(fontSize: 12, color: Colors.grey),
-                              ),
-                              const SizedBox(height: 16),
-                              
-                              // Fotoğraf Grid
-                              if (userPhotos.isEmpty)
-                                Container(
-                                  padding: const EdgeInsets.all(32),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).colorScheme.surface,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(color: Theme.of(context).colorScheme.outline),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Icon(Icons.photo_camera, size: 48, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        AppLocalizations.of(context)!.noAdditionalPhotos,
-                                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        AppLocalizations.of(context)!.secondPhotoCost,
-                                        style: TextStyle(
-                                          color: Theme.of(context).colorScheme.primary,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              else
-                                _buildPhotoGrid(),
+                              // Avatar ve Progress Bar Listesi
+                              _buildProfileAvatarList(),
                             ],
                           ),
                         ),
@@ -617,7 +504,7 @@ class _ProfileTabState extends State<ProfileTab> {
                               Switch(
                                 value: _getFieldVisibility('instagram'),
                                 onChanged: (value) => _toggleFieldVisibility('instagram', value),
-                                activeColor: Colors.green,
+                                activeThumbColor: Colors.green,
                               ),
                               const SizedBox(width: 8),
                               IconButton(
@@ -647,7 +534,7 @@ class _ProfileTabState extends State<ProfileTab> {
                               Switch(
                                 value: _getFieldVisibility('profession'),
                                 onChanged: (value) => _toggleFieldVisibility('profession', value),
-                                activeColor: Colors.green,
+                                activeThumbColor: Colors.green,
                               ),
                               const SizedBox(width: 8),
                               IconButton(
@@ -664,8 +551,7 @@ class _ProfileTabState extends State<ProfileTab> {
                     ],
                   ),
                 ),
-              ),
-    );
+              );
   }
 
 
@@ -832,295 +718,100 @@ class _ProfileTabState extends State<ProfileTab> {
   }
 
 
-  /// Show photo statistics modal
-  Future<void> _showPhotoStats(String photoId) async {
-    final l10n = AppLocalizations.of(context)!;
+
+
+
+
+  /// Build profile avatar list showing photos with winrate bars
+  Widget _buildProfileAvatarList() {
+    List<Widget> avatarWidgets = [];
     
-    // Check if user has enough coins
-    final canView = await PhotoUploadService.canViewPhotoStats();
-    if (!canView) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.insufficientCoinsForStats),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    // Show confirmation dialog
-    final shouldProceed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.photoStats),
-        content: Text(l10n.photoStatsCost),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text('${l10n.pay} 50 ${l10n.coins}'),
-          ),
-        ],
-      ),
-    );
-
-    if (shouldProceed != true) return;
-
-    // Pay for viewing stats
-    final paymentSuccess = await PhotoUploadService.payForPhotoStatsView();
-    if (!paymentSuccess) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.error),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    // Get photo statistics
-    final photoStats = await PhotoUploadService.getPhotoStats(photoId);
-    if (photoStats == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.photoStatsLoadError),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    // Show statistics modal
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.photoStats),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              '${l10n.wins}: ${photoStats['wins']}',
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${l10n.totalMatches}: ${photoStats['total_matches']}',
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${l10n.winRate}: ${photoStats['total_matches'] > 0 ? ((photoStats['wins'] as int) / (photoStats['total_matches'] as int) * 100).toStringAsFixed(1) : '0.0'}%',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.ok),
-          ),
-        ],
-      ),
-    );
-
-    // Refresh user data to update coin balance
-    await loadUserData();
-  }
-
-
-
-
-  /// Build photo grid showing only existing photos and next available slot
-  Widget _buildPhotoGrid() {
-    // Find the next available slot
-    final nextSlot = userPhotos.length + 1;
-    
-    // If all 5 slots are full, don't show add button
-    if (nextSlot > 5) {
-      // Show only existing photos
-      return GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-          childAspectRatio: 1,
-        ),
-        itemCount: userPhotos.length,
-        itemBuilder: (context, index) {
-          final photo = userPhotos[index];
-          final slot = photo['photo_order'] as int;
-          return _buildPhotoSlot(photo, slot);
-        },
-      );
-    }
-    
-    // Show existing photos + next available slot
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-        childAspectRatio: 1,
-      ),
-      itemCount: userPhotos.length + 1, // +1 for next slot
-      itemBuilder: (context, index) {
-        if (index < userPhotos.length) {
-          // Show existing photo
-          final photo = userPhotos[index];
-          final slot = photo['photo_order'] as int;
-          return _buildPhotoSlot(photo, slot);
-        } else {
-          // Show next available slot
-          return _buildNextSlotButton(nextSlot);
-        }
-      },
-    );
-  }
-
-  /// Build individual photo slot
-  Widget _buildPhotoSlot(Map<String, dynamic> photo, int slot) {
-    return Stack(
-      children: [
+    // Mevcut fotoğrafları ekle
+    for (final photo in userPhotos) {
+      avatarWidgets.add(
         Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            image: DecorationImage(
-              image: CachedNetworkImageProvider(photo['photo_url']),
-              fit: BoxFit.cover,
-            ),
+          margin: const EdgeInsets.only(bottom: 16),
+          child: ProfileAvatarWidget(
+            user: currentUser!,
+            photoData: photo,
+            size: 60,
+            showWinRateBar: true,
+            canChangePhoto: true,
+            onPhotoChanged: loadUserData,
+            showStatsUnlockButton: true,
           ),
         ),
-        Positioned(
-          top: 4,
-          right: 4,
-          child: GestureDetector(
-            onTap: () => _deletePhoto(slot),
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: const BoxDecoration(
-                color: Colors.red,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.close,
-                color: Colors.white,
-                size: 12,
-              ),
-            ),
-          ),
+      );
+    }
+    
+    // Boş slotları ekle (maksimum 5 fotoğraf)
+    for (int i = userPhotos.length; i < 5; i++) {
+      avatarWidgets.add(
+        Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          child: _buildEmptyAvatarSlot(i + 1),
         ),
-        // İstatistik Gör butonu
-        Positioned(
-          bottom: 4,
-          right: 4,
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () => _showPhotoStats(photo['id']),
-              borderRadius: BorderRadius.circular(8),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.analytics,
-                      color: Colors.white,
-                      size: 12,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      AppLocalizations.of(context)!.viewStats,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 4,
-          left: 4,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-            decoration: BoxDecoration(
-              color: Colors.black54,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              AppLocalizations.of(context)!.slot(slot),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+      );
+    }
+    
+    return Column(children: avatarWidgets);
   }
-
-  /// Build next available slot button
-  Widget _buildNextSlotButton(int slot) {
+  
+  /// Build empty avatar slot with plus icon
+  Widget _buildEmptyAvatarSlot(int slot) {
     final cost = PhotoUploadService.getPhotoUploadCost(slot);
     
     return GestureDetector(
       onTap: isUpdating ? null : _showPhotoUploadDialog,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: Theme.of(context).colorScheme.outline,
-            style: BorderStyle.solid,
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.add,
-              color: Theme.of(context).colorScheme.primary,
-              size: 32,
+      child: Row(
+        children: [
+          // Empty avatar with plus icon
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.grey[400]!,
+                width: 2,
+                style: BorderStyle.solid,
+              ),
+              color: Colors.grey[100],
             ),
-            const SizedBox(height: 8),
-            Text(
-              '$cost coin',
-              style: TextStyle(
-                fontSize: 12,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
+            child: Icon(
+              Icons.add,
+              color: Colors.grey[600],
+              size: 30,
+            ),
+          ),
+          
+          const SizedBox(width: 12),
+          
+          // Progress bar placeholder
+          Expanded(
+            child: Container(
+              height: 24,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.grey[300],
+              ),
+              child: Center(
+                child: Text(
+                  '$cost coin',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
+
 
   /// Build animated skeleton loading screen for profile tab
   Widget _buildProfileSkeletonScreen() {

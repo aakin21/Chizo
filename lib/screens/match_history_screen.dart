@@ -487,7 +487,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('${unlockedMatches} Maç Açık', 
+                        Text('$unlockedMatches Maç Açık', 
                              style: const TextStyle(fontWeight: FontWeight.bold)),
                         Text('Bitiş: ${_formatDateTime(unlockExpiry!)}',
                              style: const TextStyle(fontSize: 12)),

@@ -797,5 +797,20 @@
   "purchasePackageDescription": "Bu paketi satın almak istediğinizden emin misiniz?",
   "package": "Paket",
   "price": "Fiyat",
-  "packagePurchasedSuccess": "Paket başarıyla satın alındı!"
+  "packagePurchasedSuccess": "Paket başarıyla satın alındı!",
+  
+  "changePhoto": "Fotoğraf Değiştir",
+  "@changePhoto": {
+    "description": "Fotoğraf değiştirme butonu metni"
+  },
+  
+  "unlockStats": "İstatistikleri Aç",
+  "@unlockStats": {
+    "description": "İstatistikleri açma modal başlığı"
+  },
+  
+  "unlockStatsDescription": "Bu fotoğrafın detaylı istatistiklerini görmek için 100 coin ödemek istediğinizden emin misiniz?",
+  "@unlockStatsDescription": {
+    "description": "İstatistikleri açma onay mesajı"
+  }
 }

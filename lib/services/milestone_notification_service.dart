@@ -48,7 +48,7 @@ class MilestoneNotificationService {
         'user_id': user.id,
         'type': NotificationTypes.photoMilestone,
         'title': 'Fotoğraf Milestone! 🎉',
-        'body': '${photoNumber}. fotoğrafın ${wins}. matchini kazandı!',
+        'body': '$photoNumber. fotoğrafın $wins. matchini kazandı!',
         'is_read': false,
         'created_at': DateTime.now().toIso8601String(),
         'data': {
@@ -59,7 +59,7 @@ class MilestoneNotificationService {
         },
       });
 
-      print('✅ Photo milestone notification created: ${photoNumber}. fotoğraf ${wins} wins');
+      print('✅ Photo milestone notification created: $photoNumber. fotoğraf $wins wins');
     } catch (e) {
       print('❌ Failed to create photo milestone notification: $e');
     }
@@ -75,7 +75,7 @@ class MilestoneNotificationService {
         'user_id': user.id,
         'type': NotificationTypes.totalMilestone,
         'title': 'Toplam Milestone! 🏆',
-        'body': 'Toplam ${totalWins}. matchini kazandın!',
+        'body': 'Toplam $totalWins. matchini kazandın!',
         'is_read': false,
         'created_at': DateTime.now().toIso8601String(),
         'data': {
@@ -83,7 +83,7 @@ class MilestoneNotificationService {
         },
       });
 
-      print('✅ Total milestone notification created: ${totalWins} total wins');
+      print('✅ Total milestone notification created: $totalWins total wins');
     } catch (e) {
       print('❌ Failed to create total milestone notification: $e');
     }
@@ -142,7 +142,7 @@ class MilestoneNotificationService {
         'user_id': user.id,
         'type': NotificationTypes.matchWon,
         'title': 'Match Kazandın! 🎉',
-        'body': '${photoNumber}. fotoğrafın ${photoWins}. matchini kazandı!',
+        'body': '$photoNumber. fotoğrafın $photoWins. matchini kazandı!',
         'is_read': false,
         'created_at': DateTime.now().toIso8601String(),
         'data': {
@@ -152,7 +152,7 @@ class MilestoneNotificationService {
         },
       });
 
-      print('✅ Match win notification created: ${photoNumber}. fotoğraf ${photoWins} wins');
+      print('✅ Match win notification created: $photoNumber. fotoğraf $photoWins wins');
     } catch (e) {
       print('❌ Failed to create match win notification: $e');
     }

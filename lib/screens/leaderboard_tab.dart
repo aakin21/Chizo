@@ -179,30 +179,31 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.leaderboardTitle),
-        bottom: TabBar(
+    return Column(
+      children: [
+        TabBar(
           controller: _tabController,
           tabs: [
             Tab(text: AppLocalizations.of(context)!.mostWins),
             Tab(text: AppLocalizations.of(context)!.highestWinRate),
           ],
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildLeaderboardList(
-            _topWinners,
-            AppLocalizations.of(context)!.noWinsYet,
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildLeaderboardList(
+                _topWinners,
+                AppLocalizations.of(context)!.noWinsYet,
+              ),
+              _buildLeaderboardList(
+                _topWinRate,
+                AppLocalizations.of(context)!.noWinRateYet,
+              ),
+            ],
           ),
-          _buildLeaderboardList(
-            _topWinRate,
-            AppLocalizations.of(context)!.noWinRateYet,
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

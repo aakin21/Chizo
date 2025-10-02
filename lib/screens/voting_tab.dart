@@ -104,6 +104,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         });
       }
     } catch (e) {
+      print('Error in _loadMatches: $e');
     }
   }
 

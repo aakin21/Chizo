@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'voting_tab.dart';
 import 'profile_tab.dart';
 import 'turnuva_tab.dart';
 import 'settings_tab.dart';
 import 'store_tab.dart';
-import 'voting_tab.dart';
 import 'leaderboard_tab.dart';
 import 'notification_center_screen.dart';
 import '../services/streak_service.dart';
@@ -20,8 +20,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _profileRefreshKey = 0;
   bool _streakChecked = false;
+  String _currentPage = 'home';
 
   @override
   void initState() {
@@ -155,147 +155,172 @@ class _HomeScreenState extends State<HomeScreen> {
     return '🎯';
   }
 
-  void _openPage(BuildContext context, Widget page, String title) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          appBar: AppBar(
-            title: Text(title),
-            leading: BackButton(
-              onPressed: () => Navigator.pop(context),
+
+  void _refreshProfile() {
+    setState(() {});
+  }
+
+
+  Future<void> _refreshAllData() async {
+    await _checkDailyStreak();
+    setState(() {});
+  }
+
+  Widget _getCurrentPage() {
+    switch (_currentPage) {
+      case 'home':
+        return RefreshIndicator(
+          onRefresh: _refreshAllData,
+          child: VotingTab(onVoteCompleted: _refreshProfile),
+        );
+      case 'profile':
+        return ProfileTab(onRefresh: _refreshProfile);
+      case 'tournament':
+        return TurnuvaTab();
+      case 'leaderboard':
+        return const LeaderboardTab();
+      case 'notifications':
+        return const NotificationCenterScreen();
+      case 'store':
+        return const StoreTab();
+      case 'settings':
+        return SettingsTab(
+          onLanguageChanged: widget.onLanguageChanged,
+          onThemeChanged: widget.onThemeChanged,
+        );
+      default:
+        return RefreshIndicator(
+          onRefresh: _refreshAllData,
+          child: VotingTab(onVoteCompleted: _refreshProfile),
+        );
+    }
+  }
+
+
+  Widget _buildNavigationButton({
+    required IconData icon,
+    required String page,
+    required Color color,
+  }) {
+    final isActive = _currentPage == page;
+    
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.symmetric(horizontal: 3),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: isActive ? [
+          BoxShadow(
+            color: color.withValues(alpha: 0.6),
+            blurRadius: 12,
+            spreadRadius: 2,
+          ),
+          BoxShadow(
+            color: color.withValues(alpha: 0.3),
+            blurRadius: 20,
+            spreadRadius: 4,
+          ),
+        ] : [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 4,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: IconButton(
+        onPressed: () {
+          setState(() {
+            _currentPage = page;
+          });
+        },
+        icon: AnimatedScale(
+          scale: isActive ? 1.2 : 1.0,
+          duration: const Duration(milliseconds: 300),
+          child: AnimatedRotation(
+            turns: isActive ? 0.1 : 0.0,
+            duration: const Duration(milliseconds: 300),
+            child: Icon(
+              icon, 
+              size: 24,
+              color: isActive ? Colors.white : color,
             ),
           ),
-          body: page,
+        ),
+        style: IconButton.styleFrom(
+          backgroundColor: isActive 
+            ? color
+            : color.withValues(alpha: 0.15),
+          foregroundColor: isActive ? Colors.white : color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: isActive 
+              ? BorderSide(color: Colors.white, width: 2)
+              : BorderSide.none,
+          ),
+          minimumSize: const Size(44, 44),
+          padding: const EdgeInsets.all(8),
+          elevation: isActive ? 8 : 2,
         ),
       ),
     );
-  }
-
-  void _refreshProfile() {
-    setState(() {
-      _profileRefreshKey++;
-    });
-  }
-
-  void _openNotificationCenter(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const NotificationCenterScreen(),
-      ),
-    );
-  }
-
-  Future<void> _refreshAllData() async {
-    // Tüm verileri yenile
-    await _checkDailyStreak();
-    setState(() {
-      _profileRefreshKey++;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              AppLocalizations.of(context)!.homePage,
-              style: const TextStyle(fontSize: 18), // Küçültülmüş font size
-            ),
-            const Spacer(),
-            // Yan yana 4 icon buton
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Profil
-                IconButton(
-                  onPressed: () => _openPage(context, ProfileTab(key: ValueKey('${_profileRefreshKey}_${Localizations.localeOf(context).languageCode}'), onRefresh: _refreshProfile), AppLocalizations.of(context)!.profile),
-                  icon: const Icon(Icons.person, size: 20),
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.blue.withOpacity(0.1),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                    minimumSize: const Size(32, 32),
-                    padding: const EdgeInsets.all(4),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildNavigationButton(
+                    icon: Icons.how_to_vote,
+                    page: 'home',
+                    color: Colors.green,
                   ),
-                ),
-                // Turnuva
-                IconButton(
-                  onPressed: () => _openPage(context, TurnuvaTab(), AppLocalizations.of(context)!.tournament),
-                  icon: const Icon(Icons.emoji_events, size: 20),
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.purple.withOpacity(0.1),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                    minimumSize: const Size(32, 32),
-                    padding: const EdgeInsets.all(4),
+                  _buildNavigationButton(
+                    icon: Icons.person,
+                    page: 'profile',
+                    color: Colors.blue,
                   ),
-                ),
-                // Liderlik
-                IconButton(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LeaderboardTab()),
+                  _buildNavigationButton(
+                    icon: Icons.emoji_events,
+                    page: 'tournament',
+                    color: Colors.purple,
                   ),
-                  icon: const Icon(Icons.leaderboard, size: 20),
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.orange.withOpacity(0.1),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                    minimumSize: const Size(32, 32),
-                    padding: const EdgeInsets.all(4),
+                  _buildNavigationButton(
+                    icon: Icons.leaderboard,
+                    page: 'leaderboard',
+                    color: Colors.orange,
                   ),
-                ),
-                // Bildirimler
-                IconButton(
-                  onPressed: () => _openNotificationCenter(context),
-                  icon: const Icon(Icons.notifications, size: 20),
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.purple.withOpacity(0.1),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                    minimumSize: const Size(32, 32),
-                    padding: const EdgeInsets.all(4),
+                  _buildNavigationButton(
+                    icon: Icons.notifications,
+                    page: 'notifications',
+                    color: Colors.red,
                   ),
-                ),
-                // Mağaza
-                IconButton(
-                  onPressed: () => _openPage(context, const StoreTab(), "Mağaza"),
-                  icon: const Icon(Icons.store, size: 20),
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.orange.withOpacity(0.1),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                    minimumSize: const Size(32, 32),
-                    padding: const EdgeInsets.all(4),
+                  _buildNavigationButton(
+                    icon: Icons.store,
+                    page: 'store',
+                    color: Colors.amber,
                   ),
-                ),
-                // Ayarlar
-                IconButton(
-                  onPressed: () => _openPage(context, SettingsTab(onLanguageChanged: widget.onLanguageChanged, onThemeChanged: widget.onThemeChanged), AppLocalizations.of(context)!.settings),
-                  icon: const Icon(Icons.settings, size: 20),
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.green.withOpacity(0.1),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                    minimumSize: const Size(32, 32),
-                    padding: const EdgeInsets.all(4),
+                  _buildNavigationButton(
+                    icon: Icons.settings,
+                    page: 'settings',
+                    color: Colors.grey,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
       ),
-      body: RefreshIndicator(
-        onRefresh: _refreshAllData,
-        child: Column(
-          children: [
-
-            // Altta tam ekran Voting
-            Expanded(
-              child: VotingTab(onVoteCompleted: _refreshProfile),
-            ),
-          ],
-        ),
-      ),
+      body: _getCurrentPage(),
     );
   }
 }

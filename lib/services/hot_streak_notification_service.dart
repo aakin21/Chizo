@@ -14,14 +14,14 @@ class HotStreakNotificationService {
       await _createNotification(
         type: NotificationTypes.streakDailyReminder,
         title: 'Hot Streak Hatırlatması 🔥',
-        body: 'Bu gün ${currentStreak}. gün hot streakini kaçırma!',
+        body: 'Bu gün $currentStreak. gün hot streakini kaçırma!',
       );
 
       // Ödül hatırlatma bildirimi
       await _createNotification(
         type: NotificationTypes.streakRewardReminder,
         title: 'Giriş Ödülü Hatırlatması 🎁',
-        body: 'Bu gün ${currentStreak}. gün giriş ödülünü toplamayı unutma!',
+        body: 'Bu gün $currentStreak. gün giriş ödülünü toplamayı unutma!',
       );
 
     } catch (e) {

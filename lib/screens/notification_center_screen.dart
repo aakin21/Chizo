@@ -15,7 +15,6 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
   bool isLoading = true;
   int unreadCount = 0;
   
-  
   // Notification Settings
   bool _notificationsEnabled = true;
   bool _tournamentNotifications = true;
@@ -182,21 +181,28 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Bildirimler'),
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
-        actions: [
-          if (unreadCount > 0)
-            IconButton(
-              icon: Icon(Icons.mark_email_read),
-              onPressed: _markAllAsRead,
-              tooltip: 'Tümünü okundu işaretle',
-            ),
-        ],
-      ),
-      body: _buildScrollableContent(),
+    return Column(
+      children: [
+        Container(
+          height: 8,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          color: Theme.of(context).primaryColor,
+          child: Row(
+            children: [
+              const Spacer(),
+              if (unreadCount > 0)
+                IconButton(
+                  icon: const Icon(Icons.mark_email_read, color: Colors.white),
+                  onPressed: _markAllAsRead,
+                  tooltip: 'Tümünü okundu işaretle',
+                ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: _buildScrollableContent(),
+        ),
+      ],
     );
   }
 
@@ -206,11 +212,6 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
         // Notification Settings
         SliverToBoxAdapter(
           child: _buildNotificationSettings(),
-        ),
-        
-        // Divider
-        SliverToBoxAdapter(
-          child: Divider(height: 1),
         ),
         
         // Çöp kutusu ikonu
@@ -241,18 +242,10 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
 
   Widget _buildNotificationSettings() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Bildirim Ayarları',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
           
           // Ana bildirim toggle
           SwitchListTile(
@@ -311,7 +304,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
   Widget _buildNotificationsSliverList() {
     if (isLoading) {
       return SliverToBoxAdapter(
-        child: Container(
+        child: SizedBox(
           height: 200,
           child: Center(child: CircularProgressIndicator()),
         ),
@@ -320,7 +313,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
 
     if (notifications.isEmpty) {
       return SliverToBoxAdapter(
-        child: Container(
+        child: SizedBox(
           height: 300,
           child: Center(
             child: Column(
@@ -365,7 +358,6 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
     );
   }
 
-
   Widget _buildNotificationItem(NotificationModel notification) {
     return Dismissible(
       key: Key(notification.id),
@@ -402,52 +394,50 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
       onDismissed: (direction) {
         _deleteNotification(notification);
       },
-      child: Container(
-        child: ListTile(
-          leading: CircleAvatar(
-            backgroundColor: getNotificationColor(notification.type).withOpacity(0.2),
-            child: Text(
-              getNotificationIcon(notification.type),
-              style: TextStyle(fontSize: 20),
-            ),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: getNotificationColor(notification.type).withOpacity(0.2),
+          child: Text(
+            getNotificationIcon(notification.type),
+            style: TextStyle(fontSize: 20),
           ),
-          title: Text(
-            notification.title,
-            style: TextStyle(
-              fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
-              color: getNotificationColor(notification.type),
-            ),
+        ),
+        title: Text(
+          notification.title,
+          style: TextStyle(
+            fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
+            color: getNotificationColor(notification.type),
           ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(notification.body),
-              const SizedBox(height: 4),
-              Text(
-                _formatDate(notification.createdAt),
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(notification.body),
+            const SizedBox(height: 4),
+            Text(
+              _formatDate(notification.createdAt),
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+        trailing: notification.isRead 
+            ? null 
+            : Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: getNotificationColor(notification.type),
+                  shape: BoxShape.circle,
                 ),
               ),
-            ],
-          ),
-          trailing: notification.isRead 
-              ? null 
-              : Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: getNotificationColor(notification.type),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-          onTap: () {
-            if (!notification.isRead) {
-              _markAsRead(notification);
-            }
-          },
-        ),
+        onTap: () {
+          if (!notification.isRead) {
+            _markAsRead(notification);
+          }
+        },
       ),
     );
   }
@@ -466,6 +456,4 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
       return 'Az önce';
     }
   }
-
-
 }
