@@ -58,15 +58,19 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
 
   Future<void> _loadSavedUnlockData() async {
     try {
+      final currentUser = await UserService.getCurrentUser();
+      if (currentUser == null) return;
+      
+      final userId = currentUser.id;
       final prefs = await SharedPreferences.getInstance();
       
       // Normal unlock verilerini yükle
-      final savedUnlockedMatches = prefs.getInt('match_history_unlocked_matches') ?? 0;
-      final savedUnlockExpiryString = prefs.getString('match_history_unlock_expiry');
+      final savedUnlockedMatches = prefs.getInt('match_history_unlocked_matches_$userId') ?? 0;
+      final savedUnlockExpiryString = prefs.getString('match_history_unlock_expiry_$userId');
       
       // Haftalık erişim verilerini yükle
-      final savedHasWeeklyAccess = prefs.getBool('match_history_weekly_access') ?? false;
-      final savedWeeklyExpiryString = prefs.getString('match_history_weekly_expiry');
+      final savedHasWeeklyAccess = prefs.getBool('match_history_weekly_access_$userId') ?? false;
+      final savedWeeklyExpiryString = prefs.getString('match_history_weekly_expiry_$userId');
       
       setState(() {
         unlockedMatches = savedUnlockedMatches;
@@ -87,22 +91,26 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
 
   Future<void> _saveUnlockData() async {
     try {
+      final currentUser = await UserService.getCurrentUser();
+      if (currentUser == null) return;
+      
+      final userId = currentUser.id;
       final prefs = await SharedPreferences.getInstance();
       
       // Normal unlock verilerini kaydet
-      await prefs.setInt('match_history_unlocked_matches', unlockedMatches);
+      await prefs.setInt('match_history_unlocked_matches_$userId', unlockedMatches);
       if (unlockExpiry != null) {
-        await prefs.setString('match_history_unlock_expiry', unlockExpiry!.toIso8601String());
+        await prefs.setString('match_history_unlock_expiry_$userId', unlockExpiry!.toIso8601String());
       } else {
-        await prefs.remove('match_history_unlock_expiry');
+        await prefs.remove('match_history_unlock_expiry_$userId');
       }
       
       // Haftalık erişim verilerini kaydet
-      await prefs.setBool('match_history_weekly_access', hasWeeklyAccess);
+      await prefs.setBool('match_history_weekly_access_$userId', hasWeeklyAccess);
       if (weeklyAccessExpiry != null) {
-        await prefs.setString('match_history_weekly_expiry', weeklyAccessExpiry!.toIso8601String());
+        await prefs.setString('match_history_weekly_expiry_$userId', weeklyAccessExpiry!.toIso8601String());
       } else {
-        await prefs.remove('match_history_weekly_expiry');
+        await prefs.remove('match_history_weekly_expiry_$userId');
       }
       
       print('💾 Saved unlock data: $unlockedMatches matches, weekly: $hasWeeklyAccess');

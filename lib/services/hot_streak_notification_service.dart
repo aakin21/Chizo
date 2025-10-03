@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/notification_model.dart';
+import 'notification_service.dart';
+import 'milestone_notification_service.dart';
 
 class HotStreakNotificationService {
   static final SupabaseClient _client = Supabase.instance.client;
@@ -26,6 +28,51 @@ class HotStreakNotificationService {
 
     } catch (e) {
       print('❌ Failed to send hot streak reminder: $e');
+    }
+  }
+
+  // Hot streak ödül bildirimi gönder
+  static Future<void> sendHotStreakRewardNotification({
+    required int streakDays,
+    required int coinReward,
+  }) async {
+    try {
+      await MilestoneNotificationService.sendHotStreakRewardNotification(
+        streakDays: streakDays,
+        coinReward: coinReward,
+      );
+    } catch (e) {
+      print('❌ Failed to send hot streak reward notification: $e');
+    }
+  }
+
+  // Günlük giriş ödül bildirimi gönder
+  static Future<void> sendDailyLoginRewardNotification({
+    required int coinReward,
+    required int streakDays,
+  }) async {
+    try {
+      await MilestoneNotificationService.sendDailyLoginRewardNotification(
+        coinReward: coinReward,
+        streakDays: streakDays,
+      );
+    } catch (e) {
+      print('❌ Failed to send daily login reward notification: $e');
+    }
+  }
+
+  // 12 saat sonra hot streak hatırlatması planla
+  static Future<void> scheduleHotStreakReminder({
+    required int currentStreak,
+    required DateTime lastLoginTime,
+  }) async {
+    try {
+      await NotificationService.scheduleHotStreakReminder(
+        currentStreak: currentStreak,
+        lastLoginTime: lastLoginTime,
+      );
+    } catch (e) {
+      print('❌ Failed to schedule hot streak reminder: $e');
     }
   }
 

@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
+import 'coin_transaction_notification_service.dart';
+import 'notification_service.dart';
 import '../models/coin_transaction_model.dart';
 import '../utils/constants.dart';
 
@@ -162,6 +164,9 @@ class UserService {
         'created_at': DateTime.now().toIso8601String(),
       });
 
+      // Coin transaction bildirimi gönder
+      await _sendCoinTransactionNotification(amount, type, description);
+
       // Bildirim gönder
       String notificationTitle;
       String notificationBody;
@@ -174,11 +179,16 @@ class UserService {
         notificationBody = '${amount.abs()} coin harcandı. $description';
       }
       
-      await _sendNotificationToUser(
-        currentUser.id,
-        'coin_transaction',
-        notificationTitle,
-        notificationBody,
+      // Send notification using auth_id
+      await NotificationService.sendLocalNotification(
+        title: notificationTitle,
+        body: notificationBody,
+        type: 'coin_reward',
+        data: {
+          'amount': amount,
+          'type': type,
+          'description': description,
+        },
       );
 
       return true;
@@ -315,11 +325,14 @@ class UserService {
   // Coin bildirimleri
   static Future<void> sendCoinRewardNotification(String userId, int coins, String reason) async {
     try {
-      await _sendNotificationToUser(
-        userId,
-        'coin_reward',
-        '💰 Coin Ödülü!',
-        '$coins coin kazandınız: $reason',
+      await NotificationService.sendLocalNotification(
+        title: '💰 Coin Ödülü!',
+        body: '$coins coin kazandınız: $reason',
+        type: 'coin_reward',
+        data: {
+          'coins': coins,
+          'reason': reason,
+        },
       );
     } catch (e) {
       // // print('Error sending coin reward notification: $e');
@@ -328,11 +341,14 @@ class UserService {
 
   static Future<void> sendStreakRewardNotification(String userId, int streak, int coins) async {
     try {
-      await _sendNotificationToUser(
-        userId,
-        'streak_reward',
-        '🔥 Streak Ödülü!',
-        '$streak günlük streak ile $coins coin kazandınız!',
+      await NotificationService.sendLocalNotification(
+        title: '🔥 Streak Ödülü!',
+        body: '$streak günlük streak ile $coins coin kazandınız!',
+        type: 'coin_reward',
+        data: {
+          'streak': streak,
+          'coins': coins,
+        },
       );
     } catch (e) {
       // // print('Error sending streak reward notification: $e');
@@ -351,6 +367,97 @@ class UserService {
       });
     } catch (e) {
       // // print('Error sending notification to user: $e');
+    }
+  }
+
+  /// Send coin transaction notification
+  static Future<void> _sendCoinTransactionNotification(int amount, String type, String description) async {
+    try {
+      
+      // Pozitif miktar = kazanılan, negatif miktar = harcanan
+      if (amount > 0) {
+        // Coin kazanıldı
+        if (type == 'earned' || type == 'reward') {
+          if (description.contains('tahmin')) {
+            await CoinTransactionNotificationService.sendCoinEarnedFromPredictionNotification(
+              coinAmount: amount,
+              matchId: 'unknown',
+              matchTitle: description,
+            );
+          } else if (description.contains('reklam')) {
+            await CoinTransactionNotificationService.sendCoinEarnedFromAdNotification(
+              coinAmount: amount,
+            );
+          } else if (description.contains('hot streak')) {
+            await CoinTransactionNotificationService.sendCoinEarnedFromHotStreakNotification(
+              coinAmount: amount,
+              streakDays: 1, // Bu değer description'dan parse edilebilir
+            );
+          } else if (description.contains('günlük') || description.contains('giriş')) {
+            await CoinTransactionNotificationService.sendCoinEarnedFromDailyLoginNotification(
+              coinAmount: amount,
+              streakDays: 1,
+            );
+          } else if (description.contains('maç')) {
+            await CoinTransactionNotificationService.sendCoinEarnedFromMatchWinNotification(
+              coinAmount: amount,
+              opponentName: 'Rakip',
+              matchId: 'unknown',
+            );
+          } else if (description.contains('turnuva')) {
+            await CoinTransactionNotificationService.sendCoinEarnedFromTournamentNotification(
+              coinAmount: amount,
+              tournamentName: 'Turnuva',
+              position: '1',
+            );
+          } else if (description.contains('oylama')) {
+            await CoinTransactionNotificationService.sendCoinEarnedFromVotingNotification(
+              coinAmount: amount,
+              matchTitle: description,
+            );
+          } else if (description.contains('referans')) {
+            await CoinTransactionNotificationService.sendCoinEarnedFromReferralNotification(
+              coinAmount: amount,
+              referredUserName: 'Kullanıcı',
+            );
+          } else if (description.contains('başarı')) {
+            await CoinTransactionNotificationService.sendCoinEarnedFromAchievementNotification(
+              coinAmount: amount,
+              achievementName: description,
+            );
+          } else if (description.contains('bonus')) {
+            await CoinTransactionNotificationService.sendCoinEarnedFromBonusNotification(
+              coinAmount: amount,
+              bonusType: description,
+            );
+          } else if (description.contains('etkinlik')) {
+            await CoinTransactionNotificationService.sendCoinEarnedFromSpecialEventNotification(
+              coinAmount: amount,
+              eventName: description,
+            );
+          }
+        }
+      } else {
+        // Coin harcandı (negatif miktar)
+        print('💸 Sending spent notification for negative amount: ${amount.abs()}');
+        await CoinTransactionNotificationService.sendCoinSpentNotification(
+          coinAmount: amount.abs(),
+          reason: type,
+          itemName: description,
+        );
+      }
+      
+      // Ayrıca type 'spent' ise de harcama bildirimi gönder
+      if (type == 'spent') {
+        print('💸 Sending spent notification for type=spent: ${amount.abs()}');
+        await CoinTransactionNotificationService.sendCoinSpentNotification(
+          coinAmount: amount.abs(),
+          reason: type,
+          itemName: description,
+        );
+      }
+    } catch (e) {
+      print('❌ Failed to send coin transaction notification: $e');
     }
   }
 }

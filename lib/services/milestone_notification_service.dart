@@ -1,160 +1,126 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/notification_model.dart';
+import 'notification_service.dart';
 
 class MilestoneNotificationService {
   static final SupabaseClient _client = Supabase.instance.client;
 
-  // Fotoğraf milestone bildirimi gönder
-  static Future<void> checkPhotoMilestone(String photoId, int photoWins) async {
+  /// Check and send photo milestone notifications
+  static Future<void> checkPhotoMilestones({
+    required int photoId,
+    required int newWinCount,
+    required String photoName,
+  }) async {
     try {
-      // 100'ün katları kontrol et (100, 200, 300, 400, 500...)
-      if (photoWins > 0 && photoWins % 100 == 0) {
-        await _createPhotoMilestoneNotification(photoId, photoWins);
-      }
-    } catch (e) {
-      print('❌ Failed to check photo milestone: $e');
-    }
-  }
-
-  // Total profil milestone bildirimi gönder
-  static Future<void> checkTotalMilestone(int totalWins) async {
-    try {
-      // 500'ün katları kontrol et (500, 1000, 1500, 2000...)
-      if (totalWins > 0 && totalWins % 500 == 0) {
-        await _createTotalMilestoneNotification(totalWins);
-      }
-    } catch (e) {
-      print('❌ Failed to check total milestone: $e');
-    }
-  }
-
-  // Fotoğraf milestone bildirimi oluştur
-  static Future<void> _createPhotoMilestoneNotification(String photoId, int wins) async {
-    try {
-      final user = _client.auth.currentUser;
-      if (user == null) return;
-
-      // Fotoğraf bilgisini al
-      final photoResponse = await _client
-          .from('user_photos')
-          .select('photo_url')
-          .eq('id', photoId)
-          .single();
-
-      final photoUrl = photoResponse['photo_url'] as String?;
-      final photoNumber = await _getPhotoNumber(photoId);
-
-      await _client.from('notifications').insert({
-        'user_id': user.id,
-        'type': NotificationTypes.photoMilestone,
-        'title': 'Fotoğraf Milestone! 🎉',
-        'body': '$photoNumber. fotoğrafın $wins. matchini kazandı!',
-        'is_read': false,
-        'created_at': DateTime.now().toIso8601String(),
-        'data': {
-          'photo_id': photoId,
-          'photo_url': photoUrl,
-          'wins': wins,
-          'photo_number': photoNumber,
-        },
-      });
-
-      print('✅ Photo milestone notification created: $photoNumber. fotoğraf $wins wins');
-    } catch (e) {
-      print('❌ Failed to create photo milestone notification: $e');
-    }
-  }
-
-  // Total milestone bildirimi oluştur
-  static Future<void> _createTotalMilestoneNotification(int totalWins) async {
-    try {
-      final user = _client.auth.currentUser;
-      if (user == null) return;
-
-      await _client.from('notifications').insert({
-        'user_id': user.id,
-        'type': NotificationTypes.totalMilestone,
-        'title': 'Toplam Milestone! 🏆',
-        'body': 'Toplam $totalWins. matchini kazandın!',
-        'is_read': false,
-        'created_at': DateTime.now().toIso8601String(),
-        'data': {
-          'total_wins': totalWins,
-        },
-      });
-
-      print('✅ Total milestone notification created: $totalWins total wins');
-    } catch (e) {
-      print('❌ Failed to create total milestone notification: $e');
-    }
-  }
-
-  // Fotoğraf numarasını al
-  static Future<int> _getPhotoNumber(String photoId) async {
-    try {
-      final user = _client.auth.currentUser;
-      if (user == null) return 1;
-
-      final response = await _client
-          .from('user_photos')
-          .select('created_at')
-          .eq('user_id', user.id)
-          .order('created_at', ascending: true);
-
-      final photos = response as List;
-      for (int i = 0; i < photos.length; i++) {
-        if (photos[i]['id'] == photoId) {
-          return i + 1;
+      // Foto milestone kontrolü: 100, 200, 300, 400, 500 ve katları
+      final milestones = [100, 200, 300, 400, 500];
+      
+      for (int milestone in milestones) {
+        if (newWinCount == milestone || (newWinCount > milestone && newWinCount % 100 == 0)) {
+          await NotificationService.sendPhotoMilestoneNotification(
+            photoId: photoId,
+            winCount: newWinCount,
+            photoName: photoName,
+          );
+          break; // Sadece bir milestone bildirimi gönder
         }
       }
-      return 1;
     } catch (e) {
-      print('❌ Failed to get photo number: $e');
-      return 1;
+      print('❌ Failed to check photo milestones: $e');
     }
   }
 
-  // Match kazanma bildirimi gönder (sadece milestone değilse)
-  static Future<void> sendMatchWinNotification(String photoId, int photoWins, int totalWins) async {
+  /// Check and send total milestone notifications
+  static Future<void> checkTotalMilestones({
+    required int newTotalWins,
+  }) async {
     try {
-      // Milestone kontrolü yap
-      await checkPhotoMilestone(photoId, photoWins);
-      await checkTotalMilestone(totalWins);
-
-      // Normal match kazanma bildirimi (milestone değilse)
-      if (photoWins % 100 != 0 && totalWins % 500 != 0) {
-        await _createMatchWinNotification(photoId, photoWins);
+      // Toplam milestone kontrolü: 500 ve katları
+      if (newTotalWins >= 500 && newTotalWins % 500 == 0) {
+        await NotificationService.sendTotalMilestoneNotification(
+          totalWins: newTotalWins,
+        );
       }
     } catch (e) {
-      print('❌ Failed to send match win notification: $e');
+      print('❌ Failed to check total milestones: $e');
     }
   }
 
-  // Normal match kazanma bildirimi oluştur
-  static Future<void> _createMatchWinNotification(String photoId, int photoWins) async {
+  /// Check all milestones for a user
+  static Future<void> checkAllMilestones({
+    required String userId,
+  }) async {
     try {
-      final user = _client.auth.currentUser;
-      if (user == null) return;
+      // Kullanıcının tüm foto win sayılarını al
+      final photosResponse = await _client
+          .from('user_photos')
+          .select('id, win_count, photo_name')
+          .eq('user_id', userId);
 
-      final photoNumber = await _getPhotoNumber(photoId);
+      if (photosResponse.isNotEmpty) {
+        for (var photo in photosResponse) {
+          await checkPhotoMilestones(
+            photoId: photo['id'],
+            newWinCount: photo['win_count'] ?? 0,
+            photoName: photo['photo_name'] ?? 'Foto',
+          );
+        }
+      }
 
-      await _client.from('notifications').insert({
-        'user_id': user.id,
-        'type': NotificationTypes.matchWon,
-        'title': 'Match Kazandın! 🎉',
-        'body': '$photoNumber. fotoğrafın $photoWins. matchini kazandı!',
-        'is_read': false,
-        'created_at': DateTime.now().toIso8601String(),
-        'data': {
-          'photo_id': photoId,
-          'wins': photoWins,
-          'photo_number': photoNumber,
-        },
-      });
+      // Toplam win sayısını al
+      final userResponse = await _client
+          .from('users')
+          .select('total_wins')
+          .eq('id', userId)
+          .single();
 
-      print('✅ Match win notification created: $photoNumber. fotoğraf $photoWins wins');
+      if (userResponse.isNotEmpty) {
+        await checkTotalMilestones(
+          newTotalWins: userResponse['total_wins'] ?? 0,
+        );
+      }
     } catch (e) {
-      print('❌ Failed to create match win notification: $e');
+      print('❌ Failed to check all milestones: $e');
+    }
+  }
+
+  /// Send hot streak reward notification
+  static Future<void> sendHotStreakRewardNotification({
+    required int streakDays,
+    required int coinReward,
+  }) async {
+    try {
+      await NotificationService.sendLocalNotification(
+        title: '🔥 Hot Streak Ödülü!',
+        body: 'Tebrikler! $streakDays. gün hot streak ödülü: $coinReward coin!',
+        type: NotificationTypes.coinReward,
+        data: {
+          'streak_days': streakDays,
+          'coin_reward': coinReward,
+        },
+      );
+    } catch (e) {
+      print('❌ Failed to send hot streak reward notification: $e');
+    }
+  }
+
+  /// Send daily login reward notification
+  static Future<void> sendDailyLoginRewardNotification({
+    required int coinReward,
+    required int streakDays,
+  }) async {
+    try {
+      await NotificationService.sendLocalNotification(
+        title: '🎁 Günlük Giriş Ödülü!',
+        body: 'Bugün $coinReward coin kazandınız! Hot streak: $streakDays gün',
+        type: NotificationTypes.coinReward,
+        data: {
+          'coin_reward': coinReward,
+          'streak_days': streakDays,
+        },
+      );
+    } catch (e) {
+      print('❌ Failed to send daily login reward notification: $e');
     }
   }
 }

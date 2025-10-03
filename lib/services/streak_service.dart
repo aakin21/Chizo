@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'hot_streak_notification_service.dart';
 
 class StreakService {
   static final SupabaseClient _client = Supabase.instance.client;
@@ -90,6 +91,12 @@ class StreakService {
           'description': 'Günlük streak ödülü ($newStreak gün)',
           'created_at': DateTime.now().toIso8601String(),
         });
+
+        // Hot streak bildirimi gönder
+        await HotStreakNotificationService.sendHotStreakRewardNotification(
+          streakDays: newStreak,
+          coinReward: rewardCoins,
+        );
 
         return {
           'success': true,

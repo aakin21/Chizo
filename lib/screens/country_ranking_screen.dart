@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/country_ranking_service.dart';
+import '../services/user_service.dart';
 import '../l10n/app_localizations.dart';
 
 class CountryRankingScreen extends StatefulWidget {
@@ -83,8 +84,11 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
 
   Future<void> _checkUnlockStatus() async {
     try {
+      final authUserId = Supabase.instance.client.auth.currentUser?.id;
+      if (authUserId == null) return;
+      
       final prefs = await SharedPreferences.getInstance();
-      final timeString = prefs.getString('country_stats_unlock');
+      final timeString = prefs.getString('country_stats_unlock_$authUserId');
       if (timeString != null) {
         final savedTime = DateTime.parse(timeString);
         if (DateTime.now().isBefore(savedTime)) {
@@ -94,7 +98,7 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
           });
           _startAutoLockTimer();
         } else {
-          await prefs.remove('country_stats_unlock');
+          await prefs.remove('country_stats_unlock_$authUserId');
         }
       }
     } catch (e) {
@@ -128,8 +132,11 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
 
   Future<void> _storeUnlockTime(DateTime expiryTime) async {
     try {
+      final authUserId = Supabase.instance.client.auth.currentUser?.id;
+      if (authUserId == null) return;
+      
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('country_stats_unlock', expiryTime.toIso8601String());
+      await prefs.setString('country_stats_unlock_$authUserId', expiryTime.toIso8601String());
     } catch (e) {
       print('Error storing unlock time: $e');
     }
@@ -137,39 +144,63 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
 
   Future<void> _removeStoredUnlockTime() async {
     try {
+      final authUserId = Supabase.instance.client.auth.currentUser?.id;
+      if (authUserId == null) return;
+      
       final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('country_stats_unlock');
+      await prefs.remove('country_stats_unlock_$authUserId');
     } catch (e) {
       print('Error removing unlock time: $e');
     }
   }
 
-  void _purchaseCountryStats() {
-    // TODO: Gerçek coin harcama sistemi entegre et
-    // await UserService.spendCoins(500, 'spent', 'Ülke istatistikleri görüntüleme');
-    
-    // 24 saatlik unlock süresi ayarla
-    final expiryTime = DateTime.now().add(Duration(hours: 24));
-    
-    // Progress bar'ları aç
-    setState(() {
-      isUnlocked = true;
-      unlockExpiryTime = expiryTime;
-    });
-    
-    // Storage'a kaydet
-    _storeUnlockTime(expiryTime);
-    
-    // Timer başlat
-    _startAutoLockTimer();
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('✅ Ülke istatistikleri 24 saat açık! 500 coin harcandı.'),
-        backgroundColor: Colors.green,
-        duration: Duration(seconds: 3),
-      ),
-    );
+  Future<void> _purchaseCountryStats() async {
+    try {
+      // Gerçek coin harcama sistemi
+      final success = await UserService.updateCoins(-500, 'spent', 'Ülke istatistikleri görüntüleme');
+      
+      if (!success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Yetersiz coin! 500 coin gerekli.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+        return;
+      }
+      
+      // 24 saatlik unlock süresi ayarla
+      final expiryTime = DateTime.now().add(Duration(hours: 24));
+      
+      // Progress bar'ları aç
+      setState(() {
+        isUnlocked = true;
+        unlockExpiryTime = expiryTime;
+      });
+      
+      // Storage'a kaydet
+      _storeUnlockTime(expiryTime);
+      
+      // Timer başlat
+      _startAutoLockTimer();
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('✅ Ülke istatistikleri 24 saat açık! 500 coin harcandı.'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('❌ Hata: $e'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   @override

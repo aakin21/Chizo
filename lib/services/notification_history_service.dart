@@ -13,6 +13,7 @@ class NotificationHistoryService {
       final user = _client.auth.currentUser;
       if (user == null) return [];
 
+      // Use auth_id directly for notifications
       final response = await _client
           .from('notifications')
           .select()

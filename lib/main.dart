@@ -9,6 +9,7 @@ import 'services/language_service.dart';
 import 'services/global_language_service.dart';
 import 'services/global_theme_service.dart';
 import 'services/notification_service.dart';
+import 'services/notification_integration_service.dart';
 import 'l10n/app_localizations.dart';
 import 'utils/navigation.dart';
 
@@ -32,8 +33,8 @@ void main() async {
     // Supabase initialization failed
   }
 
-  // Initialize notification service
-  await NotificationService.initialize();
+  // Initialize notification services
+  await NotificationIntegrationService.initializeAll();
 
   runApp(const MyApp());
 }

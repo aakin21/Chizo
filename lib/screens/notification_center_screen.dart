@@ -214,19 +214,26 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
           child: _buildNotificationSettings(),
         ),
         
-        // Çöp kutusu ikonu
+        // Yönetim butonları
         if (notifications.isNotEmpty)
           SliverToBoxAdapter(
             child: Container(
-              padding: EdgeInsets.only(right: 8, top: 4),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  IconButton(
+                    icon: Icon(Icons.mark_email_read),
+                    onPressed: _markAllAsRead,
+                    tooltip: 'Tümünü okundu işaretle',
+                    color: Colors.blue[600],
+                    iconSize: 20,
+                  ),
                   IconButton(
                     icon: Icon(Icons.delete_outline),
                     onPressed: _deleteAllNotifications,
                     tooltip: 'Tümünü sil',
-                    color: Colors.grey[600],
+                    color: Colors.red[600],
                     iconSize: 20,
                   ),
                 ],

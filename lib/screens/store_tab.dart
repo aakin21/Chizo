@@ -1,6 +1,8 @@
 ﻿import 'package:flutter/material.dart';
 import '../services/user_service.dart';
 import '../models/user_model.dart';
+import '../services/notification_service.dart';
+import '../models/notification_model.dart';
 
 class StoreTab extends StatefulWidget {
   const StoreTab({super.key});
@@ -240,11 +242,53 @@ class _StoreTabState extends State<StoreTab> {
     });
   }
 
-  void _addCoins(int coins) {
-    setState(() {
-      // Reload user data to get updated coins
-      _loadUserData();
-    });
+  void _addCoins(int coins) async {
+    try {
+      // Coin'leri hesaba ekle
+      final success = await UserService.updateCoins(coins, 'earned', 'Coin satın alma');
+      
+      if (success) {
+        // Coin satın alma bildirimi gönder
+        await _sendCoinPurchaseNotification(coins);
+        
+        setState(() {
+          // Reload user data to get updated coins
+          _loadUserData();
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Coin eklenirken hata oluştu!'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      print('❌ Error adding coins: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Hata: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _sendCoinPurchaseNotification(int coins) async {
+    try {
+      // Coin satın alma bildirimi
+      await NotificationService.sendLocalNotification(
+        title: '💰 Coin Satın Alındı!',
+        body: '$coins coin satın aldınız!',
+        type: NotificationTypes.coinReward,
+        data: {
+          'transaction_type': 'purchase',
+          'coin_amount': coins,
+        },
+      );
+    } catch (e) {
+      print('❌ Failed to send coin purchase notification: $e');
+    }
   }
 
   void _showPurchaseDialog(int coins) {
