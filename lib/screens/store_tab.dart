@@ -48,7 +48,6 @@ class _StoreTabState extends State<StoreTab> {
           
           // Coin Bakiyesi
           Card(
-            color: Colors.amber.shade50,
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Row(
@@ -74,7 +73,6 @@ class _StoreTabState extends State<StoreTab> {
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.amber,
                         ),
                       ),
                     ],
@@ -92,9 +90,10 @@ class _StoreTabState extends State<StoreTab> {
             children: [
               _buildCoinPackage('100 Coin', '₺0.99', 100, Colors.blue),
               _buildCoinPackage('250 Coin', '₺1.99', 250, Colors.green),
-              _buildCoinPackage('500 Coin', '₺3.49', 500, Colors.orange),
-              _buildCoinPackage('1000 Coin', '₺5.99', 1000, Colors.purple),
-              _buildCoinPackage('2500 Coin', '₺9.99', 2500, Colors.red),
+              _buildCoinPackage('500 Coin', '₺3.49', 500, Colors.yellow),
+              _buildCoinPackage('1000 Coin', '₺5.99', 1000, Colors.amber[800]!),
+              _buildCoinPackage('2500 Coin', '₺9.99', 2500, Colors.purple),
+              _buildCoinPackage('10000 Coin', '₺29.99', 10000, Colors.red),
             ],
           ),
 
