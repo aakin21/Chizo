@@ -356,19 +356,34 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     
     showDialog(
       context: context,
+      barrierDismissible: false, // Dialog'u kapatmayı engelle
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context)!.tournamentPhoto),
-        content: Text(AppLocalizations.of(context)!.tournamentJoinedUploadPhoto),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(AppLocalizations.of(context)!.tournamentJoinedUploadPhoto),
+            const SizedBox(height: 16),
+            const Text(
+              'Turnuva fotoğrafı yüklemek zorunludur. Fotoğraf yüklemeden turnuvaya katılamazsınız.',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.uploadLater),
-          ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               _uploadTournamentPhoto(tournamentId);
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+            ),
             child: Text(AppLocalizations.of(context)!.uploadPhoto),
           ),
         ],
@@ -405,24 +420,60 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
               ),
             );
           } else {
+            // Fotoğraf yükleme başarısız - turnuvadan çıkar
+            await _leaveTournamentDueToPhotoUploadFailure(tournamentId);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(AppLocalizations.of(context)!.photoUploadError),
+                content: const Text('Fotoğraf yükleme başarısız. Turnuvadan çıkarıldınız.'),
                 backgroundColor: Colors.red,
               ),
             );
           }
+        } else {
+          // Fotoğraf yükleme başarısız - turnuvadan çıkar
+          await _leaveTournamentDueToPhotoUploadFailure(tournamentId);
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Fotoğraf yükleme başarısız. Turnuvadan çıkarıldınız.'),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
+      } else {
+        // Fotoğraf seçilmedi - turnuvadan çıkar
+        await _leaveTournamentDueToPhotoUploadFailure(tournamentId);
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Fotoğraf seçilmedi. Turnuvadan çıkarıldınız.'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } catch (e) {
+      // Hata durumunda - turnuvadan çıkar
+      await _leaveTournamentDueToPhotoUploadFailure(tournamentId);
       if (!mounted) return;
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${AppLocalizations.of(context)!.error}: $e'),
+          content: Text('${AppLocalizations.of(context)!.error}: $e. Turnuvadan çıkarıldınız.'),
           backgroundColor: Colors.red,
         ),
       );
+    }
+  }
+
+  // Fotoğraf yükleme başarısızlığı nedeniyle turnuvadan çıkarma
+  Future<void> _leaveTournamentDueToPhotoUploadFailure(String tournamentId) async {
+    try {
+      await TournamentService.leaveTournament(tournamentId);
+      
+      // Turnuva listesini yenile
+      loadTournaments();
+    } catch (e) {
+      // print('Error leaving tournament due to photo upload failure: $e');
     }
   }
 
@@ -880,21 +931,25 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
               children: [
                 // Private turnuva creator kontrolü
                 if (tournament.isPrivate && currentUser != null && tournament.creatorId == currentUser?.id) ...[
-                  // Creator için hem join hem incele butonu
+                  // Creator için: katıldıysa ayrıl butonu, katılmadıysa katıl butonu
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: _getJoinButtonEnabled(tournament)
-                          ? () => _joinTournament(tournament)
-                          : null,
+                      onPressed: tournament.isUserParticipating
+                          ? () => _showLeaveTournamentDialog(tournament)
+                          : (_getJoinButtonEnabled(tournament)
+                              ? () => _joinTournament(tournament)
+                              : null),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _getJoinButtonEnabled(tournament) 
-                            ? Colors.green
-                            : Colors.grey[300],
-                        foregroundColor: _getJoinButtonEnabled(tournament) 
-                            ? Colors.white
-                            : Colors.grey[600],
+                        backgroundColor: tournament.isUserParticipating
+                            ? Colors.red
+                            : (_getJoinButtonEnabled(tournament) 
+                                ? Colors.green
+                                : Colors.grey[300]),
+                        foregroundColor: Colors.white,
                       ),
-                      child: Text(_getJoinButtonText(tournament)),
+                      child: Text(
+                        tournament.isUserParticipating ? 'Turnuvadan Ayrıl' : _getJoinButtonText(tournament),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -2095,6 +2150,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                     itemBuilder: (context, index) {
                       final participant = participants[index];
                       final user = participant['user'];
+                      final bool isAdmin = (participant['is_admin'] == true);
                       
                       return ListTile(
                         leading: CircleAvatar(
@@ -2105,7 +2161,26 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                               ? const Icon(Icons.person) 
                               : null,
                         ),
-                        title: Text(user['username'] ?? 'Bilinmeyen'),
+                        title: Row(
+                          children: [
+                            Expanded(child: Text(user['username'] ?? 'Bilinmeyen')),
+                            if (isAdmin) ...[
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.purple.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: Colors.purple),
+                                ),
+                                child: const Text(
+                                  'Admin',
+                                  style: TextStyle(color: Colors.purple, fontSize: 10, fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
                         subtitle: Text('Katılım: ${_formatDate(DateTime.parse(participant['joined_at']))}'),
                         trailing: participant['is_eliminated'] 
                             ? const Icon(Icons.close, color: Colors.red)
