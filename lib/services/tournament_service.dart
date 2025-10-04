@@ -653,7 +653,6 @@ class TournamentService {
             score,
             is_eliminated,
             tournament_photo_url,
-            photo_uploaded,
             joined_at,
             users!inner(
               username,
@@ -673,7 +672,6 @@ class TournamentService {
           'score': item['score'],
           'is_eliminated': item['is_eliminated'],
           'tournament_photo_url': item['tournament_photo_url'],
-          'photo_uploaded': item['photo_uploaded'],
           'joined_at': item['joined_at'],
           'profiles': {
             'username': item['users']['username'],
@@ -978,8 +976,14 @@ class TournamentService {
   // Turnuva fotoğrafı yükle
   static Future<bool> uploadTournamentPhoto(String tournamentId, String photoUrl) async {
     try {
+      print('🎯 UPLOAD DEBUG: Starting photo upload for tournament $tournamentId');
+      
       final user = _client.auth.currentUser;
-      if (user == null) return false;
+      if (user == null) {
+        print('❌ UPLOAD DEBUG: No authenticated user');
+        return false;
+      }
+      print('✅ UPLOAD DEBUG: User authenticated: ${user.id}');
 
       // Kullanıcının users tablosundaki ID'sini al (auth_id -> users.id)
       final currentUserRecord = await _client
@@ -988,10 +992,15 @@ class TournamentService {
           .eq('auth_id', user.id)
           .maybeSingle();
 
-      if (currentUserRecord == null) return false;
+      if (currentUserRecord == null) {
+        print('❌ UPLOAD DEBUG: Current user record not found');
+        return false;
+      }
       final currentUserId = currentUserRecord['id'];
+      print('✅ UPLOAD DEBUG: Current user ID: $currentUserId');
 
       // Kullanıcının turnuvaya katılıp katılmadığını kontrol et
+      print('🎯 UPLOAD DEBUG: Checking participation...');
       final participation = await _client
           .from('tournament_participants')
           .select('id')
@@ -999,9 +1008,14 @@ class TournamentService {
           .eq('user_id', currentUserId)
           .maybeSingle();
 
-      if (participation == null) return false;
+      if (participation == null) {
+        print('❌ UPLOAD DEBUG: User not participating in tournament');
+        return false;
+      }
+      print('✅ UPLOAD DEBUG: User is participating, participation ID: ${participation['id']}');
 
       // Turnuva fotoğrafını güncelle
+      print('🎯 UPLOAD DEBUG: Updating tournament photo...');
       await _client
           .from('tournament_participants')
           .update({
@@ -1010,8 +1024,10 @@ class TournamentService {
           .eq('tournament_id', tournamentId)
           .eq('user_id', currentUserId);
 
+      print('✅ UPLOAD DEBUG: Photo upload successful');
       return true;
     } catch (e) {
+      print('❌ UPLOAD DEBUG: Error uploading photo: $e');
       return false;
     }
   }
@@ -1263,19 +1279,7 @@ class TournamentService {
       final currentUserId = currentUserRecord['id'];
       print('✅ PRIVATE VOTE: Current user ID: $currentUserId');
 
-      // Oy kaydını ekle (loser_id kolonu yoksa sadece winner_id ile kaydet)
-      try {
-        await _client.from('private_tournament_votes').insert({
-          'tournament_id': tournamentId,
-          'voter_id': currentUserId,
-          'winner_id': winnerId,
-          'created_at': DateTime.now().toIso8601String(),
-        });
-        print('✅ PRIVATE VOTE: Vote record inserted successfully');
-      } catch (voteError) {
-        print('⚠️ PRIVATE VOTE: Vote record insert failed: $voteError');
-        // Oy kaydı başarısız olsa bile devam et - sadece wins_count güncellemesi yeterli
-      }
+      // Oy kaydı kaldırıldı - sadece wins_count güncellemesi yeterli
 
       // Kazananın skorunu artır (match kazanma sayısı) - Manuel güncelleme
       print('🎯 PRIVATE VOTE: Updating wins count for winner: $winnerId');
@@ -2133,6 +2137,60 @@ class TournamentService {
       });
     } catch (e) {
       // // print('Error sending notification to user: $e');
+    }
+  }
+
+  // Katılımcıyı turnuvadan at
+  static Future<bool> kickParticipant(String tournamentId, String userId) async {
+    try {
+      print('🎯 KICK DEBUG: Starting kick participant for tournament $tournamentId, user $userId');
+      
+      final user = _client.auth.currentUser;
+      if (user == null) {
+        print('❌ KICK DEBUG: No authenticated user');
+        return false;
+      }
+      print('✅ KICK DEBUG: User authenticated: ${user.id}');
+
+      // Kullanıcının users tablosundaki ID'sini al (auth_id -> users.id)
+      final currentUserRecord = await _client
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+
+      if (currentUserRecord == null) {
+        print('❌ KICK DEBUG: Current user record not found');
+        return false;
+      }
+      final currentUserId = currentUserRecord['id'];
+      print('✅ KICK DEBUG: Current user ID: $currentUserId');
+
+      // Turnuva bilgilerini al ve admin kontrolü yap
+      final tournament = await _client
+          .from('tournaments')
+          .select('creator_id')
+          .eq('id', tournamentId)
+          .single();
+
+      if (tournament['creator_id'] != currentUserId) {
+        print('❌ KICK DEBUG: User is not admin of tournament');
+        return false;
+      }
+      print('✅ KICK DEBUG: User is admin, proceeding with kick');
+
+      // Katılımcıyı turnuvadan çıkar
+      await _client
+          .from('tournament_participants')
+          .delete()
+          .eq('tournament_id', tournamentId)
+          .eq('user_id', userId);
+
+      print('✅ KICK DEBUG: Participant kicked successfully');
+      return true;
+    } catch (e) {
+      print('❌ KICK DEBUG: Error kicking participant: $e');
+      return false;
     }
   }
 }
