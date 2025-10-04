@@ -53,16 +53,22 @@ class TournamentService {
           // Önce katılım ID'lerini al
           final participatedIds = await _getUserParticipatedTournamentIds(currentUser.id);
           
-          // Basit sorgu - oluşturan veya katılımcı
+          // Key ile katılan turnuva ID'lerini al
+          final viewedIds = await _getUserViewedTournamentIds(currentUser.id);
+          
+          // Tüm erişim ID'lerini birleştir
+          final allAccessIds = [...participatedIds, ...viewedIds];
+          
+          // Basit sorgu - oluşturan, katılımcı veya key ile katılan
           var privateQuery = _client
               .from('tournaments')
               .select()
               .inFilter('status', ['upcoming', 'active'])
               .eq('is_private', true);
           
-          if (participatedIds.isNotEmpty) {
-            // Hem oluşturan hem katılımcı kontrolü
-            privateQuery = privateQuery.or('creator_id.eq.${currentUser.id},id.in.(${participatedIds.join(',')})');
+          if (allAccessIds.isNotEmpty) {
+            // Oluşturan, katılımcı veya key ile katılan kontrolü
+            privateQuery = privateQuery.or('creator_id.eq.${currentUser.id},id.in.(${allAccessIds.join(',')})');
           } else {
             // Sadece oluşturan kontrolü
             privateQuery = privateQuery.eq('creator_id', currentUser.id);
@@ -103,6 +109,28 @@ class TournamentService {
       
       return ids;
     } catch (e) {
+      return [];
+    }
+  }
+
+  // Kullanıcının key ile katıldığı private turnuva ID'lerini getir
+  static Future<List<String>> _getUserViewedTournamentIds(String userId) async {
+    try {
+      final views = await _client
+          .from('tournament_viewers')
+          .select('tournament_id')
+          .eq('user_id', userId);
+      
+      if (views.isEmpty) {
+        return [];
+      }
+      
+      final ids = views.map((v) => v['tournament_id'] as String).toList();
+      
+      return ids;
+    } catch (e) {
+      // Tablo yoksa veya hata varsa boş liste döndür
+      print('Error getting user viewed tournaments: $e');
       return [];
     }
   }
@@ -569,6 +597,51 @@ class TournamentService {
   }
 
 
+  // Private turnuva sıralamasını getir (match kazanma sayısına göre)
+  static Future<List<Map<String, dynamic>>> getPrivateTournamentLeaderboard(String tournamentId) async {
+    try {
+      final response = await _client
+          .from('tournament_participants')
+          .select('''
+            id,
+            user_id,
+            wins_count,
+            is_eliminated,
+            tournament_photo_url,
+            joined_at,
+            users!inner(
+              username,
+              profile_image_url
+            )
+          ''')
+          .eq('tournament_id', tournamentId)
+          .order('wins_count', ascending: false)
+          .order('joined_at', ascending: true);
+
+      // Response'u düzenle - users tablosundan gelen veriyi profiles olarak map et
+      final List<Map<String, dynamic>> result = [];
+      for (var item in response) {
+        result.add({
+          'id': item['id'],
+          'user_id': item['user_id'],
+          'wins_count': item['wins_count'],
+          'is_eliminated': item['is_eliminated'],
+          'tournament_photo_url': item['tournament_photo_url'],
+          'joined_at': item['joined_at'],
+          'profiles': {
+            'username': item['users']['username'],
+            'profile_photo_url': item['users']['profile_image_url'],
+          }
+        });
+      }
+
+      return result;
+    } catch (e) {
+      print('Error getting private tournament leaderboard: $e');
+      return [];
+    }
+  }
+
   // Turnuva sıralamasını getir
   static Future<List<Map<String, dynamic>>> getTournamentLeaderboard(String tournamentId) async {
     try {
@@ -582,17 +655,34 @@ class TournamentService {
             tournament_photo_url,
             photo_uploaded,
             joined_at,
-            profiles!inner(
+            users!inner(
               username,
-              profile_photo_url
+              profile_image_url
             )
           ''')
           .eq('tournament_id', tournamentId)
           .order('score', ascending: false)
           .order('joined_at', ascending: true);
 
+      // Response'u düzenle - users tablosundan gelen veriyi profiles olarak map et
+      final List<Map<String, dynamic>> participants = [];
+      for (var item in response) {
+        participants.add({
+          'id': item['id'],
+          'user_id': item['user_id'],
+          'score': item['score'],
+          'is_eliminated': item['is_eliminated'],
+          'tournament_photo_url': item['tournament_photo_url'],
+          'photo_uploaded': item['photo_uploaded'],
+          'joined_at': item['joined_at'],
+          'profiles': {
+            'username': item['users']['username'],
+            'profile_photo_url': item['users']['profile_image_url'],
+          }
+        });
+      }
+
       // Katılımcıları alfabetik sırala (username'e göre)
-      final participants = List<Map<String, dynamic>>.from(response);
       participants.sort((a, b) {
         final usernameA = a['profiles']['username']?.toString().toLowerCase() ?? '';
         final usernameB = b['profiles']['username']?.toString().toLowerCase() ?? '';
@@ -601,7 +691,7 @@ class TournamentService {
 
       return participants;
     } catch (e) {
-      // // print('Error getting tournament leaderboard: $e');
+      print('Error getting tournament leaderboard: $e');
       return [];
     }
   }
@@ -1016,6 +1106,173 @@ class TournamentService {
     } catch (e) {
       // // print('Error getting tournament matches for voting: $e');
       return [];
+    }
+  }
+
+  // Private turnuva match'leri için oylama
+  static Future<List<Map<String, dynamic>>> getPrivateTournamentMatchesForVoting(String tournamentId) async {
+    try {
+      final user = _client.auth.currentUser;
+      if (user == null) return [];
+
+      // Kullanıcının users tablosundaki ID'sini al
+      final currentUserRecord = await _client
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+      
+      if (currentUserRecord == null) return [];
+
+      // Private turnuva katılımcılarını getir (turnuva fotoğrafı olanlar)
+      final participants = await _client
+          .from('tournament_participants')
+          .select('''
+            user_id,
+            tournament_photo_url,
+            users!tournament_participants_user_id_fkey(username, profile_image_url, age, country, gender)
+          ''')
+          .eq('tournament_id', tournamentId)
+          .eq('is_eliminated', false)
+          .not('tournament_photo_url', 'is', null);
+
+      if (participants.length < 2) return [];
+
+      // Eşit dağılım için her katılımcının aynı sayıda match'e çıkmasını sağla
+      final matches = <Map<String, dynamic>>[];
+      final shuffledParticipants = List<Map<String, dynamic>>.from(participants);
+      
+      // Her katılımcının match sayısını takip et
+      final participantMatchCount = <String, int>{};
+      for (var participant in participants) {
+        participantMatchCount[participant['user_id']] = 0;
+      }
+      
+      // Her katılımcı için eşit sayıda match oluştur (minimum 3)
+      final targetMatchesPerParticipant = 3;
+      
+      // Tüm olası kombinasyonları oluştur
+      final allCombinations = <List<Map<String, dynamic>>>[];
+      for (int i = 0; i < shuffledParticipants.length; i++) {
+        for (int j = i + 1; j < shuffledParticipants.length; j++) {
+          allCombinations.add([shuffledParticipants[i], shuffledParticipants[j]]);
+        }
+      }
+      
+      // Kombinasyonları karıştır
+      allCombinations.shuffle(Random());
+      
+      // Her katılımcının eşit sayıda match'e çıkmasını sağla
+      for (var combination in allCombinations) {
+        final participant1 = combination[0];
+        final participant2 = combination[1];
+        final userId1 = participant1['user_id'];
+        final userId2 = participant2['user_id'];
+        
+        // Her iki katılımcı da hedef match sayısına ulaşmadıysa match oluştur
+        if ((participantMatchCount[userId1] ?? 0) < targetMatchesPerParticipant &&
+            (participantMatchCount[userId2] ?? 0) < targetMatchesPerParticipant) {
+          
+          matches.add({
+            'user1': {
+              'id': participant1['user_id'],
+              'username': participant1['users']['username'],
+              'tournament_photo_url': participant1['tournament_photo_url'],
+              'age': participant1['users']['age'],
+              'country': participant1['users']['country'],
+              'gender': participant1['users']['gender'],
+            },
+            'user2': {
+              'id': participant2['user_id'],
+              'username': participant2['users']['username'],
+              'tournament_photo_url': participant2['tournament_photo_url'],
+              'age': participant2['users']['age'],
+              'country': participant2['users']['country'],
+              'gender': participant2['users']['gender'],
+            },
+          });
+          
+          // Match sayılarını artır
+          participantMatchCount[userId1] = (participantMatchCount[userId1] ?? 0) + 1;
+          participantMatchCount[userId2] = (participantMatchCount[userId2] ?? 0) + 1;
+        }
+        
+        // Tüm katılımcılar hedef match sayısına ulaştıysa dur
+        if (participantMatchCount.values.every((count) => count >= targetMatchesPerParticipant)) {
+          break;
+        }
+      }
+      
+      // Eğer yeterli match oluşmadıysa, kalan kombinasyonlardan ekle
+      if (matches.length < 3) {
+        for (var combination in allCombinations.take(3 - matches.length)) {
+          final participant1 = combination[0];
+          final participant2 = combination[1];
+          
+          matches.add({
+            'user1': {
+              'id': participant1['user_id'],
+              'username': participant1['users']['username'],
+              'tournament_photo_url': participant1['tournament_photo_url'],
+              'age': participant1['users']['age'],
+              'country': participant1['users']['country'],
+              'gender': participant1['users']['gender'],
+            },
+            'user2': {
+              'id': participant2['user_id'],
+              'username': participant2['users']['username'],
+              'tournament_photo_url': participant2['tournament_photo_url'],
+              'age': participant2['users']['age'],
+              'country': participant2['users']['country'],
+              'gender': participant2['users']['gender'],
+            },
+          });
+        }
+      }
+
+      return matches;
+    } catch (e) {
+      print('Error getting private tournament matches for voting: $e');
+      return [];
+    }
+  }
+
+  // Private turnuva oylaması yap
+  static Future<bool> voteForPrivateTournamentMatch(String tournamentId, String winnerId, String loserId) async {
+    try {
+      final user = _client.auth.currentUser;
+      if (user == null) return false;
+
+      // Kullanıcının users tablosundaki ID'sini al
+      final currentUserRecord = await _client
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+      
+      if (currentUserRecord == null) return false;
+
+      final currentUserId = currentUserRecord['id'];
+
+      // Oy kaydını ekle
+      await _client.from('private_tournament_votes').insert({
+        'tournament_id': tournamentId,
+        'voter_id': currentUserId,
+        'winner_id': winnerId,
+        'loser_id': loserId,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+
+      // Kazananın skorunu artır (match kazanma sayısı)
+      await _client.rpc('increment_private_tournament_wins', params: {
+        'tournament_id': tournamentId,
+        'user_id': winnerId,
+      });
+
+      return true;
+    } catch (e) {
+      print('Error voting for private tournament match: $e');
+      return false;
     }
   }
 
@@ -1525,27 +1782,26 @@ class TournamentService {
 
       // Private turnuvalar için entry fee yok
 
-      // Turnuvaya katıl
-      await _client.from('tournament_participants').insert({
-        'tournament_id': tournament['id'],
-        'user_id': currentUser.id,
-        'joined_at': DateTime.now().toIso8601String(),
-        'is_eliminated': false,
-        'score': 0,
-        'tournament_photo_url': null,
-      });
-
-      // Private turnuvalar için entry fee yok
-
-      // Current participants'ı güncelle
-      await _client
-          .from('tournaments')
-          .update({'current_participants': tournament['current_participants'] + 1})
-          .eq('id', tournament['id']);
+      // Key ile katılan kişileri "tournament_viewers" tablosuna ekle (sadece görme hakkı)
+      try {
+        await _client.from('tournament_viewers').insert({
+          'tournament_id': tournament['id'],
+          'user_id': currentUser.id,
+          'joined_at': DateTime.now().toIso8601String(),
+        });
+      } catch (e) {
+        // Eğer tablo yoksa veya başka hata varsa, sadece mesaj döndür
+        print('Error inserting into tournament_viewers: $e');
+        return {
+          'success': true,
+          'message': 'Turnuvaya erişim sağlandı. Katılmak için "Katıl" butonuna basın.',
+          'tournament_name': tournament['name']
+        };
+      }
 
       return {
         'success': true,
-        'message': 'Turnuvaya başarıyla katıldınız',
+        'message': 'Turnuvaya erişim sağlandı. Katılmak için "Katıl" butonuna basın.',
         'tournament_name': tournament['name']
       };
     } catch (e) {
