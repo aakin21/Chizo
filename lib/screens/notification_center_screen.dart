@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/notification_history_service.dart';
 import '../models/notification_model.dart';
+import '../l10n/app_localizations.dart';
+import '../services/language_service.dart';
 
 class NotificationCenterScreen extends StatefulWidget {
   const NotificationCenterScreen({super.key});
@@ -20,12 +22,23 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
   bool _tournamentNotifications = true;
   bool _winCelebrationNotifications = true;
   bool _streakReminderNotifications = true;
+  
+  // Dil değişkeni
+  String _currentLanguage = 'tr';
 
   @override
   void initState() {
     super.initState();
     _loadNotifications();
     _loadNotificationSettings();
+    _loadCurrentLanguage();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Dil değişikliğini dinle
+    _loadCurrentLanguage();
   }
 
   Future<void> _loadNotificationSettings() async {
@@ -39,6 +52,17 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
       setState(() {});
     } catch (e) {
       print('Error loading notification preferences: $e');
+    }
+  }
+
+  Future<void> _loadCurrentLanguage() async {
+    try {
+      final locale = await LanguageService.getCurrentLocale();
+      setState(() {
+        _currentLanguage = locale.languageCode;
+      });
+    } catch (e) {
+      print('Error loading current language: $e');
     }
   }
 
@@ -162,6 +186,8 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
   }
 
   Future<void> _saveNotificationSettings() async {
+    final l10n = AppLocalizations.of(context)!;
+    
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('notification_all', _notificationsEnabled);
@@ -170,11 +196,11 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
       await prefs.setBool('notification_streak_reminder', _streakReminderNotifications);
       
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Notification settings saved')),
+        const SnackBar(content: Text('Bildirim ayarları kaydedildi')),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error saving settings: $e')),
+        SnackBar(content: Text('${l10n.error}: $e')),
       );
     }
   }
@@ -194,7 +220,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                 IconButton(
                   icon: const Icon(Icons.mark_email_read, color: Colors.white),
                   onPressed: _markAllAsRead,
-                  tooltip: 'Tümünü okundu işaretle',
+                  tooltip: _getLocalizedText('markAllAsRead'),
                 ),
             ],
           ),
@@ -207,6 +233,8 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
   }
 
   Widget _buildScrollableContent() {
+    final l10n = AppLocalizations.of(context)!;
+    
     return CustomScrollView(
       slivers: [
         // Notification Settings
@@ -225,14 +253,14 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                   IconButton(
                     icon: Icon(Icons.mark_email_read),
                     onPressed: _markAllAsRead,
-                    tooltip: 'Tümünü okundu işaretle',
+                    tooltip: l10n.markAllAsRead,
                     color: Colors.blue[600],
                     iconSize: 20,
                   ),
                   IconButton(
                     icon: Icon(Icons.delete_outline),
                     onPressed: _deleteAllNotifications,
-                    tooltip: 'Tümünü sil',
+                    tooltip: _getLocalizedText('deleteAll'),
                     color: Colors.red[600],
                     iconSize: 20,
                   ),
@@ -247,6 +275,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
     );
   }
 
+
   Widget _buildNotificationSettings() {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -256,8 +285,8 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
           
           // Ana bildirim toggle
           SwitchListTile(
-            title: Text('Bildirimler'),
-            subtitle: Text('Telefon bildirimlerini aç/kapat (bildirimler uygulamada görünmeye devam eder)'),
+            title: Text(_getLocalizedText('notifications')),
+            subtitle: Text(_getLocalizedText('notificationSettingsDescription')),
             value: _notificationsEnabled,
             onChanged: (value) {
               setState(() {
@@ -270,8 +299,8 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
           // Alt bildirim türleri
           if (_notificationsEnabled) ...[
             SwitchListTile(
-              title: Text('Turnuva Bildirimleri'),
-              subtitle: Text('Lig aşaması, eşleşme başlangıç/bitiş hatırlatmaları'),
+              title: Text(_getLocalizedText('tournamentNotifications')),
+              subtitle: Text(_getLocalizedText('tournamentNotificationsDescription')),
               value: _tournamentNotifications,
               onChanged: (value) {
                 setState(() {
@@ -281,8 +310,8 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
               },
             ),
             SwitchListTile(
-              title: Text('Kazanç Kutlamaları'),
-              subtitle: Text('Match kazanma ve milestone bildirimleri'),
+              title: Text(_getLocalizedText('winCelebrationNotifications')),
+              subtitle: Text(_getLocalizedText('winCelebrationNotificationsDescription')),
               value: _winCelebrationNotifications,
               onChanged: (value) {
                 setState(() {
@@ -292,8 +321,8 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
               },
             ),
             SwitchListTile(
-              title: Text('Hot Streak Hatırlatmaları'),
-              subtitle: Text('Günlük hot streak ve ödül hatırlatmaları'),
+              title: Text(_getLocalizedText('streakReminderNotifications')),
+              subtitle: Text(_getLocalizedText('streakReminderNotificationsDescription')),
               value: _streakReminderNotifications,
               onChanged: (value) {
                 setState(() {
@@ -461,6 +490,86 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
       return '${difference.inMinutes} dakika önce';
     } else {
       return 'Az önce';
+    }
+  }
+
+  String _getLocalizedText(String key) {
+    // Gerçek dil ayarlarını kullan
+    String currentLanguage = _currentLanguage;
+    
+    switch (key) {
+      case 'notifications':
+        switch (currentLanguage) {
+          case 'en': return 'Notifications';
+          case 'de': return 'Benachrichtigungen';
+          case 'es': return 'Notificaciones';
+          default: return 'Bildirimler';
+        }
+      case 'notificationSettingsDescription':
+        switch (currentLanguage) {
+          case 'en': return 'Turn phone notifications on/off (notifications will continue to appear in the app)';
+          case 'de': return 'Telefon-Benachrichtigungen ein/aus (Benachrichtigungen werden weiterhin in der App angezeigt)';
+          case 'es': return 'Activar/desactivar notificaciones del teléfono (las notificaciones seguirán apareciendo en la app)';
+          default: return 'Telefon bildirimlerini aç/kapat (bildirimler uygulamada görünmeye devam eder)';
+        }
+      case 'tournamentNotifications':
+        switch (currentLanguage) {
+          case 'en': return 'Tournament Notifications';
+          case 'de': return 'Turnier-Benachrichtigungen';
+          case 'es': return 'Notificaciones de Torneo';
+          default: return 'Turnuva Bildirimleri';
+        }
+      case 'tournamentNotificationsDescription':
+        switch (currentLanguage) {
+          case 'en': return 'League stage, match start/end reminders';
+          case 'de': return 'Liga-Phase, Match-Start/Ende-Erinnerungen';
+          case 'es': return 'Fase de liga, recordatorios de inicio/fin de partido';
+          default: return 'Lig aşaması, eşleşme başlangıç/bitiş hatırlatmaları';
+        }
+      case 'winCelebrationNotifications':
+        switch (currentLanguage) {
+          case 'en': return 'Win Celebrations';
+          case 'de': return 'Sieg-Feiern';
+          case 'es': return 'Celebraciones de Victoria';
+          default: return 'Kazanç Kutlamaları';
+        }
+      case 'winCelebrationNotificationsDescription':
+        switch (currentLanguage) {
+          case 'en': return 'Match wins and milestone notifications';
+          case 'de': return 'Match-Siege und Meilenstein-Benachrichtigungen';
+          case 'es': return 'Victorias en partidos y notificaciones de logros';
+          default: return 'Match kazanma ve milestone bildirimleri';
+        }
+      case 'streakReminderNotifications':
+        switch (currentLanguage) {
+          case 'en': return 'Hot Streak Reminders';
+          case 'de': return 'Hot Streak-Erinnerungen';
+          case 'es': return 'Recordatorios de Racha';
+          default: return 'Hot Streak Hatırlatmaları';
+        }
+      case 'streakReminderNotificationsDescription':
+        switch (currentLanguage) {
+          case 'en': return 'Daily hot streak and reward reminders';
+          case 'de': return 'Tägliche Hot Streak- und Belohnungs-Erinnerungen';
+          case 'es': return 'Recordatorios diarios de racha caliente y recompensas';
+          default: return 'Günlük hot streak ve ödül hatırlatmaları';
+        }
+      case 'markAllAsRead':
+        switch (currentLanguage) {
+          case 'en': return 'Mark all as read';
+          case 'de': return 'Alle als gelesen markieren';
+          case 'es': return 'Marcar todo como leído';
+          default: return 'Tümünü okundu işaretle';
+        }
+      case 'deleteAll':
+        switch (currentLanguage) {
+          case 'en': return 'Delete all';
+          case 'de': return 'Alle löschen';
+          case 'es': return 'Eliminar todo';
+          default: return 'Tümünü sil';
+        }
+      default:
+        return key;
     }
   }
 }

@@ -110,6 +110,97 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coins => 'Coins';
 
   @override
+  String get coinPackages => 'Coin Packages';
+
+  @override
+  String get watchAds => '📺 Watch Ads';
+
+  @override
+  String get watchAdsToEarnCoins => 'Watch Ads to Earn Coins';
+
+  @override
+  String get watchAdsDescription =>
+      '3 video viewing rights within 24 hours - 5 coins per video';
+
+  @override
+  String get buy => 'Buy';
+
+  @override
+  String get watchAd => 'Watch Ad';
+
+  @override
+  String get watchAdConfirmation =>
+      'You can earn 5 coins by watching ads. Do you want to continue?';
+
+  @override
+  String get watchingAd => 'Watching Ad';
+
+  @override
+  String coinsEarned(int count) {
+    return 'You earned $count coins!';
+  }
+
+  @override
+  String get errorAddingCoins => 'Error occurred while adding coins';
+
+  @override
+  String get buyCoins => 'Buy Coins';
+
+  @override
+  String buyCoinsConfirmation(int count) {
+    return 'Do you want to buy $count coins?';
+  }
+
+  @override
+  String get processing => 'Processing...';
+
+  @override
+  String coinsAdded(int count) {
+    return '$count coins added!';
+  }
+
+  @override
+  String get watch => 'Watch';
+
+  @override
+  String get adLimitReached => 'Daily ad watching limit reached!';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get notificationSettingsDescription =>
+      'Turn phone notifications on/off (notifications will continue to appear in the app)';
+
+  @override
+  String get tournamentNotifications => 'Tournament Notifications';
+
+  @override
+  String get tournamentNotificationsDescription =>
+      'New tournament invitations and updates';
+
+  @override
+  String get winCelebrationNotifications => 'Victory Celebrations';
+
+  @override
+  String get winCelebrationNotificationsDescription => 'Victory notifications';
+
+  @override
+  String get streakReminderNotifications => 'Streak Reminders';
+
+  @override
+  String get streakReminderNotificationsDescription => 'Daily streak reminders';
+
+  @override
+  String get notificationSettingsSaved => 'Notification settings saved';
+
+  @override
+  String get markAllAsRead => 'Mark All as Read';
+
+  @override
+  String get deleteAll => 'Delete all';
+
+  @override
   String get totalMatches => 'Total Matches';
 
   @override
@@ -443,9 +534,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get purchaseCoins => 'Purchase Coins';
 
   @override
-  String get watchAd => 'Watch Ad';
-
-  @override
   String get dailyAdLimit => 'You can watch maximum 5 ads per day';
 
   @override
@@ -509,9 +597,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get watchingAd => 'Watching Ad';
-
-  @override
   String get adLoading => 'Ad loading...';
 
   @override
@@ -520,12 +605,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adWatched => 'Ad watched! +20 coins earned!';
-
-  @override
-  String get errorAddingCoins => 'Error occurred while adding coins';
-
-  @override
-  String get buy => 'Buy';
 
   @override
   String get predict => 'Predict';
@@ -678,9 +757,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get purchaseFailed => 'Purchase failed!';
-
-  @override
-  String get coinPackages => 'Coin Packages';
 
   @override
   String get coinUsage => 'Coin Usage';
@@ -1184,9 +1260,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get photoStatsLoadError => 'Could not load photo statistics';
 
   @override
-  String get tournamentNotifications => 'Tournament Notifications';
-
-  @override
   String get newTournamentInvitations => 'New tournament invitations';
 
   @override
@@ -1442,27 +1515,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enable/disable all notification types';
 
   @override
-  String get tournamentNotificationsDescription =>
-      'New tournament invitations and updates';
-
-  @override
   String get voteReminderNotifications => 'Vote Reminders';
 
   @override
   String get voteReminderNotificationsDescription =>
       'Vote reminder notifications';
-
-  @override
-  String get winCelebrationNotifications => 'Victory Celebrations';
-
-  @override
-  String get winCelebrationNotificationsDescription => 'Victory notifications';
-
-  @override
-  String get streakReminderNotifications => 'Streak Reminders';
-
-  @override
-  String get streakReminderNotificationsDescription => 'Daily streak reminders';
 
   @override
   String get notificationsList => 'Notifications';
@@ -1473,7 +1530,4 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get newNotificationsWillAppearHere =>
       'New notifications will appear here';
-
-  @override
-  String get markAllAsRead => 'Mark All as Read';
 }

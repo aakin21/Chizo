@@ -153,6 +153,156 @@
     "description": "Coins label"
   },
   
+  "coinPackages": "💰 Coin Packages",
+  "@coinPackages": {
+    "description": "Coin packages section title"
+  },
+  
+  "watchAds": "📺 Watch Ads",
+  "@watchAds": {
+    "description": "Watch ads section title"
+  },
+  
+  "watchAdsToEarnCoins": "Watch Ads to Earn Coins",
+  "@watchAdsToEarnCoins": {
+    "description": "Watch ads to earn coins title"
+  },
+  
+  "watchAdsDescription": "3 video viewing rights within 24 hours - 5 coins per video",
+  "@watchAdsDescription": {
+    "description": "Watch ads description"
+  },
+  
+  "buy": "Buy",
+  "@buy": {
+    "description": "Buy button text"
+  },
+  
+  "watchAd": "Watch Ad",
+  "@watchAd": {
+    "description": "Watch ad button text"
+  },
+  
+  "watchAdConfirmation": "You can earn 5 coins by watching ads. Do you want to continue?",
+  "@watchAdConfirmation": {
+    "description": "Watch ad confirmation message"
+  },
+  
+  "watchingAd": "Watching ad...",
+  "@watchingAd": {
+    "description": "Watching ad loading text"
+  },
+  
+  "coinsEarned": "You earned {count} coins!",
+  "@coinsEarned": {
+    "description": "Coins earned message",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "errorAddingCoins": "Error adding coins!",
+  "@errorAddingCoins": {
+    "description": "Error adding coins message"
+  },
+  
+  "buyCoins": "Buy Coins",
+  "@buyCoins": {
+    "description": "Buy coins dialog title"
+  },
+  
+  "buyCoinsConfirmation": "Do you want to buy {count} coins?",
+  "@buyCoinsConfirmation": {
+    "description": "Buy coins confirmation message",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "processing": "Processing...",
+  "@processing": {
+    "description": "Processing text"
+  },
+  
+  "coinsAdded": "{count} coins added!",
+  
+  "watch": "Watch",
+  "@watch": {
+    "description": "Watch button text"
+  },
+  
+  "adLimitReached": "Daily ad watching limit reached!",
+  
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications title"
+  },
+  
+  "notificationSettingsDescription": "Turn phone notifications on/off (notifications will continue to appear in the app)",
+  "@notificationSettingsDescription": {
+    "description": "Notification settings description"
+  },
+  
+  "tournamentNotifications": "Tournament Notifications",
+  "@tournamentNotifications": {
+    "description": "Tournament notifications title"
+  },
+  
+  "tournamentNotificationsDescription": "League stage, match start/end reminders",
+  "@tournamentNotificationsDescription": {
+    "description": "Tournament notifications description"
+  },
+  
+  "winCelebrationNotifications": "Win Celebrations",
+  "@winCelebrationNotifications": {
+    "description": "Win celebration notifications title"
+  },
+  
+  "winCelebrationNotificationsDescription": "Match wins and milestone notifications",
+  "@winCelebrationNotificationsDescription": {
+    "description": "Win celebration notifications description"
+  },
+  
+  "streakReminderNotifications": "Hot Streak Reminders",
+  "@streakReminderNotifications": {
+    "description": "Streak reminder notifications title"
+  },
+  
+  "streakReminderNotificationsDescription": "Daily hot streak and reward reminders",
+  "@streakReminderNotificationsDescription": {
+    "description": "Streak reminder notifications description"
+  },
+  
+  "notificationSettingsSaved": "Notification settings saved",
+  "@notificationSettingsSaved": {
+    "description": "Notification settings saved message"
+  },
+  
+  "markAllAsRead": "Mark all as read",
+  "@markAllAsRead": {
+    "description": "Mark all as read tooltip"
+  },
+  
+  "deleteAll": "Delete all",
+  "@deleteAll": {
+    "description": "Delete all tooltip"
+  },
+  "@adLimitReached": {
+    "description": "Ad limit reached message"
+  },
+  "@coinsAdded": {
+    "description": "Coins added message",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
   "totalMatches": "Total Matches",
   "@totalMatches": {
     "description": "Total matches label"

@@ -3,17 +3,16 @@ import 'notification_service.dart';
 
 class CoinTransactionNotificationService {
 
-  /// Send coin purchase notification
+  /// Send coin purchase notification with language support
   static Future<void> sendCoinPurchaseNotification({
     required int coinAmount,
     required double price,
     required String currency,
   }) async {
     try {
-      await NotificationService.sendLocalNotification(
-        title: '💰 Coin Satın Alındı!',
-        body: '$coinAmount coin satın aldınız ($price $currency)',
-        type: NotificationTypes.coinReward,
+      // Dil desteği ile bildirim gönder
+      await NotificationService.sendLocalizedNotification(
+        type: 'coin_purchase',
         data: {
           'transaction_type': 'purchase',
           'coin_amount': coinAmount,
@@ -26,22 +25,18 @@ class CoinTransactionNotificationService {
     }
   }
 
-  /// Send coin earned from prediction notification
+  /// Send coin earned from prediction notification with language support
   static Future<void> sendCoinEarnedFromPredictionNotification({
     required int coinAmount,
     required String matchId,
     required String matchTitle,
   }) async {
     try {
-      await NotificationService.sendLocalNotification(
-        title: '🎯 Tahmin Ödülü!',
-        body: '$matchTitle tahmininden $coinAmount coin kazandınız!',
-        type: NotificationTypes.coinReward,
+      await NotificationService.sendLocalizedNotification(
+        type: 'coin_reward',
         data: {
-          'transaction_type': 'prediction_earned',
-          'coin_amount': coinAmount,
-          'match_id': matchId,
-          'match_title': matchTitle,
+          'coins': coinAmount.toString(),
+          'description': '$matchTitle tahmininden',
         },
       );
     } catch (e) {
@@ -49,7 +44,7 @@ class CoinTransactionNotificationService {
     }
   }
 
-  /// Send coin spent notification
+  /// Send coin spent notification with language support
   static Future<void> sendCoinSpentNotification({
     required int coinAmount,
     required String reason,
@@ -58,15 +53,11 @@ class CoinTransactionNotificationService {
     try {
       print('💸 Sending coin spent notification: $coinAmount coins for $itemName ($reason)');
       
-      await NotificationService.sendLocalNotification(
-        title: '💸 Coin Harcandı!',
-        body: '$itemName için $coinAmount coin harcandı ($reason)',
-        type: NotificationTypes.coinReward,
+      await NotificationService.sendLocalizedNotification(
+        type: 'coin_spent',
         data: {
-          'transaction_type': 'spent',
-          'coin_amount': coinAmount,
-          'reason': reason,
-          'item_name': itemName,
+          'coins': coinAmount.toString(),
+          'description': '$itemName için ($reason)',
         },
       );
       
@@ -76,18 +67,16 @@ class CoinTransactionNotificationService {
     }
   }
 
-  /// Send coin earned from ad notification
+  /// Send coin earned from ad notification with language support
   static Future<void> sendCoinEarnedFromAdNotification({
     required int coinAmount,
   }) async {
     try {
-      await NotificationService.sendLocalNotification(
-        title: '📺 Reklam Ödülü!',
-        body: 'Reklam izleyerek $coinAmount coin kazandınız!',
-        type: NotificationTypes.coinReward,
+      await NotificationService.sendLocalizedNotification(
+        type: 'coin_reward',
         data: {
-          'transaction_type': 'ad_earned',
-          'coin_amount': coinAmount,
+          'coins': coinAmount.toString(),
+          'description': 'Reklam izleyerek',
         },
       );
     } catch (e) {

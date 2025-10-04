@@ -4,6 +4,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/notification_model.dart';
+import 'notification_language_service.dart';
 import 'dart:convert';
 
 class NotificationService {
@@ -432,7 +433,7 @@ class NotificationService {
     }
   }
 
-  /// Send local notification
+  /// Send local notification with language support
   static Future<void> sendLocalNotification({
     required String title,
     required String body,
@@ -484,6 +485,52 @@ class NotificationService {
       await _saveLocalNotificationToDatabase(title, body, type, data);
     } catch (e) {
       print('❌ Failed to send local notification: $e');
+    }
+  }
+
+  /// Send localized notification (new method)
+  static Future<void> sendLocalizedNotification({
+    required String type,
+    Map<String, dynamic>? data,
+  }) async {
+    try {
+      final localizedContent = await NotificationLanguageService.getLocalizedContent(
+        type: type,
+        data: data,
+      );
+
+      await sendLocalNotification(
+        title: localizedContent['title']!,
+        body: localizedContent['body']!,
+        type: type,
+        data: data,
+      );
+    } catch (e) {
+      print('❌ Failed to send localized notification: $e');
+    }
+  }
+
+  /// Send localized notification with specific language
+  static Future<void> sendLocalizedNotificationWithLanguage({
+    required String type,
+    required String language,
+    Map<String, dynamic>? data,
+  }) async {
+    try {
+      final localizedContent = NotificationLanguageService.getLocalizedContentWithLanguage(
+        type: type,
+        language: language,
+        data: data,
+      );
+
+      await sendLocalNotification(
+        title: localizedContent['title']!,
+        body: localizedContent['body']!,
+        type: type,
+        data: data,
+      );
+    } catch (e) {
+      print('❌ Failed to send localized notification: $e');
     }
   }
 

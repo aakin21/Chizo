@@ -110,6 +110,100 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coins => 'Münzen';
 
   @override
+  String get coinPackages => 'Coin-Pakete';
+
+  @override
+  String get watchAds => '📺 Werbung ansehen';
+
+  @override
+  String get watchAdsToEarnCoins => 'Werbung ansehen um Münzen zu verdienen';
+
+  @override
+  String get watchAdsDescription =>
+      '3 Video-Ansichtsrechte innerhalb von 24 Stunden - 5 Münzen pro Video';
+
+  @override
+  String get buy => 'Kaufen';
+
+  @override
+  String get watchAd => 'Werbung ansehen';
+
+  @override
+  String get watchAdConfirmation =>
+      'Sie können 5 Münzen verdienen, indem Sie Werbung ansehen. Möchten Sie fortfahren?';
+
+  @override
+  String get watchingAd => 'Werbung wird angesehen';
+
+  @override
+  String coinsEarned(int count) {
+    return 'Sie haben $count Münzen verdient!';
+  }
+
+  @override
+  String get errorAddingCoins => 'Fehler beim Hinzufügen von Coins';
+
+  @override
+  String get buyCoins => 'Münzen kaufen';
+
+  @override
+  String buyCoinsConfirmation(int count) {
+    return 'Möchten Sie $count Münzen kaufen?';
+  }
+
+  @override
+  String get processing => 'Verarbeitung...';
+
+  @override
+  String coinsAdded(int count) {
+    return '$count Münzen hinzugefügt!';
+  }
+
+  @override
+  String get watch => 'Ansehen';
+
+  @override
+  String get adLimitReached => 'Tägliches Werbung-Ansehen-Limit erreicht!';
+
+  @override
+  String get notifications => 'Benachrichtigungen';
+
+  @override
+  String get notificationSettingsDescription =>
+      'Telefon-Benachrichtigungen ein/aus (Benachrichtigungen werden weiterhin in der App angezeigt)';
+
+  @override
+  String get tournamentNotifications => 'Turnier-Benachrichtigungen';
+
+  @override
+  String get tournamentNotificationsDescription =>
+      'Neue Turnier-Einladungen und Updates';
+
+  @override
+  String get winCelebrationNotifications => 'Siegfeiern';
+
+  @override
+  String get winCelebrationNotificationsDescription =>
+      'Sieg-Benachrichtigungen';
+
+  @override
+  String get streakReminderNotifications => 'Streak-Erinnerungen';
+
+  @override
+  String get streakReminderNotificationsDescription =>
+      'Tägliche Streak-Erinnerungen';
+
+  @override
+  String get notificationSettingsSaved =>
+      'Benachrichtigungseinstellungen gespeichert';
+
+  @override
+  String get markAllAsRead => 'Alle als gelesen markieren';
+
+  @override
+  String get deleteAll => 'Alle löschen';
+
+  @override
   String get totalMatches => 'Gesamte Matches';
 
   @override
@@ -449,9 +543,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get purchaseCoins => 'Coins kaufen';
 
   @override
-  String get watchAd => 'Werbung ansehen';
-
-  @override
   String get dailyAdLimit => 'Sie können maximal 5 Werbungen pro Tag ansehen';
 
   @override
@@ -516,9 +607,6 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get watchingAd => 'Werbung wird angesehen';
-
-  @override
   String get adLoading => 'Werbung wird geladen...';
 
   @override
@@ -527,12 +615,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get adWatched => 'Werbung angesehen! +20 Coins verdient!';
-
-  @override
-  String get errorAddingCoins => 'Fehler beim Hinzufügen von Coins';
-
-  @override
-  String get buy => 'Kaufen';
 
   @override
   String get predict => 'Vorhersagen';
@@ -686,9 +768,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get purchaseFailed => 'Kauf fehlgeschlagen!';
-
-  @override
-  String get coinPackages => 'Coin-Pakete';
 
   @override
   String get coinUsage => 'Coin-Verwendung';
@@ -1203,9 +1282,6 @@ class AppLocalizationsDe extends AppLocalizations {
       'Fotostatistiken konnten nicht geladen werden';
 
   @override
-  String get tournamentNotifications => 'Turnier-Benachrichtigungen';
-
-  @override
   String get newTournamentInvitations => 'Neue Turnier-Einladungen';
 
   @override
@@ -1461,29 +1537,11 @@ class AppLocalizationsDe extends AppLocalizations {
       'Alle Benachrichtigungstypen aktivieren/deaktivieren';
 
   @override
-  String get tournamentNotificationsDescription =>
-      'Neue Turnier-Einladungen und Updates';
-
-  @override
   String get voteReminderNotifications => 'Abstimmungserinnerungen';
 
   @override
   String get voteReminderNotificationsDescription =>
       'Abstimmungserinnerungs-Benachrichtigungen';
-
-  @override
-  String get winCelebrationNotifications => 'Siegfeiern';
-
-  @override
-  String get winCelebrationNotificationsDescription =>
-      'Sieg-Benachrichtigungen';
-
-  @override
-  String get streakReminderNotifications => 'Streak-Erinnerungen';
-
-  @override
-  String get streakReminderNotificationsDescription =>
-      'Tägliche Streak-Erinnerungen';
 
   @override
   String get notificationsList => 'Benachrichtigungen';
@@ -1494,7 +1552,4 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get newNotificationsWillAppearHere =>
       'Neue Benachrichtigungen erscheinen hier';
-
-  @override
-  String get markAllAsRead => 'Alle als gelesen markieren';
 }

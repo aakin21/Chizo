@@ -110,6 +110,98 @@ class AppLocalizationsTr extends AppLocalizations {
   String get coins => 'Coin';
 
   @override
+  String get coinPackages => 'Coin Paketleri';
+
+  @override
+  String get watchAds => 'Reklam İzle';
+
+  @override
+  String get watchAdsToEarnCoins => 'Reklam İzleyerek Coin Kazan';
+
+  @override
+  String get watchAdsDescription =>
+      '24 saat içinde 3 video izleme hakkı - Her video için 5 coin';
+
+  @override
+  String get buy => 'Satın Al';
+
+  @override
+  String get watchAd => 'Reklam İzle';
+
+  @override
+  String get watchAdConfirmation =>
+      'Reklam izleyerek 5 coin kazanabilirsiniz. Devam etmek istiyor musunuz?';
+
+  @override
+  String get watchingAd => 'Reklam İzleniyor';
+
+  @override
+  String coinsEarned(int count) {
+    return '$count coin kazandınız!';
+  }
+
+  @override
+  String get errorAddingCoins => 'Coin eklenirken hata oluştu';
+
+  @override
+  String get buyCoins => 'Coin Satın Al';
+
+  @override
+  String buyCoinsConfirmation(int count) {
+    return '$count coin satın almak istiyor musunuz?';
+  }
+
+  @override
+  String get processing => 'İşlem gerçekleştiriliyor...';
+
+  @override
+  String coinsAdded(int count) {
+    return '$count coin eklendi!';
+  }
+
+  @override
+  String get watch => 'İzle';
+
+  @override
+  String get adLimitReached => 'Günlük reklam izleme limitiniz doldu!';
+
+  @override
+  String get notifications => 'Bildirimler';
+
+  @override
+  String get notificationSettingsDescription =>
+      'Telefon bildirimlerini aç/kapat (bildirimler uygulamada görünmeye devam eder)';
+
+  @override
+  String get tournamentNotifications => 'Turnuva Bildirimleri';
+
+  @override
+  String get tournamentNotificationsDescription =>
+      'Yeni turnuva davetleri ve güncellemeleri';
+
+  @override
+  String get winCelebrationNotifications => 'Zafer Kutlamaları';
+
+  @override
+  String get winCelebrationNotificationsDescription => 'Kazanma bildirimleri';
+
+  @override
+  String get streakReminderNotifications => 'Streak Hatırlatmaları';
+
+  @override
+  String get streakReminderNotificationsDescription =>
+      'Günlük streak hatırlatmaları';
+
+  @override
+  String get notificationSettingsSaved => 'Bildirim ayarları kaydedildi';
+
+  @override
+  String get markAllAsRead => 'Tümünü Okundu İşaretle';
+
+  @override
+  String get deleteAll => 'Tümünü sil';
+
+  @override
   String get totalMatches => 'Toplam Maç';
 
   @override
@@ -445,9 +537,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get purchaseCoins => 'Coin Satın Al';
 
   @override
-  String get watchAd => 'Reklam İzle';
-
-  @override
   String get dailyAdLimit => 'Günde maksimum 5 reklam izleyebilirsiniz';
 
   @override
@@ -510,9 +599,6 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get watchingAd => 'Reklam İzleniyor';
-
-  @override
   String get adLoading => 'Reklam yükleniyor...';
 
   @override
@@ -521,12 +607,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get adWatched => 'Reklam izlendi! +20 coin kazandınız!';
-
-  @override
-  String get errorAddingCoins => 'Coin eklenirken hata oluştu';
-
-  @override
-  String get buy => 'Satın Al';
 
   @override
   String get predict => 'Tahmin Et';
@@ -678,9 +758,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get purchaseFailed => 'Satın alma başarısız!';
-
-  @override
-  String get coinPackages => 'Coin Paketleri';
 
   @override
   String get coinUsage => 'Coin Kullanımı';
@@ -1187,9 +1264,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get photoStatsLoadError => 'Fotoğraf istatistikleri yüklenemedi';
 
   @override
-  String get tournamentNotifications => 'Turnuva Bildirimleri';
-
-  @override
   String get newTournamentInvitations => 'Yeni turnuva davetleri';
 
   @override
@@ -1446,28 +1520,11 @@ class AppLocalizationsTr extends AppLocalizations {
       'Tüm bildirim türlerini etkinleştir/devre dışı bırak';
 
   @override
-  String get tournamentNotificationsDescription =>
-      'Yeni turnuva davetleri ve güncellemeleri';
-
-  @override
   String get voteReminderNotifications => 'Oylama Hatırlatmaları';
 
   @override
   String get voteReminderNotificationsDescription =>
       'Oylama hatırlatma bildirimleri';
-
-  @override
-  String get winCelebrationNotifications => 'Zafer Kutlamaları';
-
-  @override
-  String get winCelebrationNotificationsDescription => 'Kazanma bildirimleri';
-
-  @override
-  String get streakReminderNotifications => 'Streak Hatırlatmaları';
-
-  @override
-  String get streakReminderNotificationsDescription =>
-      'Günlük streak hatırlatmaları';
 
   @override
   String get notificationsList => 'Bildirimler';
@@ -1478,7 +1535,4 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get newNotificationsWillAppearHere =>
       'Yeni bildirimler burada görünecek';
-
-  @override
-  String get markAllAsRead => 'Tümünü Okundu İşaretle';
 }

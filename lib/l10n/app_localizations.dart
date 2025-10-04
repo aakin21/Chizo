@@ -300,6 +300,168 @@ abstract class AppLocalizations {
   /// **'Coins'**
   String get coins;
 
+  /// Coin packages section title
+  ///
+  /// In en, this message translates to:
+  /// **'Coin Packages'**
+  String get coinPackages;
+
+  /// Watch ads section title
+  ///
+  /// In en, this message translates to:
+  /// **'📺 Watch Ads'**
+  String get watchAds;
+
+  /// Watch ads to earn coins title
+  ///
+  /// In en, this message translates to:
+  /// **'Watch Ads to Earn Coins'**
+  String get watchAdsToEarnCoins;
+
+  /// Watch ads description
+  ///
+  /// In en, this message translates to:
+  /// **'3 video viewing rights within 24 hours - 5 coins per video'**
+  String get watchAdsDescription;
+
+  /// Buy button text
+  ///
+  /// In en, this message translates to:
+  /// **'Buy'**
+  String get buy;
+
+  /// Watch ad button text
+  ///
+  /// In en, this message translates to:
+  /// **'Watch Ad'**
+  String get watchAd;
+
+  /// Watch ad confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'You can earn 5 coins by watching ads. Do you want to continue?'**
+  String get watchAdConfirmation;
+
+  /// Watching ad dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Watching Ad'**
+  String get watchingAd;
+
+  /// Coins earned message
+  ///
+  /// In en, this message translates to:
+  /// **'You earned {count} coins!'**
+  String coinsEarned(int count);
+
+  /// Error adding coins message
+  ///
+  /// In en, this message translates to:
+  /// **'Error occurred while adding coins'**
+  String get errorAddingCoins;
+
+  /// Buy coins dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Buy Coins'**
+  String get buyCoins;
+
+  /// Buy coins confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to buy {count} coins?'**
+  String buyCoinsConfirmation(int count);
+
+  /// Processing text
+  ///
+  /// In en, this message translates to:
+  /// **'Processing...'**
+  String get processing;
+
+  /// Coins added message
+  ///
+  /// In en, this message translates to:
+  /// **'{count} coins added!'**
+  String coinsAdded(int count);
+
+  /// Watch button text
+  ///
+  /// In en, this message translates to:
+  /// **'Watch'**
+  String get watch;
+
+  /// Ad limit reached message
+  ///
+  /// In en, this message translates to:
+  /// **'Daily ad watching limit reached!'**
+  String get adLimitReached;
+
+  /// Notifications title
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// Notification settings description
+  ///
+  /// In en, this message translates to:
+  /// **'Turn phone notifications on/off (notifications will continue to appear in the app)'**
+  String get notificationSettingsDescription;
+
+  /// Tournament notifications toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament Notifications'**
+  String get tournamentNotifications;
+
+  /// Tournament notifications description
+  ///
+  /// In en, this message translates to:
+  /// **'New tournament invitations and updates'**
+  String get tournamentNotificationsDescription;
+
+  /// Win celebration notifications toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Victory Celebrations'**
+  String get winCelebrationNotifications;
+
+  /// Win celebration notifications description
+  ///
+  /// In en, this message translates to:
+  /// **'Victory notifications'**
+  String get winCelebrationNotificationsDescription;
+
+  /// Streak reminder notifications toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Streak Reminders'**
+  String get streakReminderNotifications;
+
+  /// Streak reminder notifications description
+  ///
+  /// In en, this message translates to:
+  /// **'Daily streak reminders'**
+  String get streakReminderNotificationsDescription;
+
+  /// Notification settings saved message
+  ///
+  /// In en, this message translates to:
+  /// **'Notification settings saved'**
+  String get notificationSettingsSaved;
+
+  /// Mark all as read button
+  ///
+  /// In en, this message translates to:
+  /// **'Mark All as Read'**
+  String get markAllAsRead;
+
+  /// Delete all tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all'**
+  String get deleteAll;
+
   /// Total matches label in statistics
   ///
   /// In en, this message translates to:
@@ -876,12 +1038,6 @@ abstract class AppLocalizations {
   /// **'Purchase Coins'**
   String get purchaseCoins;
 
-  /// Watch ad button text
-  ///
-  /// In en, this message translates to:
-  /// **'Watch Ad'**
-  String get watchAd;
-
   /// Daily ad limit message
   ///
   /// In en, this message translates to:
@@ -990,12 +1146,6 @@ abstract class AppLocalizations {
   /// **'Error occurred while watching ad'**
   String errorWatchingAd(String error);
 
-  /// Watching ad dialog title
-  ///
-  /// In en, this message translates to:
-  /// **'Watching Ad'**
-  String get watchingAd;
-
   /// Ad loading message
   ///
   /// In en, this message translates to:
@@ -1013,18 +1163,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ad watched! +20 coins earned!'**
   String get adWatched;
-
-  /// Error adding coins message
-  ///
-  /// In en, this message translates to:
-  /// **'Error occurred while adding coins'**
-  String get errorAddingCoins;
-
-  /// Buy button text
-  ///
-  /// In en, this message translates to:
-  /// **'Buy'**
-  String get buy;
 
   /// Predict button text
   ///
@@ -1301,12 +1439,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Purchase failed!'**
   String get purchaseFailed;
-
-  /// No description provided for @coinPackages.
-  ///
-  /// In en, this message translates to:
-  /// **'Coin Packages'**
-  String get coinPackages;
 
   /// No description provided for @coinUsage.
   ///
@@ -2202,12 +2334,6 @@ abstract class AppLocalizations {
   /// **'Could not load photo statistics'**
   String get photoStatsLoadError;
 
-  /// Tournament notifications toggle
-  ///
-  /// In en, this message translates to:
-  /// **'Tournament Notifications'**
-  String get tournamentNotifications;
-
   /// No description provided for @newTournamentInvitations.
   ///
   /// In en, this message translates to:
@@ -2694,12 +2820,6 @@ abstract class AppLocalizations {
   /// **'Enable/disable all notification types'**
   String get allNotificationsDescription;
 
-  /// Tournament notifications description
-  ///
-  /// In en, this message translates to:
-  /// **'New tournament invitations and updates'**
-  String get tournamentNotificationsDescription;
-
   /// Vote reminder notifications toggle
   ///
   /// In en, this message translates to:
@@ -2711,30 +2831,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Vote reminder notifications'**
   String get voteReminderNotificationsDescription;
-
-  /// Win celebration notifications toggle
-  ///
-  /// In en, this message translates to:
-  /// **'Victory Celebrations'**
-  String get winCelebrationNotifications;
-
-  /// Win celebration notifications description
-  ///
-  /// In en, this message translates to:
-  /// **'Victory notifications'**
-  String get winCelebrationNotificationsDescription;
-
-  /// Streak reminder notifications toggle
-  ///
-  /// In en, this message translates to:
-  /// **'Streak Reminders'**
-  String get streakReminderNotifications;
-
-  /// Streak reminder notifications description
-  ///
-  /// In en, this message translates to:
-  /// **'Daily streak reminders'**
-  String get streakReminderNotificationsDescription;
 
   /// Notifications list title
   ///
@@ -2753,12 +2849,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New notifications will appear here'**
   String get newNotificationsWillAppearHere;
-
-  /// Mark all as read button
-  ///
-  /// In en, this message translates to:
-  /// **'Mark All as Read'**
-  String get markAllAsRead;
 }
 
 class _AppLocalizationsDelegate

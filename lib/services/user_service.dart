@@ -167,29 +167,26 @@ class UserService {
       // Coin transaction bildirimi gönder
       await _sendCoinTransactionNotification(amount, type, description);
 
-      // Bildirim gönder
-      String notificationTitle;
-      String notificationBody;
-      
+      // Dil desteği ile bildirim gönder
       if (amount > 0) {
-        notificationTitle = '💰 Coin Kazandınız!';
-        notificationBody = '+$amount coin kazandınız. $description';
+        // Coin kazanıldı
+        await NotificationService.sendLocalizedNotification(
+          type: 'coin_reward',
+          data: {
+            'coins': amount.toString(),
+            'description': description,
+          },
+        );
       } else {
-        notificationTitle = '💸 Coin Harcandı';
-        notificationBody = '${amount.abs()} coin harcandı. $description';
+        // Coin harcandı
+        await NotificationService.sendLocalizedNotification(
+          type: 'coin_spent',
+          data: {
+            'coins': amount.abs().toString(),
+            'description': description,
+          },
+        );
       }
-      
-      // Send notification using auth_id
-      await NotificationService.sendLocalNotification(
-        title: notificationTitle,
-        body: notificationBody,
-        type: 'coin_reward',
-        data: {
-          'amount': amount,
-          'type': type,
-          'description': description,
-        },
-      );
 
       return true;
     } catch (e) {
@@ -355,20 +352,7 @@ class UserService {
     }
   }
 
-  static Future<void> _sendNotificationToUser(String userId, String type, String title, String body) async {
-    try {
-      await _client.from('notifications').insert({
-        'user_id': userId,
-        'type': type,
-        'title': title,
-        'body': body,
-        'is_read': false,
-        'created_at': DateTime.now().toIso8601String(),
-      });
-    } catch (e) {
-      // // print('Error sending notification to user: $e');
-    }
-  }
+  // _sendNotificationToUser metodu kaldırıldı - dil desteği ile değiştirildi
 
   /// Send coin transaction notification
   static Future<void> _sendCoinTransactionNotification(int amount, String type, String description) async {
@@ -434,6 +418,13 @@ class UserService {
             await CoinTransactionNotificationService.sendCoinEarnedFromSpecialEventNotification(
               coinAmount: amount,
               eventName: description,
+            );
+          } else if (description.contains('satın alma')) {
+            // Coin satın alma bildirimi - dil desteği ile
+            await CoinTransactionNotificationService.sendCoinPurchaseNotification(
+              coinAmount: amount,
+              price: 0.0, // Bu değer description'dan parse edilebilir
+              currency: 'TL',
             );
           }
         }

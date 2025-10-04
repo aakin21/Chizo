@@ -1,8 +1,9 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/user_service.dart';
 import '../models/user_model.dart';
-import '../services/notification_service.dart';
-import '../models/notification_model.dart';
+import '../l10n/app_localizations.dart';
+// Notification imports removed - using UserService.updateCoins instead
 
 class StoreTab extends StatefulWidget {
   const StoreTab({super.key});
@@ -14,11 +15,43 @@ class StoreTab extends StatefulWidget {
 class _StoreTabState extends State<StoreTab> {
   UserModel? _currentUser;
   bool _isLoading = true;
+  int _adWatchCount = 0;
+  DateTime? _lastAdWatchDate;
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+    _loadAdWatchData();
+  }
+
+  Future<void> _loadAdWatchData() async {
+    // SharedPreferences'dan reklam izleme verilerini yükle
+    final prefs = await SharedPreferences.getInstance();
+    _adWatchCount = prefs.getInt('ad_watch_count') ?? 0;
+    final lastWatchString = prefs.getString('last_ad_watch_date');
+    if (lastWatchString != null) {
+      _lastAdWatchDate = DateTime.parse(lastWatchString);
+    }
+    
+    // Eğer son izleme 24 saatten eskiyse sayacı sıfırla
+    if (_lastAdWatchDate != null && 
+        DateTime.now().difference(_lastAdWatchDate!).inHours >= 24) {
+      _adWatchCount = 0;
+      _lastAdWatchDate = null;
+      await prefs.remove('ad_watch_count');
+      await prefs.remove('last_ad_watch_date');
+    }
+    
+    setState(() {});
+  }
+
+  int _getAdCount() {
+    return _adWatchCount;
+  }
+
+  bool _canWatchAd() {
+    return _adWatchCount < 3;
   }
 
   Future<void> _loadUserData() async {
@@ -37,6 +70,8 @@ class _StoreTabState extends State<StoreTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     if (_isLoading) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -63,9 +98,9 @@ class _StoreTabState extends State<StoreTab> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Coin",
-                        style: TextStyle(
+                      Text(
+                        l10n.coins,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
@@ -88,7 +123,7 @@ class _StoreTabState extends State<StoreTab> {
 
           // Coin Paketleri
           _buildSectionCard(
-            title: '💰 Coin Paketleri',
+            title: l10n.coinPackages,
             children: [
               _buildCoinPackage('100 Coin', '₺0.99', 100, Colors.blue),
               _buildCoinPackage('250 Coin', '₺1.99', 250, Colors.green),
@@ -96,35 +131,7 @@ class _StoreTabState extends State<StoreTab> {
               _buildCoinPackage('1000 Coin', '₺5.99', 1000, Colors.amber[800]!),
               _buildCoinPackage('2500 Coin', '₺9.99', 2500, Colors.purple),
               _buildCoinPackage('10000 Coin', '₺29.99', 10000, Colors.red),
-            ],
-          ),
-
-          const SizedBox(height: 24),
-
-          // Reklam İzleme
-          _buildSectionCard(
-            title: '📺 Reklam İzle',
-            children: [
-              ListTile(
-                leading: const Icon(
-                  Icons.play_circle,
-                  color: Colors.blue,
-                  size: 28,
-                ),
-                title: const Text(
-                  "Reklam İzleyerek Coin Kazan",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                subtitle: const Text(
-                  "24 saat içinde 3 video izleme hakkı - Her video için 5 coin",
-                  style: TextStyle(fontSize: 14),
-                ),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: _watchAdForCoins,
-              ),
+              _buildAdPackage(),
             ],
           ),
         ],
@@ -159,6 +166,8 @@ class _StoreTabState extends State<StoreTab> {
   }
 
   Widget _buildCoinPackage(String title, String price, int coins, Color color) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
@@ -181,75 +190,143 @@ class _StoreTabState extends State<StoreTab> {
         subtitle: Text(price),
         trailing: ElevatedButton(
           onPressed: () => _showPurchaseDialog(coins),
-          child: const Text('Satın Al'),
+          child: Text(l10n.buy),
         ),
         onTap: () => _showPurchaseDialog(coins),
       ),
     );
   }
 
+  Widget _buildAdPackage() {
+    final l10n = AppLocalizations.of(context)!;
+    
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: Colors.grey.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(
+            Icons.play_circle,
+            color: Colors.grey,
+          ),
+        ),
+        title: Text(
+          l10n.watchAd,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text('50 ${l10n.coins}'),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('${_getAdCount()}/3', style: const TextStyle(fontSize: 12)),
+            const SizedBox(height: 4),
+            ElevatedButton(
+              onPressed: _canWatchAd() ? _watchAdForCoins : null,
+              child: const Text('İzle'),
+            ),
+          ],
+        ),
+        onTap: _canWatchAd() ? _watchAdForCoins : null,
+      ),
+    );
+  }
+
   void _watchAdForCoins() {
+    final l10n = AppLocalizations.of(context)!;
+    
+    if (!_canWatchAd()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Günlük reklam izleme limitiniz doldu!'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Reklam İzle'),
-        content: const Text('Reklam izleyerek 5 coin kazanabilirsiniz. Devam etmek istiyor musunuz?'),
+        title: Text(l10n.watchAd),
+        content: Text(l10n.watchAdConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('İptal'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               _simulateAdWatch();
             },
-            child: const Text("Reklam İzle"),
+            child: Text(l10n.watchAd),
           ),
         ],
       ),
     );
   }
 
-  void _simulateAdWatch() {
+  void _simulateAdWatch() async {
+    final l10n = AppLocalizations.of(context)!;
+    
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const AlertDialog(
+      builder: (context) => AlertDialog(
         content: Row(
           children: [
-            CircularProgressIndicator(),
-            SizedBox(width: 16),
-            Text('Reklam izleniyor...'),
+            const CircularProgressIndicator(),
+            const SizedBox(width: 16),
+            Text(l10n.watchingAd),
           ],
         ),
       ),
     );
 
     // Simulate 3 seconds of ad watching
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () async {
       Navigator.pop(context); // Close loading dialog
+      
+      // Reklam izleme sayacını güncelle
+      await _updateAdWatchCount();
       
       // Add coins
       _addCoins(5);
       
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('5 coin kazandınız!'),
+        SnackBar(
+          content: Text(l10n.coinsEarned(5)),
           backgroundColor: Colors.green,
         ),
       );
     });
   }
 
+  Future<void> _updateAdWatchCount() async {
+    final prefs = await SharedPreferences.getInstance();
+    _adWatchCount++;
+    _lastAdWatchDate = DateTime.now();
+    
+    await prefs.setInt('ad_watch_count', _adWatchCount);
+    await prefs.setString('last_ad_watch_date', _lastAdWatchDate!.toIso8601String());
+    
+    setState(() {});
+  }
+
   void _addCoins(int coins) async {
+    final l10n = AppLocalizations.of(context)!;
+    
     try {
-      // Coin'leri hesaba ekle
+      // Coin'leri hesaba ekle (UserService.updateCoins zaten bildirim gönderiyor)
       final success = await UserService.updateCoins(coins, 'earned', 'Coin satın alma');
       
       if (success) {
-        // Coin satın alma bildirimi gönder
-        await _sendCoinPurchaseNotification(coins);
+        // Duplicate bildirim kaldırıldı - UserService.updateCoins zaten bildirim gönderiyor
         
         setState(() {
           // Reload user data to get updated coins
@@ -267,47 +344,34 @@ class _StoreTabState extends State<StoreTab> {
       print('❌ Error adding coins: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Hata: $e'),
+          content: Text('${l10n.error}: $e'),
           backgroundColor: Colors.red,
         ),
       );
     }
   }
 
-  Future<void> _sendCoinPurchaseNotification(int coins) async {
-    try {
-      // Coin satın alma bildirimi
-      await NotificationService.sendLocalNotification(
-        title: '💰 Coin Satın Alındı!',
-        body: '$coins coin satın aldınız!',
-        type: NotificationTypes.coinReward,
-        data: {
-          'transaction_type': 'purchase',
-          'coin_amount': coins,
-        },
-      );
-    } catch (e) {
-      print('❌ Failed to send coin purchase notification: $e');
-    }
-  }
+  // _sendCoinPurchaseNotification metodu kaldırıldı - UserService.updateCoins zaten bildirim gönderiyor
 
   void _showPurchaseDialog(int coins) {
+    final l10n = AppLocalizations.of(context)!;
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Coin Satın Al'),
-        content: Text('$coins coin satın almak istiyor musunuz?'),
+        title: Text('${l10n.buy} ${l10n.coins}'),
+        content: Text('$coins ${l10n.coins} ${l10n.buy}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('İptal'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               _simulatePurchase(coins);
             },
-            child: const Text('Satın Al'),
+            child: Text(l10n.buy),
           ),
         ],
       ),
@@ -315,6 +379,8 @@ class _StoreTabState extends State<StoreTab> {
   }
 
   void _simulatePurchase(int coins) {
+    final l10n = AppLocalizations.of(context)!;
+    
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -338,7 +404,7 @@ class _StoreTabState extends State<StoreTab> {
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('$coins coin eklendi!'),
+          content: Text('$coins ${l10n.coins} eklendi!'),
           backgroundColor: Colors.green,
         ),
       );
