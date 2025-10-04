@@ -37,8 +37,9 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Dil değişikliğini dinle
+    // Dil değişikliğini dinle ve bildirimleri yenile
     _loadCurrentLanguage();
+    setState(() {}); // UI'yi güncelle
   }
 
   Future<void> _loadNotificationSettings() async {
@@ -213,17 +214,6 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
           height: 8,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           color: Theme.of(context).primaryColor,
-          child: Row(
-            children: [
-              const Spacer(),
-              if (unreadCount > 0)
-                IconButton(
-                  icon: const Icon(Icons.mark_email_read, color: Colors.white),
-                  onPressed: _markAllAsRead,
-                  tooltip: _getLocalizedText('markAllAsRead'),
-                ),
-            ],
-          ),
         ),
         Expanded(
           child: _buildScrollableContent(),
@@ -439,7 +429,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
           ),
         ),
         title: Text(
-          notification.title,
+          _getLocalizedNotificationTitle(notification),
           style: TextStyle(
             fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
             color: getNotificationColor(notification.type),
@@ -448,7 +438,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(notification.body),
+            Text(_getLocalizedNotificationBody(notification)),
             const SizedBox(height: 4),
             Text(
               _formatDate(notification.createdAt),
@@ -490,6 +480,112 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
       return '${difference.inMinutes} dakika önce';
     } else {
       return 'Az önce';
+    }
+  }
+
+  String _getLocalizedNotificationTitle(NotificationModel notification) {
+    // Bildirim tipine göre mevcut dilde başlık döndür
+    String currentLanguage = _currentLanguage;
+    
+    switch (notification.type) {
+      case 'tournament_update':
+        switch (currentLanguage) {
+          case 'en': return 'Tournament Update';
+          case 'de': return 'Turnier-Update';
+          case 'es': return 'Actualización del Torneo';
+          default: return 'Turnuva Güncellemesi';
+        }
+      case 'coin_reward':
+        switch (currentLanguage) {
+          case 'en': return '💰 Coins Earned!';
+          case 'de': return '💰 Münzen verdient!';
+          case 'es': return '💰 ¡Monedas Ganadas!';
+          default: return '💰 Coin Kazanıldı!';
+        }
+      case 'coin_purchase':
+        switch (currentLanguage) {
+          case 'en': return '💰 Coins Purchased!';
+          case 'de': return '💰 Münzen gekauft!';
+          case 'es': return '💰 ¡Monedas Compradas!';
+          default: return '💰 Coin Satın Alındı!';
+        }
+      case 'coin_spent':
+        switch (currentLanguage) {
+          case 'en': return '💸 Coins Spent';
+          case 'de': return '💸 Münzen ausgegeben';
+          case 'es': return '💸 Monedas Gastadas';
+          default: return '💸 Coin Harcandı';
+        }
+      case 'system_announcement':
+        switch (currentLanguage) {
+          case 'en': return '📢 System Announcement';
+          case 'de': return '📢 System-Ankündigung';
+          case 'es': return '📢 Anuncio del Sistema';
+          default: return '📢 Sistem Duyurusu';
+        }
+      default:
+        return notification.title; // Bilinmeyen tip için orijinal başlık
+    }
+  }
+
+  String _getLocalizedNotificationBody(NotificationModel notification) {
+    // Bildirim tipine göre mevcut dilde içerik döndür
+    String currentLanguage = _currentLanguage;
+    
+    // Eğer bildirimde data varsa, onu kullan
+    if (notification.data != null) {
+      switch (notification.type) {
+        case 'coin_reward':
+          final coins = notification.data?['coins'] ?? '1';
+          final description = notification.data?['description'] ?? '';
+          switch (currentLanguage) {
+            case 'en': return 'You earned $coins coins. $description';
+            case 'de': return 'Sie haben $coins Münzen verdient. $description';
+            case 'es': return 'Ganaste $coins monedas. $description';
+            default: return '$coins coin kazandınız. $description';
+          }
+        case 'coin_purchase':
+          final coins = notification.data?['coin_amount'] ?? '1';
+          final price = notification.data?['price'] ?? '0';
+          final currency = notification.data?['currency'] ?? 'TL';
+          switch (currentLanguage) {
+            case 'en': return 'You purchased $coins coins ($price $currency)';
+            case 'de': return 'Sie haben $coins Münzen gekauft ($price $currency)';
+            case 'es': return 'Compraste $coins monedas ($price $currency)';
+            default: return '$coins coin satın aldınız ($price $currency)';
+          }
+        case 'coin_spent':
+          final coins = notification.data?['coins'] ?? '1';
+          final description = notification.data?['description'] ?? '';
+          switch (currentLanguage) {
+            case 'en': return '$coins coins spent. $description';
+            case 'de': return '$coins Münzen ausgegeben. $description';
+            case 'es': return '$coins monedas gastadas. $description';
+            default: return '$coins coin harcandı. $description';
+          }
+        default:
+          return notification.body; // Bilinmeyen tip için orijinal içerik
+      }
+    }
+    
+    // Data yoksa, tip bazında genel mesaj
+    switch (notification.type) {
+      case 'tournament_update':
+        switch (currentLanguage) {
+          case 'en': return 'Tournament status has been updated';
+          case 'de': return 'Turnier-Status wurde aktualisiert';
+          case 'es': return 'El estado del torneo ha sido actualizado';
+          default: return 'Turnuva durumu güncellendi';
+        }
+      case 'system_announcement':
+        switch (currentLanguage) {
+          case 'en': return 'New system announcement';
+          case 'de': return 'Neue System-Ankündigung';
+          case 'es': return 'Nuevo anuncio del sistema';
+          default: return 'Yeni sistem duyurusu';
+        }
+      default:
+        return notification.body; // Bilinmeyen tip için orijinal içerik
     }
   }
 

@@ -12,18 +12,12 @@ class HotStreakNotificationService {
       final user = _client.auth.currentUser;
       if (user == null) return;
 
-      // Günlük hatırlatma bildirimi
-      await _createNotification(
-        type: NotificationTypes.streakDailyReminder,
-        title: 'Hot Streak Hatırlatması 🔥',
-        body: 'Bu gün $currentStreak. gün hot streakini kaçırma!',
-      );
-
-      // Ödül hatırlatma bildirimi
-      await _createNotification(
-        type: NotificationTypes.streakRewardReminder,
-        title: 'Giriş Ödülü Hatırlatması 🎁',
-        body: 'Bu gün $currentStreak. gün giriş ödülünü toplamayı unutma!',
+      // Lokalize edilmiş hotstreak hatırlatma bildirimi
+      await NotificationService.sendLocalizedNotification(
+        type: 'hotstreak_reminder',
+        data: {
+          'streak': currentStreak,
+        },
       );
 
     } catch (e) {
@@ -37,9 +31,13 @@ class HotStreakNotificationService {
     required int coinReward,
   }) async {
     try {
-      await MilestoneNotificationService.sendHotStreakRewardNotification(
-        streakDays: streakDays,
-        coinReward: coinReward,
+      // Lokalize edilmiş hotstreak ödül bildirimi
+      await NotificationService.sendLocalizedNotification(
+        type: 'hotstreak_reward',
+        data: {
+          'streak_days': streakDays,
+          'coin_reward': coinReward,
+        },
       );
     } catch (e) {
       print('❌ Failed to send hot streak reward notification: $e');
@@ -76,30 +74,6 @@ class HotStreakNotificationService {
     }
   }
 
-  // Bildirim oluştur
-  static Future<void> _createNotification({
-    required String type,
-    required String title,
-    required String body,
-  }) async {
-    try {
-      final user = _client.auth.currentUser;
-      if (user == null) return;
-
-      await _client.from('notifications').insert({
-        'user_id': user.id,
-        'type': type,
-        'title': title,
-        'body': body,
-        'is_read': false,
-        'created_at': DateTime.now().toIso8601String(),
-      });
-
-      print('✅ Hot streak notification created: $title');
-    } catch (e) {
-      print('❌ Failed to create notification: $e');
-    }
-  }
 
   // Günlük hot streak hatırlatmalarını kontrol et ve gönder
   static Future<void> checkAndSendDailyReminders() async {

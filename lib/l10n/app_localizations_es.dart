@@ -204,6 +204,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get deleteAll => 'Eliminar todo';
 
   @override
+  String get marketingSettings => 'Configuración de Marketing';
+
+  @override
+  String get marketingEmails => 'Correos de Marketing';
+
+  @override
+  String get marketingEmailsDescription =>
+      'Recibir correos promocionales y actualizaciones';
+
+  @override
+  String get marketingEmailsEnabled => 'Correos de marketing habilitados';
+
+  @override
+  String get marketingEmailsDisabled => 'Correos de marketing deshabilitados';
+
+  @override
   String get totalMatches => 'Partidos Totales';
 
   @override
@@ -1483,13 +1499,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get dataCollectionDescription => 'Allow data collection for analytics';
 
   @override
-  String get marketingEmails => 'Marketing Emails';
-
-  @override
-  String get marketingEmailsDescription =>
-      'Receive promotional emails and updates';
-
-  @override
   String get locationTracking => 'Location Tracking';
 
   @override
@@ -1557,4 +1566,49 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get newNotificationsWillAppearHere =>
       'Las nuevas notificaciones aparecerán aquí';
+
+  @override
+  String get referralSystem => '🎁 Referral System';
+
+  @override
+  String get inviteFriends => 'Invite Friends';
+
+  @override
+  String get inviteFriendsDescription =>
+      'Invite your friends and both of you earn 100 coins!';
+
+  @override
+  String get yourReferralLink => 'Your Referral Link';
+
+  @override
+  String get copyLink => 'Copy Link';
+
+  @override
+  String get linkCopied => 'Link copied!';
+
+  @override
+  String get shareLink => 'Share Link';
+
+  @override
+  String get referralReward => 'Referral Reward';
+
+  @override
+  String get referralRewardDescription =>
+      'Earn 100 coins for each friend you invite!';
+
+  @override
+  String get inviteeReward => 'Invitee Reward';
+
+  @override
+  String get inviteeRewardDescription =>
+      'Friends who join with your link also earn 100 coins!';
+
+  @override
+  String get referralStats => 'Referral Statistics';
+
+  @override
+  String get totalReferrals => 'Total Referrals';
+
+  @override
+  String get referralCoinsEarned => 'Coins Earned from Referrals';
 }

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/country_ranking_service.dart';
 import '../services/user_service.dart';
 import '../l10n/app_localizations.dart';
+import '../utils/win_rate_colors.dart';
 
 class CountryRankingScreen extends StatefulWidget {
   const CountryRankingScreen({super.key});
@@ -296,10 +297,8 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
   }
 
   Widget _buildCountryStatCard(Map<String, dynamic> stat, int rank) {
-    final l10n = AppLocalizations.of(context)!;
     final country = stat['country'] as String;
     final wins = stat['wins'] as int;
-    final losses = stat['losses'] as int;
     final totalMatches = stat['totalMatches'] as int;
     final winRate = stat['winRate'] as double;
 
@@ -328,7 +327,7 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: _getCountryBorderColor(winRate),
+          color: WinRateColors.getBorderColorFromPercentage(winRate),
           width: 2,
         ),
         boxShadow: [
@@ -343,22 +342,9 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
         child: Container(
           color: Colors.grey[100],
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  _getCountryFlag(country),
-                  style: const TextStyle(fontSize: 20),
-                ),
-                Text(
-                  '$rank',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[700],
-                  ),
-                ),
-              ],
+            child: Text(
+              _getCountryFlag(country),
+              style: const TextStyle(fontSize: 32),
             ),
           ),
         ),
@@ -394,7 +380,7 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     gradient: LinearGradient(
-                      colors: _getCountryProgressBarColors(winRate),
+                      colors: WinRateColors.getProgressBarColorsFromPercentage(winRate),
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
                     ),
@@ -409,39 +395,17 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       gradient: LinearGradient(
-                        colors: [
-                          Colors.yellow[300]!,
-                          Colors.yellow[400]!,
-                          Colors.yellow[500]!,
-                          Colors.yellow[600]!,
-                          Colors.orange[200]!,
-                          Colors.orange[300]!,
-                          Colors.orange[400]!,
-                          Colors.orange[500]!,
-                          Colors.orange[600]!,
-                          Colors.orange[700]!,
-                          Colors.orange[800]!,
-                          Colors.orange[900]!,
-                          Colors.red[200]!,
-                          Colors.red[300]!,
-                          Colors.red[400]!,
-                          Colors.red[500]!,
-                          Colors.red[600]!,
-                          Colors.red[700]!,
-                          Colors.red[800]!,
-                          Colors.red[900]!,
-                        ],
+                        colors: WinRateColors.getProgressBarColors(1.0), // Tam renk geçişi
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
-                        stops: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 1.0],
                       ),
                       border: Border.all(
-                        color: Colors.orange[600]!,
+                        color: WinRateColors.getBorderColor(1.0),
                         width: 1.5,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.orange.withValues(alpha: 0.4),
+                          color: WinRateColors.getBorderColor(1.0).withValues(alpha: 0.4),
                           blurRadius: 6,
                           offset: Offset(0, 2),
                         ),
@@ -510,80 +474,7 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
     );
   }
 
-  Widget _buildStatChip(String text, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 10,
-          color: color,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
-  }
 
-  Color _getCountryBorderColor(double winRate) {
-    if (winRate >= 80) return Colors.amber;
-    if (winRate >= 60) return Colors.grey[400]!;
-    if (winRate >= 40) return Colors.orange;
-    return Colors.grey;
-  }
-
-  List<Color> _getCountryProgressBarColors(double winRate) {
-    // Aynı renk geçişleri - sarıdan kırmızıya
-    final progress = winRate / 100.0;
-    
-    if (progress <= 0.0) {
-      return [Colors.yellow[300]!, Colors.yellow[300]!];
-    } else if (progress <= 0.05) {
-      return [Colors.yellow[300]!, Colors.yellow[400]!];
-    } else if (progress <= 0.10) {
-      return [Colors.yellow[300]!, Colors.yellow[500]!];
-    } else if (progress <= 0.15) {
-      return [Colors.yellow[300]!, Colors.yellow[600]!];
-    } else if (progress <= 0.20) {
-      return [Colors.yellow[300]!, Colors.orange[200]!];
-    } else if (progress <= 0.25) {
-      return [Colors.yellow[300]!, Colors.orange[300]!];
-    } else if (progress <= 0.30) {
-      return [Colors.yellow[300]!, Colors.orange[400]!];
-    } else if (progress <= 0.35) {
-      return [Colors.yellow[300]!, Colors.orange[500]!];
-    } else if (progress <= 0.40) {
-      return [Colors.yellow[300]!, Colors.orange[600]!];
-    } else if (progress <= 0.45) {
-      return [Colors.yellow[300]!, Colors.orange[700]!];
-    } else if (progress <= 0.50) {
-      return [Colors.yellow[300]!, Colors.orange[800]!];
-    } else if (progress <= 0.55) {
-      return [Colors.yellow[300]!, Colors.orange[900]!];
-    } else if (progress <= 0.60) {
-      return [Colors.yellow[300]!, Colors.red[200]!]; // %60'ta açık kırmızıya geçiş
-    } else if (progress <= 0.65) {
-      return [Colors.yellow[300]!, Colors.red[300]!];
-    } else if (progress <= 0.70) {
-      return [Colors.yellow[300]!, Colors.red[400]!];
-    } else if (progress <= 0.75) {
-      return [Colors.yellow[300]!, Colors.red[500]!];
-    } else if (progress <= 0.80) {
-      return [Colors.yellow[300]!, Colors.red[600]!];
-    } else if (progress <= 0.85) {
-      return [Colors.yellow[300]!, Colors.red[700]!];
-    } else if (progress <= 0.90) {
-      return [Colors.yellow[300]!, Colors.red[800]!];
-    } else if (progress <= 0.95) {
-      return [Colors.yellow[300]!, Colors.red[900]!];
-    } else {
-      return [Colors.yellow[300]!, Colors.red[900]!];
-    }
-  }
 
   String _getCountryFlag(String country) {
     // Basit ülke bayrağı emojileri

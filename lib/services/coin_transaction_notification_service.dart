@@ -90,14 +90,11 @@ class CoinTransactionNotificationService {
     required int streakDays,
   }) async {
     try {
-      await NotificationService.sendLocalNotification(
-        title: '🔥 Hot Streak Ödülü!',
-        body: '$streakDays. gün hot streak ödülü: $coinAmount coin!',
-        type: NotificationTypes.coinReward,
+      await NotificationService.sendLocalizedNotification(
+        type: 'hotstreak_reward',
         data: {
-          'transaction_type': 'hot_streak_earned',
-          'coin_amount': coinAmount,
           'streak_days': streakDays,
+          'coin_reward': coinAmount,
         },
       );
     } catch (e) {

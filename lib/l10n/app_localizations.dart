@@ -462,6 +462,36 @@ abstract class AppLocalizations {
   /// **'Delete all'**
   String get deleteAll;
 
+  /// Marketing settings title
+  ///
+  /// In en, this message translates to:
+  /// **'Marketing Settings'**
+  String get marketingSettings;
+
+  /// Marketing emails setting
+  ///
+  /// In en, this message translates to:
+  /// **'Marketing Emails'**
+  String get marketingEmails;
+
+  /// Marketing emails description
+  ///
+  /// In en, this message translates to:
+  /// **'Receive promotional emails and updates'**
+  String get marketingEmailsDescription;
+
+  /// Marketing emails enabled message
+  ///
+  /// In en, this message translates to:
+  /// **'Marketing emails enabled'**
+  String get marketingEmailsEnabled;
+
+  /// Marketing emails disabled message
+  ///
+  /// In en, this message translates to:
+  /// **'Marketing emails disabled'**
+  String get marketingEmailsDisabled;
+
   /// Total matches label in statistics
   ///
   /// In en, this message translates to:
@@ -2706,18 +2736,6 @@ abstract class AppLocalizations {
   /// **'Allow data collection for analytics'**
   String get dataCollectionDescription;
 
-  /// Marketing emails setting
-  ///
-  /// In en, this message translates to:
-  /// **'Marketing Emails'**
-  String get marketingEmails;
-
-  /// Marketing emails description
-  ///
-  /// In en, this message translates to:
-  /// **'Receive promotional emails and updates'**
-  String get marketingEmailsDescription;
-
   /// Location tracking setting
   ///
   /// In en, this message translates to:
@@ -2849,6 +2867,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New notifications will appear here'**
   String get newNotificationsWillAppearHere;
+
+  /// Referral system section title
+  ///
+  /// In en, this message translates to:
+  /// **'🎁 Referral System'**
+  String get referralSystem;
+
+  /// Invite friends title
+  ///
+  /// In en, this message translates to:
+  /// **'Invite Friends'**
+  String get inviteFriends;
+
+  /// Referral system description
+  ///
+  /// In en, this message translates to:
+  /// **'Invite your friends and both of you earn 100 coins!'**
+  String get inviteFriendsDescription;
+
+  /// User's referral link title
+  ///
+  /// In en, this message translates to:
+  /// **'Your Referral Link'**
+  String get yourReferralLink;
+
+  /// Copy link button
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Link'**
+  String get copyLink;
+
+  /// Link copied message
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied!'**
+  String get linkCopied;
+
+  /// Share link button
+  ///
+  /// In en, this message translates to:
+  /// **'Share Link'**
+  String get shareLink;
+
+  /// Referral reward title
+  ///
+  /// In en, this message translates to:
+  /// **'Referral Reward'**
+  String get referralReward;
+
+  /// Referral reward description
+  ///
+  /// In en, this message translates to:
+  /// **'Earn 100 coins for each friend you invite!'**
+  String get referralRewardDescription;
+
+  /// Invitee reward title
+  ///
+  /// In en, this message translates to:
+  /// **'Invitee Reward'**
+  String get inviteeReward;
+
+  /// Invitee reward description
+  ///
+  /// In en, this message translates to:
+  /// **'Friends who join with your link also earn 100 coins!'**
+  String get inviteeRewardDescription;
+
+  /// Referral statistics title
+  ///
+  /// In en, this message translates to:
+  /// **'Referral Statistics'**
+  String get referralStats;
+
+  /// Total referral count
+  ///
+  /// In en, this message translates to:
+  /// **'Total Referrals'**
+  String get totalReferrals;
+
+  /// Coins earned from referrals amount
+  ///
+  /// In en, this message translates to:
+  /// **'Coins Earned from Referrals'**
+  String get referralCoinsEarned;
 }
 
 class _AppLocalizationsDelegate

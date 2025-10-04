@@ -202,6 +202,23 @@ class AppLocalizationsTr extends AppLocalizations {
   String get deleteAll => 'Tümünü sil';
 
   @override
+  String get marketingSettings => 'Pazarlama Ayarları';
+
+  @override
+  String get marketingEmails => 'Pazarlama E-postaları';
+
+  @override
+  String get marketingEmailsDescription =>
+      'Promosyon e-postaları ve güncellemeleri al';
+
+  @override
+  String get marketingEmailsEnabled => 'Pazarlama e-postaları etkinleştirildi';
+
+  @override
+  String get marketingEmailsDisabled =>
+      'Pazarlama e-postaları devre dışı bırakıldı';
+
+  @override
   String get totalMatches => 'Toplam Maç';
 
   @override
@@ -1460,13 +1477,6 @@ class AppLocalizationsTr extends AppLocalizations {
       'Analitik için veri toplamaya izin ver';
 
   @override
-  String get marketingEmails => 'Pazarlama E-postaları';
-
-  @override
-  String get marketingEmailsDescription =>
-      'Promosyon e-postaları ve güncellemeleri al';
-
-  @override
   String get locationTracking => 'Konum Takibi';
 
   @override
@@ -1535,4 +1545,49 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get newNotificationsWillAppearHere =>
       'Yeni bildirimler burada görünecek';
+
+  @override
+  String get referralSystem => '🎁 Davet Sistemi';
+
+  @override
+  String get inviteFriends => 'Arkadaşlarını Davet Et';
+
+  @override
+  String get inviteFriendsDescription =>
+      'Arkadaşlarını davet et ve her ikiniz de 100 coin kazanın!';
+
+  @override
+  String get yourReferralLink => 'Davet Linkiniz';
+
+  @override
+  String get copyLink => 'Linki Kopyala';
+
+  @override
+  String get linkCopied => 'Link kopyalandı!';
+
+  @override
+  String get shareLink => 'Linki Paylaş';
+
+  @override
+  String get referralReward => 'Davet Ödülü';
+
+  @override
+  String get referralRewardDescription =>
+      'Her davet ettiğiniz arkadaş için 100 coin kazanın!';
+
+  @override
+  String get inviteeReward => 'Davet Edilen Ödülü';
+
+  @override
+  String get inviteeRewardDescription =>
+      'Davet linki ile katılan arkadaşlar da 100 coin kazanır!';
+
+  @override
+  String get referralStats => 'Davet İstatistikleri';
+
+  @override
+  String get totalReferrals => 'Toplam Davet';
+
+  @override
+  String get referralCoinsEarned => 'Davetlerden Kazanılan Coin';
 }

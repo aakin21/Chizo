@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/user_model.dart';
 import '../services/photo_upload_service.dart';
 import '../services/user_service.dart';
+import '../utils/win_rate_colors.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final UserModel user;
@@ -261,6 +262,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: winRate == 0.0 ? WinRateColors.getNewPhotoColor() : WinRateColors.getBorderColorFromPercentage(winRate),
+              width: 3,
+            ),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.3),
@@ -328,14 +333,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         children: [
                           Icon(
                             Icons.emoji_events,
-                            color: _getWinRateColor(winRate),
+                            color: winRate == 0.0 ? WinRateColors.getNewPhotoColor() : WinRateColors.getBorderColorFromPercentage(winRate),
                             size: 16,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             '${winRate.toStringAsFixed(1)}%',
                             style: TextStyle(
-                              color: _getWinRateColor(winRate),
+                              color: winRate == 0.0 ? WinRateColors.getNewPhotoColor() : WinRateColors.getBorderColorFromPercentage(winRate),
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
                             ),
@@ -374,7 +379,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _getWinRateColor(winRate).withOpacity(0.9),
+                    color: (winRate == 0.0 ? WinRateColors.getNewPhotoColor() : WinRateColors.getBorderColorFromPercentage(winRate)).withOpacity(0.9),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -416,7 +421,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 margin: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: _getWinRateColor(winRate).withOpacity(0.8),
+                  color: (winRate == 0.0 ? WinRateColors.getNewPhotoColor() : WinRateColors.getBorderColorFromPercentage(winRate)).withOpacity(0.8),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -492,7 +497,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   'Kazanma Oranı',
                   '${winRate.toStringAsFixed(1)}%',
                   Icons.trending_up,
-                  _getWinRateColor(winRate),
+                  winRate == 0.0 ? WinRateColors.getNewPhotoColor() : WinRateColors.getBorderColorFromPercentage(winRate),
                 ),
               ],
             ),
@@ -795,9 +800,4 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     }
   }
 
-  Color _getWinRateColor(double winRate) {
-    if (winRate >= 70) return Colors.green;
-    if (winRate >= 50) return Colors.orange;
-    return Colors.red;
-  }
 }

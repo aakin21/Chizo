@@ -291,6 +291,31 @@
   "@deleteAll": {
     "description": "Delete all tooltip"
   },
+  
+  "marketingSettings": "Marketing Settings",
+  "@marketingSettings": {
+    "description": "Marketing settings title"
+  },
+  
+  "marketingEmails": "Marketing Emails",
+  "@marketingEmails": {
+    "description": "Marketing emails title"
+  },
+  
+  "marketingEmailsDescription": "Receive promotional emails and updates",
+  "@marketingEmailsDescription": {
+    "description": "Marketing emails description"
+  },
+  
+  "marketingEmailsEnabled": "Marketing emails enabled",
+  "@marketingEmailsEnabled": {
+    "description": "Marketing emails enabled message"
+  },
+  
+  "marketingEmailsDisabled": "Marketing emails disabled",
+  "@marketingEmailsDisabled": {
+    "description": "Marketing emails disabled message"
+  },
   "@adLimitReached": {
     "description": "Ad limit reached message"
   },
@@ -1830,5 +1855,62 @@
   "markAllAsRead": "Mark All as Read",
   "@markAllAsRead": {
     "description": "Mark all as read button"
+  },
+  
+  "referralSystem": "🎁 Referral System",
+  "@referralSystem": {
+    "description": "Referral system section title"
+  },
+  "inviteFriends": "Invite Friends",
+  "@inviteFriends": {
+    "description": "Invite friends title"
+  },
+  "inviteFriendsDescription": "Invite your friends and both of you earn 100 coins!",
+  "@inviteFriendsDescription": {
+    "description": "Referral system description"
+  },
+  "yourReferralLink": "Your Referral Link",
+  "@yourReferralLink": {
+    "description": "User's referral link title"
+  },
+  "copyLink": "Copy Link",
+  "@copyLink": {
+    "description": "Copy link button"
+  },
+  "linkCopied": "Link copied!",
+  "@linkCopied": {
+    "description": "Link copied message"
+  },
+  "shareLink": "Share Link",
+  "@shareLink": {
+    "description": "Share link button"
+  },
+  "referralReward": "Referral Reward",
+  "@referralReward": {
+    "description": "Referral reward title"
+  },
+  "referralRewardDescription": "Earn 100 coins for each friend you invite!",
+  "@referralRewardDescription": {
+    "description": "Referral reward description"
+  },
+  "inviteeReward": "Invitee Reward",
+  "@inviteeReward": {
+    "description": "Invitee reward title"
+  },
+  "inviteeRewardDescription": "Friends who join with your link also earn 100 coins!",
+  "@inviteeRewardDescription": {
+    "description": "Invitee reward description"
+  },
+  "referralStats": "Referral Statistics",
+  "@referralStats": {
+    "description": "Referral statistics title"
+  },
+  "totalReferrals": "Total Referrals",
+  "@totalReferrals": {
+    "description": "Total referral count"
+  },
+  "referralCoinsEarned": "Coins Earned from Referrals",
+  "@referralCoinsEarned": {
+    "description": "Coins earned from referrals amount"
   }
 }

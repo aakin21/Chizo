@@ -90,10 +90,8 @@ class MilestoneNotificationService {
     required int coinReward,
   }) async {
     try {
-      await NotificationService.sendLocalNotification(
-        title: '🔥 Hot Streak Ödülü!',
-        body: 'Tebrikler! $streakDays. gün hot streak ödülü: $coinReward coin!',
-        type: NotificationTypes.coinReward,
+      await NotificationService.sendLocalizedNotification(
+        type: 'hotstreak_reward',
         data: {
           'streak_days': streakDays,
           'coin_reward': coinReward,

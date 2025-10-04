@@ -4,7 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui';
 import '../models/user_model.dart';
 import '../services/photo_upload_service.dart';
+import '../services/user_service.dart';
 import '../l10n/app_localizations.dart';
+import '../utils/win_rate_colors.dart';
 
 class ProfileAvatarWidget extends StatefulWidget {
   final UserModel user;
@@ -215,10 +217,14 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
   }
 
   Color _getAvatarBorderColor() {
-    if (winRate >= 0.8) return Colors.amber;
-    if (winRate >= 0.6) return Colors.grey[400]!;
-    if (winRate >= 0.4) return Colors.orange;
-    return Colors.grey;
+    // Only show colored border when stats are unlocked
+    if (isUnlocked || !widget.showStatsUnlockButton) {
+      // Use the same color logic as progress bar for consistency
+      return WinRateColors.getBorderColor(winRate);
+    } else {
+      // Default white border when stats are locked
+      return Colors.white;
+    }
   }
 
   Widget _buildAvatarContent() {
@@ -287,7 +293,7 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     gradient: LinearGradient(
-                      colors: _getProgressBarColors(),
+                      colors: WinRateColors.getProgressBarColors(winRate),
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
                     ),
@@ -302,39 +308,17 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       gradient: LinearGradient(
-                        colors: [
-                          Colors.yellow[300]!,
-                          Colors.yellow[400]!,
-                          Colors.yellow[500]!,
-                          Colors.yellow[600]!,
-                          Colors.orange[200]!,
-                          Colors.orange[300]!,
-                          Colors.orange[400]!,
-                          Colors.orange[500]!,
-                          Colors.orange[600]!,
-                          Colors.orange[700]!,
-                          Colors.orange[800]!,
-                          Colors.orange[900]!,
-                          Colors.red[200]!,
-                          Colors.red[300]!,
-                          Colors.red[400]!,
-                          Colors.red[500]!,
-                          Colors.red[600]!,
-                          Colors.red[700]!,
-                          Colors.red[800]!,
-                          Colors.red[900]!,
-                        ],
+                        colors: WinRateColors.getProgressBarColors(1.0), // Tam renk geçişi
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
-                        stops: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 1.0],
                       ),
                       border: Border.all(
-                        color: Colors.orange[600]!,
+                        color: WinRateColors.getBorderColor(1.0),
                         width: 1.5,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.orange.withValues(alpha: 0.4),
+                          color: WinRateColors.getBorderColor(1.0).withValues(alpha: 0.4),
                           blurRadius: 6,
                           offset: Offset(0, 2),
                         ),
@@ -405,56 +389,6 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
   }
   
 
-  List<Color> _getProgressBarColors() {
-    // Her progress bar aynı renk geçişine sahip - sarıdan kırmızıya
-    // %60'ta açık kırmızıya geçiş, %5'lik aralıklarla smooth geçiş
-    final progress = winRate;
-    
-    // Her zaman sarıdan başla, %60'ta kırmızıya geç
-    if (progress <= 0.0) {
-      return [Colors.yellow[300]!, Colors.yellow[300]!];
-    } else if (progress <= 0.05) {
-      return [Colors.yellow[300]!, Colors.yellow[400]!];
-    } else if (progress <= 0.10) {
-      return [Colors.yellow[300]!, Colors.yellow[500]!];
-    } else if (progress <= 0.15) {
-      return [Colors.yellow[300]!, Colors.yellow[600]!];
-    } else if (progress <= 0.20) {
-      return [Colors.yellow[300]!, Colors.orange[200]!];
-    } else if (progress <= 0.25) {
-      return [Colors.yellow[300]!, Colors.orange[300]!];
-    } else if (progress <= 0.30) {
-      return [Colors.yellow[300]!, Colors.orange[400]!];
-    } else if (progress <= 0.35) {
-      return [Colors.yellow[300]!, Colors.orange[500]!];
-    } else if (progress <= 0.40) {
-      return [Colors.yellow[300]!, Colors.orange[600]!];
-    } else if (progress <= 0.45) {
-      return [Colors.yellow[300]!, Colors.orange[700]!];
-    } else if (progress <= 0.50) {
-      return [Colors.yellow[300]!, Colors.orange[800]!];
-    } else if (progress <= 0.55) {
-      return [Colors.yellow[300]!, Colors.orange[900]!];
-    } else if (progress <= 0.60) {
-      return [Colors.yellow[300]!, Colors.red[200]!]; // %60'ta açık kırmızıya geçiş
-    } else if (progress <= 0.65) {
-      return [Colors.yellow[300]!, Colors.red[300]!];
-    } else if (progress <= 0.70) {
-      return [Colors.yellow[300]!, Colors.red[400]!];
-    } else if (progress <= 0.75) {
-      return [Colors.yellow[300]!, Colors.red[500]!];
-    } else if (progress <= 0.80) {
-      return [Colors.yellow[300]!, Colors.red[600]!];
-    } else if (progress <= 0.85) {
-      return [Colors.yellow[300]!, Colors.red[700]!];
-    } else if (progress <= 0.90) {
-      return [Colors.yellow[300]!, Colors.red[800]!];
-    } else if (progress <= 0.95) {
-      return [Colors.yellow[300]!, Colors.red[900]!];
-    } else {
-      return [Colors.yellow[300]!, Colors.red[900]!];
-    }
-  }
 
   Future<void> _handleAvatarTap() async {
     if (isUpdating) return;
@@ -606,7 +540,21 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
 
     try {
       // Gerçek coin harcama - UserService ile entegre et
-      // await UserService.spendCoins(100, 'spent', 'Fotoğraf istatistik görüntüleme');
+      final coinUpdateSuccess = await UserService.updateCoins(
+        -100, 
+        'spent', 
+        'Fotoğraf istatistik görüntüleme'
+      );
+      
+      if (!coinUpdateSuccess) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Yeterli coin yok!'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
 
       // 24 saatlik unlock süresi ayarla
       final expiryTime = DateTime.now().add(Duration(hours: 24));

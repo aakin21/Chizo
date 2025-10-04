@@ -7,8 +7,6 @@
     "profileVisibilityDescription",
     "dataCollection",
     "dataCollectionDescription",
-    "marketingEmails",
-    "marketingEmailsDescription",
     "locationTracking",
     "locationTrackingDescription",
     "reportContent",
@@ -23,7 +21,21 @@
     "reportError",
     "submit",
     "profileVisible",
-    "profileHidden"
+    "profileHidden",
+    "referralSystem",
+    "inviteFriends",
+    "inviteFriendsDescription",
+    "yourReferralLink",
+    "copyLink",
+    "linkCopied",
+    "shareLink",
+    "referralReward",
+    "referralRewardDescription",
+    "inviteeReward",
+    "inviteeRewardDescription",
+    "referralStats",
+    "totalReferrals",
+    "referralCoinsEarned"
   ],
 
   "es": [
@@ -34,8 +46,6 @@
     "profileVisibilityDescription",
     "dataCollection",
     "dataCollectionDescription",
-    "marketingEmails",
-    "marketingEmailsDescription",
     "locationTracking",
     "locationTrackingDescription",
     "reportContent",
@@ -50,6 +60,20 @@
     "reportError",
     "submit",
     "profileVisible",
-    "profileHidden"
+    "profileHidden",
+    "referralSystem",
+    "inviteFriends",
+    "inviteFriendsDescription",
+    "yourReferralLink",
+    "copyLink",
+    "linkCopied",
+    "shareLink",
+    "referralReward",
+    "referralRewardDescription",
+    "inviteeReward",
+    "inviteeRewardDescription",
+    "referralStats",
+    "totalReferrals",
+    "referralCoinsEarned"
   ]
 }

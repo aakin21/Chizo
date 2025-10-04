@@ -420,11 +420,13 @@ class UserService {
               eventName: description,
             );
           } else if (description.contains('satın alma')) {
-            // Coin satın alma bildirimi - dil desteği ile
-            await CoinTransactionNotificationService.sendCoinPurchaseNotification(
-              coinAmount: amount,
-              price: 0.0, // Bu değer description'dan parse edilebilir
-              currency: 'TL',
+            // Coin satın alma bildirimi - duplicate bildirim kaldırıldı
+            // UserService.updateCoins içinde zaten bildirim gönderiliyor
+          } else if (description.contains('istatistik')) {
+            await CoinTransactionNotificationService.sendCoinSpentNotification(
+              coinAmount: amount.abs(),
+              reason: 'photo_stats_view',
+              itemName: 'Fotoğraf İstatistikleri',
             );
           }
         }
@@ -449,6 +451,99 @@ class UserService {
       }
     } catch (e) {
       print('❌ Failed to send coin transaction notification: $e');
+    }
+  }
+
+  // Referral sistemi fonksiyonları
+  
+  /// Generate referral link for current user
+  static String generateReferralLink() {
+    final authUser = _client.auth.currentUser;
+    if (authUser == null) return '';
+    
+    // Basit referral link oluştur - gerçek uygulamada daha karmaşık olabilir
+    return 'https://chizo.app/invite?ref=${authUser.id}';
+  }
+  
+  /// Get referral statistics for current user
+  static Future<Map<String, dynamic>> getReferralStats() async {
+    try {
+      final currentUser = await getCurrentUser();
+      if (currentUser == null) return {'totalReferrals': 0, 'coinsEarned': 0};
+      
+      // Referral istatistiklerini al
+      final response = await _client
+          .from('coin_transactions')
+          .select()
+          .eq('user_id', currentUser.id)
+          .eq('type', 'earned')
+          .like('description', '%referans%');
+      
+      int totalReferrals = 0;
+      int coinsEarned = 0;
+      
+      for (var transaction in response) {
+        if (transaction['description'].toString().contains('referans')) {
+          totalReferrals++;
+          coinsEarned += (transaction['amount'] as int?) ?? 0;
+        }
+      }
+      
+      return {
+        'totalReferrals': totalReferrals,
+        'coinsEarned': coinsEarned,
+      };
+    } catch (e) {
+      print('Error getting referral stats: $e');
+      return {'totalReferrals': 0, 'coinsEarned': 0};
+    }
+  }
+  
+  /// Process referral when new user signs up
+  static Future<bool> processReferral(String referralCode) async {
+    try {
+      // Referral kodundan kullanıcı ID'sini al
+      final referrerResponse = await _client
+          .from('users')
+          .select('id, username')
+          .eq('auth_id', referralCode)
+          .maybeSingle();
+      
+      if (referrerResponse == null) return false;
+      
+      final currentUser = await getCurrentUser();
+      if (currentUser == null) return false;
+      
+      // Referral kaydı oluştur
+      await _client.from('referrals').insert({
+        'referrer_id': referrerResponse['id'],
+        'referred_id': currentUser.id,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+      
+      // Her iki kullanıcıya da 100 coin ver
+      // Referrer'a 100 coin
+      await updateCoins(100, 'earned', 'Arkadaş davet etme referans ödülü');
+      
+      // Referred user'a 100 coin
+      await _client
+          .from('users')
+          .update({'coins': currentUser.coins + 100})
+          .eq('id', currentUser.id);
+      
+      // Referred user için coin transaction kaydı
+      await _client.from('coin_transactions').insert({
+        'user_id': currentUser.id,
+        'amount': 100,
+        'type': 'earned',
+        'description': 'Davet linki ile katılım ödülü',
+        'created_at': DateTime.now().toIso8601String(),
+      });
+      
+      return true;
+    } catch (e) {
+      print('Error processing referral: $e');
+      return false;
     }
   }
 }

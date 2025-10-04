@@ -59,6 +59,11 @@
   "notificationSettingsSaved": "Bildirim ayarları kaydedildi",
   "markAllAsRead": "Tümünü okundu işaretle",
   "deleteAll": "Tümünü sil",
+  "marketingSettings": "Pazarlama Ayarları",
+  "marketingEmails": "Pazarlama E-postaları",
+  "marketingEmailsDescription": "Promosyon e-postaları ve güncellemeleri al",
+  "marketingEmailsEnabled": "Pazarlama e-postaları etkinleştirildi",
+  "marketingEmailsDisabled": "Pazarlama e-postaları devre dışı bırakıldı",
   "totalMatches": "Toplam Maç",
   "wins": "Galibiyet",
   "winRatePercentage": "Kazanma Oranı",
@@ -839,5 +844,62 @@
   "unlockStatsDescription": "Bu fotoğrafın detaylı istatistiklerini görmek için 100 coin ödemek istediğinizden emin misiniz?",
   "@unlockStatsDescription": {
     "description": "İstatistikleri açma onay mesajı"
+  },
+  
+  "referralSystem": "🎁 Davet Sistemi",
+  "@referralSystem": {
+    "description": "Davet sistemi bölüm başlığı"
+  },
+  "inviteFriends": "Arkadaşlarını Davet Et",
+  "@inviteFriends": {
+    "description": "Arkadaş davet etme başlığı"
+  },
+  "inviteFriendsDescription": "Arkadaşlarını davet et ve her ikiniz de 100 coin kazanın!",
+  "@inviteFriendsDescription": {
+    "description": "Davet sistemi açıklaması"
+  },
+  "yourReferralLink": "Davet Linkiniz",
+  "@yourReferralLink": {
+    "description": "Kullanıcının davet linki başlığı"
+  },
+  "copyLink": "Linki Kopyala",
+  "@copyLink": {
+    "description": "Link kopyalama butonu"
+  },
+  "linkCopied": "Link kopyalandı!",
+  "@linkCopied": {
+    "description": "Link kopyalandı mesajı"
+  },
+  "shareLink": "Linki Paylaş",
+  "@shareLink": {
+    "description": "Link paylaşma butonu"
+  },
+  "referralReward": "Davet Ödülü",
+  "@referralReward": {
+    "description": "Davet ödülü başlığı"
+  },
+  "referralRewardDescription": "Her davet ettiğiniz arkadaş için 100 coin kazanın!",
+  "@referralRewardDescription": {
+    "description": "Davet ödülü açıklaması"
+  },
+  "inviteeReward": "Davet Edilen Ödülü",
+  "@inviteeReward": {
+    "description": "Davet edilen kişi ödülü başlığı"
+  },
+  "inviteeRewardDescription": "Davet linki ile katılan arkadaşlar da 100 coin kazanır!",
+  "@inviteeRewardDescription": {
+    "description": "Davet edilen kişi ödülü açıklaması"
+  },
+  "referralStats": "Davet İstatistikleri",
+  "@referralStats": {
+    "description": "Davet istatistikleri başlığı"
+  },
+  "totalReferrals": "Toplam Davet",
+  "@totalReferrals": {
+    "description": "Toplam davet sayısı"
+  },
+  "referralCoinsEarned": "Davetlerden Kazanılan Coin",
+  "@referralCoinsEarned": {
+    "description": "Davetlerden kazanılan coin miktarı"
   }
 }

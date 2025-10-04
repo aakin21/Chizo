@@ -20,6 +20,10 @@ class NotificationLanguageService {
         return _getCoinSpentContent(currentLanguage, data);
       case 'streak_reminder':
         return _getStreakReminderContent(currentLanguage, data);
+      case 'hotstreak_reward':
+        return _getHotStreakRewardContent(currentLanguage, data);
+      case 'hotstreak_reminder':
+        return _getHotStreakReminderContent(currentLanguage, data);
       case 'match_won':
         return _getMatchWonContent(currentLanguage, data);
       case 'voting_result':
@@ -48,6 +52,10 @@ class NotificationLanguageService {
         return _getCoinSpentContent(language, data);
       case 'streak_reminder':
         return _getStreakReminderContent(language, data);
+      case 'hotstreak_reward':
+        return _getHotStreakRewardContent(language, data);
+      case 'hotstreak_reminder':
+        return _getHotStreakReminderContent(language, data);
       case 'match_won':
         return _getMatchWonContent(language, data);
       case 'voting_result':
@@ -209,6 +217,63 @@ class NotificationLanguageService {
         return {
           'title': '🔥 Streak Hatırlatması',
           'body': '$streak günlük streak\'iniz var! Devam edin!',
+        };
+    }
+  }
+
+  /// Hot Streak Reward Content
+  static Map<String, String> _getHotStreakRewardContent(String language, Map<String, dynamic>? data) {
+    final streak = data?['streak_days'] ?? data?['streak'] ?? '1';
+    final coins = data?['coin_reward'] ?? data?['coins'] ?? '50';
+    
+    switch (language) {
+      case 'en':
+        return {
+          'title': '🔥 Hot Streak Reward!',
+          'body': 'Congratulations! $streak day streak reward: $coins coins!',
+        };
+      case 'de':
+        return {
+          'title': '🔥 Hot Streak Belohnung!',
+          'body': 'Herzlichen Glückwunsch! $streak Tage Streak Belohnung: $coins Münzen!',
+        };
+      case 'es':
+        return {
+          'title': '🔥 ¡Recompensa de Racha Caliente!',
+          'body': '¡Felicidades! Recompensa de racha de $streak días: $coins monedas!',
+        };
+      default: // Turkish
+        return {
+          'title': '🔥 Hot Streak Ödülü!',
+          'body': 'Tebrikler! $streak. gün hot streak ödülü: $coins coin!',
+        };
+    }
+  }
+
+  /// Hot Streak Reminder Content
+  static Map<String, String> _getHotStreakReminderContent(String language, Map<String, dynamic>? data) {
+    final streak = data?['streak'] ?? '1';
+    
+    switch (language) {
+      case 'en':
+        return {
+          'title': '🔥 Hot Streak Reminder!',
+          'body': 'Don\'t forget to log in today! Don\'t break your $streak day streak!',
+        };
+      case 'de':
+        return {
+          'title': '🔥 Hot Streak Erinnerung!',
+          'body': 'Vergessen Sie nicht, sich heute anzumelden! Brechen Sie nicht Ihren $streak-Tage-Streak!',
+        };
+      case 'es':
+        return {
+          'title': '🔥 ¡Recordatorio de Racha Caliente!',
+          'body': '¡No olvides iniciar sesión hoy! ¡No rompas tu racha de $streak días!',
+        };
+      default: // Turkish
+        return {
+          'title': '🔥 Hot Streak Hatırlatması!',
+          'body': 'Bu gün girmeyi unutma! $streak. gün hot streakini kaçırma!',
         };
     }
   }

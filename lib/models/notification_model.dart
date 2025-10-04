@@ -87,6 +87,8 @@ class NotificationTypes {
   static const String streakReminder = 'streak_reminder';
   static const String streakDailyReminder = 'streak_daily_reminder';
   static const String streakRewardReminder = 'streak_reward_reminder';
+  static const String hotStreakReward = 'hotstreak_reward';
+  static const String hotStreakReminder = 'hotstreak_reminder';
   static const String matchCreated = 'match_created';
   static const String matchWon = 'match_won';
   static const String photoMilestone = 'photo_milestone';
@@ -104,6 +106,17 @@ class NotificationIcons {
   static const String match = '⚔️';
   static const String profile = '👤';
   static const String system = '📢';
+  static const String purchase = '💳';
+  static const String spent = '💸';
+  static const String referral = '🎁';
+  static const String achievement = '🏅';
+  static const String reminder = '⏰';
+  static const String update = '🔄';
+  static const String win = '🎉';
+  static const String streak = '🔥';
+  static const String daily = '📅';
+  static const String photo = '📸';
+  static const String milestone = '🎯';
 }
 
 // Get icon for notification type
@@ -118,20 +131,40 @@ String getNotificationIcon(String type) {
       return NotificationIcons.vote;
     case NotificationTypes.coinReward:
       return NotificationIcons.coin;
+    case 'coin_purchase':
+      return NotificationIcons.purchase;
+    case 'coin_spent':
+      return NotificationIcons.spent;
+    case 'referral_reward':
+    case 'referral_invite':
+      return NotificationIcons.referral;
+    case 'achievement_unlocked':
+      return NotificationIcons.achievement;
     case NotificationTypes.streakReminder:
     case NotificationTypes.streakDailyReminder:
     case NotificationTypes.streakRewardReminder:
-      return NotificationIcons.fire;
+      return NotificationIcons.streak;
+    case NotificationTypes.hotStreakReward:
+    case NotificationTypes.hotStreakReminder:
+      return NotificationIcons.streak;
     case NotificationTypes.matchCreated:
       return NotificationIcons.match;
     case NotificationTypes.matchWon:
+      return NotificationIcons.win;
     case NotificationTypes.photoMilestone:
+      return NotificationIcons.photo;
     case NotificationTypes.totalMilestone:
-      return '🎉';
+      return NotificationIcons.milestone;
     case NotificationTypes.profileUpdate:
       return NotificationIcons.profile;
     case NotificationTypes.systemAnnouncement:
       return NotificationIcons.system;
+    case 'reminder':
+      return NotificationIcons.reminder;
+    case 'daily_login':
+      return NotificationIcons.daily;
+    case 'photo_stats_view':
+      return NotificationIcons.photo;
     default:
       return '🔔';
   }
@@ -150,9 +183,28 @@ Color getNotificationColor(String type) {
     case NotificationTypes.tournamentMatchEndReminder:
       return Colors.blue;
     case NotificationTypes.coinReward:
+    case 'coin_purchase':
       return Colors.amber;
+    case 'coin_spent':
+      return Colors.red;
+    case 'referral_reward':
+    case 'referral_invite':
+      return Colors.purple;
     case NotificationTypes.streakReminder:
+    case NotificationTypes.streakDailyReminder:
+    case NotificationTypes.streakRewardReminder:
       return Colors.orange;
+    case NotificationTypes.hotStreakReward:
+    case NotificationTypes.hotStreakReminder:
+      return Colors.orange;
+    case NotificationTypes.votingResult:
+      return Colors.indigo;
+    case NotificationTypes.systemAnnouncement:
+      return Colors.grey;
+    case 'reminder':
+      return Colors.teal;
+    case 'photo_stats_view':
+      return Colors.pink;
     default:
       return Colors.grey;
   }

@@ -27,8 +27,6 @@ class _SettingsTabState extends State<SettingsTab> {
   bool _isLoggingOut = false;
   
   
-  // Marketing Settings
-  bool _marketingEmailsEnabled = true;
 
   final List<String> _themeOptions = ['Beyaz', 'Koyu', 'Pembemsi'];
   String _selectedTheme = 'Beyaz';
@@ -38,22 +36,16 @@ class _SettingsTabState extends State<SettingsTab> {
     super.initState();
     _loadUserData();
     _loadSavedTheme();
-    _loadMarketingSettings();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Dil değişikliğini dinle ve UI'yi güncelle
+    setState(() {});
   }
 
 
-  Future<void> _loadMarketingSettings() async {
-    try {
-      // Load marketing settings
-      final prefs = await SharedPreferences.getInstance();
-      _marketingEmailsEnabled = prefs.getBool('marketing_emails_enabled') ?? true;
-      
-      setState(() {});
-    } catch (e) {
-      // // print('Error loading marketing settings: $e');
-      setState(() {}); // still show default preferences
-    }
-  }
 
   Future<void> _loadSavedTheme() async {
     final prefs = await SharedPreferences.getInstance();
@@ -385,24 +377,30 @@ class _SettingsTabState extends State<SettingsTab> {
           
           const SizedBox(height: 24),
 
-          // Pazarlama Ayarları
+          // Davet Sistemi
           _buildSectionCard(
-            title: '📧 Pazarlama Ayarları',
+            title: "Referral Link",
             children: [
-              ListTile(
-                leading: const Icon(Icons.email, color: Colors.orange),
-                title: const Text('Pazarlama E-postaları'),
-                subtitle: const Text('Promosyon e-postaları ve güncellemeleri al'),
-                trailing: Switch(
-                  value: _marketingEmailsEnabled,
-                  onChanged: (value) async {
-                    await _updateMarketingEmails(value);
-                  },
+              Text(
+                UserService.generateReferralLink(),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () async {
+                  await _shareReferralLink();
+                },
+                icon: const Icon(Icons.share),
+                label: Text(AppLocalizations.of(context)!.shareLink),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  minimumSize: const Size(double.infinity, 48),
                 ),
               ),
             ],
           ),
-          
+
           const SizedBox(height: 24),
 
           // Hesap İşlemleri - En alt kısımda
@@ -515,29 +513,35 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
 
+  Future<void> _copyReferralLink() async {
+    // Clipboard functionality would be implemented here
+    // For now, just show a snackbar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.linkCopied),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  Future<void> _shareReferralLink() async {
+    final link = UserService.generateReferralLink();
+    // Share functionality would be implemented here
+    // For now, just show a snackbar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${AppLocalizations.of(context)!.shareLink}: $link'),
+        backgroundColor: Colors.blue,
+      ),
+    );
+  }
+
+
   // Marketing Functions
 
 
-  Future<void> _updateMarketingEmails(bool value) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('marketing_emails_enabled', value);
-      setState(() {
-        _marketingEmailsEnabled = value;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(value 
-          ? 'Marketing emails enabled' 
-          : 'Marketing emails disabled'),
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    }
-  }
+
+
 
 
   // Yaş aralığı tercihleri dialog'u

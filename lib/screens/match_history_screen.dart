@@ -184,7 +184,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
 
   Future<void> _unlockWeeklyAccess() async {
     try {
-      final success = await UserService.updateCoins(-400, 'spent', '1 hafta sınırsız maç görüntüleme özelliği açıldı (7 gün geçerli)');
+      final success = await UserService.updateCoins(-500, 'spent', '1 hafta sınırsız maç görüntüleme özelliği açıldı (7 gün geçerli)');
       
       if (success) {
         setState(() {
@@ -198,7 +198,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
         
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✅ 400 coin harcandı! 1 hafta boyunca sınırsız erişim!'),
+            content: Text('✅ 500 coin harcandı! 1 hafta boyunca sınırsız erişim!'),
             backgroundColor: Colors.green,
           ),
         );
@@ -442,8 +442,6 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
   }
 
   Widget _buildUnlockButtons() {
-    // Dinamik fiyatlandırma: 25 maç açıldıysa 50 maç fiyatı düşsün
-    final fiftyMatchPrice = unlockedMatches >= 25 ? 50 : 75;
     
     return Container(
       padding: const EdgeInsets.all(16),
@@ -452,100 +450,81 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
           // Haftalık erişim durumu
           if (hasWeeklyAccess && weeklyAccessExpiry != null)
             Container(
-              padding: const EdgeInsets.all(12),
-              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.all(8),
+              margin: const EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
                 color: Colors.green.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: Colors.green),
               ),
-              child: Row(
-                children: [
-                  const Icon(Icons.verified, color: Colors.green),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('🎉 Haftalık Erişim Aktif!', 
-                                   style: TextStyle(fontWeight: FontWeight.bold)),
-                        Text('Bitiş: ${_formatDateTime(weeklyAccessExpiry!)}',
-                             style: const TextStyle(fontSize: 12)),
-                      ],
-                    ),
-                  ),
-                ],
+              child: const Text(
+                '1 HAFTA ERİŞİM %',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
           
           
           if (!hasWeeklyAccess) ...[
-            
-            // 24 saatlik seçenekler
+            // 2 buton yan yana
             Row(
               children: [
+                // Sol: 1 Gün
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: unlockedMatches >= 25 ? null : () => _unlockMatches(25, 50),
+                    onPressed: unlockedMatches >= 50 ? null : () => _unlockMatches(50, 100),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: unlockedMatches >= 25 ? Colors.green : Colors.orange,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      backgroundColor: Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.grey[300] 
+                          : Theme.of(context).primaryColor,
+                      foregroundColor: Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.black87 
+                          : Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      minimumSize: const Size(0, 40),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(unlockedMatches >= 25 ? '✅ Açık' : 'Son 25 Maç'),
-                        Text(unlockedMatches >= 25 ? '24 saat' : '50 Coin', 
-                             style: const TextStyle(fontSize: 12)),
+                        Text(unlockedMatches >= 50 ? 'Açık' : '1 GÜN', 
+                             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                        Text(unlockedMatches >= 50 ? '24 saat' : '100 Coin', 
+                             style: const TextStyle(fontSize: 11)),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
+                // Sağ: 1 Hafta
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: unlockedMatches >= 50 ? null : () => _unlockMatches(50, fiftyMatchPrice),
+                    onPressed: () => _unlockWeeklyAccess(),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: unlockedMatches >= 50 ? Colors.green : Colors.purple,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      backgroundColor: Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.grey[300] 
+                          : Theme.of(context).primaryColor,
+                      foregroundColor: Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.black87 
+                          : Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      minimumSize: const Size(0, 40),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(unlockedMatches >= 50 ? '✅ Açık' : 'Son 50 Maç'),
-                        Text(unlockedMatches >= 50 ? '24 saat' : '$fiftyMatchPrice Coin', 
-                             style: const TextStyle(fontSize: 12)),
+                      children: const [
+                        Text('1 HAFTA', 
+                             style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                        Text('500 Coin', 
+                             style: TextStyle(fontSize: 11)),
                       ],
                     ),
                   ),
                 ),
               ],
-            ),
-            
-            const SizedBox(height: 12),
-            
-            // 1 haftalık seçenek
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => _unlockWeeklyAccess(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('🔥 1 HAFTA SINIRSIZ ERİŞİM %', 
-                         style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text('400 Coin - En İyi Değer!', 
-                         style: TextStyle(fontSize: 12)),
-                  ],
-                ),
-              ),
             ),
           ],
         ],
@@ -602,20 +581,6 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
     }
   }
 
-  String _formatDateTime(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = dateTime.difference(now);
-    
-    if (difference.inDays > 0) {
-      return '${difference.inDays} gün ${difference.inHours % 24} saat';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours} saat ${difference.inMinutes % 60} dakika';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes} dakika';
-    } else {
-      return 'Bitiyor...';
-    }
-  }
 
   Widget _buildLazyAvatar(UserModel opponent, bool shouldBlur) {
     return FutureBuilder<UserModel?>(
