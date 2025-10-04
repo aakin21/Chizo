@@ -901,7 +901,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     
     return CachedNetworkImage(
       imageUrl: selectedPhoto['photo_url'],
-      fit: BoxFit.cover,
+      fit: BoxFit.contain,
       placeholder: (context, url) => _buildImageLoadingShimmer(),
       errorWidget: (context, url, error) => _buildImageErrorWidget(),
     );
