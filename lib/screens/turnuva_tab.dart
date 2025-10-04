@@ -68,6 +68,13 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     }
   }
 
+  // Kullanıcının key ile katılan kişi olup olmadığını kontrol et
+  bool _isUserViewer(TournamentModel tournament) {
+    // Bu fonksiyon daha sonra implement edilecek
+    // Şimdilik false döndür
+    return false;
+  }
+
   // Kullanıcının turnuvaya katılıp katılmadığını kontrol et
   Future<bool> _checkUserParticipation(String tournamentId) async {
     try {
@@ -478,6 +485,38 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   }
 
 
+  // Private turnuva için oylama
+  Future<void> _voteForPrivateTournament(String tournamentId) async {
+    try {
+      // Private turnuva match'lerini getir
+      final tournamentMatches = await TournamentService.getPrivateTournamentMatchesForVoting(tournamentId);
+      
+      if (tournamentMatches.isEmpty) {
+        if (!mounted) return;
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.noVotingForTournament),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        return;
+      }
+
+      // Private turnuva oylama ekranını aç
+      await _showPrivateTournamentVotingDialog(tournamentId, tournamentMatches);
+    } catch (e) {
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.votingLoadError(e.toString())),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   // Belirli turnuva için oylama
   Future<void> _voteForSpecificTournament(String tournamentId) async {
     try {
@@ -515,6 +554,382 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   }
 
 
+
+  // Private turnuva oylama dialog'u - Tam ekran fotoğraf oylaması
+  Future<void> _showPrivateTournamentVotingDialog(String tournamentId, List<Map<String, dynamic>> matches) async {
+    if (!mounted) return;
+    
+    int currentMatchIndex = 0;
+    String? selectedWinner;
+    int totalMatches = matches.length;
+    int completedMatches = 0;
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => StatefulBuilder(
+          builder: (context, setDialogState) {
+            if (currentMatchIndex >= matches.length) {
+              // Tüm match'ler tamamlandı
+              return Scaffold(
+                backgroundColor: Colors.black,
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.check_circle, color: Colors.green, size: 80),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Oylama Tamamlandı',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Tüm match\'leri oyladınız! Teşekkürler.',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white70,
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.purple,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        ),
+                        child: const Text('Tamam'),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            final currentMatch = matches[currentMatchIndex];
+            final user1 = currentMatch['user1'];
+            final user2 = currentMatch['user2'];
+
+            return Scaffold(
+              backgroundColor: Colors.black,
+              appBar: AppBar(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                title: Row(
+                  children: [
+                    const Icon(Icons.how_to_vote, color: Colors.purple),
+                    const SizedBox(width: 8),
+                    const Text('Private Turnuva Oylaması'),
+                    const Spacer(),
+                    Text(
+                      '${currentMatchIndex + 1}/$totalMatches',
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                  ],
+                ),
+                leading: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+              body: Column(
+                children: [
+                  // Üst kısım - Soru
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    child: const Text(
+                      'Hangi fotoğrafı tercih ediyorsunuz?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  
+                  // Ana oylama alanı - Alt-üst tasarım
+                  Expanded(
+                    child: Column(
+                      children: [
+                        // Üst fotoğraf - User 1
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setDialogState(() {
+                                selectedWinner = user1['id'];
+                              });
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: selectedWinner == user1['id'] ? Colors.purple : Colors.transparent,
+                                  width: 4,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Stack(
+                                  children: [
+                                    // Fotoğraf
+                                    Container(
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                      child: user1['tournament_photo_url'] != null
+                                          ? Image.network(
+                                              user1['tournament_photo_url'],
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error, stackTrace) {
+                                                return Container(
+                                                  color: Colors.grey[800],
+                                                  child: const Center(
+                                                    child: Icon(Icons.person, size: 80, color: Colors.white),
+                                                  ),
+                                                );
+                                              },
+                                            )
+                                          : Container(
+                                              color: Colors.grey[800],
+                                              child: const Center(
+                                                child: Icon(Icons.person, size: 80, color: Colors.white),
+                                              ),
+                                            ),
+                                    ),
+                                    
+                                    // Seçim göstergesi
+                                    if (selectedWinner == user1['id'])
+                                      Container(
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: Colors.purple.withOpacity(0.3),
+                                        ),
+                                        child: const Center(
+                                          child: Icon(
+                                            Icons.check_circle,
+                                            color: Colors.purple,
+                                            size: 60,
+                                          ),
+                                        ),
+                                      ),
+                                    
+                                    // Kullanıcı adı
+                                    Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Colors.transparent,
+                                              Colors.black.withOpacity(0.8),
+                                            ],
+                                          ),
+                                        ),
+                                        child: Text(
+                                          user1['username'] ?? 'Bilinmeyen',
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        
+                        // VS sembolü - Güzel ikon
+                        Container(
+                          height: 60,
+                          child: Center(
+                            child: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: Colors.purple.withOpacity(0.2),
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.purple,
+                                  width: 2,
+                                ),
+                              ),
+                              child: const Center(
+                                child: Icon(
+                                  Icons.swap_horiz,
+                                  color: Colors.purple,
+                                  size: 30,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        
+                        // Alt fotoğraf - User 2
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setDialogState(() {
+                                selectedWinner = user2['id'];
+                              });
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: selectedWinner == user2['id'] ? Colors.purple : Colors.transparent,
+                                  width: 4,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Stack(
+                                  children: [
+                                    // Fotoğraf
+                                    Container(
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                      child: user2['tournament_photo_url'] != null
+                                          ? Image.network(
+                                              user2['tournament_photo_url'],
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error, stackTrace) {
+                                                return Container(
+                                                  color: Colors.grey[800],
+                                                  child: const Center(
+                                                    child: Icon(Icons.person, size: 80, color: Colors.white),
+                                                  ),
+                                                );
+                                              },
+                                            )
+                                          : Container(
+                                              color: Colors.grey[800],
+                                              child: const Center(
+                                                child: Icon(Icons.person, size: 80, color: Colors.white),
+                                              ),
+                                            ),
+                                    ),
+                                    
+                                    // Seçim göstergesi
+                                    if (selectedWinner == user2['id'])
+                                      Container(
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: Colors.purple.withOpacity(0.3),
+                                        ),
+                                        child: const Center(
+                                          child: Icon(
+                                            Icons.check_circle,
+                                            color: Colors.purple,
+                                            size: 60,
+                                          ),
+                                        ),
+                                      ),
+                                    
+                                    // Kullanıcı adı
+                                    Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Colors.transparent,
+                                              Colors.black.withOpacity(0.8),
+                                            ],
+                                          ),
+                                        ),
+                                        child: Text(
+                                          user2['username'] ?? 'Bilinmeyen',
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  // Alt butonlar
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.white70,
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                            ),
+                            child: const Text('İptal'),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: selectedWinner != null 
+                                ? () async {
+                                    await _submitPrivateTournamentVote(tournamentId, currentMatch, selectedWinner!);
+                                    setDialogState(() {
+                                      currentMatchIndex++;
+                                      completedMatches++;
+                                      selectedWinner = null;
+                                    });
+                                  }
+                                : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: selectedWinner != null ? Colors.purple : Colors.grey,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                            ),
+                            child: Text(completedMatches == totalMatches - 1 ? 'Bitir' : 'Devam'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 
   Future<void> _showTournamentVotingDialog(Map<String, dynamic> tournamentMatch) async {
     if (!mounted) return;
@@ -652,6 +1067,40 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
         ),
       ),
     );
+  }
+
+  // Private turnuva oy verme
+  Future<void> _submitPrivateTournamentVote(String tournamentId, Map<String, dynamic> match, String winnerId) async {
+    try {
+      final user1 = match['user1'];
+      final user2 = match['user2'];
+      
+      final loserId = winnerId == user1['id'] ? user2['id'] : user1['id'];
+      
+      await TournamentService.voteForPrivateTournamentMatch(
+        tournamentId,
+        winnerId,
+        loserId,
+      );
+      
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.voteSavedSuccessfully),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.votingError(e.toString())),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   Future<void> _submitTournamentVote(Map<String, dynamic> tournamentMatch, String winnerId) async {
@@ -860,25 +1309,24 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
             
             const SizedBox(height: 12),
             
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
               children: [
                 _buildInfoChip(
                   Icons.people,
                   '${tournament.currentParticipants}/${tournament.maxParticipants}',
                 ),
-                const SizedBox(width: 8),
                 // Sadece sistem turnuvaları için entry fee ve prize pool göster
                 if (!tournament.isPrivate) ...[
                   _buildInfoChip(
                     Icons.monetization_on,
                     '${tournament.entryFee} coin',
                   ),
-                  const SizedBox(width: 8),
                   _buildInfoChip(
                     Icons.stars,
                     AppLocalizations.of(context)!.coinPrize(tournament.prizePool),
                   ),
-                  const SizedBox(width: 8),
                 ],
                 // Katılımcı listesi butonu
                 GestureDetector(
@@ -916,7 +1364,9 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 Icon(Icons.schedule, size: 16, color: Colors.grey[600]),
                 const SizedBox(width: 4),
                 Text(
-                  AppLocalizations.of(context)!.startDate(_formatDate(tournament.startDate)),
+                  tournament.isPrivate 
+                      ? 'Başlangıç: ${_formatDateTime(tournament.startDate)}'
+                      : AppLocalizations.of(context)!.startDate(_formatDate(tournament.startDate)),
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 12,
@@ -924,6 +1374,23 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 ),
               ],
             ),
+            
+            if (tournament.isPrivate) ...[
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Icon(Icons.event, size: 16, color: Colors.grey[600]),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Bitiş: ${_formatDateTime(tournament.endDate)}',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ],
             
             const SizedBox(height: 16),
             
@@ -988,8 +1455,26 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                         child: const Text('Turnuvadan Ayrıl'),
                       ),
                     ),
+                ] else ...[
+                  // Key ile katılan kişiler için özel buton
+                  if (tournament.isPrivate && _isUserViewer(tournament)) ...[
+                    // Key ile katılan kişi - katıl butonu
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _getJoinButtonEnabled(tournament)
+                            ? () => _joinTournament(tournament)
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: _getJoinButtonEnabled(tournament) 
+                              ? Colors.green
+                              : Colors.grey[300],
+                          foregroundColor: Colors.white,
+                        ),
+                        child: Text(_getJoinButtonText(tournament)),
+                      ),
+                    ),
                   ] else ...[
-                    // Katılım butonu (katılmadıysa)
+                    // Normal katılım butonu
                     Expanded(
                       child: ElevatedButton(
                         onPressed: _getJoinButtonEnabled(tournament)
@@ -1008,29 +1493,56 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                     ),
                   ],
                 ],
+                ],
                 const SizedBox(width: 8),
                 if (tournament.status == 'active') ...[
-                  // Turnuva oyla butonu - sadece aktif turnuvalar için
-                  ElevatedButton.icon(
-                    onPressed: () => _voteForSpecificTournament(tournament.id),
-                    icon: const Icon(Icons.how_to_vote),
-                    label: Text(AppLocalizations.of(context)!.vote),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple,
-                      foregroundColor: Colors.white,
+                  // Private turnuva için özel oylama butonu (katılımcı veya key ile katılan)
+                  if (tournament.isPrivate && (tournament.isUserParticipating || _isUserViewer(tournament))) ...[
+                    ElevatedButton.icon(
+                      onPressed: () => _voteForPrivateTournament(tournament.id),
+                      icon: const Icon(Icons.how_to_vote),
+                      label: Text(AppLocalizations.of(context)!.vote),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.purple,
+                        foregroundColor: Colors.white,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  // Sıralama butonu
-                  ElevatedButton.icon(
-                    onPressed: () => _showTournamentLeaderboard(tournament.id),
-                    icon: const Icon(Icons.leaderboard),
-                    label: Text(AppLocalizations.of(context)!.leaderboard),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
+                    const SizedBox(width: 8),
+                  ] else if (!tournament.isPrivate) ...[
+                    // Sistem turnuvaları için normal oylama
+                    ElevatedButton.icon(
+                      onPressed: () => _voteForSpecificTournament(tournament.id),
+                      icon: const Icon(Icons.how_to_vote),
+                      label: Text(AppLocalizations.of(context)!.vote),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.purple,
+                        foregroundColor: Colors.white,
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                  ],
+                  // Liderlik butonu (katılımcı veya key ile katılan)
+                  if (tournament.isPrivate && (tournament.isUserParticipating || _isUserViewer(tournament))) ...[
+                    ElevatedButton.icon(
+                      onPressed: () => _showPrivateTournamentLeaderboard(tournament.id),
+                      icon: const Icon(Icons.leaderboard),
+                      label: Text(AppLocalizations.of(context)!.leaderboard),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ] else if (!tournament.isPrivate) ...[
+                    ElevatedButton.icon(
+                      onPressed: () => _showTournamentLeaderboard(tournament.id),
+                      icon: const Icon(Icons.leaderboard),
+                      label: Text(AppLocalizations.of(context)!.leaderboard),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ],
                 ]
               ],
             ),
@@ -1066,6 +1578,10 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
 
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+    return '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
   // Turnuva format tooltip'leri
@@ -1109,6 +1625,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     String selectedGender = 'Erkek';
     DateTime startDate = DateTime.now().add(const Duration(days: 1));
     DateTime endDate = DateTime.now().add(const Duration(days: 7));
+    TimeOfDay startTime = const TimeOfDay(hour: 20, minute: 0);
+    TimeOfDay endTime = const TimeOfDay(hour: 22, minute: 0);
 
     await showDialog(
       context: context,
@@ -1235,7 +1753,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 ),
                 const SizedBox(height: 16),
                 
-                // Başlangıç tarihi
+                // Başlangıç tarihi ve saati
                 ListTile(
                   leading: const Icon(Icons.calendar_today),
                   title: const Text('Başlangıç Tarihi'),
@@ -1254,8 +1772,24 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                     }
                   },
                 ),
+                ListTile(
+                  leading: const Icon(Icons.access_time),
+                  title: const Text('Başlangıç Saati'),
+                  subtitle: Text('${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}'),
+                  onTap: () async {
+                    final time = await showTimePicker(
+                      context: context,
+                      initialTime: startTime,
+                    );
+                    if (time != null) {
+                      setDialogState(() {
+                        startTime = time;
+                      });
+                    }
+                  },
+                ),
                 
-                // Bitiş tarihi
+                // Bitiş tarihi ve saati
                 ListTile(
                   leading: const Icon(Icons.event),
                   title: const Text('Bitiş Tarihi'),
@@ -1270,6 +1804,22 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                     if (date != null) {
                       setDialogState(() {
                         endDate = date;
+                      });
+                    }
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.access_time),
+                  title: const Text('Bitiş Saati'),
+                  subtitle: Text('${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}'),
+                  onTap: () async {
+                    final time = await showTimePicker(
+                      context: context,
+                      initialTime: endTime,
+                    );
+                    if (time != null) {
+                      setDialogState(() {
+                        endTime = time;
                       });
                     }
                   },
@@ -1299,12 +1849,29 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 // Private turnuvalar için eleme usulü sınırı yok
                 
                 Navigator.pop(context);
+                
+                // Tarih ve saati birleştir
+                final finalStartDate = DateTime(
+                  startDate.year,
+                  startDate.month,
+                  startDate.day,
+                  startTime.hour,
+                  startTime.minute,
+                );
+                final finalEndDate = DateTime(
+                  endDate.year,
+                  endDate.month,
+                  endDate.day,
+                  endTime.hour,
+                  endTime.minute,
+                );
+                
                 await _createPrivateTournament(
                   name: nameController.text,
                   description: descriptionController.text,
                   maxParticipants: int.parse(maxParticipantsController.text),
-                  startDate: startDate,
-                  endDate: endDate,
+                  startDate: finalStartDate,
+                  endDate: finalEndDate,
                   tournamentFormat: selectedFormat,
                   gender: selectedGender,
                 );
@@ -1680,6 +2247,65 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       case 'league': return 'Lig Usulü';
       case 'elimination': return 'Eleme Usulü';
       default: return format;
+    }
+  }
+
+  // Private turnuva sıralamasını göster
+  Future<void> _showPrivateTournamentLeaderboard(String tournamentId) async {
+    try {
+      final leaderboard = await TournamentService.getPrivateTournamentLeaderboard(tournamentId);
+      
+      if (!mounted) return;
+      
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Private Turnuva Sıralaması'),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 400,
+            child: ListView.builder(
+              itemCount: leaderboard.length,
+              itemBuilder: (context, index) {
+                final participant = leaderboard[index];
+                final rank = index + 1;
+                
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: rank <= 3 ? Colors.amber : Colors.grey,
+                    child: Text(
+                      rank.toString(),
+                      style: TextStyle(
+                        color: rank <= 3 ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  title: Text(participant['profiles']['username'] ?? 'Bilinmeyen'),
+                  subtitle: Text('Kazanılan Match: ${participant['wins_count'] ?? 0}'),
+                  trailing: participant['is_eliminated'] 
+                      ? const Icon(Icons.close, color: Colors.red)
+                      : const Icon(Icons.check, color: Colors.green),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Kapat'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Sıralama yüklenirken hata: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -2070,11 +2696,11 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     if (!tournament.isPrivate && now.weekday >= 3) return false; // Çarşamba ve sonrası
     
     // Private turnuvalar için start date kontrolü
-    if (tournament.isPrivate && tournament.status == 'upcoming') {
-      if (now.isAfter(tournament.startDate)) return false; // Start date geçmiş
+    if (tournament.isPrivate) {
+      if (now.isAfter(tournament.startDate)) return false; // Start date geçmiş - katılım yok
     }
     
-    // Turnuva durumu kontrolü
+    // Turnuva durumu kontrolü - sadece upcoming durumunda katılım
     if (tournament.status != 'upcoming') return false;
     
     // Turnuva dolu mu kontrol et
@@ -2095,8 +2721,13 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       return "Turnuvaya Katıl";
     }
     
+    // Key ile katılan kişiler için özel metin
+    if (tournament.isPrivate && _isUserViewer(tournament)) {
+      return "Katıl";
+    }
+    
     // Private turnuvalar için start date kontrolü
-    if (tournament.isPrivate && tournament.status == 'upcoming') {
+    if (tournament.isPrivate) {
       final now = DateTime.now();
       if (now.isAfter(tournament.startDate)) {
         return "Kayıt Kapalı";
