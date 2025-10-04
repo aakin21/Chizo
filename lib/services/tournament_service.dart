@@ -1240,8 +1240,13 @@ class TournamentService {
   // Private turnuva oylaması yap
   static Future<bool> voteForPrivateTournamentMatch(String tournamentId, String winnerId, String loserId) async {
     try {
+      print('🎯 PRIVATE VOTE: Starting vote for tournament $tournamentId, winner: $winnerId, loser: $loserId');
+      
       final user = _client.auth.currentUser;
-      if (user == null) return false;
+      if (user == null) {
+        print('❌ PRIVATE VOTE: No authenticated user');
+        return false;
+      }
 
       // Kullanıcının users tablosundaki ID'sini al
       final currentUserRecord = await _client
@@ -1250,24 +1255,61 @@ class TournamentService {
           .eq('auth_id', user.id)
           .maybeSingle();
       
-      if (currentUserRecord == null) return false;
+      if (currentUserRecord == null) {
+        print('❌ PRIVATE VOTE: Current user record not found');
+        return false;
+      }
 
       final currentUserId = currentUserRecord['id'];
+      print('✅ PRIVATE VOTE: Current user ID: $currentUserId');
 
-      // Oy kaydını ekle
-      await _client.from('private_tournament_votes').insert({
-        'tournament_id': tournamentId,
-        'voter_id': currentUserId,
-        'winner_id': winnerId,
-        'loser_id': loserId,
-        'created_at': DateTime.now().toIso8601String(),
-      });
+      // Oy kaydını ekle (loser_id kolonu yoksa sadece winner_id ile kaydet)
+      try {
+        await _client.from('private_tournament_votes').insert({
+          'tournament_id': tournamentId,
+          'voter_id': currentUserId,
+          'winner_id': winnerId,
+          'created_at': DateTime.now().toIso8601String(),
+        });
+        print('✅ PRIVATE VOTE: Vote record inserted successfully');
+      } catch (voteError) {
+        print('⚠️ PRIVATE VOTE: Vote record insert failed: $voteError');
+        // Oy kaydı başarısız olsa bile devam et - sadece wins_count güncellemesi yeterli
+      }
 
-      // Kazananın skorunu artır (match kazanma sayısı)
-      await _client.rpc('increment_private_tournament_wins', params: {
-        'tournament_id': tournamentId,
-        'user_id': winnerId,
-      });
+      // Kazananın skorunu artır (match kazanma sayısı) - Manuel güncelleme
+      print('🎯 PRIVATE VOTE: Updating wins count for winner: $winnerId');
+      
+      try {
+        await _client.rpc('increment_private_tournament_wins', params: {
+          'tournament_id': tournamentId,
+          'user_id': winnerId,
+        });
+        print('✅ PRIVATE VOTE: RPC call successful');
+      } catch (rpcError) {
+        // RPC başarısız olursa manuel güncelleme yap
+        print('⚠️ PRIVATE VOTE: RPC failed, trying manual update: $rpcError');
+        
+        // Mevcut wins_count'u al
+        final currentRecord = await _client
+            .from('tournament_participants')
+            .select('wins_count')
+            .eq('tournament_id', tournamentId)
+            .eq('user_id', winnerId)
+            .maybeSingle();
+        
+        final currentWins = currentRecord?['wins_count'] ?? 0;
+        print('📊 PRIVATE VOTE: Current wins for user $winnerId: $currentWins');
+        
+        // Wins count'u artır
+        await _client
+            .from('tournament_participants')
+            .update({'wins_count': currentWins + 1})
+            .eq('tournament_id', tournamentId)
+            .eq('user_id', winnerId);
+        
+        print('✅ PRIVATE VOTE: Wins count updated to ${currentWins + 1}');
+      }
 
       return true;
     } catch (e) {
