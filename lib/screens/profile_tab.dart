@@ -231,11 +231,41 @@ class _ProfileTabState extends State<ProfileTab> {
                     children: [
                       // Avatar ve Progress Bar Sistemi
                       Card(
-                        elevation: 2,
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: Padding(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white,
+                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.05),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
                           padding: const EdgeInsets.all(20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,17 +284,48 @@ class _ProfileTabState extends State<ProfileTab> {
                             ],
                           ),
                         ),
+                        ),
                       ),
 
                       const SizedBox(height: 24),
 
                       // İstatistikler
                       Card(
-                        elevation: 2,
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: Padding(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white,
+                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.05),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
                           padding: const EdgeInsets.all(20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,22 +345,23 @@ class _ProfileTabState extends State<ProfileTab> {
                                   _buildStatItem(
                                     '${currentUser!.totalMatches}',
                                     AppLocalizations.of(context)!.totalMatches,
-                                    Colors.blue,
+                                    const Color(0xFFFF8C42), // Açık turuncu ton
                                   ),
                                   _buildStatItem(
                                     '${currentUser!.wins}',
                                     AppLocalizations.of(context)!.wins,
-                                    Colors.green,
+                                    const Color(0xFFFF6B35), // Ana turuncu ton
                                   ),
                                   _buildStatItem(
                                     '${_calculateWinRate(currentUser!.totalMatches, currentUser!.wins)}%',
                                     AppLocalizations.of(context)!.winRatePercentage,
-                                    Colors.orange,
+                                    const Color(0xFFE55A2B), // Koyu turuncu ton
                                   ),
                                 ],
                               ),
                             ],
                           ),
+                        ),
                         ),
                       ),
 
@@ -307,21 +369,51 @@ class _ProfileTabState extends State<ProfileTab> {
 
                       // Match History Butonu
                       Card(
-                        elevation: 2,
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: ListTile(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white,
+                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.05),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
                           contentPadding: const EdgeInsets.all(20),
                           leading: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: Colors.purple.withValues(alpha: 0.1),
+                              color: const Color(0xFFFF6B35).withValues(alpha: 0.1), // Ana turuncu ton
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Icon(
                               Icons.history,
-                              color: Colors.purple,
+                              color: Color(0xFFFF6B35), // Ana turuncu ton
                               size: 24,
                             ),
                           ),
@@ -349,27 +441,58 @@ class _ProfileTabState extends State<ProfileTab> {
                             );
                           },
                         ),
+                        ),
                       ),
 
                       const SizedBox(height: 16),
 
                       // Ülke Sıralaması Butonu
                       Card(
-                        elevation: 2,
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: ListTile(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white,
+                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.05),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
                           contentPadding: const EdgeInsets.all(20),
                           leading: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: Colors.blue.withValues(alpha: 0.1),
+                              color: const Color(0xFFFF8C42).withValues(alpha: 0.1), // Açık turuncu ton
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Icon(
                               Icons.flag,
-                              color: Colors.blue,
+                              color: Color(0xFFFF8C42), // Açık turuncu ton
                               size: 24,
                             ),
                           ),
@@ -390,16 +513,48 @@ class _ProfileTabState extends State<ProfileTab> {
                             );
                           },
                         ),
+                        ),
                       ),
 
                       const SizedBox(height: 24),
 
                       // Kullanıcı Adı
                       Card(
-                        child: ListTile(
+                        elevation: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white,
+                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.05),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
                           leading: const Icon(
                             Icons.person,
-                            color: Colors.blue,
+                            color: Color(0xFFFF6B35), // Ana turuncu ton
                             size: 28,
                           ),
                           title: Text(AppLocalizations.of(context)!.username),
@@ -414,16 +569,48 @@ class _ProfileTabState extends State<ProfileTab> {
                             ],
                           ),
                         ),
+                        ),
                       ),
 
                       const SizedBox(height: 16),
 
                       // E-posta
                       Card(
-                        child: ListTile(
+                        elevation: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white,
+                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.05),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
                           leading: const Icon(
                             Icons.email,
-                            color: Colors.green,
+                            color: Color(0xFFFF8C42), // Açık turuncu ton
                             size: 28,
                           ),
                           title: Text(AppLocalizations.of(context)!.email),
@@ -438,16 +625,48 @@ class _ProfileTabState extends State<ProfileTab> {
                             ],
                           ),
                         ),
+                        ),
                       ),
 
                       const SizedBox(height: 16),
 
                       // Coin Bilgisi
                       Card(
-                        child: ListTile(
+                        elevation: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white,
+                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.05),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
                           leading: const Icon(
                             Icons.monetization_on,
-                            color: Colors.amber,
+                            color: Color(0xFFE55A2B), // Koyu turuncu ton
                             size: 28,
                           ),
                           title: Text(AppLocalizations.of(context)!.coin),
@@ -472,16 +691,48 @@ class _ProfileTabState extends State<ProfileTab> {
                             },
                           ),
                         ),
+                        ),
                       ),
 
                       const SizedBox(height: 24),
 
                       // Yaş Seçimi
                       Card(
-                        child: ListTile(
+                        elevation: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white,
+                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.05),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
                           leading: const Icon(
                             Icons.cake,
-                            color: Colors.orange,
+                            color: Color(0xFFFF6B35), // Ana turuncu ton
                             size: 28,
                           ),
                           title: const Text('Yaş'),
@@ -489,16 +740,48 @@ class _ProfileTabState extends State<ProfileTab> {
                           trailing: const Icon(Icons.arrow_forward_ios),
                           onTap: () => _showAgeSelector(),
                         ),
+                        ),
                       ),
 
                       const SizedBox(height: 16),
 
                       // Ülke Seçimi
                       Card(
-                        child: ListTile(
+                        elevation: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white,
+                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.05),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
                           leading: const Icon(
                             Icons.public,
-                            color: Colors.blue,
+                            color: Color(0xFFFF8C42), // Açık turuncu ton
                             size: 28,
                           ),
                           title: const Text('Ülke'),
@@ -511,16 +794,48 @@ class _ProfileTabState extends State<ProfileTab> {
                           trailing: const Icon(Icons.arrow_forward_ios),
                           onTap: () => _showCountrySelector(),
                         ),
+                        ),
                       ),
 
                       const SizedBox(height: 16),
 
                       // Cinsiyet Seçimi
                       Card(
-                        child: ListTile(
+                        elevation: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white,
+                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.05),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
                           leading: const Icon(
                             Icons.person,
-                            color: Colors.purple,
+                            color: Color(0xFFE55A2B), // Koyu turuncu ton
                             size: 28,
                           ),
                           title: const Text('Cinsiyet'),
@@ -533,16 +848,48 @@ class _ProfileTabState extends State<ProfileTab> {
                           trailing: const Icon(Icons.arrow_forward_ios),
                           onTap: () => _showGenderSelector(),
                         ),
+                        ),
                       ),
 
                       const SizedBox(height: 24),
 
                       // Instagram Hesabı
                       Card(
-                        child: ListTile(
+                        elevation: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white,
+                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.05),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
                           leading: const Icon(
                             Icons.camera_alt,
-                            color: Colors.pink,
+                            color: Color(0xFFFF6B35), // Ana turuncu ton
                             size: 28,
                           ),
                           title: Text(AppLocalizations.of(context)!.instagramAccount),
@@ -553,7 +900,7 @@ class _ProfileTabState extends State<ProfileTab> {
                               Switch(
                                 value: _getFieldVisibility('instagram'),
                                 onChanged: (value) => _toggleFieldVisibility('instagram', value),
-                                activeThumbColor: Colors.green,
+                                activeThumbColor: const Color(0xFFFF6B35), // Ana turuncu ton
                               ),
                               const SizedBox(width: 8),
                               IconButton(
@@ -563,16 +910,48 @@ class _ProfileTabState extends State<ProfileTab> {
                             ],
                           ),
                         ),
+                        ),
                       ),
 
                       const SizedBox(height: 16),
 
                       // Meslek
                       Card(
-                        child: ListTile(
+                        elevation: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white,
+                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.05),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
                           leading: const Icon(
                             Icons.work,
-                            color: Colors.blue,
+                            color: Color(0xFFFF8C42), // Açık turuncu ton
                             size: 28,
                           ),
                           title: Text(AppLocalizations.of(context)!.profession),
@@ -583,7 +962,7 @@ class _ProfileTabState extends State<ProfileTab> {
                               Switch(
                                 value: _getFieldVisibility('profession'),
                                 onChanged: (value) => _toggleFieldVisibility('profession', value),
-                                activeThumbColor: Colors.green,
+                                activeThumbColor: const Color(0xFFFF6B35), // Ana turuncu ton
                               ),
                               const SizedBox(width: 8),
                               IconButton(
@@ -592,6 +971,7 @@ class _ProfileTabState extends State<ProfileTab> {
                               ),
                             ],
                           ),
+                        ),
                         ),
                       ),
 

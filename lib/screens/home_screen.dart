@@ -282,37 +282,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildNavigationButton(
                     icon: Icons.how_to_vote,
                     page: 'home',
-                    color: Colors.green,
+                    color: const Color(0xFFFF6B35), // Ana turuncu ton
                   ),
                   _buildNavigationButton(
                     icon: Icons.person,
                     page: 'profile',
-                    color: Colors.blue,
+                    color: const Color(0xFFFF8C42), // Açık turuncu ton
                   ),
                   _buildNavigationButton(
                     icon: Icons.emoji_events,
                     page: 'tournament',
-                    color: Colors.purple,
+                    color: const Color(0xFFE55A2B), // Koyu turuncu ton
                   ),
                   _buildNavigationButton(
                     icon: Icons.leaderboard,
                     page: 'leaderboard',
-                    color: Colors.orange,
+                    color: const Color(0xFFFF6B35), // Ana turuncu ton
                   ),
                   _buildNavigationButton(
                     icon: Icons.notifications,
                     page: 'notifications',
-                    color: Colors.red,
+                    color: const Color(0xFFFF8C42), // Açık turuncu ton
                   ),
                   _buildNavigationButton(
                     icon: Icons.store,
                     page: 'store',
-                    color: Colors.amber,
+                    color: const Color(0xFFE55A2B), // Koyu turuncu ton
                   ),
                   _buildNavigationButton(
                     icon: Icons.settings,
                     page: 'settings',
-                    color: Colors.grey,
+                    color: const Color(0xFFFF6B35), // Ana turuncu ton
                   ),
                 ],
               ),

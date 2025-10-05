@@ -211,9 +211,9 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
     return Column(
       children: [
         Container(
-          height: 8,
+          height: 4, // Çizgiyi incelttim
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          color: Theme.of(context).primaryColor,
+          color: const Color(0xFFFF6B35).withOpacity(0.3), // Daha soluk turuncu
         ),
         Expanded(
           child: _buildScrollableContent(),
@@ -278,6 +278,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
             title: Text(_getLocalizedText('notifications')),
             subtitle: Text(_getLocalizedText('notificationSettingsDescription')),
             value: _notificationsEnabled,
+            activeColor: const Color(0xFFFF6B35), // Ana turuncu ton
             onChanged: (value) {
               setState(() {
                 _notificationsEnabled = value;
@@ -292,6 +293,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
               title: Text(_getLocalizedText('tournamentNotifications')),
               subtitle: Text(_getLocalizedText('tournamentNotificationsDescription')),
               value: _tournamentNotifications,
+              activeColor: const Color(0xFFFF6B35), // Ana turuncu ton
               onChanged: (value) {
                 setState(() {
                   _tournamentNotifications = value;
@@ -303,6 +305,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
               title: Text(_getLocalizedText('winCelebrationNotifications')),
               subtitle: Text(_getLocalizedText('winCelebrationNotificationsDescription')),
               value: _winCelebrationNotifications,
+              activeColor: const Color(0xFFFF6B35), // Ana turuncu ton
               onChanged: (value) {
                 setState(() {
                   _winCelebrationNotifications = value;
@@ -314,6 +317,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
               title: Text(_getLocalizedText('streakReminderNotifications')),
               subtitle: Text(_getLocalizedText('streakReminderNotificationsDescription')),
               value: _streakReminderNotifications,
+              activeColor: const Color(0xFFFF6B35), // Ana turuncu ton
               onChanged: (value) {
                 setState(() {
                   _streakReminderNotifications = value;

@@ -8,6 +8,7 @@ import '../utils/beautiful_snackbar.dart';
 import 'tournament_detail_screen.dart';
 import 'champions_screen.dart';
 
+
 class TurnuvaTab extends StatefulWidget {
   const TurnuvaTab({super.key});
 
@@ -192,7 +193,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 icon: const Icon(Icons.emoji_events, size: 16),
                 label: const Text('Şampiyonlar'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber,
+                  backgroundColor: const Color(0xFFFF6B35), // Ana turuncu ton
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                   minimumSize: const Size(0, 32),
@@ -214,7 +215,25 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.emoji_events, size: 80, color: Colors.grey),
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            const Color(0xFFFF6B35).withOpacity(0.1),
+                            const Color(0xFFFF8C42).withOpacity(0.1),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Icon(
+                        Icons.emoji_events, 
+                        size: 60, 
+                        color: Color(0xFFFF6B35), // Ana turuncu ton
+                      ),
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       AppLocalizations.of(context)!.noActiveTournament,
@@ -238,6 +257,15 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     );
   }
 
+  // Turnuva amblemi widget'ı
+  Widget _buildAppLogoIcon() {
+    return const Icon(
+      Icons.emoji_events,
+      color: Colors.white,
+      size: 24,
+    );
+  }
+
   // Basit turnuva kartı - sadece isim ve katılımcı sayısı
   Widget _buildSimpleTournamentCard(TournamentModel tournament) {
     return GestureDetector(
@@ -245,11 +273,28 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              const Color(0xFFFFF8F5), // Çok açık turuncu ton
+            ],
+          ),
           borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: const Color(0xFFFF6B35).withOpacity(0.1),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: const Color(0xFFFF6B35).withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.05),
               spreadRadius: 1,
               blurRadius: 4,
               offset: const Offset(0, 2),
@@ -258,18 +303,36 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
         ),
         child: Row(
           children: [
-            // Turnuva ikonu
+            // Turnuva ikonu - Uygulama logosu
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: tournament.isPrivate ? Colors.purple.withOpacity(0.1) : Colors.blue.withOpacity(0.1),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFFFF6B35), // Ana turuncu ton
+                    const Color(0xFFFF8C42), // Açık turuncu ton
+                    const Color(0xFFE55A2B), // Koyu turuncu ton
+                  ],
+                ),
                 borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFFF6B35).withOpacity(0.3),
+                    spreadRadius: 1,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              child: Icon(
-                tournament.isPrivate ? Icons.lock : Icons.emoji_events,
-                color: tournament.isPrivate ? Colors.purple : Colors.blue,
-                size: 24,
-              ),
+              child: tournament.isPrivate 
+                ? const Icon(
+                    Icons.lock,
+                    color: Colors.white,
+                    size: 24,
+                  )
+                : _buildAppLogoIcon(),
             ),
             
             const SizedBox(width: 12),
@@ -343,7 +406,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
 
   // Turnuva detay sayfasına git
   void _navigateToTournamentDetail(TournamentModel tournament) async {
-    final result = await Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TournamentDetailScreen(tournament: tournament),
@@ -470,7 +533,10 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.tournamentName,
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.emoji_events),
+                    prefixIcon: const Icon(
+                      Icons.emoji_events,
+                      color: Color(0xFFFF6B35), // Ana turuncu ton
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),

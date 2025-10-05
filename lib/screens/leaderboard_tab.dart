@@ -58,7 +58,41 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
   Widget _buildUserCard(UserModel user, int rank, {String? subtitle}) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: ListTile(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              const Color(0xFFFFF8F5), // Çok açık turuncu ton
+            ],
+          ),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: const Color(0xFFFF6B35).withOpacity(0.1),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFFF6B35).withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.05),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ListTile(
         leading: CircleAvatar(
           radius: 20,
           backgroundColor: _getRankColor(rank),
@@ -93,6 +127,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
                  child: Icon(Icons.person),
                ),
          ),
+        ),
       ),
     );
   }
@@ -112,13 +147,13 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
   Color _getRankColor(int rank) {
     switch (rank) {
       case 1:
-        return Colors.amber;
+        return const Color(0xFFFF6B35); // Ana turuncu ton - 1. sıra
       case 2:
-        return Colors.grey[400]!;
+        return const Color(0xFFFF8C42); // Açık turuncu ton - 2. sıra
       case 3:
-        return Colors.brown[400]!;
+        return const Color(0xFFE55A2B); // Koyu turuncu ton - 3. sıra
       default:
-        return Colors.blue;
+        return const Color(0xFFFF6B35).withOpacity(0.7); // Ana turuncu ton (şeffaf) - diğer sıralar
     }
   }
 
@@ -183,6 +218,9 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
       children: [
         TabBar(
           controller: _tabController,
+          indicatorColor: const Color(0xFFFF6B35), // Ana turuncu ton
+          labelColor: const Color(0xFFFF6B35), // Ana turuncu ton
+          unselectedLabelColor: Colors.grey[600],
           tabs: [
             Tab(text: AppLocalizations.of(context)!.mostWins),
             Tab(text: AppLocalizations.of(context)!.highestWinRate),

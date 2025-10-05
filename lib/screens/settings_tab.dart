@@ -317,6 +317,8 @@ class _SettingsTabState extends State<SettingsTab> {
                 subtitle: const Text("Diğer kullanıcılar sizi görebilir"),
                 trailing: Switch(
                   value: _currentUser?.isVisible ?? false,
+                  activeColor: const Color(0xFFFF6B35), // Turuncu aktif renk
+                  activeTrackColor: const Color(0xFFFF6B35).withOpacity(0.3), // Hafif turuncu track
                   onChanged: (value) async {
                     final success = await UserService.updateProfile(isVisible: value);
                     if (success) {
@@ -393,9 +395,13 @@ class _SettingsTabState extends State<SettingsTab> {
                 icon: const Icon(Icons.share),
                 label: Text(AppLocalizations.of(context)!.shareLink),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  backgroundColor: const Color(0xFFFF6B35), // Turuncu arka plan
+                  foregroundColor: Colors.white, // Beyaz yazı
                   minimumSize: const Size(double.infinity, 48),
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
             ],
@@ -442,10 +448,33 @@ class _SettingsTabState extends State<SettingsTab> {
     required String title,
     required List<Widget> children,
   }) {
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white,
+            Color(0xFFFFF8F5), // Hafif turuncu ton
+          ],
+        ),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFFF6B35).withOpacity(0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFF6B35).withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -456,7 +485,7 @@ class _SettingsTabState extends State<SettingsTab> {
               title,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).primaryColor,
+                color: const Color(0xFFFF6B35), // Turuncu başlık rengi
               ),
             ),
             const SizedBox(height: 12),
@@ -620,16 +649,16 @@ class _SettingsTabState extends State<SettingsTab> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             colors: [
-                              Theme.of(context).colorScheme.primary,
-                              Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                              Color(0xFFFF6B35), // Ana turuncu ton
+                              Color(0xFFFF8C42), // Açık turuncu ton
                             ],
                           ),
                           borderRadius: BorderRadius.circular(25),
                           boxShadow: [
                             BoxShadow(
-                              color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                              color: const Color(0xFFFF6B35).withOpacity(0.3),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -668,10 +697,10 @@ class _SettingsTabState extends State<SettingsTab> {
                           min: 18,
                           max: 100,
                           divisions: 82,
-                          activeColor: Theme.of(context).colorScheme.primary,
-                          inactiveColor: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                          activeColor: const Color(0xFFFF6B35), // Turuncu aktif renk
+                          inactiveColor: const Color(0xFFFF6B35).withOpacity(0.2), // Hafif turuncu inaktif
                           overlayColor: MaterialStateProperty.all(
-                            Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                            const Color(0xFFFF6B35).withOpacity(0.15), // Turuncu overlay
                           ),
                           onChanged: (values) {
                             setDialogState(() {
@@ -689,30 +718,30 @@ class _SettingsTabState extends State<SettingsTab> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                              color: const Color(0xFFFF6B35).withOpacity(0.1), // Hafif turuncu arka plan
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               '18',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Color(0xFFFF6B35), // Turuncu yazı rengi
                               ),
                             ),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                              color: const Color(0xFFFF6B35).withOpacity(0.1), // Hafif turuncu arka plan
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               '100',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Color(0xFFFF6B35), // Turuncu yazı rengi
                               ),
                             ),
                           ),
@@ -728,6 +757,9 @@ class _SettingsTabState extends State<SettingsTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey[600], // Gri yazı rengi
+              ),
               child: const Text('İptal'),
             ),
             ElevatedButton(
@@ -740,6 +772,14 @@ class _SettingsTabState extends State<SettingsTab> {
                 }
                 await _updateAgeRangePreferences(newAgeRanges);
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF6B35), // Turuncu arka plan
+                foregroundColor: Colors.white, // Beyaz yazı
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
               child: const Text('Kaydet'),
             ),
           ],
@@ -757,9 +797,20 @@ class _SettingsTabState extends State<SettingsTab> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           title: const Text('Ülke Tercihleri'),
-          content: SizedBox(
+          content: Container(
             width: double.maxFinite,
             height: 400,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white,
+                  Color(0xFFFFF8F5), // Çok hafif turuncu ton
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Column(
               children: [
                 const Text('Hangi ülkelerden oylanmak istediğinizi seçin:'),
@@ -772,6 +823,7 @@ class _SettingsTabState extends State<SettingsTab> {
                       return CheckboxListTile(
                         title: Text(country),
                         value: selectedCountries.contains(country),
+                        activeColor: const Color(0xFFFF6B35), // Turuncu checkbox rengi
                         onChanged: (value) {
                           setDialogState(() {
                             if (value == true) {
@@ -791,6 +843,9 @@ class _SettingsTabState extends State<SettingsTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey[600], // Gri yazı rengi
+              ),
               child: const Text('İptal'),
             ),
             ElevatedButton(
@@ -798,6 +853,14 @@ class _SettingsTabState extends State<SettingsTab> {
                 Navigator.pop(context);
                 await _updateCountryPreferences(selectedCountries);
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF6B35), // Turuncu arka plan
+                foregroundColor: Colors.white, // Beyaz yazı
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
               child: const Text('Kaydet'),
             ),
           ],

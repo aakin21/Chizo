@@ -716,8 +716,22 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                               child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.7),
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Color(0xFFFF6B35), // Ana turuncu ton
+                                      Color(0xFFFF8C42), // Açık turuncu ton
+                                    ],
+                                  ),
                                   borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFFFF6B35).withOpacity(0.3),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
                                 child: Text(
                                   user1.username,
@@ -807,8 +821,22 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                               child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.7),
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Color(0xFFFF6B35), // Ana turuncu ton
+                                      Color(0xFFFF8C42), // Açık turuncu ton
+                                    ],
+                                  ),
                                   borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFFFF6B35).withOpacity(0.3),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
                                 child: Text(
                                   user2.username,
@@ -1226,8 +1254,26 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Kullanıcı adı
-                    RotatedBox(
-                      quarterTurns: 0,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFFFF6B35), // Ana turuncu ton
+                            Color(0xFFFF8C42), // Açık turuncu ton
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFFF6B35).withOpacity(0.3),
+                            blurRadius: 6,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
                       child: Text(
                         targetUser.username,
                         style: const TextStyle(
@@ -1620,7 +1666,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         break;
       case 'Beyaz':
       default:
-        color = Colors.white.withOpacity(0.1);
+        color = Colors.white; // Beyaz arka plan
         break;
     }
     return color;
@@ -1638,7 +1684,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         break;
       case 'Beyaz':
       default:
-        color = Colors.grey.shade400;
+        color = const Color(0xFFFF6B35); // Ana turuncu ton
         break;
     }
     return color;

@@ -669,9 +669,13 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
           ElevatedButton(
             onPressed: () => _showLeaderboard(),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
+              backgroundColor: const Color(0xFFFF6B35), // Turuncu arka plan
+              foregroundColor: Colors.white, // Beyaz yazı
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: const Text('Liderlik Tablosunu Gör'),
           ),
@@ -944,7 +948,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
         backgroundColor: Colors.grey[900],
         title: const Text(
           'Liderlik Tablosu',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Color(0xFFFF6B35)), // Turuncu başlık rengi
         ),
         content: SizedBox(
           width: double.maxFinite,
@@ -956,7 +960,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
-                  child: CircularProgressIndicator(color: Colors.purple),
+                  child: CircularProgressIndicator(color: Color(0xFFFF6B35)), // Turuncu loading indicator
                 );
               }
               
@@ -998,9 +1002,19 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                     margin: const EdgeInsets.symmetric(vertical: 4),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: rank <= 3 ? Colors.purple.withOpacity(0.1) : Colors.grey[800],
+                      gradient: rank <= 3 
+                          ? LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                const Color(0xFFFF6B35).withOpacity(0.1), // Hafif turuncu
+                                const Color(0xFFFF8C42).withOpacity(0.05), // Daha hafif turuncu
+                              ],
+                            )
+                          : null,
+                      color: rank > 3 ? Colors.grey[800] : null,
                       borderRadius: BorderRadius.circular(8),
-                      border: rank <= 3 ? Border.all(color: Colors.purple.withOpacity(0.3)) : null,
+                      border: rank <= 3 ? Border.all(color: const Color(0xFFFF6B35).withOpacity(0.3)) : null,
                     ),
                     child: Row(
                       children: [
@@ -1009,7 +1023,17 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                           width: 30,
                           height: 30,
                           decoration: BoxDecoration(
-                            color: rank <= 3 ? Colors.purple : Colors.grey[600],
+                            gradient: rank <= 3 
+                                ? LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFFFF6B35), // Ana turuncu
+                                      const Color(0xFFFF8C42), // Açık turuncu
+                                    ],
+                                  )
+                                : null,
+                            color: rank > 3 ? Colors.grey[600] : null,
                             shape: BoxShape.circle,
                           ),
                           child: Center(
@@ -1039,7 +1063,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                               ? '$score galibiyet'
                               : '$score puan',
                           style: TextStyle(
-                            color: rank <= 3 ? Colors.purple : Colors.white70,
+                            color: rank <= 3 ? const Color(0xFFFF6B35) : Colors.white70, // Turuncu puan rengi
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -1054,10 +1078,10 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Kapat',
-              style: TextStyle(color: Colors.purple),
+            style: TextButton.styleFrom(
+              foregroundColor: const Color(0xFFFF6B35), // Turuncu yazı rengi
             ),
+            child: const Text('Kapat'),
           ),
         ],
       ),

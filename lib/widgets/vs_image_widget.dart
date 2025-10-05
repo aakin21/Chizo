@@ -186,22 +186,20 @@ class VSPainter extends CustomPainter {
   }
 
   void _drawWhiteTheme(Canvas canvas, Size size) {
-    // White theme - flame VS (no background, use container background)
+    // White theme - turuncu VS (beyaz arka plan içinde turuncu)
 
-    // Draw flame V
+    // Draw V
     final vPath = Path();
-    vPath.moveTo(size.width * 0.15, size.height * 0.3);
-    vPath.lineTo(size.width * 0.2, size.height * 0.1);
-    vPath.lineTo(size.width * 0.25, size.height * 0.15);
-    vPath.lineTo(size.width * 0.3, size.height * 0.1);
-    vPath.lineTo(size.width * 0.35, size.height * 0.3);
-    vPath.lineTo(size.width * 0.32, size.height * 0.4);
-    vPath.lineTo(size.width * 0.28, size.height * 0.35);
-    vPath.lineTo(size.width * 0.24, size.height * 0.4);
-    vPath.lineTo(size.width * 0.21, size.height * 0.35);
+    vPath.moveTo(size.width * 0.15, size.height * 0.1);
+    vPath.lineTo(size.width * 0.25, size.height * 0.7);
+    vPath.lineTo(size.width * 0.35, size.height * 0.1);
+    vPath.lineTo(size.width * 0.32, size.height * 0.1);
+    vPath.lineTo(size.width * 0.27, size.height * 0.65);
+    vPath.lineTo(size.width * 0.23, size.height * 0.65);
+    vPath.lineTo(size.width * 0.18, size.height * 0.1);
     vPath.close();
 
-    // Draw flame S
+    // Draw S
     final sPath = Path();
     sPath.moveTo(size.width * 0.55, size.height * 0.15);
     sPath.arcToPoint(Offset(size.width * 0.75, size.height * 0.3), 
@@ -215,18 +213,31 @@ class VSPainter extends CustomPainter {
     sPath.arcToPoint(Offset(size.width * 0.55, size.height * 0.85), 
                      radius: const Radius.circular(15));
 
-    // Create flame gradient
-    final flamePaint = Paint()
+    // Create turuncu gradient (logodaki turuncu tonları)
+    final orangePaint = Paint()
       ..style = PaintingStyle.fill
       ..shader = ui.Gradient.linear(
         Offset(0, 0),
         Offset(size.width, size.height),
-        [Colors.yellow, Colors.orange, Colors.red],
+        [
+          const Color(0xFFFF6B35), // Ana turuncu ton
+          const Color(0xFFFF8C42), // Açık turuncu ton
+          const Color(0xFFE55A2B), // Koyu turuncu ton
+        ],
         [0.0, 0.5, 1.0],
       );
 
-    canvas.drawPath(vPath, flamePaint);
-    canvas.drawPath(sPath, flamePaint);
+    canvas.drawPath(vPath, orangePaint);
+    canvas.drawPath(sPath, orangePaint);
+
+    // Add subtle outline for better visibility
+    final outlinePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1
+      ..color = const Color(0xFFFF6B35).withOpacity(0.3);
+
+    canvas.drawPath(vPath, outlinePaint);
+    canvas.drawPath(sPath, outlinePaint);
   }
 
   @override

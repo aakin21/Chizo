@@ -43,21 +43,21 @@ class StandardNavigationBar extends StatelessWidget implements PreferredSizeWidg
   Widget _getPageIcon(String page) {
     switch (page) {
       case 'home':
-        return const Icon(Icons.how_to_vote, color: Colors.green, size: 24);
+        return const Icon(Icons.how_to_vote, color: Color(0xFFFF6B35), size: 24); // Ana turuncu ton
       case 'profile':
-        return const Icon(Icons.person, color: Colors.blue, size: 24);
+        return const Icon(Icons.person, color: Color(0xFFFF8C42), size: 24); // Açık turuncu ton
       case 'tournament':
-        return const Icon(Icons.emoji_events, color: Colors.purple, size: 24);
+        return const Icon(Icons.emoji_events, color: Color(0xFFE55A2B), size: 24); // Koyu turuncu ton
       case 'leaderboard':
-        return const Icon(Icons.leaderboard, color: Colors.orange, size: 24);
+        return const Icon(Icons.leaderboard, color: Color(0xFFFF6B35), size: 24); // Ana turuncu ton
       case 'notifications':
-        return const Icon(Icons.notifications, color: Colors.purple, size: 24);
+        return const Icon(Icons.notifications, color: Color(0xFFFF8C42), size: 24); // Açık turuncu ton
       case 'store':
-        return const Icon(Icons.store, color: Colors.orange, size: 24);
+        return const Icon(Icons.store, color: Color(0xFFE55A2B), size: 24); // Koyu turuncu ton
       case 'settings':
-        return const Icon(Icons.settings, color: Colors.green, size: 24);
+        return const Icon(Icons.settings, color: Color(0xFFFF6B35), size: 24); // Ana turuncu ton
       default:
-        return const Icon(Icons.apps, color: Colors.grey, size: 24);
+        return const Icon(Icons.apps, color: Color(0xFFFF6B35), size: 24); // Ana turuncu ton
     }
   }
 
@@ -91,7 +91,7 @@ class StandardNavigationBar extends StatelessWidget implements PreferredSizeWidg
                 context: context,
                 icon: Icons.how_to_vote,
                 page: 'home',
-                color: Colors.green,
+                color: const Color(0xFFFF6B35), // Ana turuncu ton
                 onPressed: () => _navigateToPage(context, 'home'),
               ),
               // Profil
@@ -99,7 +99,7 @@ class StandardNavigationBar extends StatelessWidget implements PreferredSizeWidg
                 context: context,
                 icon: Icons.person,
                 page: 'profile',
-                color: Colors.blue,
+                color: const Color(0xFFFF8C42), // Açık turuncu ton
                 onPressed: () => _navigateToPage(context, 'profile'),
               ),
               // Turnuva
@@ -107,7 +107,7 @@ class StandardNavigationBar extends StatelessWidget implements PreferredSizeWidg
                 context: context,
                 icon: Icons.emoji_events,
                 page: 'tournament',
-                color: Colors.purple,
+                color: const Color(0xFFE55A2B), // Koyu turuncu ton
                 onPressed: () => _navigateToPage(context, 'tournament'),
               ),
               // Liderlik
@@ -115,7 +115,7 @@ class StandardNavigationBar extends StatelessWidget implements PreferredSizeWidg
                 context: context,
                 icon: Icons.leaderboard,
                 page: 'leaderboard',
-                color: Colors.orange,
+                color: const Color(0xFFFF6B35), // Ana turuncu ton
                 onPressed: () => _navigateToPage(context, 'leaderboard'),
               ),
               // Bildirimler
@@ -123,7 +123,7 @@ class StandardNavigationBar extends StatelessWidget implements PreferredSizeWidg
                 context: context,
                 icon: Icons.notifications,
                 page: 'notifications',
-                color: Colors.purple,
+                color: const Color(0xFFFF8C42), // Açık turuncu ton
                 onPressed: () => _navigateToPage(context, 'notifications'),
               ),
               // Mağaza
@@ -131,7 +131,7 @@ class StandardNavigationBar extends StatelessWidget implements PreferredSizeWidg
                 context: context,
                 icon: Icons.store,
                 page: 'store',
-                color: Colors.orange,
+                color: const Color(0xFFE55A2B), // Koyu turuncu ton
                 onPressed: () => _navigateToPage(context, 'store'),
               ),
               // Ayarlar
@@ -139,7 +139,7 @@ class StandardNavigationBar extends StatelessWidget implements PreferredSizeWidg
                 context: context,
                 icon: Icons.settings,
                 page: 'settings',
-                color: Colors.green,
+                color: const Color(0xFFFF6B35), // Ana turuncu ton
                 onPressed: () => _navigateToPage(context, 'settings'),
               ),
             ],

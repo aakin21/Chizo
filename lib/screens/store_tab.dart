@@ -85,7 +85,41 @@ class _StoreTabState extends State<StoreTab> {
           
           // Coin Bakiyesi
           Card(
-            child: Padding(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white,
+                    const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFFFF6B35).withOpacity(0.1),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFFF6B35).withOpacity(0.1),
+                    spreadRadius: 1,
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.05),
+                    spreadRadius: 1,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Padding(
               padding: const EdgeInsets.all(20),
               child: Row(
                 children: [
@@ -116,6 +150,7 @@ class _StoreTabState extends State<StoreTab> {
                   ),
                 ],
               ),
+              ),
             ),
           ),
 
@@ -144,8 +179,41 @@ class _StoreTabState extends State<StoreTab> {
     required List<Widget> children,
   }) {
     return Card(
-      elevation: 2,
-      child: Padding(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              const Color(0xFFFFF8F5), // Çok açık turuncu ton
+            ],
+          ),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: const Color(0xFFFF6B35).withOpacity(0.1),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFFF6B35).withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.05),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,6 +229,7 @@ class _StoreTabState extends State<StoreTab> {
             ...children,
           ],
         ),
+        ),
       ),
     );
   }
@@ -170,7 +239,41 @@ class _StoreTabState extends State<StoreTab> {
     
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              const Color(0xFFFFF8F5), // Çok açık turuncu ton
+            ],
+          ),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: const Color(0xFFFF6B35).withOpacity(0.1),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFFF6B35).withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.05),
+              spreadRadius: 1,
+              blurRadius: 3,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        child: ListTile(
         leading: Container(
           width: 40,
           height: 40,
@@ -190,9 +293,18 @@ class _StoreTabState extends State<StoreTab> {
         subtitle: Text(price),
         trailing: ElevatedButton(
           onPressed: () => _showPurchaseDialog(coins),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFFF6B35), // Ana turuncu ton
+            foregroundColor: Colors.white,
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
           child: Text(l10n.buy),
         ),
         onTap: () => _showPurchaseDialog(coins),
+        ),
       ),
     );
   }
@@ -202,7 +314,41 @@ class _StoreTabState extends State<StoreTab> {
     
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              const Color(0xFFFFF8F5), // Çok açık turuncu ton
+            ],
+          ),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: const Color(0xFFFF6B35).withOpacity(0.1),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFFF6B35).withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.05),
+              spreadRadius: 1,
+              blurRadius: 3,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        child: ListTile(
         leading: Container(
           width: 40,
           height: 40,
@@ -227,11 +373,22 @@ class _StoreTabState extends State<StoreTab> {
             const SizedBox(height: 4),
             ElevatedButton(
               onPressed: _canWatchAd() ? _watchAdForCoins : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _canWatchAd() 
+                  ? const Color(0xFFFF6B35) // Ana turuncu ton
+                  : Colors.grey[400], // Devre dışı durumda gri
+                foregroundColor: Colors.white,
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
               child: const Text('İzle'),
             ),
           ],
         ),
         onTap: _canWatchAd() ? _watchAdForCoins : null,
+        ),
       ),
     );
   }
@@ -257,6 +414,9 @@ class _StoreTabState extends State<StoreTab> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.grey[600],
+            ),
             child: Text(l10n.cancel),
           ),
           ElevatedButton(
@@ -264,6 +424,14 @@ class _StoreTabState extends State<StoreTab> {
               Navigator.pop(context);
               _simulateAdWatch();
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFF6B35), // Ana turuncu ton
+              foregroundColor: Colors.white,
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
             child: Text(l10n.watchAd),
           ),
         ],
@@ -364,6 +532,9 @@ class _StoreTabState extends State<StoreTab> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.grey[600],
+            ),
             child: Text(l10n.cancel),
           ),
           ElevatedButton(
@@ -371,6 +542,14 @@ class _StoreTabState extends State<StoreTab> {
               Navigator.pop(context);
               _simulatePurchase(coins);
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFF6B35), // Ana turuncu ton
+              foregroundColor: Colors.white,
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
             child: Text(l10n.buy),
           ),
         ],

@@ -138,8 +138,33 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           Container(
             padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withOpacity(0.2),
+                  const Color(0xFFFFF8F5).withOpacity(0.3), // Çok açık turuncu ton
+                ],
+              ),
               borderRadius: BorderRadius.circular(15),
+              border: Border.all(
+                color: const Color(0xFFFF6B35).withOpacity(0.2),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFFF6B35).withOpacity(0.1),
+                  spreadRadius: 1,
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.05),
+                  spreadRadius: 1,
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -148,25 +173,25 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   'Galibiyet',
                   widget.user.wins.toString(),
                   Icons.emoji_events,
-                  Colors.amber,
+                  const Color(0xFFFF6B35), // Ana turuncu ton
                 ),
                 _buildStatItem(
                   'Toplam Maç',
                   widget.user.totalMatches.toString(),
                   Icons.sports_esports,
-                  Colors.blue,
+                  const Color(0xFFFF8C42), // Açık turuncu ton
                 ),
                 _buildStatItem(
                   'Kazanma Oranı',
                   widget.user.winRateString,
                   Icons.trending_up,
-                  Colors.green,
+                  const Color(0xFFE55A2B), // Koyu turuncu ton
                 ),
                 _buildStatItem(
                   'Seri',
                   widget.user.currentStreak.toString(),
                   Icons.local_fire_department,
-                  Colors.orange,
+                  const Color(0xFFFF6B35), // Ana turuncu ton
                 ),
               ],
             ),
@@ -485,13 +510,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   'Galibiyet',
                   wins.toString(),
                   Icons.emoji_events,
-                  Colors.amber,
+                  const Color(0xFFFF6B35), // Ana turuncu ton
                 ),
                 _buildStatItemFullScreen(
                   'Toplam Maç',
                   totalMatches.toString(),
                   Icons.sports_esports,
-                  Colors.blue,
+                  const Color(0xFFFF8C42), // Açık turuncu ton
                 ),
                 _buildStatItemFullScreen(
                   'Kazanma Oranı',
@@ -514,9 +539,24 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                color.withOpacity(0.2),
+                color.withOpacity(0.1),
+              ],
+            ),
             borderRadius: BorderRadius.circular(15),
             border: Border.all(color: color.withOpacity(0.5)),
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.2),
+                spreadRadius: 1,
+                blurRadius: 6,
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
           child: Icon(icon, color: Colors.white, size: 24),
         ),
