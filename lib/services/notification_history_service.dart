@@ -4,14 +4,17 @@ import '../models/notification_model.dart';
 class NotificationHistoryService {
   static final SupabaseClient _client = Supabase.instance.client;
 
-  // Son 50 bildirimi getir
+  // Son 20 bildirimi getir (maksimum limit)
   static Future<List<NotificationModel>> getNotificationHistory({
-    int limit = 50,
+    int limit = 20,
     int offset = 0,
   }) async {
     try {
       final user = _client.auth.currentUser;
       if (user == null) return [];
+
+      // Maksimum 20 bildirim limiti
+      final actualLimit = limit > 20 ? 20 : limit;
 
       // Use auth_id directly for notifications
       final response = await _client
@@ -19,7 +22,7 @@ class NotificationHistoryService {
           .select()
           .eq('user_id', user.id)
           .order('created_at', ascending: false)
-          .range(offset, offset + limit - 1);
+          .range(offset, offset + actualLimit - 1);
 
       return (response as List)
           .map((json) => NotificationModel.fromJson(json))
@@ -64,6 +67,63 @@ class NotificationHistoryService {
     } catch (e) {
       print('❌ Failed to delete all notifications: $e');
       return false;
+    }
+  }
+
+  // Uygulama başlatıldığında bildirimleri temizle
+  static Future<void> initializeNotificationCleanup() async {
+    try {
+      await cleanupExcessNotifications();
+      print('✅ Notification cleanup initialized');
+    } catch (e) {
+      print('❌ Failed to initialize notification cleanup: $e');
+    }
+  }
+
+  // 20'den fazla bildirim varsa eski olanları sil
+  static Future<void> cleanupExcessNotifications() async {
+    try {
+      final user = _client.auth.currentUser;
+      if (user == null) return;
+
+      // Toplam bildirim sayısını kontrol et
+      final countResponse = await _client
+          .from('notifications')
+          .select('id')
+          .eq('user_id', user.id);
+
+      final totalCount = countResponse.length;
+      
+      if (totalCount > 20) {
+        // 20'den fazla bildirim varsa, en eski olanları sil
+        final excessCount = totalCount - 20;
+        
+        // En eski bildirimleri bul
+        final oldNotifications = await _client
+            .from('notifications')
+            .select('id')
+            .eq('user_id', user.id)
+            .order('created_at', ascending: true) // En eski önce
+            .limit(excessCount);
+
+        if (oldNotifications.isNotEmpty) {
+          // Eski bildirimlerin ID'lerini al
+          final idsToDelete = oldNotifications.map((n) => n['id']).toList();
+          
+          // Eski bildirimleri sil
+          for (final id in idsToDelete) {
+            await _client
+                .from('notifications')
+                .delete()
+                .eq('id', id)
+                .eq('user_id', user.id);
+          }
+
+          print('✅ Cleaned up ${excessCount} excess notifications');
+        }
+      }
+    } catch (e) {
+      print('❌ Failed to cleanup excess notifications: $e');
     }
   }
 

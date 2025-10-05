@@ -102,6 +102,15 @@ class _SettingsTabState extends State<SettingsTab> {
       _selectedTheme = theme;
     });
     
+    // Tema değişikliği sonrası tüm sayfaları güncellemek için
+    // WidgetsBinding.instance.addPostFrameCallback kullan
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Tüm widget'ların rebuild olması için
+      if (mounted) {
+        setState(() {});
+      }
+    });
+    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(AppLocalizations.of(context)!.themeChanged(_getThemeName(theme))),

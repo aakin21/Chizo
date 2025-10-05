@@ -70,6 +70,9 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
   Future<void> _loadNotifications() async {
     setState(() => isLoading = true);
     try {
+      // Önce fazla bildirimleri temizle
+      await NotificationHistoryService.cleanupExcessNotifications();
+      
       final notificationList = await NotificationHistoryService.getNotificationHistory();
       final unread = await NotificationHistoryService.getUnreadCount();
       

@@ -58,6 +58,8 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
   @override
   void dispose() {
     _tabController.dispose();
+    // Callback'i temizle
+    GlobalThemeService().clearAllCallbacks();
     super.dispose();
   }
 

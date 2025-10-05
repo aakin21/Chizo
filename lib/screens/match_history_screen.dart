@@ -41,6 +41,13 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    // Callback'i temizle
+    GlobalThemeService().clearAllCallbacks();
+    super.dispose();
+  }
+
   Future<void> _loadCurrentTheme() async {
     try {
       final prefs = await SharedPreferences.getInstance();

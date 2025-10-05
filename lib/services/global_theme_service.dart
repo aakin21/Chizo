@@ -5,27 +5,50 @@ class GlobalThemeService {
   factory GlobalThemeService() => _instance;
   GlobalThemeService._internal();
 
-  // Global theme değiştirme callback'i
-  Function(String)? _onThemeChanged;
+  // Birden fazla callback'i desteklemek için liste
+  final List<Function(String)> _themeChangeCallbacks = [];
 
   // Callback'i kaydet
   void setThemeChangeCallback(Function(String) callback) {
-    _onThemeChanged = callback;
+    // Aynı callback'i tekrar eklemeyi engelle
+    if (!_themeChangeCallbacks.contains(callback)) {
+      _themeChangeCallbacks.add(callback);
+    }
+  }
+
+  // Callback'i kaldır
+  void removeThemeChangeCallback(Function(String) callback) {
+    _themeChangeCallbacks.remove(callback);
+  }
+
+  // Tüm callback'leri temizle
+  void clearAllCallbacks() {
+    _themeChangeCallbacks.clear();
   }
 
   // Theme değiştir
   Future<void> changeTheme(String theme) async {
+    print('🎨 GlobalThemeService - Changing theme to: $theme');
+    print('🎨 GlobalThemeService - Active callbacks: ${_themeChangeCallbacks.length}');
+    
     // Önce theme ayarını kaydet
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('selected_theme', theme);
     
     // Kısa bir gecikme - theme ayarının kaydedilmesi için
-    await Future.delayed(const Duration(milliseconds: 50));
+    await Future.delayed(const Duration(milliseconds: 100));
     
-    // Sonra global callback'i çağır
-    if (_onThemeChanged != null) {
-      _onThemeChanged!(theme);
+    // Tüm callback'leri çağır
+    for (int i = 0; i < _themeChangeCallbacks.length; i++) {
+      try {
+        print('🎨 GlobalThemeService - Calling callback $i');
+        _themeChangeCallbacks[i](theme);
+      } catch (e) {
+        print('❌ Theme callback error: $e');
+      }
     }
+    
+    print('🎨 GlobalThemeService - Theme change completed');
   }
 
   // Mevcut theme'i al

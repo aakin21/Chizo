@@ -163,11 +163,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void changeTheme(String theme) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('selected_theme', theme);
-    await Future.delayed(const Duration(milliseconds: 50));
+    await Future.delayed(const Duration(milliseconds: 100));
     
     if (mounted) {
       setState(() {
         _selectedTheme = theme;
+      });
+      
+      // Tema değişikliği sonrası tüm widget'ları güncelle
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {});
+        }
       });
     }
   }

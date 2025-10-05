@@ -46,6 +46,13 @@ class _ProfileTabState extends State<ProfileTab> {
     });
   }
 
+  @override
+  void dispose() {
+    // Callback'i temizle
+    GlobalThemeService().clearAllCallbacks();
+    super.dispose();
+  }
+
   Future<void> _loadCurrentTheme() async {
     try {
       final prefs = await SharedPreferences.getInstance();
