@@ -801,35 +801,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tournamentFees => 'Turnier-Teilnahmegebühren';
 
   @override
-  String get weeklyMaleTournament1000 =>
-      'Wöchentliches Männerturnier (1000 Münzen)';
+  String get weeklyMaleTournament5000 =>
+      'Wöchentliches Männerturnier (5000 Münzen)';
 
   @override
-  String get weeklyMaleTournament1000Desc =>
-      'Wöchentliches Männerturnier - 300 Personen Kapazität';
-
-  @override
-  String get weeklyMaleTournament10000 =>
-      'Wöchentliches Männerturnier (10000 Münzen)';
-
-  @override
-  String get weeklyMaleTournament10000Desc =>
+  String get weeklyMaleTournament5000Desc =>
       'Premium Männerturnier - 100 Personen Kapazität';
 
   @override
-  String get weeklyFemaleTournament1000 =>
-      'Wöchentliches Frauenturnier (1000 Münzen)';
+  String get weeklyFemaleTournament5000 =>
+      'Wöchentliches Frauenturnier (5000 Münzen)';
 
   @override
-  String get weeklyFemaleTournament1000Desc =>
-      'Wöchentliches Frauenturnier - 300 Personen Kapazität';
-
-  @override
-  String get weeklyFemaleTournament10000 =>
-      'Wöchentliches Frauenturnier (10000 Münzen)';
-
-  @override
-  String get weeklyFemaleTournament10000Desc =>
+  String get weeklyFemaleTournament5000Desc =>
       'Premium Frauenturnier - 100 Personen Kapazität';
 
   @override
@@ -1460,20 +1444,26 @@ class AppLocalizationsDe extends AppLocalizations {
       'Maximal 8 Teilnehmer für K.O.-Format erlaubt';
 
   @override
-  String get weeklyMaleTournament1000Description =>
-      'Wöchentliches Männerturnier - 300 Teilnehmer Kapazität';
-
-  @override
-  String get weeklyMaleTournament10000Description =>
+  String get weeklyMaleTournament5000Description =>
       'Premium Männerturnier - 100 Teilnehmer Kapazität';
 
   @override
-  String get weeklyFemaleTournament1000Description =>
-      'Wöchentliches Frauenturnier - 300 Teilnehmer Kapazität';
+  String get weeklyFemaleTournament5000Description =>
+      'Premium Frauenturnier - 100 Teilnehmer Kapazität';
 
   @override
-  String get weeklyFemaleTournament10000Description =>
-      'Premium Frauenturnier - 100 Teilnehmer Kapazität';
+  String get instantMaleTournament5000 => 'Chizo Männerturnier (5000 Münzen)';
+
+  @override
+  String get instantMaleTournament5000Description =>
+      'Premium Männerturnier das startet wenn 100 Teilnehmer beitreten';
+
+  @override
+  String get instantFemaleTournament5000 => 'Chizo Frauenturnier (5000 Münzen)';
+
+  @override
+  String get instantFemaleTournament5000Description =>
+      'Premium Frauenturnier das startet wenn 100 Teilnehmer beitreten';
 
   @override
   String get dataPrivacy => 'Data Privacy';

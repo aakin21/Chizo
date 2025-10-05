@@ -1500,53 +1500,29 @@ abstract class AppLocalizations {
   /// **'Tournament participation fees'**
   String get tournamentFees;
 
-  /// Name for weekly male tournament with 1000 coin entry fee
+  /// Name for Chizo male tournament with 5000 coin entry fee
   ///
   /// In en, this message translates to:
-  /// **'Weekly Male Tournament (1000 Coins)'**
-  String get weeklyMaleTournament1000;
+  /// **'Chizo Male Tournament (5000 Coins)'**
+  String get weeklyMaleTournament5000;
 
-  /// No description provided for @weeklyMaleTournament1000Desc.
-  ///
-  /// In en, this message translates to:
-  /// **'Weekly male tournament - 300 person capacity'**
-  String get weeklyMaleTournament1000Desc;
-
-  /// Name for weekly male tournament with 10000 coin entry fee
-  ///
-  /// In en, this message translates to:
-  /// **'Weekly Male Tournament (10000 Coins)'**
-  String get weeklyMaleTournament10000;
-
-  /// No description provided for @weeklyMaleTournament10000Desc.
+  /// No description provided for @weeklyMaleTournament5000Desc.
   ///
   /// In en, this message translates to:
   /// **'Premium male tournament - 100 person capacity'**
-  String get weeklyMaleTournament10000Desc;
+  String get weeklyMaleTournament5000Desc;
 
-  /// Name for weekly female tournament with 1000 coin entry fee
+  /// Name for Chizo female tournament with 5000 coin entry fee
   ///
   /// In en, this message translates to:
-  /// **'Weekly Female Tournament (1000 Coins)'**
-  String get weeklyFemaleTournament1000;
+  /// **'Chizo Female Tournament (5000 Coins)'**
+  String get weeklyFemaleTournament5000;
 
-  /// No description provided for @weeklyFemaleTournament1000Desc.
-  ///
-  /// In en, this message translates to:
-  /// **'Weekly female tournament - 300 person capacity'**
-  String get weeklyFemaleTournament1000Desc;
-
-  /// Name for weekly female tournament with 10000 coin entry fee
-  ///
-  /// In en, this message translates to:
-  /// **'Weekly Female Tournament (10000 Coins)'**
-  String get weeklyFemaleTournament10000;
-
-  /// No description provided for @weeklyFemaleTournament10000Desc.
+  /// No description provided for @weeklyFemaleTournament5000Desc.
   ///
   /// In en, this message translates to:
   /// **'Premium female tournament - 100 person capacity'**
-  String get weeklyFemaleTournament10000Desc;
+  String get weeklyFemaleTournament5000Desc;
 
   /// No description provided for @tournamentEntryFee.
   ///
@@ -2676,29 +2652,41 @@ abstract class AppLocalizations {
   /// **'Maximum 8 participants allowed for elimination format'**
   String get eliminationMaxParticipantsWarning;
 
-  /// Description for weekly male tournament with 1000 coin entry fee
-  ///
-  /// In en, this message translates to:
-  /// **'Weekly male tournament - 300 participant capacity'**
-  String get weeklyMaleTournament1000Description;
-
-  /// Description for weekly male tournament with 10000 coin entry fee
+  /// Description for Chizo male tournament with 5000 coin entry fee
   ///
   /// In en, this message translates to:
   /// **'Premium male tournament - 100 participant capacity'**
-  String get weeklyMaleTournament10000Description;
+  String get weeklyMaleTournament5000Description;
 
-  /// Description for weekly female tournament with 1000 coin entry fee
-  ///
-  /// In en, this message translates to:
-  /// **'Weekly female tournament - 300 participant capacity'**
-  String get weeklyFemaleTournament1000Description;
-
-  /// Description for weekly female tournament with 10000 coin entry fee
+  /// Description for Chizo female tournament with 5000 coin entry fee
   ///
   /// In en, this message translates to:
   /// **'Premium female tournament - 100 participant capacity'**
-  String get weeklyFemaleTournament10000Description;
+  String get weeklyFemaleTournament5000Description;
+
+  /// Name for instant male tournament that starts when 100 participants join
+  ///
+  /// In en, this message translates to:
+  /// **'Chizo Male Tournament (5000 Coins)'**
+  String get instantMaleTournament5000;
+
+  /// Description for instant male tournament that starts when 100 participants join
+  ///
+  /// In en, this message translates to:
+  /// **'Premium male tournament that starts when 100 participants join'**
+  String get instantMaleTournament5000Description;
+
+  /// Name for instant female tournament that starts when 100 participants join
+  ///
+  /// In en, this message translates to:
+  /// **'Chizo Female Tournament (5000 Coins)'**
+  String get instantFemaleTournament5000;
+
+  /// Description for instant female tournament that starts when 100 participants join
+  ///
+  /// In en, this message translates to:
+  /// **'Premium female tournament that starts when 100 participants join'**
+  String get instantFemaleTournament5000Description;
 
   /// Data privacy section title
   ///

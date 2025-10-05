@@ -1,3 +1,5 @@
+import '../l10n/app_localizations.dart';
+
 class TournamentModel {
   final String id;
   final String name;
@@ -132,6 +134,25 @@ class TournamentModel {
       'name_key': nameKey,
       'description_key': descriptionKey,
     };
+  }
+
+  // Localized name getter - uses nameKey if available, otherwise falls back to name
+  String getLocalizedName(AppLocalizations localizations) {
+    if (nameKey != null) {
+      switch (nameKey) {
+        case 'instantMaleTournament5000':
+          return localizations.instantMaleTournament5000;
+        case 'instantFemaleTournament5000':
+          return localizations.instantFemaleTournament5000;
+        case 'weeklyMaleTournament5000':
+          return localizations.weeklyMaleTournament5000;
+        case 'weeklyFemaleTournament5000':
+          return localizations.weeklyFemaleTournament5000;
+        default:
+          return name; // Fallback to static name
+      }
+    }
+    return name; // Fallback to static name
   }
 }
 

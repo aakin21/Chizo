@@ -4,6 +4,7 @@ import 'package:chizo/models/tournament_model.dart';
 import 'package:chizo/services/tournament_service.dart';
 import 'package:chizo/services/user_service.dart';
 import 'package:chizo/models/user_model.dart';
+import 'package:chizo/l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 
@@ -199,7 +200,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         title: Text(
-          widget.tournament.name,
+          widget.tournament.getLocalizedName(AppLocalizations.of(context)!),
           style: const TextStyle(fontSize: 18),
         ),
         leading: IconButton(
@@ -683,7 +684,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                     child: Column(
                       children: [
                         Text(
-                          widget.tournament.name,
+                          widget.tournament.getLocalizedName(AppLocalizations.of(context)!),
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -1050,7 +1051,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: Colors.grey[900],
         title: Text(
-          widget.tournament.name,
+          widget.tournament.getLocalizedName(AppLocalizations.of(context)!),
           style: const TextStyle(color: Colors.white),
         ),
         content: SingleChildScrollView(
@@ -1066,8 +1067,16 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                 _buildInfoRow('Ödül Havuzu', '${widget.tournament.prizePool} coin'),
               ],
               _buildInfoRow('Oluşturulma', _formatDate(widget.tournament.createdAt)),
-              _buildInfoRow('Başlangıç', _formatDate(widget.tournament.startDate)),
-              _buildInfoRow('Bitiş', _formatDate(widget.tournament.endDate)),
+              
+              // 5000 coinlik turnuvalar için özel açıklama
+              if (widget.tournament.entryFee == 5000) ...[
+                _buildInfoRow('Başlangıç', '100 kişi dolduğunda başlar'),
+                _buildInfoRow('Bitiş', '6 gün sürer (3 lig + 3 eleme)'),
+                _buildInfoRow('Sayaç', '100 kişi dolduğunda 1 saat sayacı'),
+              ] else ...[
+                _buildInfoRow('Başlangıç', _formatDate(widget.tournament.startDate)),
+                _buildInfoRow('Bitiş', _formatDate(widget.tournament.endDate)),
+              ],
             ],
           ),
         ),

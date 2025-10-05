@@ -417,14 +417,10 @@
   "professionView": "Ver información de profesión",
   "statsView": "Ver estadísticas detalladas",
   "tournamentFees": "Tarifas de participación en torneos",
-  "weeklyMaleTournament1000": "Torneo Masculino Semanal (1000 Monedas)",
-  "weeklyMaleTournament1000Desc": "Torneo masculino semanal - capacidad de 300 personas",
-  "weeklyMaleTournament10000": "Torneo Masculino Semanal (10000 Monedas)",
-  "weeklyMaleTournament10000Desc": "Torneo masculino premium - capacidad de 100 personas",
-  "weeklyFemaleTournament1000": "Torneo Femenino Semanal (1000 Monedas)",
-  "weeklyFemaleTournament1000Desc": "Torneo femenino semanal - capacidad de 300 personas",
-  "weeklyFemaleTournament10000": "Torneo Femenino Semanal (10000 Monedas)",
-  "weeklyFemaleTournament10000Desc": "Torneo femenino premium - capacidad de 100 personas",
+  "weeklyMaleTournament5000": "Torneo Masculino Chizo (5000 Monedas)",
+  "weeklyMaleTournament5000Desc": "Torneo masculino premium - capacidad de 100 personas",
+  "weeklyFemaleTournament5000": "Torneo Femenino Chizo (5000 Monedas)",
+  "weeklyFemaleTournament5000Desc": "Torneo femenino premium - capacidad de 100 personas",
   "tournamentEntryFee": "Tarifa de entrada al torneo",
   "tournamentVotingTitle": "Votación del Torneo",
   "tournamentThirdPlace": "3er lugar del torneo",
@@ -654,13 +650,13 @@
   "@weeklyMaleTournament1000Description": {
     "description": "Descripción para torneo masculino semanal con cuota de entrada de 1000 monedas"
   },
-  "weeklyMaleTournament10000": "Torneo Masculino Semanal (10000 Monedas)",
-  "@weeklyMaleTournament10000": {
-    "description": "Nombre para torneo masculino semanal con cuota de entrada de 10000 monedas"
+  "weeklyMaleTournament5000": "Torneo Masculino Semanal (5000 Monedas)",
+  "@weeklyMaleTournament5000": {
+    "description": "Nombre para torneo masculino semanal con cuota de entrada de 5000 monedas"
   },
-  "weeklyMaleTournament10000Description": "Torneo masculino premium - capacidad de 100 participantes",
-  "@weeklyMaleTournament10000Description": {
-    "description": "Descripción para torneo masculino semanal con cuota de entrada de 10000 monedas"
+  "weeklyMaleTournament5000Description": "Torneo masculino premium - capacidad de 100 participantes",
+  "@weeklyMaleTournament5000Description": {
+    "description": "Descripción para torneo masculino semanal con cuota de entrada de 5000 monedas"
   },
   "weeklyFemaleTournament1000": "Torneo Femenino Semanal (1000 Monedas)",
   "@weeklyFemaleTournament1000": {
@@ -670,13 +666,29 @@
   "@weeklyFemaleTournament1000Description": {
     "description": "Descripción para torneo femenino semanal con cuota de entrada de 1000 monedas"
   },
-  "weeklyFemaleTournament10000": "Torneo Femenino Semanal (10000 Monedas)",
-  "@weeklyFemaleTournament10000": {
-    "description": "Nombre para torneo femenino semanal con cuota de entrada de 10000 monedas"
+  "weeklyFemaleTournament5000": "Torneo Femenino Semanal (5000 Monedas)",
+  "@weeklyFemaleTournament5000": {
+    "description": "Nombre para torneo femenino semanal con cuota de entrada de 5000 monedas"
   },
-  "weeklyFemaleTournament10000Description": "Torneo femenino premium - capacidad de 100 participantes",
-  "@weeklyFemaleTournament10000Description": {
-    "description": "Descripción para torneo femenino semanal con cuota de entrada de 10000 monedas"
+  "weeklyFemaleTournament5000Description": "Torneo femenino premium - capacidad de 100 participantes",
+  "@weeklyFemaleTournament5000Description": {
+    "description": "Descripción para torneo femenino semanal con cuota de entrada de 5000 monedas"
+  },
+  "instantMaleTournament5000": "Torneo Masculino Chizo (5000 Monedas)",
+  "@instantMaleTournament5000": {
+    "description": "Nombre para torneo masculino instantáneo que comienza cuando 100 participantes se unen"
+  },
+  "instantMaleTournament5000Description": "Torneo masculino premium que comienza cuando 100 participantes se unen",
+  "@instantMaleTournament5000Description": {
+    "description": "Descripción para torneo masculino instantáneo que comienza cuando 100 participantes se unen"
+  },
+  "instantFemaleTournament5000": "Torneo Femenino Chizo (5000 Monedas)",
+  "@instantFemaleTournament5000": {
+    "description": "Nombre para torneo femenino instantáneo que comienza cuando 100 participantes se unen"
+  },
+  "instantFemaleTournament5000Description": "Torneo femenino premium que comienza cuando 100 participantes se unen",
+  "@instantFemaleTournament5000Description": {
+    "description": "Descripción para torneo femenino instantáneo que comienza cuando 100 participantes se unen"
   },
   
   "notificationCenter": "Notificaciones",

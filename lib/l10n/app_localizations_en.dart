@@ -790,34 +790,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tournamentFees => 'Tournament participation fees';
 
   @override
-  String get weeklyMaleTournament1000 => 'Weekly Male Tournament (1000 Coins)';
+  String get weeklyMaleTournament5000 => 'Chizo Male Tournament (5000 Coins)';
 
   @override
-  String get weeklyMaleTournament1000Desc =>
-      'Weekly male tournament - 300 person capacity';
-
-  @override
-  String get weeklyMaleTournament10000 =>
-      'Weekly Male Tournament (10000 Coins)';
-
-  @override
-  String get weeklyMaleTournament10000Desc =>
+  String get weeklyMaleTournament5000Desc =>
       'Premium male tournament - 100 person capacity';
 
   @override
-  String get weeklyFemaleTournament1000 =>
-      'Weekly Female Tournament (1000 Coins)';
+  String get weeklyFemaleTournament5000 =>
+      'Chizo Female Tournament (5000 Coins)';
 
   @override
-  String get weeklyFemaleTournament1000Desc =>
-      'Weekly female tournament - 300 person capacity';
-
-  @override
-  String get weeklyFemaleTournament10000 =>
-      'Weekly Female Tournament (10000 Coins)';
-
-  @override
-  String get weeklyFemaleTournament10000Desc =>
+  String get weeklyFemaleTournament5000Desc =>
       'Premium female tournament - 100 person capacity';
 
   @override
@@ -1438,20 +1422,27 @@ class AppLocalizationsEn extends AppLocalizations {
       'Maximum 8 participants allowed for elimination format';
 
   @override
-  String get weeklyMaleTournament1000Description =>
-      'Weekly male tournament - 300 participant capacity';
-
-  @override
-  String get weeklyMaleTournament10000Description =>
+  String get weeklyMaleTournament5000Description =>
       'Premium male tournament - 100 participant capacity';
 
   @override
-  String get weeklyFemaleTournament1000Description =>
-      'Weekly female tournament - 300 participant capacity';
+  String get weeklyFemaleTournament5000Description =>
+      'Premium female tournament - 100 participant capacity';
 
   @override
-  String get weeklyFemaleTournament10000Description =>
-      'Premium female tournament - 100 participant capacity';
+  String get instantMaleTournament5000 => 'Chizo Male Tournament (5000 Coins)';
+
+  @override
+  String get instantMaleTournament5000Description =>
+      'Premium male tournament that starts when 100 participants join';
+
+  @override
+  String get instantFemaleTournament5000 =>
+      'Chizo Female Tournament (5000 Coins)';
+
+  @override
+  String get instantFemaleTournament5000Description =>
+      'Premium female tournament that starts when 100 participants join';
 
   @override
   String get dataPrivacy => 'Data Privacy';

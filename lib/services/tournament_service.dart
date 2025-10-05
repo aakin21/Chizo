@@ -163,201 +163,662 @@ class TournamentService {
     }
   }
 
-  // Eski turnuvaları temizle - sadece eski haftalık turnuvaları sil
-  static Future<void> _cleanupOldTournaments() async {
-    try {
-      // Sadece eski haftalık turnuvaları sil (geçen hafta ve öncesi)
-      final lastWeek = DateTime.now().subtract(const Duration(days: 7));
-      
-      await _client
-          .from('tournaments')
-          .delete()
-          .lt('registration_start_date', lastWeek.toIso8601String())
-          .like('name', '%Haftalık%');
-      
-      // // print('Old weekly tournaments cleaned up!');
-    } catch (e) {
-      // // print('Error cleaning up old tournaments: $e');
-    }
-  }
 
-  // Otomatik haftalık turnuva sistemi - düzeltilmiş zamanlama
+
+  // Otomatik haftalık turnuva sistemi - sadece 5000 coinlik turnuvalar
   static Future<void> createWeeklyTournaments() async {
     try {
-      final now = DateTime.now();
-      
-      // Bu haftanın Pazartesi gününü bul (00:01'de kayıt başlar)
-      final thisWeekMonday = _getThisWeekMonday(now);
-      // Çarşamba 00:01'de kayıt kapanır, turnuva başlar
-      final thisWeekWednesday = thisWeekMonday.add(const Duration(days: 2));
-      // Cuma 00:01'de çeyrek final
-      final thisWeekFriday = thisWeekMonday.add(const Duration(days: 4));
-      // Cumartesi 00:01'de yarı final
-      final thisWeekSaturday = thisWeekMonday.add(const Duration(days: 5));
-      // Pazar 00:01'de final
-      final thisWeekSunday = thisWeekMonday.add(const Duration(days: 6));
-      
-      // Bu hafta için sistem turnuvaları var mı kontrol et
-      print('🗓️ DEBUG: createWeeklyTournaments başladı');
-      print('📅 DEBUG: Bu hafta Pazartesi: $thisWeekMonday');
-      
+      await create5000CoinTournaments();
+    } catch (e) {
+      // Error creating weekly tournaments
+    }
+  }
+
+
+
+
+
+  // 5000 coinlik turnuvaları oluştur (100 kişi dolduğunda başlayan)
+  static Future<void> create5000CoinTournaments() async {
+    try {
       final existingTournaments = await _client
           .from('tournaments')
-          .select('id, name, status')
-          .gte('registration_start_date', thisWeekMonday.toIso8601String())
-          .lt('registration_start_date', thisWeekMonday.add(const Duration(days: 7)).toIso8601String())
+          .select('id, name, status, current_participants')
+          .eq('entry_fee', 5000)
           .eq('is_private', false)
-          .eq('is_system_tournament', true); // Sadece sistem turnuvaları
-      
-      print('🔍 DEBUG: Mevcut turnuvalar: ${(existingTournaments as List).length} adet');
-      for (var tournament in existingTournaments) {
-        print('  - ${tournament['name']} (${tournament['status']})');
-      }
-      
-      // Eğer bu hafta için sistem turnuvası yoksa oluştur
-      if ((existingTournaments as List).isEmpty) {
-        print('➕ DEBUG: Yeni haftalık turnuvalar oluşturuluyor...');
-        await _cleanupOldTournaments();
-        
-        // Ortak sistem turnuvaları oluştur (dil farkı yok, sadece metin farkı)
-        await _createSystemTournaments(
-          thisWeekMonday,        // Pazartesi 00:01 - Kayıt başlar
-          thisWeekWednesday,     // Çarşamba 00:01 - Kayıt kapanır, turnuva başlar
-          thisWeekWednesday,     // Çarşamba 00:01 - Oylama başlar
-          thisWeekFriday,        // Cuma 00:01 - Oylama biter
-          thisWeekFriday,        // Cuma 00:01 - Çeyrek final
-          thisWeekSaturday,      // Cumartesi 00:01 - Yarı final
-          thisWeekSunday,        // Pazar 00:01 - Final
-        );
+          .eq('is_system_tournament', true)
+          .inFilter('status', ['upcoming', 'active']);
 
-        print('✅ DEBUG: Haftalık turnuvalar oluşturuldu');
-      } else {
-        print('ℹ️ DEBUG: Bu hafta için turnuvalar zaten mevcut');
+      if ((existingTournaments as List).isEmpty) {
+        await _create5000CoinTournament('Erkek');
+        await _create5000CoinTournament('Kadın');
       }
     } catch (e) {
-      print('❌ DEBUG: createWeeklyTournaments hatası: $e');
+      // Error creating 5000 coin tournaments
     }
   }
 
-  // Ortak sistem turnuvaları oluştur (dil farkı yok)
-  static Future<void> _createSystemTournaments(
-    DateTime registrationStartDate,
-    DateTime startDate,
-    DateTime votingStartDate,
-    DateTime votingEndDate,
-    DateTime quarterFinalDate,
-    DateTime semiFinalDate,
-    DateTime finalDate,
-  ) async {
-    // Sistem turnuvaları - tüm diller için ortak
-    final systemTournaments = [
-      {
-        'name_key': 'weeklyMaleTournament1000',
-        'description_key': 'weeklyMaleTournament1000Description',
-        'entryFee': 1000,
-        'maxParticipants': 300,
-        'gender': 'Erkek',
-      },
-      {
-        'name_key': 'weeklyMaleTournament10000',
-        'description_key': 'weeklyMaleTournament10000Description',
-        'entryFee': 10000,
-        'maxParticipants': 100,
-        'gender': 'Erkek',
-      },
-      {
-        'name_key': 'weeklyFemaleTournament1000',
-        'description_key': 'weeklyFemaleTournament1000Description',
-        'entryFee': 1000,
-        'maxParticipants': 300,
-        'gender': 'Kadın',
-      },
-      {
-        'name_key': 'weeklyFemaleTournament10000',
-        'description_key': 'weeklyFemaleTournament10000Description',
-        'entryFee': 10000,
-        'maxParticipants': 100,
-        'gender': 'Kadın',
-      },
-    ];
-
-    // Her sistem turnuvası için ortak turnuva oluştur
-    for (var tournament in systemTournaments) {
-      await _createSystemTournament(
-        nameKey: tournament['name_key'] as String,
-        descriptionKey: tournament['description_key'] as String,
-        entryFee: tournament['entryFee'] as int,
-        maxParticipants: tournament['maxParticipants'] as int,
-        gender: tournament['gender'] as String,
-        registrationStartDate: registrationStartDate,
-        startDate: startDate,
-        votingStartDate: votingStartDate,
-        votingEndDate: votingEndDate,
-        quarterFinalDate: quarterFinalDate,
-        semiFinalDate: semiFinalDate,
-        finalDate: finalDate,
-      );
-    }
-  }
-
-  // Sistem turnuvası oluştur (dil-agnostic)
-  static Future<void> _createSystemTournament({
-    required String nameKey,
-    required String descriptionKey,
-    required int entryFee,
-    required int maxParticipants,
-    required String gender,
-    required DateTime registrationStartDate,
-    required DateTime startDate,
-    required DateTime votingStartDate,
-    required DateTime votingEndDate,
-    required DateTime quarterFinalDate,
-    required DateTime semiFinalDate,
-    required DateTime finalDate,
-  }) async {
+  // 5000 coinlik turnuva oluştur
+  static Future<void> _create5000CoinTournament(String gender) async {
     try {
       final tournamentId = const Uuid().v4();
+      final nameKey = gender == 'Erkek' ? 'instantMaleTournament5000' : 'instantFemaleTournament5000';
+      final descriptionKey = gender == 'Erkek' ? 'instantMaleTournament5000Description' : 'instantFemaleTournament5000Description';
       
       await _client.from('tournaments').insert({
         'id': tournamentId,
-        'name_key': nameKey, // Localization key
-        'description_key': descriptionKey, // Localization key
-        'entry_fee': entryFee,
-        'prize_pool': entryFee * maxParticipants,
-        'max_participants': maxParticipants,
+        'name_key': nameKey,
+        'description_key': descriptionKey,
+        'entry_fee': 5000,
+        'prize_pool': 5000 * 100,
+        'max_participants': 100,
         'current_participants': 0,
-        'start_date': startDate.toIso8601String(),
-        'end_date': finalDate.toIso8601String(),
+        'start_date': null,
+        'end_date': null,
         'status': 'upcoming',
         'gender': gender,
         'current_phase': 'registration',
-        'registration_start_date': registrationStartDate.toIso8601String(),
-        'voting_start_date': votingStartDate.toIso8601String(),
-        'voting_end_date': votingEndDate.toIso8601String(),
-        'quarter_final_date': quarterFinalDate.toIso8601String(),
-        'semi_final_date': semiFinalDate.toIso8601String(),
-        'final_date': finalDate.toIso8601String(),
+        'registration_start_date': DateTime.now().toIso8601String(),
+        'voting_start_date': null,
+        'voting_end_date': null,
+        'quarter_final_date': null,
+        'semi_final_date': null,
+        'final_date': null,
         'is_private': false,
-        'is_system_tournament': true, // Sistem turnuvası işareti
+        'is_system_tournament': true,
         'tournament_format': 'hybrid',
-        'language': 'system', // Sistem turnuvası için özel dil
+        'language': 'system',
         'created_at': DateTime.now().toIso8601String(),
+        'countdown_start_date': null,
       });
-
-      // // print('System tournament created: $nameKey');
     } catch (e) {
-      // // print('Error creating system tournament: $e');
+      // Error creating 5000 coin tournament
     }
   }
 
-
-
-  // Bu haftanın Pazartesi gününü hesapla
-  static DateTime _getThisWeekMonday(DateTime now) {
-    final daysFromMonday = now.weekday - 1;
-    final monday = now.subtract(Duration(days: daysFromMonday));
-    return DateTime(monday.year, monday.month, monday.day, 12, 0, 0);
+  // Debug: Mevcut turnuvaların name_key durumunu kontrol et
+  static Future<void> debugTournamentNameKeys() async {
+    try {
+      final tournaments = await _client
+          .from('tournaments')
+          .select('id, name, name_key, entry_fee, gender, is_system_tournament')
+          .eq('entry_fee', 5000)
+          .eq('is_system_tournament', true);
+      
+      print('🔍 DEBUG: 5000 coin turnuvalar:');
+      for (var tournament in tournaments) {
+        print('  - ID: ${tournament['id']}');
+        print('    Name: ${tournament['name']}');
+        print('    Name Key: ${tournament['name_key']}');
+        print('    Gender: ${tournament['gender']}');
+        print('    ---');
+      }
+    } catch (e) {
+      print('❌ DEBUG: Error checking tournament name keys: $e');
+    }
   }
+
+  // Mevcut turnuvaların name_key alanlarını güncelle
+  static Future<void> updateExistingTournamentNameKeys() async {
+    try {
+      final tournaments = await _client
+          .from('tournaments')
+          .select('id, name_key, entry_fee, gender, is_system_tournament')
+          .eq('entry_fee', 5000)
+          .eq('is_system_tournament', true);
+      
+      for (var tournament in tournaments) {
+        final tournamentId = tournament['id'];
+        final gender = tournament['gender'];
+        final currentNameKey = tournament['name_key'];
+        
+        // Eğer name_key yoksa veya yanlışsa güncelle
+        String? newNameKey;
+        String? newDescriptionKey;
+        
+        if (gender == 'Erkek') {
+          newNameKey = 'instantMaleTournament5000';
+          newDescriptionKey = 'instantMaleTournament5000Description';
+        } else if (gender == 'Kadın') {
+          newNameKey = 'instantFemaleTournament5000';
+          newDescriptionKey = 'instantFemaleTournament5000Description';
+        }
+        
+        if (newNameKey != null && currentNameKey != newNameKey) {
+          print('🔄 DEBUG: Updating tournament $tournamentId name_key to $newNameKey');
+          await _client
+              .from('tournaments')
+              .update({
+                'name_key': newNameKey,
+                'description_key': newDescriptionKey,
+              })
+              .eq('id', tournamentId);
+        }
+      }
+    } catch (e) {
+      print('❌ DEBUG: Error updating tournament name keys: $e');
+    }
+  }
+
+  // 5000 coinlik turnuvaları kontrol et ve gerekirse başlat
+  static Future<void> checkAndStart5000CoinTournaments() async {
+    try {
+      final readyTournaments = await _client
+          .from('tournaments')
+          .select('id, name, current_participants, countdown_start_date')
+          .eq('entry_fee', 5000)
+          .eq('status', 'upcoming')
+          .eq('is_system_tournament', true)
+          .gte('current_participants', 100);
+
+      for (var tournament in readyTournaments) {
+        final countdownStartDate = tournament['countdown_start_date'];
+        
+        if (countdownStartDate == null) {
+          final now = DateTime.now();
+          final startTime = now.add(const Duration(hours: 1));
+          
+          await _client
+              .from('tournaments')
+              .update({
+                'countdown_start_date': now.toIso8601String(),
+                'start_date': startTime.toIso8601String(),
+                'voting_start_date': startTime.toIso8601String(),
+                'voting_end_date': startTime.add(const Duration(days: 3)).toIso8601String(),
+                'quarter_final_date': startTime.add(const Duration(days: 4)).toIso8601String(),
+                'semi_final_date': startTime.add(const Duration(days: 5)).toIso8601String(),
+                'final_date': startTime.add(const Duration(days: 6)).toIso8601String(),
+                'end_date': startTime.add(const Duration(days: 6)).toIso8601String(),
+              })
+              .eq('id', tournament['id']);
+        } else {
+          final countdownStart = DateTime.parse(countdownStartDate);
+          final now = DateTime.now();
+          
+          if (now.isAfter(countdownStart.add(const Duration(hours: 1)))) {
+            await _start5000CoinTournament(tournament['id']);
+          }
+        }
+      }
+    } catch (e) {
+      // Error checking 5000 coin tournaments
+    }
+  }
+
+  // 5000 coinlik turnuvayı başlat
+  static Future<void> _start5000CoinTournament(String tournamentId) async {
+    try {
+      await _client
+          .from('tournaments')
+          .update({
+            'status': 'active',
+            'current_phase': 'qualifying',
+            'current_round': 1,
+            'phase_start_date': DateTime.now().toIso8601String(),
+          })
+          .eq('id', tournamentId);
+          
+    } catch (e) {
+      // Error starting 5000 coin tournament
+    }
+  }
+
+  // 5000 coinlik turnuvaların fazlarını güncelle
+  static Future<void> _update5000CoinTournamentPhases() async {
+    try {
+      final now = DateTime.now();
+      
+      // Aktif 5000 coinlik turnuvaları getir
+      final activeTournaments = await _client
+          .from('tournaments')
+          .select('id, name, current_phase, start_date, quarter_final_date, semi_final_date, final_date')
+          .eq('entry_fee', 5000)
+          .eq('status', 'active')
+          .eq('is_system_tournament', true);
+
+      for (var tournament in activeTournaments) {
+        final quarterFinalDate = DateTime.parse(tournament['quarter_final_date']);
+        final semiFinalDate = DateTime.parse(tournament['semi_final_date']);
+        final finalDate = DateTime.parse(tournament['final_date']);
+        
+        // 4. gün: Çeyrek final
+        if (now.isAfter(quarterFinalDate) && tournament['current_phase'] == 'qualifying') {
+          await _advance5000CoinToQuarterFinals(tournament['id']);
+        }
+        // 5. gün: Yarı final
+        else if (now.isAfter(semiFinalDate) && tournament['current_phase'] == 'quarter_finals') {
+          await _advance5000CoinToSemiFinals(tournament['id']);
+        }
+        // 6. gün: Final
+        else if (now.isAfter(finalDate) && tournament['current_phase'] == 'semi_final') {
+          await _complete5000CoinTournament(tournament['id']);
+        }
+      }
+    } catch (e) {
+      // Error updating 5000 coin tournament phases
+    }
+  }
+
+  // 5000 coinlik turnuvayı çeyrek finale geçir
+  static Future<void> _advance5000CoinToQuarterFinals(String tournamentId) async {
+    try {
+      // En yüksek skorlu 8 kişiyi al
+      final top8 = await _client
+          .from('tournament_participants')
+          .select('id, user_id, score')
+          .eq('tournament_id', tournamentId)
+          .eq('is_eliminated', false)
+          .order('score', ascending: false)
+          .limit(8);
+      
+      if (top8.length >= 8) {
+        // Diğerlerini ele
+        await _client
+            .from('tournament_participants')
+            .update({'is_eliminated': true})
+            .eq('tournament_id', tournamentId)
+            .not('id', 'in', top8.map((p) => p['id']).toList());
+        
+        // Çeyrek final match'lerini oluştur (herkes aynı matchleri görecek)
+        await _create5000CoinQuarterFinalMatches(tournamentId, top8);
+        
+        // Turnuva fazını güncelle
+        await _client
+            .from('tournaments')
+            .update({
+              'current_phase': 'quarter_finals',
+              'current_round': 4,
+              'phase_start_date': DateTime.now().toIso8601String(),
+            })
+            .eq('id', tournamentId);
+      }
+          
+    } catch (e) {
+      // Error advancing 5000 coin tournament to quarter finals
+    }
+  }
+
+  // 5000 coinlik turnuvayı yarı finale geçir
+  static Future<void> _advance5000CoinToSemiFinals(String tournamentId) async {
+    try {
+      // En yüksek skorlu 4 kişiyi al
+      final top4 = await _client
+          .from('tournament_participants')
+          .select('id, user_id, score')
+          .eq('tournament_id', tournamentId)
+          .eq('is_eliminated', false)
+          .order('score', ascending: false)
+          .limit(4);
+      
+      if (top4.length >= 4) {
+        // Diğerlerini ele
+        await _client
+            .from('tournament_participants')
+            .update({'is_eliminated': true})
+            .eq('tournament_id', tournamentId)
+            .not('id', 'in', top4.map((p) => p['id']).toList());
+        
+        // Yarı final match'lerini oluştur (herkes aynı matchleri görecek)
+        await _create5000CoinSemiFinalMatches(tournamentId, top4);
+        
+        // Turnuva fazını güncelle
+        await _client
+            .from('tournaments')
+            .update({
+              'current_phase': 'semi_final',
+              'current_round': 5,
+              'phase_start_date': DateTime.now().toIso8601String(),
+            })
+            .eq('id', tournamentId);
+      }
+          
+    } catch (e) {
+      // Error advancing 5000 coin tournament to semi finals
+    }
+  }
+
+  // 5000 coinlik turnuvayı tamamla
+  static Future<void> _complete5000CoinTournament(String tournamentId) async {
+    try {
+      // En yüksek skorlu 2 kişiyi al
+      final top2 = await _client
+          .from('tournament_participants')
+          .select('id, user_id, score')
+          .eq('tournament_id', tournamentId)
+          .eq('is_eliminated', false)
+          .order('score', ascending: false)
+          .limit(2);
+      
+      if (top2.length >= 2) {
+        // Diğerlerini ele
+        await _client
+            .from('tournament_participants')
+            .update({'is_eliminated': true})
+            .eq('tournament_id', tournamentId)
+            .not('id', 'in', top2.map((p) => p['id']).toList());
+        
+        // Final match'ini oluştur (herkes aynı matchi görecek)
+        await _create5000CoinFinalMatch(tournamentId, top2);
+        
+        // Turnuva fazını güncelle
+        await _client
+            .from('tournaments')
+            .update({
+              'current_phase': 'final',
+              'current_round': 6,
+              'phase_start_date': DateTime.now().toIso8601String(),
+            })
+            .eq('id', tournamentId);
+      }
+
+      // İlk 4'ü getir (final için 2, 3.lük için 2)
+      final topParticipants = await _client
+          .from('tournament_participants')
+          .select('user_id, score')
+          .eq('tournament_id', tournamentId)
+          .eq('is_eliminated', false)
+          .order('score', ascending: false)
+          .limit(4);
+
+      if (topParticipants.length < 4) return;
+
+      // Final için ilk 2 (1. ve 2. sıradakiler)
+      final finalists = topParticipants.take(2).toList();
+      final winner = finalists[0]; // 1. sıradaki kazanan
+      final runnerUp = finalists[1]; // 2. sıradaki ikinci
+      
+      // 3.lük maçı için 3. ve 4. sıradakiler
+      final thirdPlaceContestants = topParticipants.skip(2).take(2).toList();
+      final thirdPlace = thirdPlaceContestants[0]; // 3. sıradaki üçüncü
+
+      // Ödülleri hesapla
+      const firstPrize = 600000; // 600.000 coin
+      const secondPrize = 300000; // 300.000 coin
+      const thirdPrize = 50000; // 100.000 coin
+
+      // Şampiyonların detaylı bilgilerini al
+      final winnerDetails = await _getUserDetails(winner['user_id']);
+      final runnerUpDetails = await _getUserDetails(runnerUp['user_id']);
+      final thirdPlaceDetails = await _getUserDetails(thirdPlace['user_id']);
+
+      // Turnuva bilgilerini al
+      final tournamentDetails = await _client
+          .from('tournaments')
+          .select('name, gender')
+          .eq('id', tournamentId)
+          .single();
+
+      // Ödülleri ver
+      await UserService.updateCoins(firstPrize, 'earned', '5000 Coinlik Turnuva 1.lik');
+      await UserService.updateCoins(secondPrize, 'earned', '5000 Coinlik Turnuva 2.lik');
+      await UserService.updateCoins(thirdPrize, 'earned', '5000 Coinlik Turnuva 3.lük');
+
+      // Turnuvayı tamamla
+      await _client
+          .from('tournaments')
+          .update({
+            'status': 'completed',
+            'current_phase': 'completed',
+            'winner_id': winner['user_id'],
+            'second_place_id': runnerUp['user_id'],
+            'third_place_id': thirdPlace['user_id'],
+            'phase_start_date': DateTime.now().toIso8601String(),
+          })
+          .eq('id', tournamentId);
+
+      // Şampiyonları kaydet
+      await saveTournamentWinners(
+        tournamentId: tournamentId,
+        tournamentName: tournamentDetails['name'] ?? '5000 Coinlik Turnuva',
+        tournamentType: 'instant_5000',
+        tournamentGender: tournamentDetails['gender'] ?? 'Erkek',
+        firstPlaceUserId: winner['user_id'],
+        firstPlaceUsername: winnerDetails['username'] ?? 'Bilinmeyen',
+        firstPlacePhotoUrl: winnerDetails['tournament_photo_url'],
+        firstPlacePrize: firstPrize,
+        secondPlaceUserId: runnerUp['user_id'],
+        secondPlaceUsername: runnerUpDetails['username'] ?? 'Bilinmeyen',
+        secondPlacePhotoUrl: runnerUpDetails['tournament_photo_url'],
+        secondPlacePrize: secondPrize,
+        thirdPlaceUserId: thirdPlace['user_id'],
+        thirdPlaceUsername: thirdPlaceDetails['username'] ?? 'Bilinmeyen',
+        thirdPlacePhotoUrl: thirdPlaceDetails['tournament_photo_url'],
+        thirdPlacePrize: thirdPrize,
+      );
+
+      // Yeni 5000 coinlik turnuva oluştur
+      await create5000CoinTournaments();
+    } catch (e) {
+      // Error completing 5000 coin tournament
+    }
+  }
+
+  // 5000 coinlik turnuva çeyrek final match'lerini oluştur
+  static Future<void> _create5000CoinQuarterFinalMatches(String tournamentId, List<Map<String, dynamic>> top8) async {
+    try {
+      // 4 çeyrek final match'i oluştur
+      final matches = [
+        [top8[0], top8[7]], // 1. vs 8.
+        [top8[1], top8[6]], // 2. vs 7.
+        [top8[2], top8[5]], // 3. vs 6.
+        [top8[3], top8[4]], // 4. vs 5.
+      ];
+
+      for (int i = 0; i < matches.length; i++) {
+        final match = matches[i];
+        await _client.from('tournament_matches').insert({
+          'id': const Uuid().v4(),
+          'tournament_id': tournamentId,
+          'phase': 'quarter_finals',
+          'match_number': i + 1,
+          'user1_id': match[0]['user_id'],
+          'user2_id': match[1]['user_id'],
+          'is_completed': false,
+          'created_at': DateTime.now().toIso8601String(),
+        });
+      }
+      
+    } catch (e) {
+      // Error creating 5000 coin quarter final matches
+    }
+  }
+
+  // 5000 coinlik turnuva yarı final match'lerini oluştur
+  static Future<void> _create5000CoinSemiFinalMatches(String tournamentId, List<Map<String, dynamic>> top4) async {
+    try {
+      // 2 yarı final match'i oluştur
+      final matches = [
+        [top4[0], top4[3]], // 1. vs 4.
+        [top4[1], top4[2]], // 2. vs 3.
+      ];
+
+      for (int i = 0; i < matches.length; i++) {
+        final match = matches[i];
+        await _client.from('tournament_matches').insert({
+          'id': const Uuid().v4(),
+          'tournament_id': tournamentId,
+          'phase': 'semi_finals',
+          'match_number': i + 1,
+          'user1_id': match[0]['user_id'],
+          'user2_id': match[1]['user_id'],
+          'is_completed': false,
+          'created_at': DateTime.now().toIso8601String(),
+        });
+      }
+      
+    } catch (e) {
+      // Error creating 5000 coin semi final matches
+    }
+  }
+
+  // 5000 coinlik turnuva final match'ini oluştur
+  static Future<void> _create5000CoinFinalMatch(String tournamentId, List<Map<String, dynamic>> top2) async {
+    try {
+      // 1 final match'i oluştur
+      await _client.from('tournament_matches').insert({
+        'id': const Uuid().v4(),
+        'tournament_id': tournamentId,
+        'phase': 'final',
+        'match_number': 1,
+        'user1_id': top2[0]['user_id'],
+        'user2_id': top2[1]['user_id'],
+        'is_completed': false,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+      
+    } catch (e) {
+      // Error creating 5000 coin final match
+    }
+  }
+
+  // 5000 coinlik turnuva match'lerini getir (herkes aynı matchleri görür)
+  static Future<List<Map<String, dynamic>>> get5000CoinTournamentMatches(String tournamentId) async {
+    try {
+      final matches = await _client
+          .from('tournament_matches')
+          .select('''
+            id,
+            phase,
+            match_number,
+            user1_id,
+            user2_id,
+            is_completed,
+            user1:users!tournament_matches_user1_id_fkey(
+              id,
+              username,
+              profile_image_url,
+              age,
+              country,
+              gender
+            ),
+            user2:users!tournament_matches_user2_id_fkey(
+              id,
+              username,
+              profile_image_url,
+              age,
+              country,
+              gender
+            )
+          ''')
+          .eq('tournament_id', tournamentId)
+          .eq('is_completed', false)
+          .order('phase', ascending: true)
+          .order('match_number', ascending: true);
+
+      return matches.map((match) => {
+        'match_id': match['id'],
+        'phase': match['phase'],
+        'match_number': match['match_number'],
+        'user1': {
+          'id': match['user1']['id'],
+          'username': match['user1']['username'],
+          'profile_image_url': match['user1']['profile_image_url'],
+          'age': match['user1']['age'],
+          'country': match['user1']['country'],
+          'gender': match['user1']['gender'],
+        },
+        'user2': {
+          'id': match['user2']['id'],
+          'username': match['user2']['username'],
+          'profile_image_url': match['user2']['profile_image_url'],
+          'age': match['user2']['age'],
+          'country': match['user2']['country'],
+          'gender': match['user2']['gender'],
+        },
+      }).toList();
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // Turnuva şampiyonlarını getir
+  static Future<List<Map<String, dynamic>>> getTournamentWinners() async {
+    try {
+      final response = await _client
+          .from('tournament_winners')
+          .select('*')
+          .order('completed_at', ascending: false);
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // Kullanıcı detaylarını getir
+  static Future<Map<String, dynamic>> _getUserDetails(String userId) async {
+    try {
+      final response = await _client
+          .from('tournament_participants')
+          .select('''
+            users!tournament_participants_user_id_fkey(
+              username,
+              profile_image_url
+            ),
+            tournament_photo_url
+          ''')
+          .eq('user_id', userId)
+          .single();
+
+      return {
+        'username': response['users']['username'],
+        'profile_image_url': response['users']['profile_image_url'],
+        'tournament_photo_url': response['tournament_photo_url'],
+      };
+    } catch (e) {
+      return {
+        'username': 'Bilinmeyen',
+        'profile_image_url': null,
+        'tournament_photo_url': null,
+      };
+    }
+  }
+
+  // Turnuva şampiyonlarını kaydet
+  static Future<void> saveTournamentWinners({
+    required String tournamentId,
+    required String tournamentName,
+    required String tournamentType,
+    required String tournamentGender,
+    required String firstPlaceUserId,
+    required String firstPlaceUsername,
+    required String? firstPlacePhotoUrl,
+    required int firstPlacePrize,
+    required String secondPlaceUserId,
+    required String secondPlaceUsername,
+    required String? secondPlacePhotoUrl,
+    required int secondPlacePrize,
+    required String thirdPlaceUserId,
+    required String thirdPlaceUsername,
+    required String? thirdPlacePhotoUrl,
+    required int thirdPlacePrize,
+  }) async {
+    try {
+      await _client.from('tournament_winners').insert({
+        'tournament_id': tournamentId,
+        'tournament_name': tournamentName,
+        'tournament_type': tournamentType,
+        'tournament_gender': tournamentGender,
+        'completed_at': DateTime.now().toIso8601String(),
+        'first_place_user_id': firstPlaceUserId,
+        'first_place_username': firstPlaceUsername,
+        'first_place_photo_url': firstPlacePhotoUrl,
+        'first_place_prize': firstPlacePrize,
+        'second_place_user_id': secondPlaceUserId,
+        'second_place_username': secondPlaceUsername,
+        'second_place_photo_url': secondPlacePhotoUrl,
+        'second_place_prize': secondPlacePrize,
+        'third_place_user_id': thirdPlaceUserId,
+        'third_place_username': thirdPlaceUsername,
+        'third_place_photo_url': thirdPlacePhotoUrl,
+        'third_place_prize': thirdPlacePrize,
+      });
+      
+    } catch (e) {
+      // Error saving tournament winners
+    }
+  }
+
 
 
 
@@ -732,175 +1193,9 @@ class TournamentService {
     }
   }
 
-  // Playoff sistemi - Cuma 00:00'da çeyrek final
-  static Future<void> processQuarterFinals() async {
-    try {
-      final now = DateTime.now();
-      
-      // Cuma günü 00:00'da çalışacak
-      if (now.weekday == 5 && now.hour == 0) {
-        final tournaments = await _client
-            .from('tournaments')
-            .select('id, name, current_participants')
-            .eq('status', 'active')
-            .eq('current_phase', 'voting');
-        
-        for (var tournament in tournaments) {
-          // En yüksek skorlu 8 kişiyi çeyrek finale al
-          await _advanceToQuarterFinals(tournament['id']);
-        }
-      }
-    } catch (e) {
-      // // print('Error processing quarter finals: $e');
-    }
-  }
+  // Bu fonksiyonlar artık kullanılmıyor - 1000 coinlik haftalık turnuvalar kaldırıldı
 
-  // Çeyrek finale geçiş
-  static Future<void> _advanceToQuarterFinals(String tournamentId) async {
-    try {
-      // En yüksek skorlu 8 kişiyi al
-      final top8 = await _client
-          .from('tournament_participants')
-          .select('id, user_id, score')
-          .eq('tournament_id', tournamentId)
-          .eq('is_eliminated', false)
-          .order('score', ascending: false)
-          .limit(8);
-      
-      if (top8.length >= 8) {
-        // Diğerlerini ele
-        await _client
-            .from('tournament_participants')
-            .update({'is_eliminated': true})
-            .eq('tournament_id', tournamentId)
-            .not('id', 'in', top8.map((p) => p['id']).toList());
-        
-        // Turnuva fazını güncelle
-        await _client
-            .from('tournaments')
-            .update({
-              'current_phase': 'quarter_finals',
-              'current_round': 'quarter_finals',
-              'phase_start_date': DateTime.now().toIso8601String(),
-            })
-            .eq('id', tournamentId);
-      }
-    } catch (e) {
-      // // print('Error advancing to quarter finals: $e');
-    }
-  }
-
-  // Yarı final - Cumartesi 00:00
-  static Future<void> processSemiFinals() async {
-    try {
-      final now = DateTime.now();
-      
-      if (now.weekday == 6 && now.hour == 0) {
-        final tournaments = await _client
-            .from('tournaments')
-            .select('id')
-            .eq('status', 'active')
-            .eq('current_phase', 'quarter_finals');
-        
-        for (var tournament in tournaments) {
-          await _advanceToSemiFinals(tournament['id']);
-        }
-      }
-    } catch (e) {
-      // // print('Error processing semi finals: $e');
-    }
-  }
-
-  // Yarı finale geçiş
-  static Future<void> _advanceToSemiFinals(String tournamentId) async {
-    try {
-      // En yüksek skorlu 4 kişiyi al
-      final top4 = await _client
-          .from('tournament_participants')
-          .select('id, user_id, score')
-          .eq('tournament_id', tournamentId)
-          .eq('is_eliminated', false)
-          .order('score', ascending: false)
-          .limit(4);
-      
-      if (top4.length >= 4) {
-        // Diğerlerini ele
-        await _client
-            .from('tournament_participants')
-            .update({'is_eliminated': true})
-            .eq('tournament_id', tournamentId)
-            .not('id', 'in', top4.map((p) => p['id']).toList());
-        
-        // Turnuva fazını güncelle
-        await _client
-            .from('tournaments')
-            .update({
-              'current_phase': 'semi_finals',
-              'current_round': 'semi_finals',
-              'phase_start_date': DateTime.now().toIso8601String(),
-            })
-            .eq('id', tournamentId);
-      }
-    } catch (e) {
-      // // print('Error advancing to semi finals: $e');
-    }
-  }
-
-  // Final - Pazar 00:00
-  static Future<void> processFinals() async {
-    try {
-      final now = DateTime.now();
-      
-      if (now.weekday == 7 && now.hour == 0) {
-        final tournaments = await _client
-            .from('tournaments')
-            .select('id')
-            .eq('status', 'active')
-            .eq('current_phase', 'semi_finals');
-        
-        for (var tournament in tournaments) {
-          await _advanceToFinals(tournament['id']);
-        }
-      }
-    } catch (e) {
-      // // print('Error processing finals: $e');
-    }
-  }
-
-  // Finale geçiş
-  static Future<void> _advanceToFinals(String tournamentId) async {
-    try {
-      // En yüksek skorlu 2 kişiyi al
-      final top2 = await _client
-          .from('tournament_participants')
-          .select('id, user_id, score')
-          .eq('tournament_id', tournamentId)
-          .eq('is_eliminated', false)
-          .order('score', ascending: false)
-          .limit(2);
-      
-      if (top2.length >= 2) {
-        // Diğerlerini ele
-        await _client
-            .from('tournament_participants')
-            .update({'is_eliminated': true})
-            .eq('tournament_id', tournamentId)
-            .not('id', 'in', top2.map((p) => p['id']).toList());
-        
-        // Turnuva fazını güncelle
-        await _client
-            .from('tournaments')
-            .update({
-              'current_phase': 'finals',
-              'current_round': 'finals',
-              'phase_start_date': DateTime.now().toIso8601String(),
-            })
-            .eq('id', tournamentId);
-      }
-    } catch (e) {
-      // // print('Error advancing to finals: $e');
-    }
-  }
+  // Bu fonksiyonlar artık kullanılmıyor - 1000 coinlik haftalık turnuvalar kaldırıldı
 
   // Turnuva katılımını iptal et ve coin iadesi yap
   static Future<bool> refundTournamentEntry(String tournamentId) async {
@@ -1361,29 +1656,17 @@ class TournamentService {
     }
   }
 
-  // Haftalık turnuva fazlarını güncelle - DÜZELTİLMİŞ SİSTEM
+  // Turnuva fazlarını güncelle - sadece 5000 coinlik ve private turnuvalar
   static Future<void> updateTournamentPhases() async {
     try {
-      final now = DateTime.now();
-      final dayOfWeek = now.weekday;
-      final hour = now.hour;
-
-      // Çarşamba 00:01'de kayıt kapanır, turnuva başlar
-      if (dayOfWeek == 3 && hour == 0) {
-        await _startWeeklyTournaments();
-      }
-      // Cuma 00:01'de çeyrek final
-      else if (dayOfWeek == 5 && hour == 0) {
-        await _advanceAllToQuarterFinals();
-      }
-      // Cumartesi 00:01'de yarı final
-      else if (dayOfWeek == 6 && hour == 0) {
-        await _advanceAllToSemiFinals();
-      }
-      // Pazar 00:01'de final
-      else if (dayOfWeek == 7 && hour == 0) {
-        await _completeTournament();
-      }
+      // 1000 coinlik haftalık turnuvalar kaldırıldı
+      // Artık sadece 5000 coinlik ve private turnuvalar var
+      
+      // 5000 coinlik turnuvaları kontrol et ve gerekirse başlat (sürekli kontrol)
+      await checkAndStart5000CoinTournaments();
+      
+      // 5000 coinlik turnuvaların fazlarını güncelle (sürekli kontrol)
+      await _update5000CoinTournamentPhases();
       
       // Private turnuvaları start date'e göre başlat (sürekli kontrol)
       await _startPrivateTournamentsByStartDate();
@@ -1391,190 +1674,15 @@ class TournamentService {
       // Private turnuvaları end date'e göre tamamla (sürekli kontrol)
       await _completePrivateTournamentsByEndDate();
       
-      // Haftalık turnuvaları çarşamba sonrası başlat (sürekli kontrol)
-      await _startWeeklyTournamentsByDate();
-      
     } catch (e) {
       // Error updating tournament phases
     }
   }
 
-  // Çarşamba 00:01'de turnuvaları başlat
-  static Future<void> _startWeeklyTournaments() async {
-    try {
-      // Bu haftanın turnuvalarını getir
-      final thisWeekMonday = _getThisWeekMonday(DateTime.now());
-      final thisWeekSunday = thisWeekMonday.add(const Duration(days: 6));
-      
-      final tournaments = await _client
-          .from('tournaments')
-          .select('id, name, current_participants')
-          .gte('registration_start_date', thisWeekMonday.toIso8601String())
-          .lte('registration_start_date', thisWeekSunday.toIso8601String())
-          .eq('status', 'upcoming')
-          .eq('is_system_tournament', true);
-
-      for (var tournament in tournaments) {
-        // En az 2 katılımcı varsa turnuvayı başlat
-        if (tournament['current_participants'] >= 2) {
-          await _client
-              .from('tournaments')
-              .update({
-                'status': 'active',
-                'current_phase': 'qualifying',
-                'current_round': 1,
-                'phase_start_date': DateTime.now().toIso8601String(),
-              })
-              .eq('id', tournament['id']);
-        }
-      }
-    } catch (e) {
-      // // print('Error starting weekly tournaments: $e');
-    }
-  }
-
-  // Haftalık turnuvaları çarşamba sonrası başlat (sürekli kontrol)
-  static Future<void> _startWeeklyTournamentsByDate() async {
-    try {
-      final now = DateTime.now();
-      
-      // Çarşamba sonrası upcoming durumundaki sistem turnuvalarını getir
-      final tournaments = await _client
-          .from('tournaments')
-          .select('id, name, current_participants, registration_start_date')
-          .eq('status', 'upcoming')
-          .eq('is_system_tournament', true)
-          .eq('is_private', false);
-      
-      for (var tournament in tournaments) {
-        final registrationStartDate = DateTime.parse(tournament['registration_start_date']);
-        final wednesday = registrationStartDate.add(const Duration(days: 2)); // Pazartesi + 2 = Çarşamba
-        
-        // Çarşamba geçmişse turnuvayı başlat (katılımcı kontrolü yok)
-        if (now.isAfter(wednesday)) {
-          await _client
-              .from('tournaments')
-              .update({
-                'status': 'active',
-                'current_phase': 'qualifying',
-                'current_round': 1,
-                'phase_start_date': DateTime.now().toIso8601String(),
-              })
-              .eq('id', tournament['id']);
-        }
-      }
-    } catch (e) {
-      // Error starting weekly tournaments by date
-    }
-  }
-
-  // Tüm aktif turnuvaları çeyrek finale geçir
-  static Future<void> _advanceAllToQuarterFinals() async {
-    try {
-      final tournaments = await _client
-          .from('tournaments')
-          .select('id')
-          .eq('status', 'active')
-          .eq('current_phase', 'qualifying');
-      
-      for (var tournament in tournaments) {
-        await _advanceToQuarterFinals(tournament['id']);
-      }
-    } catch (e) {
-      // // print('Error advancing all to quarter finals: $e');
-    }
-  }
-
-  // Tüm aktif turnuvaları yarı finale geçir
-  static Future<void> _advanceAllToSemiFinals() async {
-    try {
-      final tournaments = await _client
-          .from('tournaments')
-          .select('id')
-          .eq('status', 'active')
-          .eq('current_phase', 'quarter_finals');
-      
-      for (var tournament in tournaments) {
-        await _advanceToSemiFinals(tournament['id']);
-      }
-    } catch (e) {
-      // // print('Error advancing all to semi finals: $e');
-    }
-  }
 
 
 
-  // Turnuvayı tamamla (Final + 3.lük maçı)
-  static Future<void> _completeTournament() async {
-    try {
-      // Semi Final turnuvalarını getir
-      final tournaments = await _client
-          .from('tournaments')
-          .select('id, prize_pool')
-          .eq('status', 'active')
-          .eq('current_phase', 'semi_final');
 
-      for (var tournament in tournaments) {
-        // İlk 4'ü getir (final için 2, 3.lük için 2)
-        final topParticipants = await _client
-            .from('tournament_participants')
-            .select('user_id, score')
-            .eq('tournament_id', tournament['id'])
-            .eq('is_eliminated', false)
-            .order('score', ascending: false)
-            .limit(4);
-
-        if (topParticipants.length < 4) continue;
-
-        // Final için ilk 2 (1. ve 2. sıradakiler)
-        final finalists = topParticipants.take(2).toList();
-        final winner = finalists[0]; // 1. sıradaki kazanan
-        final runnerUp = finalists[1]; // 2. sıradaki ikinci
-        
-        // 3.lük maçı için 3. ve 4. sıradakiler
-        final thirdPlaceContestants = topParticipants.skip(2).take(2).toList();
-        final thirdPlace = thirdPlaceContestants[0]; // 3. sıradaki üçüncü
-
-        // Ödülleri hesapla
-        final totalPrizePool = tournament['prize_pool'] as int;
-        final firstPrize = (totalPrizePool * 0.6).round(); // %60
-        final secondPrize = (totalPrizePool * 0.3).round(); // %30
-        final thirdPrize = (totalPrizePool * 0.1).round(); // %10
-
-        // Ödülleri ver
-        await UserService.updateCoins(firstPrize, 'earned', 'Turnuva 1.lik');
-        await UserService.updateCoins(secondPrize, 'earned', 'Turnuva 2.lik');
-        await UserService.updateCoins(thirdPrize, 'earned', 'Turnuva 3.lük');
-
-        // Diğerlerini elen
-        final eliminatedIds = topParticipants.skip(4).map((p) => p['user_id']).toList();
-        if (eliminatedIds.isNotEmpty) {
-          await _client
-              .from('tournament_participants')
-              .update({'is_eliminated': true})
-              .eq('tournament_id', tournament['id'])
-              .inFilter('user_id', eliminatedIds);
-        }
-
-        // Turnuvayı tamamla
-        await _client
-            .from('tournaments')
-            .update({
-              'status': 'completed',
-              'current_phase': 'completed',
-              'current_round': 4,
-              'winner_id': winner['user_id'],
-              'second_place_id': runnerUp['user_id'],
-              'third_place_id': thirdPlace['user_id'],
-            })
-            .eq('id', tournament['id']);
-
-        // // print('Tournament ${tournament['id']} completed: 1st=${winner['user_id']}, 2nd=${runnerUp['user_id']}, 3rd=${thirdPlace['user_id']}');
-      }
-    } catch (e) {
-      // // print('Error completing tournament: $e');
-    }
-  }
 
   // Private turnuvaları start date'e göre başlat
   static Future<void> _startPrivateTournamentsByStartDate() async {

@@ -6,6 +6,7 @@ import '../services/user_service.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/beautiful_snackbar.dart';
 import 'tournament_detail_screen.dart';
+import 'champions_screen.dart';
 
 class TurnuvaTab extends StatefulWidget {
   const TurnuvaTab({super.key});
@@ -33,12 +34,16 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       await TournamentService.testSupabaseConnection();
       
       // Turnuva fazlarını güncelle (status kontrolü)
-      print('🔄 DEBUG: updateTournamentPhases çağrılıyor...');
       await TournamentService.updateTournamentPhases();
-      print('✅ DEBUG: updateTournamentPhases tamamlandı');
       
       // Önce haftalık turnuvaları oluşturmayı dene
       await TournamentService.createWeeklyTournaments();
+      
+      // Debug: Turnuva name_key durumunu kontrol et
+      await TournamentService.debugTournamentNameKeys();
+      
+      // Mevcut turnuvaların name_key alanlarını güncelle
+      await TournamentService.updateExistingTournamentNameKeys();
       
       // Kullanıcının diline göre turnuvaları getir
       final currentLanguage = Localizations.localeOf(context).languageCode;
@@ -118,7 +123,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
         creatorNames[user['id']] = user['username'] ?? 'Bilinmeyen';
       }
     } catch (e) {
-      print('Error loading creator names: $e');
+      // Error loading creator names
     }
   }
 
@@ -177,6 +182,17 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 label: Text(AppLocalizations.of(context)!.private),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.purple,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  minimumSize: const Size(0, 32),
+                ),
+              ),
+              ElevatedButton.icon(
+                onPressed: _navigateToChampions,
+                icon: const Icon(Icons.emoji_events, size: 16),
+                label: const Text('Şampiyonlar'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                   minimumSize: const Size(0, 32),
@@ -264,7 +280,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    tournament.name,
+                    tournament.getLocalizedName(AppLocalizations.of(context)!),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -824,6 +840,16 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
 
 
 
+
+  // Şampiyonlar sayfasına git
+  void _navigateToChampions() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ChampionsScreen(),
+      ),
+    );
+  }
 
   // Private turnuvaya katıl
   Future<void> _joinPrivateTournament(String privateKey) async {

@@ -1298,14 +1298,10 @@
   "professionView": "View profession information",
   "statsView": "View detailed statistics",
   "tournamentFees": "Tournament participation fees",
-  "weeklyMaleTournament1000": "Weekly Male Tournament (1000 Coins)",
-  "weeklyMaleTournament1000Desc": "Weekly male tournament - 300 person capacity",
-  "weeklyMaleTournament10000": "Weekly Male Tournament (10000 Coins)",
-  "weeklyMaleTournament10000Desc": "Premium male tournament - 100 person capacity",
-  "weeklyFemaleTournament1000": "Weekly Female Tournament (1000 Coins)",
-  "weeklyFemaleTournament1000Desc": "Weekly female tournament - 300 person capacity",
-  "weeklyFemaleTournament10000": "Weekly Female Tournament (10000 Coins)",
-  "weeklyFemaleTournament10000Desc": "Premium female tournament - 100 person capacity",
+  "weeklyMaleTournament5000": "Chizo Male Tournament (5000 Coins)",
+  "weeklyMaleTournament5000Desc": "Premium male tournament - 100 person capacity",
+  "weeklyFemaleTournament5000": "Chizo Female Tournament (5000 Coins)",
+  "weeklyFemaleTournament5000Desc": "Premium female tournament - 100 person capacity",
   "male": "Male",
   "female": "Female",
   "tournamentEntryFee": "Tournament entry fee",
@@ -1666,37 +1662,37 @@
   "eliminationMaxParticipantsWarning": "Maximum 8 participants allowed for elimination format",
   "premiumInfo": "💎 {type} Information",
 
-  "weeklyMaleTournament1000": "Weekly Male Tournament (1000 Coins)",
-  "@weeklyMaleTournament1000": {
-    "description": "Name for weekly male tournament with 1000 coin entry fee"
+  "weeklyMaleTournament5000": "Chizo Male Tournament (5000 Coins)",
+  "@weeklyMaleTournament5000": {
+    "description": "Name for Chizo male tournament with 5000 coin entry fee"
   },
-  "weeklyMaleTournament1000Description": "Weekly male tournament - 300 participant capacity",
-  "@weeklyMaleTournament1000Description": {
-    "description": "Description for weekly male tournament with 1000 coin entry fee"
+  "weeklyMaleTournament5000Description": "Premium male tournament - 100 participant capacity",
+  "@weeklyMaleTournament5000Description": {
+    "description": "Description for Chizo male tournament with 5000 coin entry fee"
   },
-  "weeklyMaleTournament10000": "Weekly Male Tournament (10000 Coins)",
-  "@weeklyMaleTournament10000": {
-    "description": "Name for weekly male tournament with 10000 coin entry fee"
+  "weeklyFemaleTournament5000": "Chizo Female Tournament (5000 Coins)",
+  "@weeklyFemaleTournament5000": {
+    "description": "Name for Chizo female tournament with 5000 coin entry fee"
   },
-  "weeklyMaleTournament10000Description": "Premium male tournament - 100 participant capacity",
-  "@weeklyMaleTournament10000Description": {
-    "description": "Description for weekly male tournament with 10000 coin entry fee"
+  "weeklyFemaleTournament5000Description": "Premium female tournament - 100 participant capacity",
+  "@weeklyFemaleTournament5000Description": {
+    "description": "Description for Chizo female tournament with 5000 coin entry fee"
   },
-  "weeklyFemaleTournament1000": "Weekly Female Tournament (1000 Coins)",
-  "@weeklyFemaleTournament1000": {
-    "description": "Name for weekly female tournament with 1000 coin entry fee"
+  "instantMaleTournament5000": "Chizo Male Tournament (5000 Coins)",
+  "@instantMaleTournament5000": {
+    "description": "Name for instant male tournament that starts when 100 participants join"
   },
-  "weeklyFemaleTournament1000Description": "Weekly female tournament - 300 participant capacity",
-  "@weeklyFemaleTournament1000Description": {
-    "description": "Description for weekly female tournament with 1000 coin entry fee"
+  "instantMaleTournament5000Description": "Premium male tournament that starts when 100 participants join",
+  "@instantMaleTournament5000Description": {
+    "description": "Description for instant male tournament that starts when 100 participants join"
   },
-  "weeklyFemaleTournament10000": "Weekly Female Tournament (10000 Coins)",
-  "@weeklyFemaleTournament10000": {
-    "description": "Name for weekly female tournament with 10000 coin entry fee"
+  "instantFemaleTournament5000": "Chizo Female Tournament (5000 Coins)",
+  "@instantFemaleTournament5000": {
+    "description": "Name for instant female tournament that starts when 100 participants join"
   },
-  "weeklyFemaleTournament10000Description": "Premium female tournament - 100 participant capacity",
-  "@weeklyFemaleTournament10000Description": {
-    "description": "Description for weekly female tournament with 10000 coin entry fee"
+  "instantFemaleTournament5000Description": "Premium female tournament that starts when 100 participants join",
+  "@instantFemaleTournament5000Description": {
+    "description": "Description for instant female tournament that starts when 100 participants join"
   },
   
   "dataPrivacy": "Data Privacy",

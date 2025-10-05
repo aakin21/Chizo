@@ -792,34 +792,17 @@ class AppLocalizationsTr extends AppLocalizations {
   String get tournamentFees => 'Turnuva katılım ücretleri';
 
   @override
-  String get weeklyMaleTournament1000 => 'Haftalık Erkek Turnuvası (1000 Coin)';
+  String get weeklyMaleTournament5000 => 'Chizo Erkek Turnuvası (5000 Coin)';
 
   @override
-  String get weeklyMaleTournament1000Desc =>
-      'Her hafta düzenlenen erkek turnuvası - 300 kişi kapasiteli';
-
-  @override
-  String get weeklyMaleTournament10000 =>
-      'Haftalık Erkek Turnuvası (10000 Coin)';
-
-  @override
-  String get weeklyMaleTournament10000Desc =>
+  String get weeklyMaleTournament5000Desc =>
       'Premium erkek turnuvası - 100 kişi kapasiteli';
 
   @override
-  String get weeklyFemaleTournament1000 =>
-      'Haftalık Kadın Turnuvası (1000 Coin)';
+  String get weeklyFemaleTournament5000 => 'Chizo Kadın Turnuvası (5000 Coin)';
 
   @override
-  String get weeklyFemaleTournament1000Desc =>
-      'Her hafta düzenlenen kadın turnuvası - 300 kişi kapasiteli';
-
-  @override
-  String get weeklyFemaleTournament10000 =>
-      'Haftalık Kadın Turnuvası (10000 Coin)';
-
-  @override
-  String get weeklyFemaleTournament10000Desc =>
+  String get weeklyFemaleTournament5000Desc =>
       'Premium kadın turnuvası - 100 kişi kapasiteli';
 
   @override
@@ -1441,20 +1424,26 @@ class AppLocalizationsTr extends AppLocalizations {
       'Eleme usulü için maksimum 8 kişi olabilir';
 
   @override
-  String get weeklyMaleTournament1000Description =>
-      'Her hafta düzenlenen erkek turnuvası - 300 kişi kapasiteli';
-
-  @override
-  String get weeklyMaleTournament10000Description =>
+  String get weeklyMaleTournament5000Description =>
       'Premium erkek turnuvası - 100 kişi kapasiteli';
 
   @override
-  String get weeklyFemaleTournament1000Description =>
-      'Her hafta düzenlenen kadın turnuvası - 300 kişi kapasiteli';
+  String get weeklyFemaleTournament5000Description =>
+      'Premium kadın turnuvası - 100 kişi kapasiteli';
 
   @override
-  String get weeklyFemaleTournament10000Description =>
-      'Premium kadın turnuvası - 100 kişi kapasiteli';
+  String get instantMaleTournament5000 => 'Chizo Erkek Turnuvası (5000 Coin)';
+
+  @override
+  String get instantMaleTournament5000Description =>
+      '100 kişi dolduğunda başlayan premium erkek turnuvası';
+
+  @override
+  String get instantFemaleTournament5000 => 'Chizo Kadın Turnuvası (5000 Coin)';
+
+  @override
+  String get instantFemaleTournament5000Description =>
+      '100 kişi dolduğunda başlayan premium kadın turnuvası';
 
   @override
   String get dataPrivacy => 'Veri Gizliliği';

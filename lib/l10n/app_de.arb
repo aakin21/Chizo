@@ -343,14 +343,10 @@
   "professionView": "Berufsinformationen anzeigen",
   "statsView": "Detaillierte Statistiken anzeigen",
   "tournamentFees": "Turnier-Teilnahmegebühren",
-  "weeklyMaleTournament1000": "Wöchentliches Männerturnier (1000 Münzen)",
-  "weeklyMaleTournament1000Desc": "Wöchentliches Männerturnier - 300 Personen Kapazität",
-  "weeklyMaleTournament10000": "Wöchentliches Männerturnier (10000 Münzen)",
-  "weeklyMaleTournament10000Desc": "Premium Männerturnier - 100 Personen Kapazität",
-  "weeklyFemaleTournament1000": "Wöchentliches Frauenturnier (1000 Münzen)",
-  "weeklyFemaleTournament1000Desc": "Wöchentliches Frauenturnier - 300 Personen Kapazität",
-  "weeklyFemaleTournament10000": "Wöchentliches Frauenturnier (10000 Münzen)",
-  "weeklyFemaleTournament10000Desc": "Premium Frauenturnier - 100 Personen Kapazität",
+  "weeklyMaleTournament5000": "Chizo Männerturnier (5000 Münzen)",
+  "weeklyMaleTournament5000Desc": "Premium Männerturnier - 100 Personen Kapazität",
+  "weeklyFemaleTournament5000": "Chizo Frauenturnier (5000 Münzen)",
+  "weeklyFemaleTournament5000Desc": "Premium Frauenturnier - 100 Personen Kapazität",
   "male": "Männlich",
   "female": "Weiblich",
   "tournamentEntryFee": "Turnier-Teilnahmegebühr",
@@ -658,13 +654,13 @@
   "@weeklyMaleTournament1000Description": {
     "description": "Beschreibung für wöchentliches Männerturnier mit 1000 Münzen Eintrittsgebühr"
   },
-  "weeklyMaleTournament10000": "Wöchentliches Männerturnier (10000 Münzen)",
-  "@weeklyMaleTournament10000": {
-    "description": "Name für wöchentliches Männerturnier mit 10000 Münzen Eintrittsgebühr"
+  "weeklyMaleTournament5000": "Wöchentliches Männerturnier (5000 Münzen)",
+  "@weeklyMaleTournament5000": {
+    "description": "Name für wöchentliches Männerturnier mit 5000 Münzen Eintrittsgebühr"
   },
-  "weeklyMaleTournament10000Description": "Premium Männerturnier - 100 Teilnehmer Kapazität",
-  "@weeklyMaleTournament10000Description": {
-    "description": "Beschreibung für wöchentliches Männerturnier mit 10000 Münzen Eintrittsgebühr"
+  "weeklyMaleTournament5000Description": "Premium Männerturnier - 100 Teilnehmer Kapazität",
+  "@weeklyMaleTournament5000Description": {
+    "description": "Beschreibung für wöchentliches Männerturnier mit 5000 Münzen Eintrittsgebühr"
   },
   "weeklyFemaleTournament1000": "Wöchentliches Frauenturnier (1000 Münzen)",
   "@weeklyFemaleTournament1000": {
@@ -674,13 +670,29 @@
   "@weeklyFemaleTournament1000Description": {
     "description": "Beschreibung für wöchentliches Frauenturnier mit 1000 Münzen Eintrittsgebühr"
   },
-  "weeklyFemaleTournament10000": "Wöchentliches Frauenturnier (10000 Münzen)",
-  "@weeklyFemaleTournament10000": {
-    "description": "Name für wöchentliches Frauenturnier mit 10000 Münzen Eintrittsgebühr"
+  "weeklyFemaleTournament5000": "Wöchentliches Frauenturnier (5000 Münzen)",
+  "@weeklyFemaleTournament5000": {
+    "description": "Name für wöchentliches Frauenturnier mit 5000 Münzen Eintrittsgebühr"
   },
-  "weeklyFemaleTournament10000Description": "Premium Frauenturnier - 100 Teilnehmer Kapazität",
-  "@weeklyFemaleTournament10000Description": {
-    "description": "Beschreibung für wöchentliches Frauenturnier mit 10000 Münzen Eintrittsgebühr"
+  "weeklyFemaleTournament5000Description": "Premium Frauenturnier - 100 Teilnehmer Kapazität",
+  "@weeklyFemaleTournament5000Description": {
+    "description": "Beschreibung für wöchentliches Frauenturnier mit 5000 Münzen Eintrittsgebühr"
+  },
+  "instantMaleTournament5000": "Chizo Männerturnier (5000 Münzen)",
+  "@instantMaleTournament5000": {
+    "description": "Name für sofortiges Männerturnier das startet wenn 100 Teilnehmer beitreten"
+  },
+  "instantMaleTournament5000Description": "Premium Männerturnier das startet wenn 100 Teilnehmer beitreten",
+  "@instantMaleTournament5000Description": {
+    "description": "Beschreibung für sofortiges Männerturnier das startet wenn 100 Teilnehmer beitreten"
+  },
+  "instantFemaleTournament5000": "Chizo Frauenturnier (5000 Münzen)",
+  "@instantFemaleTournament5000": {
+    "description": "Name für sofortiges Frauenturnier das startet wenn 100 Teilnehmer beitreten"
+  },
+  "instantFemaleTournament5000Description": "Premium Frauenturnier das startet wenn 100 Teilnehmer beitreten",
+  "@instantFemaleTournament5000Description": {
+    "description": "Beschreibung für sofortiges Frauenturnier das startet wenn 100 Teilnehmer beitreten"
   },
   
   "notificationCenter": "Benachrichtigungen",
