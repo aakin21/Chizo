@@ -365,15 +365,6 @@ class _ChampionsScreenState extends State<ChampionsScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  '$prize coin',
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
               ],
             ),
           ),

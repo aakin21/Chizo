@@ -342,13 +342,16 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   }
 
   // Turnuva detay sayfasına git
-  void _navigateToTournamentDetail(TournamentModel tournament) {
-    Navigator.push(
+  void _navigateToTournamentDetail(TournamentModel tournament) async {
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TournamentDetailScreen(tournament: tournament),
       ),
     );
+    
+    // Her zaman listeyi yenile (katılım durumu değişebilir)
+    loadTournaments();
   }
 
   // Durum rengi

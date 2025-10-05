@@ -215,6 +215,15 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
               onPressed: () => _showLeaderboard(),
             ),
           ],
+          // Private turnuva admin'i için silme butonu
+          if (widget.tournament.isPrivate && 
+              currentUser?.id == widget.tournament.creatorId &&
+              (widget.tournament.status == 'upcoming' || widget.tournament.status == 'active')) ...[
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () => _deleteTournament(),
+            ),
+          ],
           IconButton(
             icon: const Icon(Icons.info, color: Colors.orange),
             onPressed: () => _showTournamentInfo(),
@@ -812,17 +821,6 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
             
             const SizedBox(height: 20),
             
-            if (widget.tournament.isPrivate && currentUser?.id == widget.tournament.creatorId) ...[
-              _buildBigOption(
-                icon: Icons.delete,
-                title: 'Turnuvayı Sil',
-                subtitle: 'Turnuvayı kalıcı olarak sil',
-                color: Colors.red,
-                onTap: () => _deleteTournament(),
-              ),
-              
-              const SizedBox(height: 20),
-            ],
             
             if (widget.tournament.isUserParticipating) ...[
               _buildBigOption(
@@ -1701,7 +1699,8 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
         ),
       );
       
-      Navigator.pop(context); // Geri dön
+      // Geri dön ve turnuva listesini yenile
+      Navigator.pop(context, true); // true değeri ile turnuva silindiğini belirt
     } catch (e) {
       if (!mounted) return;
       

@@ -1435,6 +1435,24 @@ class TournamentService {
       
       if (currentUserRecord == null) return [];
 
+      final currentUserId = currentUserRecord['id'];
+
+      // Kullanıcının daha önce oyladığı match'leri al
+      final votedMatches = await _client
+          .from('private_tournament_votes')
+          .select('user1_id, user2_id')
+          .eq('tournament_id', tournamentId)
+          .eq('voter_id', currentUserId);
+
+      // Oylanan match'lerin set'ini oluştur
+      final votedMatchSet = <String>{};
+      for (var vote in votedMatches) {
+        final user1Id = vote['user1_id'] as String;
+        final user2Id = vote['user2_id'] as String;
+        votedMatchSet.add('$user1Id-$user2Id');
+        votedMatchSet.add('$user2Id-$user1Id'); // Ters kombinasyon da ekle
+      }
+
       // Private turnuva katılımcılarını getir (turnuva fotoğrafı olanlar)
       final participants = await _client
           .from('tournament_participants')
@@ -1449,99 +1467,46 @@ class TournamentService {
 
       if (participants.length < 2) return [];
 
-      // Eşit dağılım için her katılımcının aynı sayıda match'e çıkmasını sağla
-      final matches = <Map<String, dynamic>>[];
-      final shuffledParticipants = List<Map<String, dynamic>>.from(participants);
-      
-      // Her katılımcının match sayısını takip et
-      final participantMatchCount = <String, int>{};
-      for (var participant in participants) {
-        participantMatchCount[participant['user_id']] = 0;
-      }
-      
-      // Her katılımcı için eşit sayıda match oluştur (minimum 3)
-      final targetMatchesPerParticipant = 3;
-      
       // Tüm olası kombinasyonları oluştur
       final allCombinations = <List<Map<String, dynamic>>>[];
-      for (int i = 0; i < shuffledParticipants.length; i++) {
-        for (int j = i + 1; j < shuffledParticipants.length; j++) {
-          allCombinations.add([shuffledParticipants[i], shuffledParticipants[j]]);
+      for (int i = 0; i < participants.length; i++) {
+        for (int j = i + 1; j < participants.length; j++) {
+          allCombinations.add([participants[i], participants[j]]);
         }
       }
       
-      // Kombinasyonları karıştır
-      allCombinations.shuffle(Random());
-      
-      // Her katılımcının eşit sayıda match'e çıkmasını sağla
+      // Oylanmamış match'leri filtrele
+      final unvotedMatches = <Map<String, dynamic>>[];
       for (var combination in allCombinations) {
-        final participant1 = combination[0];
-        final participant2 = combination[1];
-        final userId1 = participant1['user_id'];
-        final userId2 = participant2['user_id'];
+        final user1Id = combination[0]['user_id'] as String;
+        final user2Id = combination[1]['user_id'] as String;
+        final matchKey = '$user1Id-$user2Id';
         
-        // Her iki katılımcı da hedef match sayısına ulaşmadıysa match oluştur
-        if ((participantMatchCount[userId1] ?? 0) < targetMatchesPerParticipant &&
-            (participantMatchCount[userId2] ?? 0) < targetMatchesPerParticipant) {
-          
-          matches.add({
+        if (!votedMatchSet.contains(matchKey)) {
+          unvotedMatches.add({
             'user1': {
-              'id': participant1['user_id'],
-              'username': participant1['users']['username'],
-              'tournament_photo_url': participant1['tournament_photo_url'],
-              'age': participant1['users']['age'],
-              'country': participant1['users']['country'],
-              'gender': participant1['users']['gender'],
+              'id': combination[0]['user_id'],
+              'username': combination[0]['users']['username'],
+              'tournament_photo_url': combination[0]['tournament_photo_url'],
+              'age': combination[0]['users']['age'],
+              'country': combination[0]['users']['country'],
+              'gender': combination[0]['users']['gender'],
             },
             'user2': {
-              'id': participant2['user_id'],
-              'username': participant2['users']['username'],
-              'tournament_photo_url': participant2['tournament_photo_url'],
-              'age': participant2['users']['age'],
-              'country': participant2['users']['country'],
-              'gender': participant2['users']['gender'],
-            },
-          });
-          
-          // Match sayılarını artır
-          participantMatchCount[userId1] = (participantMatchCount[userId1] ?? 0) + 1;
-          participantMatchCount[userId2] = (participantMatchCount[userId2] ?? 0) + 1;
-        }
-        
-        // Tüm katılımcılar hedef match sayısına ulaştıysa dur
-        if (participantMatchCount.values.every((count) => count >= targetMatchesPerParticipant)) {
-          break;
-        }
-      }
-      
-      // Eğer yeterli match oluşmadıysa, kalan kombinasyonlardan ekle
-      if (matches.length < 3) {
-        for (var combination in allCombinations.take(3 - matches.length)) {
-          final participant1 = combination[0];
-          final participant2 = combination[1];
-          
-          matches.add({
-            'user1': {
-              'id': participant1['user_id'],
-              'username': participant1['users']['username'],
-              'tournament_photo_url': participant1['tournament_photo_url'],
-              'age': participant1['users']['age'],
-              'country': participant1['users']['country'],
-              'gender': participant1['users']['gender'],
-            },
-            'user2': {
-              'id': participant2['user_id'],
-              'username': participant2['users']['username'],
-              'tournament_photo_url': participant2['tournament_photo_url'],
-              'age': participant2['users']['age'],
-              'country': participant2['users']['country'],
-              'gender': participant2['users']['gender'],
+              'id': combination[1]['user_id'],
+              'username': combination[1]['users']['username'],
+              'tournament_photo_url': combination[1]['tournament_photo_url'],
+              'age': combination[1]['users']['age'],
+              'country': combination[1]['users']['country'],
+              'gender': combination[1]['users']['gender'],
             },
           });
         }
       }
 
-      return matches;
+      // Oylanmamış match'leri karıştır ve döndür
+      unvotedMatches.shuffle(Random());
+      return unvotedMatches;
     } catch (e) {
       print('Error getting private tournament matches for voting: $e');
       return [];
@@ -1574,7 +1539,47 @@ class TournamentService {
       final currentUserId = currentUserRecord['id'];
       print('✅ PRIVATE VOTE: Current user ID: $currentUserId');
 
-      // Oy kaydı kaldırıldı - sadece wins_count güncellemesi yeterli
+      // Bu match için daha önce oy verilmiş mi kontrol et
+      final existingVote = await _client
+          .from('private_tournament_votes')
+          .select('id')
+          .eq('tournament_id', tournamentId)
+          .eq('voter_id', currentUserId)
+          .eq('user1_id', winnerId)
+          .eq('user2_id', loserId)
+          .maybeSingle();
+
+      if (existingVote != null) {
+        print('❌ PRIVATE VOTE: User already voted for this match');
+        return false;
+      }
+
+      // Ters kombinasyonu da kontrol et
+      final existingVoteReverse = await _client
+          .from('private_tournament_votes')
+          .select('id')
+          .eq('tournament_id', tournamentId)
+          .eq('voter_id', currentUserId)
+          .eq('user1_id', loserId)
+          .eq('user2_id', winnerId)
+          .maybeSingle();
+
+      if (existingVoteReverse != null) {
+        print('❌ PRIVATE VOTE: User already voted for this match (reverse)');
+        return false;
+      }
+
+      // Oy kaydını ekle
+      await _client.from('private_tournament_votes').insert({
+        'tournament_id': tournamentId,
+        'voter_id': currentUserId,
+        'user1_id': winnerId,
+        'user2_id': loserId,
+        'winner_id': winnerId,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+
+      print('✅ PRIVATE VOTE: Vote recorded successfully');
 
       // Kazananın skorunu artır (match kazanma sayısı) - Manuel güncelleme
       print('🎯 PRIVATE VOTE: Updating wins count for winner: $winnerId');
@@ -1730,16 +1735,16 @@ class TournamentService {
           
           print('✅ DEBUG: Private tournament ${tournament['name']} started by start date');
         } else {
-          // Yeterli katılımcı yoksa turnuvayı iptal et
+          // Yeterli katılımcı yoksa turnuvayı tamamla
           await _client
               .from('tournaments')
               .update({
-                'status': 'cancelled',
-                'current_phase': 'cancelled',
+                'status': 'completed',
+                'current_phase': 'completed',
               })
               .eq('id', tournament['id']);
           
-          print('❌ DEBUG: Private tournament ${tournament['name']} cancelled due to insufficient participants');
+          print('❌ DEBUG: Private tournament ${tournament['name']} completed due to insufficient participants');
         }
       }
     } catch (e) {
@@ -2110,23 +2115,37 @@ class TournamentService {
       // Turnuva bilgilerini al ve creator kontrolü yap
       final tournament = await _client
           .from('tournaments')
-          .select('creator_id, is_private, status')
+          .select('creator_id, is_private, status, name')
           .eq('id', tournamentId)
-          .single();
+          .maybeSingle();
 
-      // Sadece private turnuva ve creator olabilir
-      if (!tournament['is_private'] || tournament['creator_id'] != currentUser.id) {
+      if (tournament == null) {
         return false;
       }
 
-      // Sadece upcoming durumundaki turnuvalar silinebilir
-      if (tournament['status'] != 'upcoming') {
+      // Sadece private turnuva ve creator olabilir
+      if (!tournament['is_private']) {
+        return false;
+      }
+      
+      if (tournament['creator_id'] != currentUser.id) {
+        return false;
+      }
+
+      // Sadece upcoming ve active durumundaki turnuvalar silinebilir
+      if (tournament['status'] != 'upcoming' && tournament['status'] != 'active') {
         return false;
       }
 
       // Önce katılımcıları sil
       await _client
           .from('tournament_participants')
+          .delete()
+          .eq('tournament_id', tournamentId);
+
+      // Private tournament votes'ları da sil
+      await _client
+          .from('private_tournament_votes')
           .delete()
           .eq('tournament_id', tournamentId);
 
@@ -2138,7 +2157,6 @@ class TournamentService {
 
       return true;
     } catch (e) {
-      print('❌ DEBUG: deletePrivateTournament hatası: $e');
       return false;
     }
   }
