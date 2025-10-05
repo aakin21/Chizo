@@ -215,6 +215,15 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
               onPressed: () => _showLeaderboard(),
             ),
           ],
+            // Private turnuva admin'i için tarih değiştirme butonu
+          if (widget.tournament.isPrivate && 
+              currentUser?.id == widget.tournament.creatorId &&
+              widget.tournament.status == 'upcoming') ...[
+            IconButton(
+              icon: const Icon(Icons.schedule, color: Colors.blue),
+              onPressed: () => _showUpdateDatesDialog(),
+            ),
+          ],
           // Private turnuva admin'i için silme butonu
           if (widget.tournament.isPrivate && 
               currentUser?.id == widget.tournament.creatorId &&
@@ -821,6 +830,19 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
             
             const SizedBox(height: 20),
             
+            // Admin için tarih değiştirme seçeneği
+            if (widget.tournament.isPrivate && 
+                currentUser?.id == widget.tournament.creatorId &&
+                widget.tournament.status == 'upcoming') ...[
+              _buildBigOption(
+                icon: Icons.schedule,
+                title: 'Tarihleri Güncelle',
+                subtitle: 'Turnuva başlangıç ve bitiş tarihlerini değiştir',
+                color: Colors.blue,
+                onTap: () => _showUpdateDatesDialog(),
+              ),
+              const SizedBox(height: 20),
+            ],
             
             if (widget.tournament.isUserParticipating) ...[
               _buildBigOption(
@@ -1732,6 +1754,391 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Ayrılma hatası: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // Tarih değiştirme dialog'u
+  void _showUpdateDatesDialog() {
+    DateTime selectedStartDate = widget.tournament.startDate;
+    DateTime selectedEndDate = widget.tournament.endDate;
+    TimeOfDay selectedStartTime = TimeOfDay.fromDateTime(widget.tournament.startDate);
+    TimeOfDay selectedEndTime = TimeOfDay.fromDateTime(widget.tournament.endDate);
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          backgroundColor: Colors.grey[900],
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.schedule,
+                  color: Colors.blue,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                'Turnuva Tarihlerini Güncelle',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Mevcut tarihler bilgisi
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Mevcut Tarihler:',
+                        style: TextStyle(
+                          color: Colors.orange,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Başlangıç: ${_formatDate(widget.tournament.startDate)}',
+                        style: const TextStyle(color: Colors.white70, fontSize: 12),
+                      ),
+                      Text(
+                        'Bitiş: ${_formatDate(widget.tournament.endDate)}',
+                        style: const TextStyle(color: Colors.white70, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                const SizedBox(height: 20),
+                
+                // Başlangıç tarihi seçimi
+                _buildDateSelector(
+                  title: 'Başlangıç Tarihi',
+                  selectedDate: selectedStartDate,
+                  selectedTime: selectedStartTime,
+                  onDateChanged: (date) {
+                    setDialogState(() {
+                      selectedStartDate = date;
+                    });
+                  },
+                  onTimeChanged: (time) {
+                    setDialogState(() {
+                      selectedStartTime = time;
+                    });
+                  },
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Bitiş tarihi seçimi
+                _buildDateSelector(
+                  title: 'Bitiş Tarihi',
+                  selectedDate: selectedEndDate,
+                  selectedTime: selectedEndTime,
+                  onDateChanged: (date) {
+                    setDialogState(() {
+                      selectedEndDate = date;
+                    });
+                  },
+                  onTimeChanged: (time) {
+                    setDialogState(() {
+                      selectedEndTime = time;
+                    });
+                  },
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Uyarı mesajı
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.info_outline,
+                        color: Colors.blue,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Tarih değişikliği sadece turnuva başlamadan önce yapılabilir.',
+                          style: const TextStyle(
+                            color: Colors.blue,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'İptal',
+                style: TextStyle(color: Colors.white70),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                // Tarih ve saati birleştir
+                final finalStartDate = DateTime(
+                  selectedStartDate.year,
+                  selectedStartDate.month,
+                  selectedStartDate.day,
+                  selectedStartTime.hour,
+                  selectedStartTime.minute,
+                );
+                final finalEndDate = DateTime(
+                  selectedEndDate.year,
+                  selectedEndDate.month,
+                  selectedEndDate.day,
+                  selectedEndTime.hour,
+                  selectedEndTime.minute,
+                );
+
+                Navigator.pop(context);
+                await _updateTournamentDates(finalStartDate, finalEndDate);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Güncelle'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Tarih seçici widget'ı
+  Widget _buildDateSelector({
+    required String title,
+    required DateTime selectedDate,
+    required TimeOfDay selectedTime,
+    required Function(DateTime) onDateChanged,
+    required Function(TimeOfDay) onTimeChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            // Tarih seçici
+            Expanded(
+              child: GestureDetector(
+                onTap: () async {
+                  final date = await showDatePicker(
+                    context: context,
+                    initialDate: selectedDate,
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime.now().add(const Duration(days: 365)),
+                    builder: (context, child) {
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          colorScheme: const ColorScheme.dark(
+                            primary: Colors.blue,
+                            onPrimary: Colors.white,
+                            surface: Colors.grey,
+                            onSurface: Colors.white,
+                          ),
+                        ),
+                        child: child!,
+                      );
+                    },
+                  );
+                  if (date != null) {
+                    onDateChanged(date);
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[800],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey[600]!),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.calendar_today,
+                        color: Colors.blue,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            // Saat seçici
+            Expanded(
+              child: GestureDetector(
+                onTap: () async {
+                  final time = await showTimePicker(
+                    context: context,
+                    initialTime: selectedTime,
+                    builder: (context, child) {
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          colorScheme: const ColorScheme.dark(
+                            primary: Colors.blue,
+                            onPrimary: Colors.white,
+                            surface: Colors.grey,
+                            onSurface: Colors.white,
+                          ),
+                        ),
+                        child: child!,
+                      );
+                    },
+                  );
+                  if (time != null) {
+                    onTimeChanged(time);
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[800],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey[600]!),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.access_time,
+                        color: Colors.blue,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // Tarih güncelleme işlemi
+  Future<void> _updateTournamentDates(DateTime newStartDate, DateTime newEndDate) async {
+    try {
+      // Loading dialog göster
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const AlertDialog(
+          backgroundColor: Colors.grey,
+          content: Row(
+            children: [
+              CircularProgressIndicator(color: Colors.blue),
+              SizedBox(width: 16),
+              Text(
+                'Tarihler güncelleniyor...',
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      final result = await TournamentService.updatePrivateTournamentDates(
+        tournamentId: widget.tournament.id,
+        newStartDate: newStartDate,
+        newEndDate: newEndDate,
+      );
+
+      // Loading dialog'u kapat
+      if (mounted) Navigator.pop(context);
+
+      if (result['success']) {
+        if (!mounted) return;
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['message']),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+        
+        // Verileri yenile
+        await _loadData();
+      } else {
+        if (!mounted) return;
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['message']),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      // Loading dialog'u kapat
+      if (mounted) Navigator.pop(context);
+      
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Tarih güncelleme hatası: $e'),
           backgroundColor: Colors.red,
         ),
       );

@@ -1887,6 +1887,67 @@ class TournamentService {
     }
   }
 
+  // Private turnuva tarihlerini güncelle (sadece admin)
+  static Future<Map<String, dynamic>> updatePrivateTournamentDates({
+    required String tournamentId,
+    required DateTime newStartDate,
+    required DateTime newEndDate,
+  }) async {
+    try {
+      final currentUser = await UserService.getCurrentUser();
+      if (currentUser == null) {
+        return {'success': false, 'message': 'Kullanıcı bulunamadı'};
+      }
+
+      // Turnuva bilgilerini al
+      final tournament = await _client
+          .from('tournaments')
+          .select('creator_id, status, is_private')
+          .eq('id', tournamentId)
+          .single();
+
+      // Admin kontrolü
+      if (tournament['creator_id'] != currentUser.id) {
+        return {'success': false, 'message': 'Bu işlem için yetkiniz yok'};
+      }
+
+      // Private turnuva kontrolü
+      if (!tournament['is_private']) {
+        return {'success': false, 'message': 'Sadece private turnuvalar için geçerli'};
+      }
+
+      // Turnuva durumu kontrolü - sadece upcoming turnuvalar için
+      if (tournament['status'] != 'upcoming') {
+        return {'success': false, 'message': 'Sadece başlamamış turnuvalar için tarih değiştirilebilir'};
+      }
+
+      // Tarih validasyonu
+      if (newStartDate.isBefore(DateTime.now())) {
+        return {'success': false, 'message': 'Başlangıç tarihi geçmiş olamaz'};
+      }
+
+      if (newEndDate.isBefore(newStartDate)) {
+        return {'success': false, 'message': 'Bitiş tarihi başlangıç tarihinden önce olamaz'};
+      }
+
+      // Tarihleri güncelle
+      await _client
+          .from('tournaments')
+          .update({
+            'start_date': newStartDate.toIso8601String(),
+            'end_date': newEndDate.toIso8601String(),
+          })
+          .eq('id', tournamentId);
+
+      return {
+        'success': true,
+        'message': 'Turnuva tarihleri başarıyla güncellendi'
+      };
+    } catch (e) {
+      return {'success': false, 'message': 'Tarih güncelleme hatası: ${e.toString()}'};
+    }
+  }
+
   // Private key ile turnuvaya katıl
   static Future<Map<String, dynamic>> joinPrivateTournament(String privateKey) async {
     try {
