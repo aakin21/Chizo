@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import '../services/leaderboard_service.dart';
 import '../l10n/app_localizations.dart';
+import '../services/global_theme_service.dart';
 import 'user_profile_screen.dart';
 
 class LeaderboardTab extends StatefulWidget {
@@ -16,12 +18,41 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
   List<UserModel> _topWinners = [];
   List<UserModel> _topWinRate = [];
   bool _isLoading = true;
+  String _currentTheme = 'Beyaz';
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _loadLeaderboardData();
+    _loadCurrentTheme();
+    
+    // Global theme service'e callback kaydet
+    GlobalThemeService().setThemeChangeCallback((theme) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    });
+  }
+
+  Future<void> _loadCurrentTheme() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final theme = prefs.getString('selected_theme') ?? 'Beyaz';
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = 'Beyaz';
+        });
+      }
+    }
   }
 
   @override
@@ -56,6 +87,8 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
   }
 
   Widget _buildUserCard(UserModel user, int rank, {String? subtitle}) {
+    final isDarkTheme = _currentTheme == 'Koyu';
+    
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       elevation: 0,
@@ -64,28 +97,43 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
       ),
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              const Color(0xFFFFF8F5), // Çok açık turuncu ton
-            ],
-          ),
+          gradient: isDarkTheme 
+              ? LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFF1E1E1E), // Koyu gri
+                    const Color(0xFF2D2D2D), // Daha koyu gri
+                  ],
+                )
+              : LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white,
+                    const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                  ],
+                ),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: const Color(0xFFFF6B35).withOpacity(0.1),
+            color: isDarkTheme 
+                ? const Color(0xFFFF6B35).withOpacity(0.3)
+                : const Color(0xFFFF6B35).withOpacity(0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFFF6B35).withOpacity(0.1),
+              color: isDarkTheme 
+                  ? const Color(0xFFFF6B35).withOpacity(0.2)
+                  : const Color(0xFFFF6B35).withOpacity(0.1),
               spreadRadius: 1,
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
             BoxShadow(
-              color: Colors.grey.withOpacity(0.05),
+              color: isDarkTheme 
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.grey.withOpacity(0.05),
               spreadRadius: 1,
               blurRadius: 4,
               offset: const Offset(0, 2),
@@ -107,11 +155,24 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
         ),
         title: Text(
           user.username,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDarkTheme ? Colors.white : null,
+          ),
         ),
         subtitle: subtitle != null 
-          ? Text(subtitle)
-          : Text(AppLocalizations.of(context)!.winsAndMatches(user.wins, user.totalMatches)),
+          ? Text(
+              subtitle,
+              style: TextStyle(
+                color: isDarkTheme ? Colors.white70 : null,
+              ),
+            )
+          : Text(
+              AppLocalizations.of(context)!.winsAndMatches(user.wins, user.totalMatches),
+              style: TextStyle(
+                color: isDarkTheme ? Colors.white70 : null,
+              ),
+            ),
          trailing: GestureDetector(
            onTap: () {
              // print('🎯 Avatar tapped for user: ${user.username}');
@@ -158,9 +219,13 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
   }
 
   Widget _buildLeaderboardList(List<UserModel> users, String emptyMessage) {
+    final isDarkTheme = _currentTheme == 'Koyu';
+    
     if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
+      return Center(
+        child: CircularProgressIndicator(
+          color: isDarkTheme ? const Color(0xFFFF6B35) : null,
+        ),
       );
     }
 
@@ -172,14 +237,14 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
             Icon(
               Icons.emoji_events_outlined,
               size: 64,
-              color: Colors.grey[400],
+              color: isDarkTheme ? Colors.white70 : Colors.grey[400],
             ),
             const SizedBox(height: 16),
             Text(
               emptyMessage,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: isDarkTheme ? Colors.white70 : Colors.grey[600],
               ),
               textAlign: TextAlign.center,
             ),
@@ -214,18 +279,33 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TabBar(
-          controller: _tabController,
-          indicatorColor: const Color(0xFFFF6B35), // Ana turuncu ton
-          labelColor: const Color(0xFFFF6B35), // Ana turuncu ton
-          unselectedLabelColor: Colors.grey[600],
-          tabs: [
-            Tab(text: AppLocalizations.of(context)!.mostWins),
-            Tab(text: AppLocalizations.of(context)!.highestWinRate),
-          ],
-        ),
+    final isDarkTheme = _currentTheme == 'Koyu';
+    
+    return Container(
+      decoration: isDarkTheme 
+          ? BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF121212), // Çok koyu gri
+                  Color(0xFF1A1A1A), // Koyu gri
+                ],
+              ),
+            )
+          : null,
+      child: Column(
+        children: [
+          TabBar(
+            controller: _tabController,
+            indicatorColor: const Color(0xFFFF6B35), // Ana turuncu ton
+            labelColor: const Color(0xFFFF6B35), // Ana turuncu ton
+            unselectedLabelColor: isDarkTheme ? Colors.white70 : Colors.grey[600],
+            tabs: [
+              Tab(text: AppLocalizations.of(context)!.mostWins),
+              Tab(text: AppLocalizations.of(context)!.highestWinRate),
+            ],
+          ),
         Expanded(
           child: TabBarView(
             controller: _tabController,
@@ -241,7 +321,8 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
             ],
           ),
         ),
-      ],
+        ],
+      ),
     );
   }
 }

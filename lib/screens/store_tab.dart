@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/user_service.dart';
 import '../models/user_model.dart';
 import '../l10n/app_localizations.dart';
+import '../services/global_theme_service.dart';
 // Notification imports removed - using UserService.updateCoins instead
 
 class StoreTab extends StatefulWidget {
@@ -17,12 +18,41 @@ class _StoreTabState extends State<StoreTab> {
   bool _isLoading = true;
   int _adWatchCount = 0;
   DateTime? _lastAdWatchDate;
+  String _currentTheme = 'Beyaz';
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
     _loadAdWatchData();
+    _loadCurrentTheme();
+    
+    // Global theme service'e callback kaydet
+    GlobalThemeService().setThemeChangeCallback((theme) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    });
+  }
+
+  Future<void> _loadCurrentTheme() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final theme = prefs.getString('selected_theme') ?? 'Beyaz';
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = 'Beyaz';
+        });
+      }
+    }
   }
 
   Future<void> _loadAdWatchData() async {
@@ -71,6 +101,7 @@ class _StoreTabState extends State<StoreTab> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDarkTheme = _currentTheme == 'Koyu';
     
     if (_isLoading) {
       return const Center(
@@ -78,9 +109,22 @@ class _StoreTabState extends State<StoreTab> {
       );
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
+    return Container(
+      decoration: isDarkTheme 
+          ? BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF121212), // Çok koyu gri
+                  Color(0xFF1A1A1A), // Koyu gri
+                ],
+              ),
+            )
+          : null,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
         children: [
           
           // Coin Bakiyesi
@@ -91,28 +135,43 @@ class _StoreTabState extends State<StoreTab> {
             ),
             child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.white,
-                    const Color(0xFFFFF8F5), // Çok açık turuncu ton
-                  ],
-                ),
+                gradient: isDarkTheme 
+                    ? LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          const Color(0xFF1E1E1E), // Koyu gri
+                          const Color(0xFF2D2D2D), // Daha koyu gri
+                        ],
+                      )
+                    : LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.white,
+                          const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                        ],
+                      ),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: const Color(0xFFFF6B35).withOpacity(0.1),
+                  color: isDarkTheme 
+                      ? const Color(0xFFFF6B35).withOpacity(0.3)
+                      : const Color(0xFFFF6B35).withOpacity(0.1),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFFF6B35).withOpacity(0.1),
+                    color: isDarkTheme 
+                        ? const Color(0xFFFF6B35).withOpacity(0.2)
+                        : const Color(0xFFFF6B35).withOpacity(0.1),
                     spreadRadius: 1,
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.05),
+                    color: isDarkTheme 
+                        ? Colors.black.withOpacity(0.3)
+                        : Colors.grey.withOpacity(0.05),
                     spreadRadius: 1,
                     blurRadius: 4,
                     offset: const Offset(0, 2),
@@ -134,16 +193,18 @@ class _StoreTabState extends State<StoreTab> {
                     children: [
                       Text(
                         l10n.coins,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
+                          color: isDarkTheme ? Colors.white70 : null,
                         ),
                       ),
                       Text(
                         '${_currentUser?.coins ?? 0}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
+                          color: isDarkTheme ? Colors.white : null,
                         ),
                       ),
                     ],
@@ -170,6 +231,7 @@ class _StoreTabState extends State<StoreTab> {
             ],
           ),
         ],
+        ),
       ),
     );
   }
@@ -178,6 +240,8 @@ class _StoreTabState extends State<StoreTab> {
     required String title,
     required List<Widget> children,
   }) {
+    final isDarkTheme = _currentTheme == 'Koyu';
+    
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -185,28 +249,43 @@ class _StoreTabState extends State<StoreTab> {
       ),
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              const Color(0xFFFFF8F5), // Çok açık turuncu ton
-            ],
-          ),
+          gradient: isDarkTheme 
+              ? LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFF1E1E1E), // Koyu gri
+                    const Color(0xFF2D2D2D), // Daha koyu gri
+                  ],
+                )
+              : LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white,
+                    const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                  ],
+                ),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: const Color(0xFFFF6B35).withOpacity(0.1),
+            color: isDarkTheme 
+                ? const Color(0xFFFF6B35).withOpacity(0.3)
+                : const Color(0xFFFF6B35).withOpacity(0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFFF6B35).withOpacity(0.1),
+              color: isDarkTheme 
+                  ? const Color(0xFFFF6B35).withOpacity(0.2)
+                  : const Color(0xFFFF6B35).withOpacity(0.1),
               spreadRadius: 1,
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
             BoxShadow(
-              color: Colors.grey.withOpacity(0.05),
+              color: isDarkTheme 
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.grey.withOpacity(0.05),
               spreadRadius: 1,
               blurRadius: 4,
               offset: const Offset(0, 2),
@@ -220,9 +299,10 @@ class _StoreTabState extends State<StoreTab> {
           children: [
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
+                color: isDarkTheme ? Colors.white : null,
               ),
             ),
             const SizedBox(height: 16),
@@ -236,6 +316,7 @@ class _StoreTabState extends State<StoreTab> {
 
   Widget _buildCoinPackage(String title, String price, int coins, Color color) {
     final l10n = AppLocalizations.of(context)!;
+    final isDarkTheme = _currentTheme == 'Koyu';
     
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
@@ -245,28 +326,43 @@ class _StoreTabState extends State<StoreTab> {
       ),
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              const Color(0xFFFFF8F5), // Çok açık turuncu ton
-            ],
-          ),
+          gradient: isDarkTheme 
+              ? LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFF1E1E1E), // Koyu gri
+                    const Color(0xFF2D2D2D), // Daha koyu gri
+                  ],
+                )
+              : LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white,
+                    const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                  ],
+                ),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: const Color(0xFFFF6B35).withOpacity(0.1),
+            color: isDarkTheme 
+                ? const Color(0xFFFF6B35).withOpacity(0.3)
+                : const Color(0xFFFF6B35).withOpacity(0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFFF6B35).withOpacity(0.1),
+              color: isDarkTheme 
+                  ? const Color(0xFFFF6B35).withOpacity(0.2)
+                  : const Color(0xFFFF6B35).withOpacity(0.1),
               spreadRadius: 1,
               blurRadius: 6,
               offset: const Offset(0, 3),
             ),
             BoxShadow(
-              color: Colors.grey.withOpacity(0.05),
+              color: isDarkTheme 
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.grey.withOpacity(0.05),
               spreadRadius: 1,
               blurRadius: 3,
               offset: const Offset(0, 1),
@@ -288,9 +384,17 @@ class _StoreTabState extends State<StoreTab> {
         ),
         title: Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDarkTheme ? Colors.white : null,
+          ),
         ),
-        subtitle: Text(price),
+        subtitle: Text(
+          price,
+          style: TextStyle(
+            color: isDarkTheme ? Colors.white70 : null,
+          ),
+        ),
         trailing: ElevatedButton(
           onPressed: () => _showPurchaseDialog(coins),
           style: ElevatedButton.styleFrom(
@@ -311,6 +415,7 @@ class _StoreTabState extends State<StoreTab> {
 
   Widget _buildAdPackage() {
     final l10n = AppLocalizations.of(context)!;
+    final isDarkTheme = _currentTheme == 'Koyu';
     
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
@@ -320,28 +425,43 @@ class _StoreTabState extends State<StoreTab> {
       ),
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              const Color(0xFFFFF8F5), // Çok açık turuncu ton
-            ],
-          ),
+          gradient: isDarkTheme 
+              ? LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFF1E1E1E), // Koyu gri
+                    const Color(0xFF2D2D2D), // Daha koyu gri
+                  ],
+                )
+              : LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white,
+                    const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                  ],
+                ),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: const Color(0xFFFF6B35).withOpacity(0.1),
+            color: isDarkTheme 
+                ? const Color(0xFFFF6B35).withOpacity(0.3)
+                : const Color(0xFFFF6B35).withOpacity(0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFFF6B35).withOpacity(0.1),
+              color: isDarkTheme 
+                  ? const Color(0xFFFF6B35).withOpacity(0.2)
+                  : const Color(0xFFFF6B35).withOpacity(0.1),
               spreadRadius: 1,
               blurRadius: 6,
               offset: const Offset(0, 3),
             ),
             BoxShadow(
-              color: Colors.grey.withOpacity(0.05),
+              color: isDarkTheme 
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.grey.withOpacity(0.05),
               spreadRadius: 1,
               blurRadius: 3,
               offset: const Offset(0, 1),
@@ -363,13 +483,27 @@ class _StoreTabState extends State<StoreTab> {
         ),
         title: Text(
           l10n.watchAd,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDarkTheme ? Colors.white : null,
+          ),
         ),
-        subtitle: Text('50 ${l10n.coins}'),
+        subtitle: Text(
+          '50 ${l10n.coins}',
+          style: TextStyle(
+            color: isDarkTheme ? Colors.white70 : null,
+          ),
+        ),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${_getAdCount()}/3', style: const TextStyle(fontSize: 12)),
+            Text(
+              '${_getAdCount()}/3', 
+              style: TextStyle(
+                fontSize: 12,
+                color: isDarkTheme ? Colors.white70 : null,
+              ),
+            ),
             const SizedBox(height: 4),
             ElevatedButton(
               onPressed: _canWatchAd() ? _watchAdForCoins : null,
@@ -406,11 +540,24 @@ class _StoreTabState extends State<StoreTab> {
       return;
     }
     
+    final isDarkTheme = _currentTheme == 'Koyu';
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.watchAd),
-        content: Text(l10n.watchAdConfirmation),
+        backgroundColor: isDarkTheme ? const Color(0xFF1E1E1E) : null,
+        title: Text(
+          l10n.watchAd,
+          style: TextStyle(
+            color: isDarkTheme ? Colors.white : null,
+          ),
+        ),
+        content: Text(
+          l10n.watchAdConfirmation,
+          style: TextStyle(
+            color: isDarkTheme ? Colors.white70 : null,
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -442,15 +589,25 @@ class _StoreTabState extends State<StoreTab> {
   void _simulateAdWatch() async {
     final l10n = AppLocalizations.of(context)!;
     
+    final isDarkTheme = _currentTheme == 'Koyu';
+    
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
+        backgroundColor: isDarkTheme ? const Color(0xFF1E1E1E) : null,
         content: Row(
           children: [
-            const CircularProgressIndicator(),
+            CircularProgressIndicator(
+              color: isDarkTheme ? const Color(0xFFFF6B35) : null,
+            ),
             const SizedBox(width: 16),
-            Text(l10n.watchingAd),
+            Text(
+              l10n.watchingAd,
+              style: TextStyle(
+                color: isDarkTheme ? Colors.white70 : null,
+              ),
+            ),
           ],
         ),
       ),
@@ -523,12 +680,24 @@ class _StoreTabState extends State<StoreTab> {
 
   void _showPurchaseDialog(int coins) {
     final l10n = AppLocalizations.of(context)!;
+    final isDarkTheme = _currentTheme == 'Koyu';
     
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('${l10n.buy} ${l10n.coins}'),
-        content: Text('$coins ${l10n.coins} ${l10n.buy}?'),
+        backgroundColor: isDarkTheme ? const Color(0xFF1E1E1E) : null,
+        title: Text(
+          '${l10n.buy} ${l10n.coins}',
+          style: TextStyle(
+            color: isDarkTheme ? Colors.white : null,
+          ),
+        ),
+        content: Text(
+          '$coins ${l10n.coins} ${l10n.buy}?',
+          style: TextStyle(
+            color: isDarkTheme ? Colors.white70 : null,
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -560,15 +729,25 @@ class _StoreTabState extends State<StoreTab> {
   void _simulatePurchase(int coins) {
     final l10n = AppLocalizations.of(context)!;
     
+    final isDarkTheme = _currentTheme == 'Koyu';
+    
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const AlertDialog(
+      builder: (context) => AlertDialog(
+        backgroundColor: isDarkTheme ? const Color(0xFF1E1E1E) : null,
         content: Row(
           children: [
-            CircularProgressIndicator(),
-            SizedBox(width: 16),
-            Text('İşlem gerçekleştiriliyor...'),
+            CircularProgressIndicator(
+              color: isDarkTheme ? const Color(0xFFFF6B35) : null,
+            ),
+            const SizedBox(width: 16),
+            Text(
+              'İşlem gerçekleştiriliyor...',
+              style: TextStyle(
+                color: isDarkTheme ? Colors.white70 : null,
+              ),
+            ),
           ],
         ),
       ),

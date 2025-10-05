@@ -254,9 +254,24 @@ class _SettingsTabState extends State<SettingsTab> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
+    final isDarkTheme = _selectedTheme == 'Koyu';
+    
+    return Container(
+      decoration: isDarkTheme 
+          ? BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF121212), // Çok koyu gri
+                  Color(0xFF1A1A1A), // Koyu gri
+                ],
+              ),
+            )
+          : null,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
         children: [
           
           // Tema ve Görünüm
@@ -287,14 +302,14 @@ class _SettingsTabState extends State<SettingsTab> {
             title: AppLocalizations.of(context)!.appSettings,
             children: [
               ListTile(
-                leading: const Icon(Icons.emoji_events, color: Colors.purple),
+                leading: const Icon(Icons.emoji_events, color: Color(0xFFFF6B35)),
                 title: Text(AppLocalizations.of(context)!.dailyRewards),
                 subtitle: Text(AppLocalizations.of(context)!.dailyRewardsSubtitle),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: _showDailyStreakDialog,
               ),
               ListTile(
-                leading: const Icon(Icons.info_outline, color: Colors.blue),
+                leading: const Icon(Icons.info_outline, color: Color(0xFFFF6B35)),
                 title: Text(AppLocalizations.of(context)!.aboutApp),
                 subtitle: const Text('${AppConstants.appName} v${AppConstants.appVersion}'),
                 trailing: const Icon(Icons.arrow_forward_ios),
@@ -312,7 +327,7 @@ class _SettingsTabState extends State<SettingsTab> {
             title: '⚔️ Match Ayarları',
             children: [
               ListTile(
-                leading: const Icon(Icons.visibility, color: Colors.green),
+                leading: const Icon(Icons.visibility, color: Color(0xFFFF6B35)),
                 title: Text(AppLocalizations.of(context)!.visibleInMatches),
                 subtitle: const Text("Diğer kullanıcılar sizi görebilir"),
                 trailing: Switch(
@@ -338,7 +353,7 @@ class _SettingsTabState extends State<SettingsTab> {
               ),
               // Yaş Aralığı Tercihleri
               ListTile(
-                leading: const Icon(Icons.cake, color: Colors.orange),
+                leading: const Icon(Icons.cake, color: Color(0xFFFF6B35)),
                 title: const Text('Yaş Aralığı Tercihleri'),
                 subtitle: const Text('Hangi yaş aralıklarından oylanmak istediğinizi seçin'),
                 trailing: const Icon(Icons.arrow_forward_ios),
@@ -346,7 +361,7 @@ class _SettingsTabState extends State<SettingsTab> {
               ),
               // Ülke Tercihleri
               ListTile(
-                leading: const Icon(Icons.public, color: Colors.blue),
+                leading: const Icon(Icons.public, color: Color(0xFFFF6B35)),
                 title: const Text('Ülke Tercihleri'),
                 subtitle: const Text('Hangi ülkelerden oylanmak istediğinizi seçin'),
                 trailing: const Icon(Icons.arrow_forward_ios),
@@ -364,7 +379,7 @@ class _SettingsTabState extends State<SettingsTab> {
             title: '🌍 ${AppLocalizations.of(context)!.language}',
             children: [
               ListTile(
-                leading: const Icon(Icons.language, color: Colors.blue),
+                leading: const Icon(Icons.language, color: Color(0xFFFF6B35)),
                 title: Text(AppLocalizations.of(context)!.language),
                 subtitle: Text('Select your preferred language'),
                 trailing: CompactLanguageSelector(
@@ -414,7 +429,7 @@ class _SettingsTabState extends State<SettingsTab> {
             title: AppLocalizations.of(context)!.accountOperations,
             children: [
               ListTile(
-                leading: const Icon(Icons.logout, color: Colors.orange),
+                leading: const Icon(Icons.logout, color: Color(0xFFFF6B35)),
                 title: Text(AppLocalizations.of(context)!.logout),
                 subtitle: Text(AppLocalizations.of(context)!.logout),
                 trailing: _isLoggingOut 
@@ -440,6 +455,7 @@ class _SettingsTabState extends State<SettingsTab> {
           const SizedBox(height: 24),
           
         ],
+        ),
       ),
     );
   }
@@ -448,29 +464,46 @@ class _SettingsTabState extends State<SettingsTab> {
     required String title,
     required List<Widget> children,
   }) {
+    final isDarkTheme = _selectedTheme == 'Koyu';
+    
     return Container(
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white,
-            Color(0xFFFFF8F5), // Hafif turuncu ton
-          ],
-        ),
+        gradient: isDarkTheme 
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF1E1E1E), // Koyu gri
+                  Color(0xFF2D2D2D), // Daha koyu gri
+                ],
+              )
+            : const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white,
+                  Color(0xFFFFF8F5), // Hafif turuncu ton
+                ],
+              ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFFFF6B35).withOpacity(0.1),
+          color: isDarkTheme 
+              ? const Color(0xFFFF6B35).withOpacity(0.3)
+              : const Color(0xFFFF6B35).withOpacity(0.1),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFF6B35).withOpacity(0.1),
+            color: isDarkTheme 
+                ? const Color(0xFFFF6B35).withOpacity(0.2)
+                : const Color(0xFFFF6B35).withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
           BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
+            color: isDarkTheme 
+                ? Colors.black.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.05),
             blurRadius: 4,
             offset: const Offset(0, 1),
           ),
@@ -485,7 +518,7 @@ class _SettingsTabState extends State<SettingsTab> {
               title,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFFFF6B35), // Turuncu başlık rengi
+                color: const Color(0xFFFF6B35), // Turuncu başlık rengi (her temada aynı)
               ),
             ),
             const SizedBox(height: 12),
@@ -497,26 +530,57 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
   void _showDailyStreakDialog() {
+    final isDarkTheme = _selectedTheme == 'Koyu';
+    
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.dailyStreakRewards),
+          backgroundColor: isDarkTheme ? const Color(0xFF1E1E1E) : null,
+          title: Text(
+            AppLocalizations.of(context)!.dailyStreakRewards,
+            style: TextStyle(
+              color: isDarkTheme ? Colors.white : null,
+            ),
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(AppLocalizations.of(context)!.dailyStreakDescription),
+                Text(
+                  AppLocalizations.of(context)!.dailyStreakDescription,
+                  style: TextStyle(
+                    color: isDarkTheme ? Colors.white70 : null,
+                  ),
+                ),
                 const SizedBox(height: 12),
-                Text(AppLocalizations.of(context)!.day1_2Reward),
-                Text(AppLocalizations.of(context)!.day3_6Reward),
-                Text(AppLocalizations.of(context)!.day7PlusReward),
+                Text(
+                  AppLocalizations.of(context)!.day1_2Reward,
+                  style: TextStyle(
+                    color: isDarkTheme ? Colors.white70 : null,
+                  ),
+                ),
+                Text(
+                  AppLocalizations.of(context)!.day3_6Reward,
+                  style: TextStyle(
+                    color: isDarkTheme ? Colors.white70 : null,
+                  ),
+                ),
+                Text(
+                  AppLocalizations.of(context)!.day7PlusReward,
+                  style: TextStyle(
+                    color: isDarkTheme ? Colors.white70 : null,
+                  ),
+                ),
               ],
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
+              style: TextButton.styleFrom(
+                foregroundColor: isDarkTheme ? const Color(0xFFFF6B35) : null,
+              ),
               child: Text(AppLocalizations.of(context)!.ok),
             ),
           ],
@@ -576,6 +640,7 @@ class _SettingsTabState extends State<SettingsTab> {
   // Yaş aralığı tercihleri dialog'u
   void _showAgeRangePreferencesDialog() {
     if (_currentUser == null) return;
+    final isDarkTheme = _selectedTheme == 'Koyu';
     
     // Mevcut seçili yaş aralıklarını al (eğer yoksa tüm yaş aralıkları seçili olsun)
     List<String> selectedAgeRanges = _currentUser!.ageRangePreferences ?? AppConstants.ageRanges;
@@ -610,7 +675,13 @@ class _SettingsTabState extends State<SettingsTab> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Yaş Aralığı Tercihleri'),
+          backgroundColor: isDarkTheme ? const Color(0xFF1E1E1E) : null,
+          title: Text(
+            'Yaş Aralığı Tercihleri',
+            style: TextStyle(
+              color: isDarkTheme ? Colors.white : null,
+            ),
+          ),
           content: SizedBox(
             width: double.maxFinite,
             height: 250,
@@ -790,30 +861,51 @@ class _SettingsTabState extends State<SettingsTab> {
 
   // Ülke tercihleri dialog'u
   void _showCountryPreferencesDialog() {
+    final isDarkTheme = _selectedTheme == 'Koyu';
     List<String> selectedCountries = _currentUser?.countryPreferences ?? AppConstants.countries;
     
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Ülke Tercihleri'),
+          backgroundColor: isDarkTheme ? const Color(0xFF1E1E1E) : null,
+          title: Text(
+            'Ülke Tercihleri',
+            style: TextStyle(
+              color: isDarkTheme ? Colors.white : null,
+            ),
+          ),
           content: Container(
             width: double.maxFinite,
             height: 400,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white,
-                  Color(0xFFFFF8F5), // Çok hafif turuncu ton
-                ],
-              ),
+              gradient: isDarkTheme 
+                  ? const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFF2D2D2D), // Koyu gri
+                        Color(0xFF1E1E1E), // Daha koyu gri
+                      ],
+                    )
+                  : const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.white,
+                        Color(0xFFFFF8F5), // Çok hafif turuncu ton
+                      ],
+                    ),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
               children: [
-                const Text('Hangi ülkelerden oylanmak istediğinizi seçin:'),
+                Text(
+                  'Hangi ülkelerden oylanmak istediğinizi seçin:',
+                  style: TextStyle(
+                    color: isDarkTheme ? Colors.white70 : null,
+                  ),
+                ),
                 const SizedBox(height: 16),
                 Expanded(
                   child: ListView.builder(
@@ -821,7 +913,12 @@ class _SettingsTabState extends State<SettingsTab> {
                     itemBuilder: (context, index) {
                       final country = AppConstants.countries[index];
                       return CheckboxListTile(
-                        title: Text(country),
+                        title: Text(
+                          country,
+                          style: TextStyle(
+                            color: isDarkTheme ? Colors.white : null,
+                          ),
+                        ),
                         value: selectedCountries.contains(country),
                         activeColor: const Color(0xFFFF6B35), // Turuncu checkbox rengi
                         onChanged: (value) {

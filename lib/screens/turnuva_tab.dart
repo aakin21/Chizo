@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/tournament_model.dart';
 import '../models/user_model.dart';
 import '../services/tournament_service.dart';
 import '../services/user_service.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/beautiful_snackbar.dart';
+import '../services/global_theme_service.dart';
 import 'tournament_detail_screen.dart';
 import 'champions_screen.dart';
 
@@ -21,11 +23,40 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   bool isLoading = true;
   UserModel? currentUser;
   Map<String, String> creatorNames = {}; // Creator ID -> Username mapping
+  String _currentTheme = 'Beyaz';
 
   @override
   void initState() {
     super.initState();
     loadTournaments();
+    _loadCurrentTheme();
+    
+    // Global theme service'e callback kaydet
+    GlobalThemeService().setThemeChangeCallback((theme) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    });
+  }
+
+  Future<void> _loadCurrentTheme() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final theme = prefs.getString('selected_theme') ?? 'Beyaz';
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = 'Beyaz';
+        });
+      }
+    }
   }
 
   Future<void> loadTournaments() async {
@@ -149,14 +180,32 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: loadTournaments,
-      child: _buildSimpleTournamentList(),
+    final isDarkTheme = _currentTheme == 'Koyu';
+    
+    return Container(
+      decoration: isDarkTheme 
+          ? BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF121212), // Çok koyu gri
+                  Color(0xFF1A1A1A), // Koyu gri
+                ],
+              ),
+            )
+          : null,
+      child: RefreshIndicator(
+        onRefresh: loadTournaments,
+        child: _buildSimpleTournamentList(),
+      ),
     );
   }
 
   // Basit turnuva listesi
   Widget _buildSimpleTournamentList() {
+    final isDarkTheme = _currentTheme == 'Koyu';
+    
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(16),
@@ -204,9 +253,13 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
           const SizedBox(height: 16),
           
           if (isLoading)
-            const SizedBox(
+            SizedBox(
               height: 200,
-              child: Center(child: CircularProgressIndicator()),
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: isDarkTheme ? const Color(0xFFFF6B35) : null,
+                ),
+              ),
             )
           else if (tournaments.isEmpty)
             SizedBox(
@@ -237,7 +290,10 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                     const SizedBox(height: 16),
                     Text(
                       AppLocalizations.of(context)!.noActiveTournament,
-                      style: const TextStyle(fontSize: 16, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 16, 
+                        color: isDarkTheme ? Colors.white70 : Colors.grey,
+                      ),
                     ),
                   ],
                 ),
@@ -268,33 +324,50 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
 
   // Basit turnuva kartı - sadece isim ve katılımcı sayısı
   Widget _buildSimpleTournamentCard(TournamentModel tournament) {
+    final isDarkTheme = _currentTheme == 'Koyu';
+    
     return GestureDetector(
       onTap: () => _navigateToTournamentDetail(tournament),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              const Color(0xFFFFF8F5), // Çok açık turuncu ton
-            ],
-          ),
+          gradient: isDarkTheme 
+              ? LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFF1E1E1E), // Koyu gri
+                    const Color(0xFF2D2D2D), // Daha koyu gri
+                  ],
+                )
+              : LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white,
+                    const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                  ],
+                ),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: const Color(0xFFFF6B35).withOpacity(0.1),
+            color: isDarkTheme 
+                ? const Color(0xFFFF6B35).withOpacity(0.3)
+                : const Color(0xFFFF6B35).withOpacity(0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFFF6B35).withOpacity(0.1),
+              color: isDarkTheme 
+                  ? const Color(0xFFFF6B35).withOpacity(0.2)
+                  : const Color(0xFFFF6B35).withOpacity(0.1),
               spreadRadius: 1,
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
             BoxShadow(
-              color: Colors.grey.withOpacity(0.05),
+              color: isDarkTheme 
+                  ? Colors.black.withOpacity(0.3)
+                  : Colors.grey.withOpacity(0.05),
               spreadRadius: 1,
               blurRadius: 4,
               offset: const Offset(0, 2),
@@ -344,9 +417,10 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 children: [
                   Text(
                     tournament.getLocalizedName(AppLocalizations.of(context)!),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
+                      color: isDarkTheme ? Colors.white : null,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -356,7 +430,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                     '${tournament.currentParticipants}/${tournament.maxParticipants} katılımcı',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: isDarkTheme ? Colors.white70 : Colors.grey[600],
                     ),
                   ),
                   if (tournament.isPrivate) ...[
@@ -365,7 +439,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                       'Oluşturan: ${creatorNames[tournament.creatorId] ?? "Bilinmeyen"}',
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey[500],
+                        color: isDarkTheme ? Colors.white60 : Colors.grey[500],
                       ),
                     ),
                   ],
@@ -395,7 +469,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
             // Ok ikonu
             Icon(
               Icons.arrow_forward_ios,
-              color: Colors.grey[400],
+              color: isDarkTheme ? Colors.white60 : Colors.grey[400],
               size: 16,
             ),
           ],
@@ -497,10 +571,13 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     TimeOfDay startTime = const TimeOfDay(hour: 20, minute: 0);
     TimeOfDay endTime = const TimeOfDay(hour: 22, minute: 0);
 
+    final isDarkTheme = _currentTheme == 'Koyu';
+    
     await showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
+          backgroundColor: isDarkTheme ? const Color(0xFF1E1E1E) : null,
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -508,7 +585,12 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 children: [
                   const Icon(Icons.add_circle, color: Colors.purple),
                   const SizedBox(width: 8),
-                  Text(AppLocalizations.of(context)!.createPrivateTournament),
+                  Text(
+                    AppLocalizations.of(context)!.createPrivateTournament,
+                    style: TextStyle(
+                      color: isDarkTheme ? Colors.white : null,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 8),
@@ -834,14 +916,22 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   Future<void> _showJoinPrivateTournamentDialog() async {
     final keyController = TextEditingController();
 
+    final isDarkTheme = _currentTheme == 'Koyu';
+    
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Row(
+        backgroundColor: isDarkTheme ? const Color(0xFF1E1E1E) : null,
+        title: Row(
           children: [
-            Icon(Icons.key, color: Colors.orange),
-            SizedBox(width: 8),
-            Text('Private Key ile Katıl'),
+            const Icon(Icons.key, color: Colors.orange),
+            const SizedBox(width: 8),
+            Text(
+              'Private Key ile Katıl',
+              style: TextStyle(
+                color: isDarkTheme ? Colors.white : null,
+              ),
+            ),
           ],
         ),
         content: Column(

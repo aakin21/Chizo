@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import '../services/match_history_service.dart';
 import '../services/user_service.dart';
+import '../services/global_theme_service.dart';
 import '../l10n/app_localizations.dart';
 
 class MatchHistoryScreen extends StatefulWidget {
@@ -21,12 +22,41 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
   DateTime? unlockExpiry; // Unlock'un ne zaman sona ereceği
   bool hasWeeklyAccess = false; // 1 haftalık erişim var mı
   DateTime? weeklyAccessExpiry; // Haftalık erişimin ne zaman sona ereceği
+  String _currentTheme = 'Beyaz';
 
   @override
   void initState() {
     super.initState();
     _loadSavedUnlockData();
     _loadMatchHistory();
+    _loadCurrentTheme();
+    
+    // Global theme service'e callback kaydet
+    GlobalThemeService().setThemeChangeCallback((theme) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    });
+  }
+
+  Future<void> _loadCurrentTheme() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final theme = prefs.getString('selected_theme') ?? 'Beyaz';
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = 'Beyaz';
+        });
+      }
+    }
   }
 
   Future<void> _loadMatchHistory() async {
@@ -356,6 +386,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
     final opponent = matchData['opponent'] as UserModel;
     final isWinner = matchData['is_winner'] as bool;
     final completedAt = DateTime.parse(matchData['completed_at']);
+    final isDarkTheme = _currentTheme == 'Koyu';
     
     // Check if this match should be blurred
     final shouldBlur = (index >= unlockedMatches);
@@ -374,9 +405,10 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
             children: [
               Text(
                 shouldBlur ? '●●●●●●●●' : opponent.username,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: isDarkTheme ? Colors.white : null,
                 ),
               ),
               const SizedBox(height: 4),
@@ -384,14 +416,14 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                 shouldBlur ? '●●●●●●●●●●' : AppLocalizations.of(context)!.winRateColon(opponent.winRateString),
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey[600],
+                  color: isDarkTheme ? Colors.white70 : Colors.grey[600],
                 ),
               ),
               Text(
                 shouldBlur ? '●●●●●●●●●●●●' : AppLocalizations.of(context)!.matchesAndWins(opponent.totalMatches, opponent.wins),
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey[500],
+                  color: isDarkTheme ? Colors.white60 : Colors.grey[500],
                 ),
               ),
             ],
@@ -419,7 +451,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
               '${completedAt.day}/${completedAt.month}',
               style: TextStyle(
                 fontSize: 10,
-                color: Colors.grey[500],
+                color: isDarkTheme ? Colors.white60 : Colors.grey[500],
               ),
             ),
           ],
@@ -427,8 +459,52 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
       ],
     );
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: isDarkTheme 
+            ? LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color(0xFF1E1E1E), // Koyu gri
+                  const Color(0xFF2D2D2D), // Daha koyu gri
+                ],
+              )
+            : LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white,
+                  const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                ],
+              ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDarkTheme 
+              ? const Color(0xFFFF6B35).withOpacity(0.3)
+              : const Color(0xFFFF6B35).withOpacity(0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDarkTheme 
+                ? const Color(0xFFFF6B35).withOpacity(0.2)
+                : const Color(0xFFFF6B35).withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: isDarkTheme 
+                ? Colors.black.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.05),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: shouldBlur
@@ -442,6 +518,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
   }
 
   Widget _buildUnlockButtons() {
+    final isDarkTheme = _currentTheme == 'Koyu';
     
     return Container(
       padding: const EdgeInsets.all(16),
@@ -478,12 +555,10 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                   child: ElevatedButton(
                     onPressed: unlockedMatches >= 50 ? null : () => _unlockMatches(50, 100),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).brightness == Brightness.dark 
-                          ? Colors.grey[300] 
-                          : Theme.of(context).primaryColor,
-                      foregroundColor: Theme.of(context).brightness == Brightness.dark 
-                          ? Colors.black87 
-                          : Colors.white,
+                      backgroundColor: isDarkTheme 
+                          ? const Color(0xFFFF6B35) // Ana turuncu ton
+                          : const Color(0xFFFF6B35), // Ana turuncu ton
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       minimumSize: const Size(0, 40),
                     ),
@@ -504,12 +579,10 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                   child: ElevatedButton(
                     onPressed: () => _unlockWeeklyAccess(),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).brightness == Brightness.dark 
-                          ? Colors.grey[300] 
-                          : Theme.of(context).primaryColor,
-                      foregroundColor: Theme.of(context).brightness == Brightness.dark 
-                          ? Colors.black87 
-                          : Colors.white,
+                      backgroundColor: isDarkTheme 
+                          ? const Color(0xFFFF6B35) // Ana turuncu ton
+                          : const Color(0xFFFF6B35), // Ana turuncu ton
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       minimumSize: const Size(0, 40),
                     ),
@@ -583,6 +656,8 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
 
 
   Widget _buildLazyAvatar(UserModel opponent, bool shouldBlur) {
+    final isDarkTheme = _currentTheme == 'Koyu';
+    
     return FutureBuilder<UserModel?>(
       future: opponent.matchPhotos == null || opponent.matchPhotos!.isEmpty
           ? MatchHistoryService.loadUserPhotos(opponent)
@@ -594,6 +669,9 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
           onTap: shouldBlur ? null : () => _showImageDialog(user),
           child: CircleAvatar(
             radius: 30,
+            backgroundColor: isDarkTheme 
+                ? const Color(0xFFFF6B35).withOpacity(0.2) // Turuncu arka plan
+                : const Color(0xFFFF6B35).withOpacity(0.1), // Turuncu arka plan
             backgroundImage: user.matchPhotos != null && 
                               user.matchPhotos!.isNotEmpty &&
                               user.matchPhotos!.first['photo_url'] != null
@@ -608,7 +686,11 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Icon(Icons.person, size: 30)
+                    : Icon(
+                        Icons.person, 
+                        size: 30,
+                        color: const Color(0xFFFF6B35), // Turuncu ikon
+                      )
                 : null,
           ),
         );
@@ -618,13 +700,23 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkTheme = _currentTheme == 'Koyu';
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.matchHistory),
+        title: Text(
+          AppLocalizations.of(context)!.matchHistory,
+          style: TextStyle(
+            color: isDarkTheme ? Colors.white : null,
+          ),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle: isDarkTheme ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+        iconTheme: IconThemeData(
+          color: isDarkTheme ? Colors.white : null,
+        ),
         actions: [
           if (hasWeeklyAccess && weeklyAccessExpiry != null)
             _buildTimeCounter('Bitiş:', weeklyAccessExpiry!)
@@ -632,41 +724,59 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
             _buildTimeCounter('Bitiş:', unlockExpiry!),
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _loadMatchHistory,
-              child: ListView(
-                children: [
-                  // Unlock buttons
-                  _buildUnlockButtons(),
-                  
-                  const SizedBox(height: 16),
-                  
-                  // Match list
-                  if (matchHistory.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.all(32),
-                      child: Center(
-                        child: Text(
-                          AppLocalizations.of(context)!.noMatchHistoryYet,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
+      body: Container(
+        decoration: isDarkTheme 
+            ? BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF121212), // Çok koyu gri
+                    Color(0xFF1A1A1A), // Koyu gri
+                  ],
+                ),
+              )
+            : null,
+        child: isLoading
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: isDarkTheme ? const Color(0xFFFF6B35) : null,
+                ),
+              )
+            : RefreshIndicator(
+                onRefresh: _loadMatchHistory,
+                child: ListView(
+                  children: [
+                    // Unlock buttons
+                    _buildUnlockButtons(),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Match list
+                    if (matchHistory.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: Center(
+                          child: Text(
+                            AppLocalizations.of(context)!.noMatchHistoryYet,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: isDarkTheme ? Colors.white70 : Colors.grey,
+                            ),
                           ),
                         ),
-                      ),
-                    )
-                  else
-                    ...matchHistory.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final match = entry.value;
-                      return _buildMatchCard(match, index);
-                    }),
-                ],
+                      )
+                    else
+                      ...matchHistory.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final match = entry.value;
+                        return _buildMatchCard(match, index);
+                      }),
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 }

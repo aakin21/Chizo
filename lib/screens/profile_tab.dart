@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import '../services/user_service.dart';
 import '../services/photo_upload_service.dart';
 import '../l10n/app_localizations.dart';
+import '../services/global_theme_service.dart';
 import 'match_history_screen.dart';
 import 'country_ranking_screen.dart';
 import 'store_tab.dart';
@@ -26,11 +28,40 @@ class _ProfileTabState extends State<ProfileTab> {
   bool isLoading = true;
   bool isUpdating = false;
   List<Map<String, dynamic>> userPhotos = [];
+  String _currentTheme = 'Beyaz';
 
   @override
   void initState() {
     super.initState();
     loadUserData();
+    _loadCurrentTheme();
+    
+    // Global theme service'e callback kaydet
+    GlobalThemeService().setThemeChangeCallback((theme) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    });
+  }
+
+  Future<void> _loadCurrentTheme() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final theme = prefs.getString('selected_theme') ?? 'Beyaz';
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = 'Beyaz';
+        });
+      }
+    }
   }
 
   @override
@@ -90,6 +121,8 @@ class _ProfileTabState extends State<ProfileTab> {
   }
 
   Widget _buildStatItem(String value, String label, Color color) {
+    final isDarkTheme = _currentTheme == 'Koyu';
+    
     return Column(
       children: [
         Container(
@@ -112,7 +145,7 @@ class _ProfileTabState extends State<ProfileTab> {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.grey[600],
+            color: isDarkTheme ? Colors.white70 : Colors.grey[600],
             fontWeight: FontWeight.w500,
           ),
           textAlign: TextAlign.center,
@@ -218,10 +251,32 @@ class _ProfileTabState extends State<ProfileTab> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
+    final isDarkTheme = _currentTheme == 'Koyu';
+    
+    return Container(
+      decoration: isDarkTheme 
+          ? BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF121212), // Çok koyu gri
+                  Color(0xFF1A1A1A), // Koyu gri
+                ],
+              ),
+            )
+          : null,
+      child: isLoading
           ? _buildProfileSkeletonScreen()
           : currentUser == null
-              ? Center(child: Text(AppLocalizations.of(context)!.userInfoNotLoaded))
+              ? Center(
+                  child: Text(
+                    AppLocalizations.of(context)!.userInfoNotLoaded,
+                    style: TextStyle(
+                      color: isDarkTheme ? Colors.white70 : null,
+                    ),
+                  ),
+                )
               : RefreshIndicator(
                   onRefresh: loadUserData,
                   child: SingleChildScrollView(
@@ -237,28 +292,43 @@ class _ProfileTabState extends State<ProfileTab> {
                         ),
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white,
-                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
-                              ],
-                            ),
+                            gradient: isDarkTheme 
+                                ? LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFF1E1E1E), // Koyu gri
+                                      const Color(0xFF2D2D2D), // Daha koyu gri
+                                    ],
+                                  )
+                                : LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white,
+                                      const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                                    ],
+                                  ),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              color: isDarkTheme 
+                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
+                                  : const Color(0xFFFF6B35).withOpacity(0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                color: isDarkTheme 
+                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
+                                    : const Color(0xFFFF6B35).withOpacity(0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.05),
+                                color: isDarkTheme 
+                                    ? Colors.black.withOpacity(0.3)
+                                    : Colors.grey.withOpacity(0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -275,7 +345,7 @@ class _ProfileTabState extends State<ProfileTab> {
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey[800],
+                                  color: isDarkTheme ? Colors.white : Colors.grey[800],
                                 ),
                               ),
                               const SizedBox(height: 16),
@@ -297,28 +367,43 @@ class _ProfileTabState extends State<ProfileTab> {
                         ),
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white,
-                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
-                              ],
-                            ),
+                            gradient: isDarkTheme 
+                                ? LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFF1E1E1E), // Koyu gri
+                                      const Color(0xFF2D2D2D), // Daha koyu gri
+                                    ],
+                                  )
+                                : LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white,
+                                      const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                                    ],
+                                  ),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              color: isDarkTheme 
+                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
+                                  : const Color(0xFFFF6B35).withOpacity(0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                color: isDarkTheme 
+                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
+                                    : const Color(0xFFFF6B35).withOpacity(0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.05),
+                                color: isDarkTheme 
+                                    ? Colors.black.withOpacity(0.3)
+                                    : Colors.grey.withOpacity(0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -335,7 +420,7 @@ class _ProfileTabState extends State<ProfileTab> {
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey[800],
+                                  color: isDarkTheme ? Colors.white : Colors.grey[800],
                                 ),
                               ),
                               const SizedBox(height: 20),
@@ -375,28 +460,43 @@ class _ProfileTabState extends State<ProfileTab> {
                         ),
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white,
-                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
-                              ],
-                            ),
+                            gradient: isDarkTheme 
+                                ? LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFF1E1E1E), // Koyu gri
+                                      const Color(0xFF2D2D2D), // Daha koyu gri
+                                    ],
+                                  )
+                                : LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white,
+                                      const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                                    ],
+                                  ),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              color: isDarkTheme 
+                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
+                                  : const Color(0xFFFF6B35).withOpacity(0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                color: isDarkTheme 
+                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
+                                    : const Color(0xFFFF6B35).withOpacity(0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.05),
+                                color: isDarkTheme 
+                                    ? Colors.black.withOpacity(0.3)
+                                    : Colors.grey.withOpacity(0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -419,16 +519,17 @@ class _ProfileTabState extends State<ProfileTab> {
                           ),
                           title: Text(
                             AppLocalizations.of(context)!.matchHistory,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
+                              color: isDarkTheme ? Colors.white : null,
                             ),
                           ),
                           subtitle: Text(
                             AppLocalizations.of(context)!.viewRecentMatches,
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey[600],
+                              color: isDarkTheme ? Colors.white70 : Colors.grey[600],
                             ),
                           ),
                           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
@@ -454,28 +555,43 @@ class _ProfileTabState extends State<ProfileTab> {
                         ),
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white,
-                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
-                              ],
-                            ),
+                            gradient: isDarkTheme 
+                                ? LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFF1E1E1E), // Koyu gri
+                                      const Color(0xFF2D2D2D), // Daha koyu gri
+                                    ],
+                                  )
+                                : LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white,
+                                      const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                                    ],
+                                  ),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              color: isDarkTheme 
+                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
+                                  : const Color(0xFFFF6B35).withOpacity(0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                color: isDarkTheme 
+                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
+                                    : const Color(0xFFFF6B35).withOpacity(0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.05),
+                                color: isDarkTheme 
+                                    ? Colors.black.withOpacity(0.3)
+                                    : Colors.grey.withOpacity(0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -498,9 +614,10 @@ class _ProfileTabState extends State<ProfileTab> {
                           ),
                           title: Text(
                             'Ülkelere Göre İstatistikler',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
+                              color: isDarkTheme ? Colors.white : null,
                             ),
                           ),
                           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
@@ -523,28 +640,43 @@ class _ProfileTabState extends State<ProfileTab> {
                         elevation: 0,
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white,
-                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
-                              ],
-                            ),
+                            gradient: isDarkTheme 
+                                ? LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFF1E1E1E), // Koyu gri
+                                      const Color(0xFF2D2D2D), // Daha koyu gri
+                                    ],
+                                  )
+                                : LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white,
+                                      const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                                    ],
+                                  ),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              color: isDarkTheme 
+                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
+                                  : const Color(0xFFFF6B35).withOpacity(0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                color: isDarkTheme 
+                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
+                                    : const Color(0xFFFF6B35).withOpacity(0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.05),
+                                color: isDarkTheme 
+                                    ? Colors.black.withOpacity(0.3)
+                                    : Colors.grey.withOpacity(0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -557,8 +689,18 @@ class _ProfileTabState extends State<ProfileTab> {
                             color: Color(0xFFFF6B35), // Ana turuncu ton
                             size: 28,
                           ),
-                          title: Text(AppLocalizations.of(context)!.username),
-                          subtitle: Text(currentUser!.username),
+                          title: Text(
+                            AppLocalizations.of(context)!.username,
+                            style: TextStyle(
+                              color: isDarkTheme ? Colors.white : null,
+                            ),
+                          ),
+                          subtitle: Text(
+                            currentUser!.username,
+                            style: TextStyle(
+                              color: isDarkTheme ? Colors.white70 : null,
+                            ),
+                          ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -579,28 +721,43 @@ class _ProfileTabState extends State<ProfileTab> {
                         elevation: 0,
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white,
-                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
-                              ],
-                            ),
+                            gradient: isDarkTheme 
+                                ? LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFF1E1E1E), // Koyu gri
+                                      const Color(0xFF2D2D2D), // Daha koyu gri
+                                    ],
+                                  )
+                                : LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white,
+                                      const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                                    ],
+                                  ),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              color: isDarkTheme 
+                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
+                                  : const Color(0xFFFF6B35).withOpacity(0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                color: isDarkTheme 
+                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
+                                    : const Color(0xFFFF6B35).withOpacity(0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.05),
+                                color: isDarkTheme 
+                                    ? Colors.black.withOpacity(0.3)
+                                    : Colors.grey.withOpacity(0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -613,8 +770,18 @@ class _ProfileTabState extends State<ProfileTab> {
                             color: Color(0xFFFF8C42), // Açık turuncu ton
                             size: 28,
                           ),
-                          title: Text(AppLocalizations.of(context)!.email),
-                          subtitle: Text(currentUser!.email),
+                          title: Text(
+                            AppLocalizations.of(context)!.email,
+                            style: TextStyle(
+                              color: isDarkTheme ? Colors.white : null,
+                            ),
+                          ),
+                          subtitle: Text(
+                            currentUser!.email,
+                            style: TextStyle(
+                              color: isDarkTheme ? Colors.white70 : null,
+                            ),
+                          ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -635,28 +802,43 @@ class _ProfileTabState extends State<ProfileTab> {
                         elevation: 0,
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white,
-                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
-                              ],
-                            ),
+                            gradient: isDarkTheme 
+                                ? LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFF1E1E1E), // Koyu gri
+                                      const Color(0xFF2D2D2D), // Daha koyu gri
+                                    ],
+                                  )
+                                : LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white,
+                                      const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                                    ],
+                                  ),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              color: isDarkTheme 
+                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
+                                  : const Color(0xFFFF6B35).withOpacity(0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                color: isDarkTheme 
+                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
+                                    : const Color(0xFFFF6B35).withOpacity(0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.05),
+                                color: isDarkTheme 
+                                    ? Colors.black.withOpacity(0.3)
+                                    : Colors.grey.withOpacity(0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -669,8 +851,18 @@ class _ProfileTabState extends State<ProfileTab> {
                             color: Color(0xFFE55A2B), // Koyu turuncu ton
                             size: 28,
                           ),
-                          title: Text(AppLocalizations.of(context)!.coin),
-                          subtitle: Text('${currentUser!.coins}'),
+                          title: Text(
+                            AppLocalizations.of(context)!.coin,
+                            style: TextStyle(
+                              color: isDarkTheme ? Colors.white : null,
+                            ),
+                          ),
+                          subtitle: Text(
+                            '${currentUser!.coins}',
+                            style: TextStyle(
+                              color: isDarkTheme ? Colors.white70 : null,
+                            ),
+                          ),
                           trailing: IconButton(
                             icon: const Icon(Icons.store),
                             onPressed: () {
@@ -701,28 +893,43 @@ class _ProfileTabState extends State<ProfileTab> {
                         elevation: 0,
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white,
-                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
-                              ],
-                            ),
+                            gradient: isDarkTheme 
+                                ? LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFF1E1E1E), // Koyu gri
+                                      const Color(0xFF2D2D2D), // Daha koyu gri
+                                    ],
+                                  )
+                                : LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white,
+                                      const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                                    ],
+                                  ),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              color: isDarkTheme 
+                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
+                                  : const Color(0xFFFF6B35).withOpacity(0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                color: isDarkTheme 
+                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
+                                    : const Color(0xFFFF6B35).withOpacity(0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.05),
+                                color: isDarkTheme 
+                                    ? Colors.black.withOpacity(0.3)
+                                    : Colors.grey.withOpacity(0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -735,8 +942,18 @@ class _ProfileTabState extends State<ProfileTab> {
                             color: Color(0xFFFF6B35), // Ana turuncu ton
                             size: 28,
                           ),
-                          title: const Text('Yaş'),
-                          subtitle: Text(currentUser!.age?.toString() ?? 'Yaşınızı seçin'),
+                          title: Text(
+                            'Yaş',
+                            style: TextStyle(
+                              color: isDarkTheme ? Colors.white : null,
+                            ),
+                          ),
+                          subtitle: Text(
+                            currentUser!.age?.toString() ?? 'Yaşınızı seçin',
+                            style: TextStyle(
+                              color: isDarkTheme ? Colors.white70 : null,
+                            ),
+                          ),
                           trailing: const Icon(Icons.arrow_forward_ios),
                           onTap: () => _showAgeSelector(),
                         ),
@@ -750,28 +967,43 @@ class _ProfileTabState extends State<ProfileTab> {
                         elevation: 0,
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white,
-                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
-                              ],
-                            ),
+                            gradient: isDarkTheme 
+                                ? LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFF1E1E1E), // Koyu gri
+                                      const Color(0xFF2D2D2D), // Daha koyu gri
+                                    ],
+                                  )
+                                : LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white,
+                                      const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                                    ],
+                                  ),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              color: isDarkTheme 
+                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
+                                  : const Color(0xFFFF6B35).withOpacity(0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                color: isDarkTheme 
+                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
+                                    : const Color(0xFFFF6B35).withOpacity(0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.05),
+                                color: isDarkTheme 
+                                    ? Colors.black.withOpacity(0.3)
+                                    : Colors.grey.withOpacity(0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -784,11 +1016,21 @@ class _ProfileTabState extends State<ProfileTab> {
                             color: Color(0xFFFF8C42), // Açık turuncu ton
                             size: 28,
                           ),
-                          title: const Text('Ülke'),
+                          title: Text(
+                            'Ülke',
+                            style: TextStyle(
+                              color: isDarkTheme ? Colors.white : null,
+                            ),
+                          ),
                           subtitle: FutureBuilder<String?>(
                             future: _getCountryName(currentUser!.countryCode),
                             builder: (context, snapshot) {
-                              return Text(snapshot.data ?? 'Ülkenizi seçin');
+                              return Text(
+                                snapshot.data ?? 'Ülkenizi seçin',
+                                style: TextStyle(
+                                  color: isDarkTheme ? Colors.white70 : null,
+                                ),
+                              );
                             },
                           ),
                           trailing: const Icon(Icons.arrow_forward_ios),
@@ -804,28 +1046,43 @@ class _ProfileTabState extends State<ProfileTab> {
                         elevation: 0,
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white,
-                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
-                              ],
-                            ),
+                            gradient: isDarkTheme 
+                                ? LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFF1E1E1E), // Koyu gri
+                                      const Color(0xFF2D2D2D), // Daha koyu gri
+                                    ],
+                                  )
+                                : LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white,
+                                      const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                                    ],
+                                  ),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              color: isDarkTheme 
+                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
+                                  : const Color(0xFFFF6B35).withOpacity(0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                color: isDarkTheme 
+                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
+                                    : const Color(0xFFFF6B35).withOpacity(0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.05),
+                                color: isDarkTheme 
+                                    ? Colors.black.withOpacity(0.3)
+                                    : Colors.grey.withOpacity(0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -838,11 +1095,21 @@ class _ProfileTabState extends State<ProfileTab> {
                             color: Color(0xFFE55A2B), // Koyu turuncu ton
                             size: 28,
                           ),
-                          title: const Text('Cinsiyet'),
+                          title: Text(
+                            'Cinsiyet',
+                            style: TextStyle(
+                              color: isDarkTheme ? Colors.white : null,
+                            ),
+                          ),
                           subtitle: FutureBuilder<String?>(
                             future: _getGenderName(currentUser!.genderCode),
                             builder: (context, snapshot) {
-                              return Text(snapshot.data ?? 'Cinsiyetinizi seçin');
+                              return Text(
+                                snapshot.data ?? 'Cinsiyetinizi seçin',
+                                style: TextStyle(
+                                  color: isDarkTheme ? Colors.white70 : null,
+                                ),
+                              );
                             },
                           ),
                           trailing: const Icon(Icons.arrow_forward_ios),
@@ -858,28 +1125,43 @@ class _ProfileTabState extends State<ProfileTab> {
                         elevation: 0,
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white,
-                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
-                              ],
-                            ),
+                            gradient: isDarkTheme 
+                                ? LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFF1E1E1E), // Koyu gri
+                                      const Color(0xFF2D2D2D), // Daha koyu gri
+                                    ],
+                                  )
+                                : LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white,
+                                      const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                                    ],
+                                  ),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              color: isDarkTheme 
+                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
+                                  : const Color(0xFFFF6B35).withOpacity(0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                color: isDarkTheme 
+                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
+                                    : const Color(0xFFFF6B35).withOpacity(0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.05),
+                                color: isDarkTheme 
+                                    ? Colors.black.withOpacity(0.3)
+                                    : Colors.grey.withOpacity(0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -892,8 +1174,18 @@ class _ProfileTabState extends State<ProfileTab> {
                             color: Color(0xFFFF6B35), // Ana turuncu ton
                             size: 28,
                           ),
-                          title: Text(AppLocalizations.of(context)!.instagramAccount),
-                          subtitle: Text(currentUser!.instagramHandle != null ? '@${currentUser!.instagramHandle!}' : 'Instagram hesabınızı ekleyin'),
+                          title: Text(
+                            AppLocalizations.of(context)!.instagramAccount,
+                            style: TextStyle(
+                              color: isDarkTheme ? Colors.white : null,
+                            ),
+                          ),
+                          subtitle: Text(
+                            currentUser!.instagramHandle != null ? '@${currentUser!.instagramHandle!}' : 'Instagram hesabınızı ekleyin',
+                            style: TextStyle(
+                              color: isDarkTheme ? Colors.white70 : null,
+                            ),
+                          ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -920,28 +1212,43 @@ class _ProfileTabState extends State<ProfileTab> {
                         elevation: 0,
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white,
-                                const Color(0xFFFFF8F5), // Çok açık turuncu ton
-                              ],
-                            ),
+                            gradient: isDarkTheme 
+                                ? LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFF1E1E1E), // Koyu gri
+                                      const Color(0xFF2D2D2D), // Daha koyu gri
+                                    ],
+                                  )
+                                : LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white,
+                                      const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                                    ],
+                                  ),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: const Color(0xFFFF6B35).withOpacity(0.1),
+                              color: isDarkTheme 
+                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
+                                  : const Color(0xFFFF6B35).withOpacity(0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                color: isDarkTheme 
+                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
+                                    : const Color(0xFFFF6B35).withOpacity(0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.05),
+                                color: isDarkTheme 
+                                    ? Colors.black.withOpacity(0.3)
+                                    : Colors.grey.withOpacity(0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -954,8 +1261,18 @@ class _ProfileTabState extends State<ProfileTab> {
                             color: Color(0xFFFF8C42), // Açık turuncu ton
                             size: 28,
                           ),
-                          title: Text(AppLocalizations.of(context)!.profession),
-                          subtitle: Text(currentUser!.profession ?? 'Mesleğinizi ekleyin'),
+                          title: Text(
+                            AppLocalizations.of(context)!.profession,
+                            style: TextStyle(
+                              color: isDarkTheme ? Colors.white : null,
+                            ),
+                          ),
+                          subtitle: Text(
+                            currentUser!.profession ?? 'Mesleğinizi ekleyin',
+                            style: TextStyle(
+                              color: isDarkTheme ? Colors.white70 : null,
+                            ),
+                          ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -978,9 +1295,10 @@ class _ProfileTabState extends State<ProfileTab> {
                       const SizedBox(height: 24),
 
                     ],
+                    ),
                   ),
                 ),
-              );
+    );
   }
 
 
@@ -1189,6 +1507,7 @@ class _ProfileTabState extends State<ProfileTab> {
   /// Build empty avatar slot with plus icon
   Widget _buildEmptyAvatarSlot(int slot) {
     final cost = PhotoUploadService.getPhotoUploadCost(slot);
+    final isDarkTheme = _currentTheme == 'Koyu';
     
     return GestureDetector(
       onTap: isUpdating ? null : _showPhotoUploadDialog,
@@ -1239,9 +1558,9 @@ class _ProfileTabState extends State<ProfileTab> {
                 child: Text(
                   '$cost coin',
                   style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                    color: isDarkTheme ? Colors.black : Colors.grey[600],
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
