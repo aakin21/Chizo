@@ -18,7 +18,7 @@ class _StoreTabState extends State<StoreTab> {
   bool _isLoading = true;
   int _adWatchCount = 0;
   DateTime? _lastAdWatchDate;
-  String _currentTheme = 'Beyaz';
+  String _currentTheme = 'Koyu';
 
   @override
   void initState() {
@@ -47,7 +47,7 @@ class _StoreTabState extends State<StoreTab> {
   Future<void> _loadCurrentTheme() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final theme = prefs.getString('selected_theme') ?? 'Beyaz';
+      final theme = prefs.getString('selected_theme') ?? 'Koyu';
       if (mounted) {
         setState(() {
           _currentTheme = theme;
@@ -56,7 +56,7 @@ class _StoreTabState extends State<StoreTab> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _currentTheme = 'Beyaz';
+          _currentTheme = 'Koyu';
         });
       }
     }

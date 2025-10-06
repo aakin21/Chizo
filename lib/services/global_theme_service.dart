@@ -54,7 +54,7 @@ class GlobalThemeService {
   // Mevcut theme'i al
   Future<String> getCurrentTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('selected_theme') ?? 'Beyaz';
+    return prefs.getString('selected_theme') ?? 'Koyu';
   }
 
   // Desteklenen theme'ler

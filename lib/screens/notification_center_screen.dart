@@ -277,56 +277,140 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
         children: [
           
           // Ana bildirim toggle
-          SwitchListTile(
-            title: Text(_getLocalizedText('notifications')),
-            subtitle: Text(_getLocalizedText('notificationSettingsDescription')),
-            value: _notificationsEnabled,
-            activeColor: const Color(0xFFFF6B35), // Ana turuncu ton
-            onChanged: (value) {
-              setState(() {
-                _notificationsEnabled = value;
-              });
-              _saveNotificationSettings();
-            },
+          Column(
+            children: [
+              SwitchListTile(
+                title: Text(_getLocalizedText('notifications')),
+                subtitle: Text(_getLocalizedText('notificationSettingsDescription')),
+                value: _notificationsEnabled,
+                activeColor: const Color(0xFFFF6B35), // Ana turuncu ton
+                onChanged: (value) {
+                  setState(() {
+                    _notificationsEnabled = value;
+                  });
+                  _saveNotificationSettings();
+                },
+              ),
+              // Turuncu estetik çizgi
+              Container(
+                margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                height: 1,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.transparent,
+                      const Color(0xFFFF6B35).withOpacity(0.3),
+                      const Color(0xFFFF6B35).withOpacity(0.6),
+                      const Color(0xFFFF6B35).withOpacity(0.3),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.0, 0.2, 0.5, 0.8, 1.0],
+                  ),
+                ),
+              ),
+            ],
           ),
           
           // Alt bildirim türleri
           if (_notificationsEnabled) ...[
-            SwitchListTile(
-              title: Text(_getLocalizedText('tournamentNotifications')),
-              subtitle: Text(_getLocalizedText('tournamentNotificationsDescription')),
-              value: _tournamentNotifications,
-              activeColor: const Color(0xFFFF6B35), // Ana turuncu ton
-              onChanged: (value) {
-                setState(() {
-                  _tournamentNotifications = value;
-                });
-                _saveNotificationSettings();
-              },
+            Column(
+              children: [
+                SwitchListTile(
+                  title: Text(_getLocalizedText('tournamentNotifications')),
+                  subtitle: Text(_getLocalizedText('tournamentNotificationsDescription')),
+                  value: _tournamentNotifications,
+                  activeColor: const Color(0xFFFF6B35), // Ana turuncu ton
+                  onChanged: (value) {
+                    setState(() {
+                      _tournamentNotifications = value;
+                    });
+                    _saveNotificationSettings();
+                  },
+                ),
+                // Turuncu estetik çizgi
+                Container(
+                  margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                  height: 1,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        const Color(0xFFFF6B35).withOpacity(0.3),
+                        const Color(0xFFFF6B35).withOpacity(0.6),
+                        const Color(0xFFFF6B35).withOpacity(0.3),
+                        Colors.transparent,
+                      ],
+                      stops: const [0.0, 0.2, 0.5, 0.8, 1.0],
+                    ),
+                  ),
+                ),
+              ],
             ),
-            SwitchListTile(
-              title: Text(_getLocalizedText('winCelebrationNotifications')),
-              subtitle: Text(_getLocalizedText('winCelebrationNotificationsDescription')),
-              value: _winCelebrationNotifications,
-              activeColor: const Color(0xFFFF6B35), // Ana turuncu ton
-              onChanged: (value) {
-                setState(() {
-                  _winCelebrationNotifications = value;
-                });
-                _saveNotificationSettings();
-              },
+            Column(
+              children: [
+                SwitchListTile(
+                  title: Text(_getLocalizedText('winCelebrationNotifications')),
+                  subtitle: Text(_getLocalizedText('winCelebrationNotificationsDescription')),
+                  value: _winCelebrationNotifications,
+                  activeColor: const Color(0xFFFF6B35), // Ana turuncu ton
+                  onChanged: (value) {
+                    setState(() {
+                      _winCelebrationNotifications = value;
+                    });
+                    _saveNotificationSettings();
+                  },
+                ),
+                // Turuncu estetik çizgi
+                Container(
+                  margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                  height: 1,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        const Color(0xFFFF6B35).withOpacity(0.3),
+                        const Color(0xFFFF6B35).withOpacity(0.6),
+                        const Color(0xFFFF6B35).withOpacity(0.3),
+                        Colors.transparent,
+                      ],
+                      stops: const [0.0, 0.2, 0.5, 0.8, 1.0],
+                    ),
+                  ),
+                ),
+              ],
             ),
-            SwitchListTile(
-              title: Text(_getLocalizedText('streakReminderNotifications')),
-              subtitle: Text(_getLocalizedText('streakReminderNotificationsDescription')),
-              value: _streakReminderNotifications,
-              activeColor: const Color(0xFFFF6B35), // Ana turuncu ton
-              onChanged: (value) {
-                setState(() {
-                  _streakReminderNotifications = value;
-                });
-                _saveNotificationSettings();
-              },
+            Column(
+              children: [
+                SwitchListTile(
+                  title: Text(_getLocalizedText('streakReminderNotifications')),
+                  subtitle: Text(_getLocalizedText('streakReminderNotificationsDescription')),
+                  value: _streakReminderNotifications,
+                  activeColor: const Color(0xFFFF6B35), // Ana turuncu ton
+                  onChanged: (value) {
+                    setState(() {
+                      _streakReminderNotifications = value;
+                    });
+                    _saveNotificationSettings();
+                  },
+                ),
+                // Turuncu estetik çizgi
+                Container(
+                  margin: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                  height: 1,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        const Color(0xFFFF6B35).withOpacity(0.3),
+                        const Color(0xFFFF6B35).withOpacity(0.6),
+                        const Color(0xFFFF6B35).withOpacity(0.3),
+                        Colors.transparent,
+                      ],
+                      stops: const [0.0, 0.2, 0.5, 0.8, 1.0],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ],

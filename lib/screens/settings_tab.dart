@@ -29,7 +29,7 @@ class _SettingsTabState extends State<SettingsTab> {
   
 
   final List<String> _themeOptions = ['Beyaz', 'Koyu', 'Pembemsi'];
-  String _selectedTheme = 'Beyaz';
+  String _selectedTheme = 'Koyu';
 
   @override
   void initState() {
@@ -49,7 +49,7 @@ class _SettingsTabState extends State<SettingsTab> {
 
   Future<void> _loadSavedTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    final savedTheme = prefs.getString('selected_theme') ?? 'Beyaz';
+    final savedTheme = prefs.getString('selected_theme') ?? 'Koyu';
     setState(() {
       _selectedTheme = savedTheme;
     });
@@ -475,6 +475,34 @@ class _SettingsTabState extends State<SettingsTab> {
   }) {
     final isDarkTheme = _selectedTheme == 'Koyu';
     
+    // Children arasına çizgiler ekle (referral link hariç)
+    List<Widget> childrenWithDividers = [];
+    for (int i = 0; i < children.length; i++) {
+      childrenWithDividers.add(children[i]);
+      
+      // Son öğe değilse ve referral link section'ı değilse çizgi ekle
+      if (i < children.length - 1 && !title.contains("Referral Link")) {
+        childrenWithDividers.add(
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            height: 1,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.transparent,
+                  const Color(0xFFFF6B35).withOpacity(0.3),
+                  const Color(0xFFFF6B35).withOpacity(0.6),
+                  const Color(0xFFFF6B35).withOpacity(0.3),
+                  Colors.transparent,
+                ],
+                stops: const [0.0, 0.2, 0.5, 0.8, 1.0],
+              ),
+            ),
+          ),
+        );
+      }
+    }
+    
     return Container(
       decoration: BoxDecoration(
         gradient: isDarkTheme 
@@ -531,7 +559,7 @@ class _SettingsTabState extends State<SettingsTab> {
               ),
             ),
             const SizedBox(height: 12),
-            ...children,
+            ...childrenWithDividers,
           ],
         ),
       ),

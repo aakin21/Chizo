@@ -22,7 +22,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
   DateTime? unlockExpiry; // Unlock'un ne zaman sona ereceği
   bool hasWeeklyAccess = false; // 1 haftalık erişim var mı
   DateTime? weeklyAccessExpiry; // Haftalık erişimin ne zaman sona ereceği
-  String _currentTheme = 'Beyaz';
+  String _currentTheme = 'Koyu';
 
   @override
   void initState() {
@@ -51,7 +51,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
   Future<void> _loadCurrentTheme() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final theme = prefs.getString('selected_theme') ?? 'Beyaz';
+      final theme = prefs.getString('selected_theme') ?? 'Koyu';
       if (mounted) {
         setState(() {
           _currentTheme = theme;
@@ -60,7 +60,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _currentTheme = 'Beyaz';
+          _currentTheme = 'Koyu';
         });
       }
     }

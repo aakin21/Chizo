@@ -187,8 +187,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final l10n = AppLocalizations.of(context)!;
     
     return Scaffold(
+      backgroundColor: const Color(0xFF121212), // Koyu arka plan
       appBar: AppBar(
-        title: Text(l10n.register),
+        backgroundColor: const Color(0xFF1E1E1E), // Koyu app bar
+        foregroundColor: Colors.white, // Beyaz ikonlar
+        title: Text(
+          l10n.register,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           CompactLanguageSelector(
             onLanguageChanged: (locale) async {
@@ -198,88 +207,327 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            const SizedBox(height: 8),
-            TextField(
-              controller: _usernameController, 
-              decoration: InputDecoration(
-                labelText: l10n.username,
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.person),
-              )
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _emailController, 
-              decoration: InputDecoration(
-                labelText: l10n.email,
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.email),
-              ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _passwordController, 
-              decoration: InputDecoration(
-                labelText: l10n.password,
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.lock),
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _ageController, 
-              decoration: InputDecoration(
-                labelText: l10n.age,
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.cake),
-              ), 
-              keyboardType: TextInputType.number
-            ),
-            const SizedBox(height: 16),
-            CountrySelector(
-              selectedCountryCode: _selectedCountryCode,
-              onCountrySelected: (countryCode) {
-                setState(() {
-                  _selectedCountryCode = countryCode;
-                });
-              },
-              label: l10n.country,
-            ),
-            const SizedBox(height: 16),
-            GenderSelector(
-              selectedGenderCode: _selectedGenderCode,
-              onGenderSelected: (genderCode) {
-                setState(() {
-                  _selectedGenderCode = genderCode;
-                });
-              },
-              label: l10n.gender,
-            ),
-            const SizedBox(height: 20),
-            _isLoading
-                ? const CircularProgressIndicator()
-                : ElevatedButton(onPressed: register, child: Text(l10n.register)),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF121212), // Çok koyu gri
+              Color(0xFF1A1A1A), // Koyu gri
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Column(
               children: [
-                Text(l10n.alreadyHaveAccount),
-                TextButton(
-                  onPressed: () => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
+                const SizedBox(height: 20),
+                
+                // Logo/Title
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFFFF6B35), // Ana turuncu
+                        Color(0xFFFF8C42), // Açık turuncu
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFFF6B35).withOpacity(0.3),
+                        blurRadius: 15,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
                   ),
-                  child: Text(l10n.loginNow),
+                  child: const Icon(
+                    Icons.person_add,
+                    size: 40,
+                    color: Colors.white,
+                  ),
                 ),
+                
+                const SizedBox(height: 20),
+                
+                Text(
+                  'Chizo',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        color: const Color(0xFFFF6B35).withOpacity(0.5),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                const SizedBox(height: 8),
+                
+                Text(
+                  'Kayıt Ol',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white70,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                
+                const SizedBox(height: 30),
+                
+                // Username Field
+                _buildStyledTextField(
+                  controller: _usernameController,
+                  labelText: l10n.username,
+                  prefixIcon: Icons.person,
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Email Field
+                _buildStyledTextField(
+                  controller: _emailController,
+                  labelText: l10n.email,
+                  prefixIcon: Icons.email,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Password Field
+                _buildStyledTextField(
+                  controller: _passwordController,
+                  labelText: l10n.password,
+                  prefixIcon: Icons.lock,
+                  obscureText: true,
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Age Field
+                _buildStyledTextField(
+                  controller: _ageController,
+                  labelText: l10n.age,
+                  prefixIcon: Icons.cake,
+                  keyboardType: TextInputType.number,
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Country Selector
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFF1E1E1E), // Koyu gri
+                        Color(0xFF2D2D2D), // Daha koyu gri
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: const Color(0xFFFF6B35).withOpacity(0.3),
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFFF6B35).withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: CountrySelector(
+                    selectedCountryCode: _selectedCountryCode,
+                    onCountrySelected: (countryCode) {
+                      setState(() {
+                        _selectedCountryCode = countryCode;
+                      });
+                    },
+                    label: l10n.country,
+                  ),
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Gender Selector
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFF1E1E1E), // Koyu gri
+                        Color(0xFF2D2D2D), // Daha koyu gri
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: const Color(0xFFFF6B35).withOpacity(0.3),
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFFF6B35).withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: GenderSelector(
+                    selectedGenderCode: _selectedGenderCode,
+                    onGenderSelected: (genderCode) {
+                      setState(() {
+                        _selectedGenderCode = genderCode;
+                      });
+                    },
+                    label: l10n.gender,
+                  ),
+                ),
+                
+                const SizedBox(height: 30),
+                
+                // Register Button
+                Container(
+                  width: double.infinity,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFFFF6B35), // Ana turuncu
+                        Color(0xFFFF8C42), // Açık turuncu
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFFF6B35).withOpacity(0.3),
+                        blurRadius: 15,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: _isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : ElevatedButton(
+                          onPressed: register,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: Text(
+                            l10n.register,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                ),
+                
+                const SizedBox(height: 20),
+                
+                // Login Link
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      l10n.alreadyHaveAccount,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: () => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
+                      ),
+                      child: Text(
+                        l10n.loginNow,
+                        style: const TextStyle(
+                          color: Color(0xFFFF6B35),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 40),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStyledTextField({
+    required TextEditingController controller,
+    required String labelText,
+    required IconData prefixIcon,
+    TextInputType? keyboardType,
+    bool obscureText = false,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF1E1E1E), // Koyu gri
+            Color(0xFF2D2D2D), // Daha koyu gri
           ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFFF6B35).withOpacity(0.3),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFF6B35).withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: controller,
+        style: const TextStyle(color: Colors.white),
+        keyboardType: keyboardType,
+        obscureText: obscureText,
+        decoration: InputDecoration(
+          labelText: labelText,
+          labelStyle: const TextStyle(color: Colors.white70),
+          prefixIcon: Icon(prefixIcon, color: const Color(0xFFFF6B35)),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.transparent,
         ),
       ),
     );

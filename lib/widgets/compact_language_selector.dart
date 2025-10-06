@@ -18,7 +18,7 @@ class CompactLanguageSelector extends StatefulWidget {
 
 class _CompactLanguageSelectorState extends State<CompactLanguageSelector> {
   Locale? _selectedLocale;
-  String _currentTheme = 'Beyaz'; // Varsayılan değer
+  String _currentTheme = 'Koyu'; // Varsayılan değer
 
   @override
   void initState() {
@@ -27,7 +27,7 @@ class _CompactLanguageSelectorState extends State<CompactLanguageSelector> {
     
     // Global theme service'e callback kaydet
     GlobalThemeService().setThemeChangeCallback((theme) {
-      final safeTheme = theme.isNotEmpty ? theme : 'Beyaz';
+      final safeTheme = theme.isNotEmpty ? theme : 'Koyu';
       print('🔄 CompactLanguageSelector - Theme changed to: $safeTheme');
       if (mounted) {
         setState(() {
@@ -41,7 +41,7 @@ class _CompactLanguageSelectorState extends State<CompactLanguageSelector> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final theme = prefs.getString('selected_theme');
-      final safeTheme = (theme != null && theme.isNotEmpty) ? theme : 'Beyaz';
+      final safeTheme = (theme != null && theme.isNotEmpty) ? theme : 'Koyu';
       print('🔍 CompactLanguageSelector - Loaded theme from prefs: $safeTheme');
       if (mounted) {
         setState(() {
@@ -52,7 +52,7 @@ class _CompactLanguageSelectorState extends State<CompactLanguageSelector> {
       print('❌ CompactLanguageSelector - Error loading theme: $e');
       if (mounted) {
         setState(() {
-          _currentTheme = 'Beyaz';
+          _currentTheme = 'Koyu';
         });
       }
     }

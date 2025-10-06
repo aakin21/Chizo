@@ -130,7 +130,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future<void> _loadTheme() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final theme = prefs.getString('selected_theme') ?? 'Beyaz';
+      final theme = prefs.getString('selected_theme') ?? 'Koyu';
       
       if (mounted) {
         setState(() {
@@ -141,7 +141,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _selectedTheme = 'Beyaz';
+          _selectedTheme = 'Koyu';
           _isThemeLoaded = true;
         });
       }

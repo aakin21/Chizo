@@ -28,7 +28,7 @@ class _ProfileTabState extends State<ProfileTab> {
   bool isLoading = true;
   bool isUpdating = false;
   List<Map<String, dynamic>> userPhotos = [];
-  String _currentTheme = 'Beyaz';
+  String _currentTheme = 'Koyu';
 
   @override
   void initState() {
@@ -56,7 +56,7 @@ class _ProfileTabState extends State<ProfileTab> {
   Future<void> _loadCurrentTheme() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final theme = prefs.getString('selected_theme') ?? 'Beyaz';
+      final theme = prefs.getString('selected_theme') ?? 'Koyu';
       if (mounted) {
         setState(() {
           _currentTheme = theme;
@@ -65,7 +65,7 @@ class _ProfileTabState extends State<ProfileTab> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _currentTheme = 'Beyaz';
+          _currentTheme = 'Koyu';
         });
       }
     }

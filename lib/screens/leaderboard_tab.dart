@@ -18,7 +18,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
   List<UserModel> _topWinners = [];
   List<UserModel> _topWinRate = [];
   bool _isLoading = true;
-  String _currentTheme = 'Beyaz';
+  String _currentTheme = 'Koyu';
 
   @override
   void initState() {
@@ -40,7 +40,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
   Future<void> _loadCurrentTheme() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final theme = prefs.getString('selected_theme') ?? 'Beyaz';
+      final theme = prefs.getString('selected_theme') ?? 'Koyu';
       if (mounted) {
         setState(() {
           _currentTheme = theme;
@@ -49,7 +49,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
     } catch (e) {
       if (mounted) {
         setState(() {
-          _currentTheme = 'Beyaz';
+          _currentTheme = 'Koyu';
         });
       }
     }

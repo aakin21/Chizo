@@ -23,7 +23,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   bool isLoading = true;
   UserModel? currentUser;
   Map<String, String> creatorNames = {}; // Creator ID -> Username mapping
-  String _currentTheme = 'Beyaz';
+  String _currentTheme = 'Koyu';
 
   @override
   void initState() {
@@ -51,7 +51,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   Future<void> _loadCurrentTheme() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final theme = prefs.getString('selected_theme') ?? 'Beyaz';
+      final theme = prefs.getString('selected_theme') ?? 'Koyu';
       if (mounted) {
         setState(() {
           _currentTheme = theme;
@@ -60,7 +60,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _currentTheme = 'Beyaz';
+          _currentTheme = 'Koyu';
         });
       }
     }

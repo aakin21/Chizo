@@ -91,24 +91,19 @@ class _GenderSelectorState extends State<GenderSelector> {
     
     return GestureDetector(
       onTap: widget.enabled ? () => _showGenderPicker(context, genders) : null,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade400),
-          borderRadius: BorderRadius.circular(4),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: widget.label ?? 'Gender',
+          labelStyle: const TextStyle(color: Colors.white70),
+          border: InputBorder.none,
+          prefixIcon: const Icon(Icons.person, color: Color(0xFFFF6B35)),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         ),
-        child: InputDecorator(
-          decoration: InputDecoration(
-            labelText: widget.label ?? 'Gender',
-            border: InputBorder.none,
-            prefixIcon: Icon(Icons.person),
-            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-          ),
-          child: Text(
-            _selectedGenderCode != null ? selectedGender['name']! : _getSelectGenderText(),
-            style: TextStyle(
-              color: _selectedGenderCode != null ? Colors.black : Colors.grey.shade600,
-              fontSize: 16,
-            ),
+        child: Text(
+          _selectedGenderCode != null ? selectedGender['name']! : _getSelectGenderText(),
+          style: TextStyle(
+            color: _selectedGenderCode != null ? Colors.white : Colors.white60,
+            fontSize: 16,
           ),
         ),
       ),
@@ -119,23 +114,75 @@ class _GenderSelectorState extends State<GenderSelector> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(_getSelectGenderText()),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: genders.map((gender) {
-            return ListTile(
-              title: Text(gender['name']!),
-              onTap: () {
-                setState(() {
-                  _selectedGenderCode = gender['code'];
-                });
-                widget.onGenderSelected(gender['code']);
-                Navigator.pop(context);
-              },
-              selected: _selectedGenderCode == gender['code'],
-            );
-          }).toList(),
+        backgroundColor: const Color(0xFF1E1E1E), // Koyu arka plan
+        title: Text(
+          _getSelectGenderText(),
+          style: const TextStyle(color: Colors.white),
         ),
+        content: Container(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF2D2D2D), // Koyu gri
+                Color(0xFF1E1E1E), // Daha koyu gri
+              ],
+            ),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: const Color(0xFFFF6B35).withOpacity(0.3),
+              width: 1,
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: genders.map((gender) {
+              final isSelected = _selectedGenderCode == gender['code'];
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: isSelected 
+                      ? const Color(0xFFFF6B35).withOpacity(0.2)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                  border: isSelected 
+                      ? Border.all(color: const Color(0xFFFF6B35), width: 1)
+                      : null,
+                ),
+                child: ListTile(
+                  title: Text(
+                    gender['name']!,
+                    style: TextStyle(
+                      color: isSelected ? const Color(0xFFFF6B35) : Colors.white,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  leading: Icon(
+                    Icons.person,
+                    color: isSelected ? const Color(0xFFFF6B35) : Colors.white70,
+                  ),
+                  onTap: () {
+                    setState(() {
+                      _selectedGenderCode = gender['code'];
+                    });
+                    widget.onGenderSelected(gender['code']);
+                    Navigator.pop(context);
+                  },
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              foregroundColor: const Color(0xFFFF6B35),
+            ),
+            child: const Text('İptal'),
+          ),
+        ],
       ),
     );
   }

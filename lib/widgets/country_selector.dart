@@ -326,24 +326,19 @@ class _CountrySelectorState extends State<CountrySelector> {
     
     return GestureDetector(
       onTap: widget.enabled ? () => _showCountryPicker(context, countries) : null,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade400),
-          borderRadius: BorderRadius.circular(4),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: widget.label ?? AppLocalizations.of(context)!.country,
+          labelStyle: const TextStyle(color: Colors.white70),
+          border: InputBorder.none,
+          prefixIcon: const Icon(Icons.public, color: Color(0xFFFF6B35)),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         ),
-        child: InputDecorator(
-          decoration: InputDecoration(
-            labelText: widget.label ?? AppLocalizations.of(context)!.country,
-            border: InputBorder.none,
-            prefixIcon: Icon(Icons.public),
-            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-          ),
-          child: Text(
-            _selectedCountryCode != null ? selectedCountry['name']! : AppLocalizations.of(context)!.selectCountry,
-            style: TextStyle(
-              color: _selectedCountryCode != null ? Colors.black : Colors.grey.shade600,
-              fontSize: 16,
-            ),
+        child: Text(
+          _selectedCountryCode != null ? selectedCountry['name']! : AppLocalizations.of(context)!.selectCountry,
+          style: TextStyle(
+            color: _selectedCountryCode != null ? Colors.white : Colors.white60,
+            fontSize: 16,
           ),
         ),
       ),
@@ -354,28 +349,78 @@ class _CountrySelectorState extends State<CountrySelector> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.selectCountry),
-        content: SizedBox(
+        backgroundColor: const Color(0xFF1E1E1E), // Koyu arka plan
+        title: Text(
+          AppLocalizations.of(context)!.selectCountry,
+          style: const TextStyle(color: Colors.white),
+        ),
+        content: Container(
           width: double.maxFinite,
           height: 300,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF2D2D2D), // Koyu gri
+                Color(0xFF1E1E1E), // Daha koyu gri
+              ],
+            ),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: const Color(0xFFFF6B35).withOpacity(0.3),
+              width: 1,
+            ),
+          ),
           child: ListView.builder(
             itemCount: countries.length,
             itemBuilder: (context, index) {
               final country = countries[index];
-              return ListTile(
-                title: Text(country['name']!),
-                onTap: () {
-                  setState(() {
-                    _selectedCountryCode = country['code'];
-                  });
-                  widget.onCountrySelected(country['code']);
-                  Navigator.pop(context);
-                },
-                selected: _selectedCountryCode == country['code'],
+              final isSelected = _selectedCountryCode == country['code'];
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: isSelected 
+                      ? const Color(0xFFFF6B35).withOpacity(0.2)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                  border: isSelected 
+                      ? Border.all(color: const Color(0xFFFF6B35), width: 1)
+                      : null,
+                ),
+                child: ListTile(
+                  title: Text(
+                    country['name']!,
+                    style: TextStyle(
+                      color: isSelected ? const Color(0xFFFF6B35) : Colors.white,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  leading: Icon(
+                    Icons.public,
+                    color: isSelected ? const Color(0xFFFF6B35) : Colors.white70,
+                  ),
+                  onTap: () {
+                    setState(() {
+                      _selectedCountryCode = country['code'];
+                    });
+                    widget.onCountrySelected(country['code']);
+                    Navigator.pop(context);
+                  },
+                ),
               );
             },
           ),
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              foregroundColor: const Color(0xFFFF6B35),
+            ),
+            child: const Text('İptal'),
+          ),
+        ],
       ),
     );
   }
