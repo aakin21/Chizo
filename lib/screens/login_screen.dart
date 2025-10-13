@@ -20,6 +20,11 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   void login() async {
     final l10n = AppLocalizations.of(context)!;
     
@@ -48,6 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text.trim(),
       );
 
+      if (!mounted) return;
       final user = response.user;
 
       if (user != null) {
@@ -58,6 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
             .eq('auth_id', user.id)
             .maybeSingle();
 
+        if (!mounted) return;
         if (usersRow == null) {
           // Sign out and inform user
           await Supabase.instance.client.auth.signOut();
@@ -75,6 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
           SnackBar(content: Text(l10n.loginSuccessful)),
         );
 
+        if (!mounted) return;
         // HomeScreen’e yönlendir (username parametresi yok)
         Navigator.pushReplacement(
           context,
@@ -225,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFFF6B35).withOpacity(0.3),
+                        color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
@@ -248,7 +256,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Colors.white,
                     shadows: [
                       Shadow(
-                        color: const Color(0xFFFF6B35).withOpacity(0.5),
+                        color: const Color(0xFFFF6B35).withValues(alpha: 0.5),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -282,12 +290,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: const Color(0xFFFF6B35).withOpacity(0.3),
+                      color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
                       width: 1,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFFF6B35).withOpacity(0.1),
+                        color: const Color(0xFFFF6B35).withValues(alpha: 0.1),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -326,12 +334,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: const Color(0xFFFF6B35).withOpacity(0.3),
+                      color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
                       width: 1,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFFF6B35).withOpacity(0.1),
+                        color: const Color(0xFFFF6B35).withValues(alpha: 0.1),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -371,7 +379,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFFF6B35).withOpacity(0.3),
+                        color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
                         blurRadius: 15,
                         offset: const Offset(0, 8),
                       ),

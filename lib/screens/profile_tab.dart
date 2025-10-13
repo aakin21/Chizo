@@ -228,6 +228,7 @@ class _ProfileTabState extends State<ProfileTab> {
       
       if (result['success']) {
         await loadUserData();
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('✅ ${AppLocalizations.of(context)!.photoUploaded(result['coinsSpent'])}'),
@@ -319,23 +320,23 @@ class _ProfileTabState extends State<ProfileTab> {
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: isDarkTheme 
-                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
-                                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                                  ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
-                                    : const Color(0xFFFF6B35).withOpacity(0.1),
+                                    ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                                    : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? Colors.black.withOpacity(0.3)
-                                    : Colors.grey.withOpacity(0.05),
+                                    ? Colors.black.withValues(alpha: 0.3)
+                                    : Colors.grey.withValues(alpha: 0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -394,23 +395,23 @@ class _ProfileTabState extends State<ProfileTab> {
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: isDarkTheme 
-                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
-                                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                                  ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
-                                    : const Color(0xFFFF6B35).withOpacity(0.1),
+                                    ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                                    : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? Colors.black.withOpacity(0.3)
-                                    : Colors.grey.withOpacity(0.05),
+                                    ? Colors.black.withValues(alpha: 0.3)
+                                    : Colors.grey.withValues(alpha: 0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -487,23 +488,23 @@ class _ProfileTabState extends State<ProfileTab> {
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: isDarkTheme 
-                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
-                                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                                  ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
-                                    : const Color(0xFFFF6B35).withOpacity(0.1),
+                                    ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                                    : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? Colors.black.withOpacity(0.3)
-                                    : Colors.grey.withOpacity(0.05),
+                                    ? Colors.black.withValues(alpha: 0.3)
+                                    : Colors.grey.withValues(alpha: 0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -582,23 +583,23 @@ class _ProfileTabState extends State<ProfileTab> {
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: isDarkTheme 
-                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
-                                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                                  ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
-                                    : const Color(0xFFFF6B35).withOpacity(0.1),
+                                    ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                                    : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? Colors.black.withOpacity(0.3)
-                                    : Colors.grey.withOpacity(0.05),
+                                    ? Colors.black.withValues(alpha: 0.3)
+                                    : Colors.grey.withValues(alpha: 0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -667,23 +668,23 @@ class _ProfileTabState extends State<ProfileTab> {
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isDarkTheme 
-                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
-                                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                                  ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
-                                    : const Color(0xFFFF6B35).withOpacity(0.1),
+                                    ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                                    : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? Colors.black.withOpacity(0.3)
-                                    : Colors.grey.withOpacity(0.05),
+                                    ? Colors.black.withValues(alpha: 0.3)
+                                    : Colors.grey.withValues(alpha: 0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -748,23 +749,23 @@ class _ProfileTabState extends State<ProfileTab> {
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isDarkTheme 
-                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
-                                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                                  ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
-                                    : const Color(0xFFFF6B35).withOpacity(0.1),
+                                    ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                                    : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? Colors.black.withOpacity(0.3)
-                                    : Colors.grey.withOpacity(0.05),
+                                    ? Colors.black.withValues(alpha: 0.3)
+                                    : Colors.grey.withValues(alpha: 0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -829,23 +830,23 @@ class _ProfileTabState extends State<ProfileTab> {
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isDarkTheme 
-                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
-                                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                                  ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
-                                    : const Color(0xFFFF6B35).withOpacity(0.1),
+                                    ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                                    : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? Colors.black.withOpacity(0.3)
-                                    : Colors.grey.withOpacity(0.05),
+                                    ? Colors.black.withValues(alpha: 0.3)
+                                    : Colors.grey.withValues(alpha: 0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -920,23 +921,23 @@ class _ProfileTabState extends State<ProfileTab> {
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isDarkTheme 
-                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
-                                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                                  ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
-                                    : const Color(0xFFFF6B35).withOpacity(0.1),
+                                    ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                                    : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? Colors.black.withOpacity(0.3)
-                                    : Colors.grey.withOpacity(0.05),
+                                    ? Colors.black.withValues(alpha: 0.3)
+                                    : Colors.grey.withValues(alpha: 0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -994,23 +995,23 @@ class _ProfileTabState extends State<ProfileTab> {
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isDarkTheme 
-                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
-                                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                                  ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
-                                    : const Color(0xFFFF6B35).withOpacity(0.1),
+                                    ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                                    : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? Colors.black.withOpacity(0.3)
-                                    : Colors.grey.withOpacity(0.05),
+                                    ? Colors.black.withValues(alpha: 0.3)
+                                    : Colors.grey.withValues(alpha: 0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -1073,23 +1074,23 @@ class _ProfileTabState extends State<ProfileTab> {
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isDarkTheme 
-                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
-                                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                                  ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
-                                    : const Color(0xFFFF6B35).withOpacity(0.1),
+                                    ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                                    : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? Colors.black.withOpacity(0.3)
-                                    : Colors.grey.withOpacity(0.05),
+                                    ? Colors.black.withValues(alpha: 0.3)
+                                    : Colors.grey.withValues(alpha: 0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -1152,23 +1153,23 @@ class _ProfileTabState extends State<ProfileTab> {
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isDarkTheme 
-                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
-                                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                                  ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
-                                    : const Color(0xFFFF6B35).withOpacity(0.1),
+                                    ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                                    : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? Colors.black.withOpacity(0.3)
-                                    : Colors.grey.withOpacity(0.05),
+                                    ? Colors.black.withValues(alpha: 0.3)
+                                    : Colors.grey.withValues(alpha: 0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -1239,23 +1240,23 @@ class _ProfileTabState extends State<ProfileTab> {
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isDarkTheme 
-                                  ? const Color(0xFFFF6B35).withOpacity(0.3)
-                                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                                  ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                               width: 1,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? const Color(0xFFFF6B35).withOpacity(0.2)
-                                    : const Color(0xFFFF6B35).withOpacity(0.1),
+                                    ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                                    : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                                 spreadRadius: 1,
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),
                               BoxShadow(
                                 color: isDarkTheme 
-                                    ? Colors.black.withOpacity(0.3)
-                                    : Colors.grey.withOpacity(0.05),
+                                    ? Colors.black.withValues(alpha: 0.3)
+                                    : Colors.grey.withValues(alpha: 0.05),
                                 spreadRadius: 1,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -1450,6 +1451,7 @@ class _ProfileTabState extends State<ProfileTab> {
       
       if (success) {
         await loadUserData();
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.infoUpdated),
@@ -1589,7 +1591,7 @@ class _ProfileTabState extends State<ProfileTab> {
           // Header skeleton
           Shimmer.fromColors(
             baseColor: Theme.of(context).colorScheme.surface,
-            highlightColor: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+            highlightColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1655,7 +1657,7 @@ class _ProfileTabState extends State<ProfileTab> {
           // Photo management skeleton
           Shimmer.fromColors(
             baseColor: Theme.of(context).colorScheme.surface,
-            highlightColor: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+            highlightColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
             child: Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -1764,6 +1766,7 @@ class _ProfileTabState extends State<ProfileTab> {
       final success = await UserService.updateProfile(age: age);
       if (success) {
         await loadUserData();
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Yaş bilgisi güncellendi')),
         );
@@ -1781,6 +1784,7 @@ class _ProfileTabState extends State<ProfileTab> {
       final success = await UserService.updateProfile(countryCode: countryCode);
       if (success) {
         await loadUserData();
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Ülke bilgisi güncellendi')),
         );
@@ -1798,6 +1802,7 @@ class _ProfileTabState extends State<ProfileTab> {
       final success = await UserService.updateProfile(genderCode: genderCode);
       if (success) {
         await loadUserData();
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Cinsiyet bilgisi güncellendi')),
         );

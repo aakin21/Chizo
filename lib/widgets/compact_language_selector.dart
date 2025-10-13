@@ -28,7 +28,6 @@ class _CompactLanguageSelectorState extends State<CompactLanguageSelector> {
     // Global theme service'e callback kaydet
     GlobalThemeService().setThemeChangeCallback((theme) {
       final safeTheme = theme.isNotEmpty ? theme : 'Koyu';
-      print('🔄 CompactLanguageSelector - Theme changed to: $safeTheme');
       if (mounted) {
         setState(() {
           _currentTheme = safeTheme;
@@ -42,14 +41,12 @@ class _CompactLanguageSelectorState extends State<CompactLanguageSelector> {
       final prefs = await SharedPreferences.getInstance();
       final theme = prefs.getString('selected_theme');
       final safeTheme = (theme != null && theme.isNotEmpty) ? theme : 'Koyu';
-      print('🔍 CompactLanguageSelector - Loaded theme from prefs: $safeTheme');
       if (mounted) {
         setState(() {
           _currentTheme = safeTheme;
         });
       }
     } catch (e) {
-      print('❌ CompactLanguageSelector - Error loading theme: $e');
       if (mounted) {
         setState(() {
           _currentTheme = 'Koyu';
@@ -99,9 +96,6 @@ class _CompactLanguageSelectorState extends State<CompactLanguageSelector> {
     // Alternatif: Theme.of(context) ile tema kontrolü
     final brightness = Theme.of(context).brightness;
     final isSystemDark = brightness == Brightness.dark;
-    
-    // Debug için tema durumunu yazdır
-    print('🌙 CompactLanguageSelector - Current Theme: $safeTheme, Is Dark: $isDarkTheme, System Dark: $isSystemDark');
 
     // Tema kontrolü: hem kendi değerimiz hem de sistem teması
     final shouldUseDarkTheme = isDarkTheme || isSystemDark;
@@ -124,13 +118,13 @@ class _CompactLanguageSelectorState extends State<CompactLanguageSelector> {
             decoration: shouldUseDarkTheme 
                 ? BoxDecoration(
                     color: isSelected 
-                        ? const Color(0xFFFF6B35).withOpacity(0.1)
+                        ? const Color(0xFFFF6B35).withValues(alpha: 0.1)
                         : const Color(0xFF2D2D2D),
                     borderRadius: BorderRadius.circular(8),
                   )
                 : BoxDecoration(
                     color: isSelected 
-                        ? const Color(0xFFFF6B35).withOpacity(0.1)
+                        ? const Color(0xFFFF6B35).withValues(alpha: 0.1)
                         : null,
                     borderRadius: BorderRadius.circular(8),
                   ),

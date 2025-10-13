@@ -1,5 +1,4 @@
 import 'notification_service.dart';
-import 'milestone_notification_service.dart';
 import 'tournament_notification_service.dart';
 import 'hot_streak_notification_service.dart';
 import 'notification_test_service.dart';

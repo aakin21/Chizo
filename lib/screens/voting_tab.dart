@@ -12,6 +12,7 @@ import '../services/photo_upload_service.dart';
 import '../l10n/app_localizations.dart';
 import '../services/tournament_service.dart';
 import '../services/report_service.dart';
+import '../services/global_theme_service.dart';
 import '../widgets/vs_image_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
@@ -67,7 +68,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     
     // Dragging durumuna göre transparency
     final alpha = _isSliderDragging ? 0.85 : 0.35; 
-    return baseColor.withOpacity(alpha);
+    return baseColor.withValues(alpha: alpha);
   }
 
   @override
@@ -76,11 +77,22 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _loadCurrentTheme();
     loadMatches();
+    
+    // Global theme service'e callback kaydet
+    GlobalThemeService().setThemeChangeCallback((theme) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    // Callback'i temizle
+    GlobalThemeService().clearAllCallbacks();
     super.dispose();
   }
 
@@ -661,7 +673,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                           borderRadius: BorderRadius.circular(8),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
                             ),
@@ -727,7 +739,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                                   borderRadius: BorderRadius.circular(12),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFFFF6B35).withOpacity(0.3),
+                                      color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
                                       blurRadius: 4,
                                       offset: const Offset(0, 2),
                                     ),
@@ -766,7 +778,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                           borderRadius: BorderRadius.circular(8),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
                             ),
@@ -832,7 +844,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                                   borderRadius: BorderRadius.circular(12),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFFFF6B35).withOpacity(0.3),
+                                      color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
                                       blurRadius: 4,
                                       offset: const Offset(0, 2),
                                     ),
@@ -944,11 +956,11 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.8),
+            color: color.withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -1156,7 +1168,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 10,
                   spreadRadius: 2,
                 ),
@@ -1183,7 +1195,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Icon(
@@ -1214,7 +1226,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 10,
                   spreadRadius: 2,
                 ),
@@ -1239,8 +1251,8 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                   end: Alignment.centerRight,
                   colors: [
                     Colors.transparent,
-                    Colors.black.withOpacity(0.4),
-                    Colors.black.withOpacity(0.7),
+                    Colors.black.withValues(alpha: 0.4),
+                    Colors.black.withValues(alpha: 0.7),
                   ],
                 ),
                 borderRadius: const BorderRadius.only(
@@ -1268,7 +1280,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFF6B35).withOpacity(0.3),
+                            color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
                             blurRadius: 6,
                             offset: const Offset(0, 3),
                           ),
@@ -1304,9 +1316,9 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                                         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 15),
                                         overlayShape: const RoundSliderOverlayShape(overlayRadius: 24),
                                         activeTrackColor: _getSliderColorFromPercentage(_tempSliderValue),
-                                        inactiveTrackColor: Colors.grey.withOpacity(_isSliderDragging ? 0.8 : 0.3),
+                                        inactiveTrackColor: Colors.grey.withValues(alpha: _isSliderDragging ? 0.8 : 0.3),
                                         thumbColor: _getSliderColorFromPercentage(_tempSliderValue),
-                                        overlayColor: _getSliderColorFromPercentage(_tempSliderValue).withOpacity(0.3),
+                                        overlayColor: _getSliderColorFromPercentage(_tempSliderValue).withValues(alpha: 0.3),
                                       ),
                                       child: Slider(
                                         value: _tempSliderValue,
@@ -1459,7 +1471,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         children: [
           Shimmer.fromColors(
             baseColor: Theme.of(context).colorScheme.surface,
-            highlightColor: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+            highlightColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
             child: Column(
               children: [
                 // Two skeleton photo containers
@@ -1564,7 +1576,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
   Widget _buildImageLoadingShimmer() {
     return Shimmer.fromColors(
       baseColor: Theme.of(context).colorScheme.surface,
-      highlightColor: Theme.of(context).colorScheme.surface.withOpacity(0.8),
+      highlightColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -1577,7 +1589,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
   /// Build error placeholder widget for failed image loads
   Widget _buildImageErrorWidget() {
     return Container(
-      color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
+      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.3),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1585,14 +1597,14 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
             Icon(
               Icons.person,
               size: 50,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             const SizedBox(height: 4),
             Text(
               'Image unavailable',
               style: TextStyle(
                 fontSize: 12,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -1659,10 +1671,10 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     Color color;
     switch (appTheme) {
       case 'Koyu':
-        color = Colors.black.withOpacity(0.8);
+        color = Colors.black.withValues(alpha: 0.8);
         break;
       case 'Pembemsi':
-        color = const Color(0xFFC2185B).withOpacity(0.1);
+        color = const Color(0xFFC2185B).withValues(alpha: 0.1);
         break;
       case 'Beyaz':
       default:

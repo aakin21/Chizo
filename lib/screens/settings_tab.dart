@@ -341,8 +341,8 @@ class _SettingsTabState extends State<SettingsTab> {
                 subtitle: const Text("Diğer kullanıcılar sizi görebilir"),
                 trailing: Switch(
                   value: _currentUser?.isVisible ?? false,
-                  activeColor: const Color(0xFFFF6B35), // Turuncu aktif renk
-                  activeTrackColor: const Color(0xFFFF6B35).withOpacity(0.3), // Hafif turuncu track
+                  activeThumbColor: const Color(0xFFFF6B35), // Turuncu aktif renk
+                  activeTrackColor: const Color(0xFFFF6B35).withValues(alpha: 0.3), // Hafif turuncu track
                   onChanged: (value) async {
                     final success = await UserService.updateProfile(isVisible: value);
                     if (success) {
@@ -490,9 +490,9 @@ class _SettingsTabState extends State<SettingsTab> {
               gradient: LinearGradient(
                 colors: [
                   Colors.transparent,
-                  const Color(0xFFFF6B35).withOpacity(0.3),
-                  const Color(0xFFFF6B35).withOpacity(0.6),
-                  const Color(0xFFFF6B35).withOpacity(0.3),
+                  const Color(0xFFFF6B35).withValues(alpha: 0.3),
+                  const Color(0xFFFF6B35).withValues(alpha: 0.6),
+                  const Color(0xFFFF6B35).withValues(alpha: 0.3),
                   Colors.transparent,
                 ],
                 stops: const [0.0, 0.2, 0.5, 0.8, 1.0],
@@ -525,22 +525,22 @@ class _SettingsTabState extends State<SettingsTab> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDarkTheme 
-              ? const Color(0xFFFF6B35).withOpacity(0.3)
-              : const Color(0xFFFF6B35).withOpacity(0.1),
+              ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+              : const Color(0xFFFF6B35).withValues(alpha: 0.1),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
             color: isDarkTheme 
-                ? const Color(0xFFFF6B35).withOpacity(0.2)
-                : const Color(0xFFFF6B35).withOpacity(0.1),
+                ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                : const Color(0xFFFF6B35).withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
           BoxShadow(
             color: isDarkTheme 
-                ? Colors.black.withOpacity(0.3)
-                : Colors.grey.withOpacity(0.05),
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.grey.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 1),
           ),
@@ -735,17 +735,17 @@ class _SettingsTabState extends State<SettingsTab> {
                       end: Alignment.bottomRight,
                       colors: [
                         Theme.of(context).colorScheme.surface,
-                        Theme.of(context).colorScheme.surface.withOpacity(0.8),
+                        Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                       width: 1.5,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -766,7 +766,7 @@ class _SettingsTabState extends State<SettingsTab> {
                           borderRadius: BorderRadius.circular(25),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFFF6B35).withOpacity(0.3),
+                              color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -797,7 +797,7 @@ class _SettingsTabState extends State<SettingsTab> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: RangeSlider(
@@ -806,9 +806,9 @@ class _SettingsTabState extends State<SettingsTab> {
                           max: 100,
                           divisions: 82,
                           activeColor: const Color(0xFFFF6B35), // Turuncu aktif renk
-                          inactiveColor: const Color(0xFFFF6B35).withOpacity(0.2), // Hafif turuncu inaktif
-                          overlayColor: MaterialStateProperty.all(
-                            const Color(0xFFFF6B35).withOpacity(0.15), // Turuncu overlay
+                          inactiveColor: const Color(0xFFFF6B35).withValues(alpha: 0.2), // Hafif turuncu inaktif
+                          overlayColor: WidgetStateProperty.all(
+                            const Color(0xFFFF6B35).withValues(alpha: 0.15), // Turuncu overlay
                           ),
                           onChanged: (values) {
                             setDialogState(() {
@@ -826,7 +826,7 @@ class _SettingsTabState extends State<SettingsTab> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFFF6B35).withOpacity(0.1), // Hafif turuncu arka plan
+                              color: const Color(0xFFFF6B35).withValues(alpha: 0.1), // Hafif turuncu arka plan
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -841,7 +841,7 @@ class _SettingsTabState extends State<SettingsTab> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFFF6B35).withOpacity(0.1), // Hafif turuncu arka plan
+                              color: const Color(0xFFFF6B35).withValues(alpha: 0.1), // Hafif turuncu arka plan
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(

@@ -4,7 +4,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/user_model.dart';
 import '../services/photo_upload_service.dart';
 import '../services/user_service.dart';
+import '../services/global_theme_service.dart';
 import '../utils/win_rate_colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final UserModel user;
@@ -21,11 +23,47 @@ class UserProfileScreen extends StatefulWidget {
 class _UserProfileScreenState extends State<UserProfileScreen> {
   List<Map<String, dynamic>> _photoStats = [];
   bool _isLoading = true;
+  String _currentTheme = 'Koyu';
 
   @override
   void initState() {
     super.initState();
     _loadPhotoStats();
+    _loadCurrentTheme();
+    
+    // Global theme service'e callback kaydet
+    GlobalThemeService().setThemeChangeCallback((theme) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // Callback'i temizle
+    GlobalThemeService().clearAllCallbacks();
+    super.dispose();
+  }
+
+  Future<void> _loadCurrentTheme() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final theme = prefs.getString('selected_theme') ?? 'Koyu';
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = 'Koyu';
+        });
+      }
+    }
   }
 
   Future<void> _loadPhotoStats() async {
@@ -142,24 +180,24 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withOpacity(0.2),
-                  const Color(0xFFFFF8F5).withOpacity(0.3), // Çok açık turuncu ton
+                  Colors.white.withValues(alpha: 0.2),
+                  const Color(0xFFFFF8F5).withValues(alpha: 0.3), // Çok açık turuncu ton
                 ],
               ),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: const Color(0xFFFF6B35).withOpacity(0.2),
+                color: const Color(0xFFFF6B35).withValues(alpha: 0.2),
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFF6B35).withOpacity(0.1),
+                  color: const Color(0xFFFF6B35).withValues(alpha: 0.1),
                   spreadRadius: 1,
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.05),
+                  color: Colors.grey.withValues(alpha: 0.05),
                   spreadRadius: 1,
                   blurRadius: 4,
                   offset: const Offset(0, 2),
@@ -207,7 +245,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: Colors.white, size: 20),
@@ -225,7 +263,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
           ),
         ),
       ],
@@ -293,7 +331,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
+              color: Colors.grey.withValues(alpha: 0.3),
               spreadRadius: 2,
               blurRadius: 8,
               offset: const Offset(0, 4),
@@ -335,7 +373,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.8),
+                        Colors.black.withValues(alpha: 0.8),
                       ],
                     ),
                   ),
@@ -388,7 +426,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       Text(
                         'Maç',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                           fontSize: 10,
                         ),
                       ),
@@ -404,7 +442,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: (winRate == 0.0 ? WinRateColors.getNewPhotoColor() : WinRateColors.getBorderColorFromPercentage(winRate)).withOpacity(0.9),
+                    color: (winRate == 0.0 ? WinRateColors.getNewPhotoColor() : WinRateColors.getBorderColorFromPercentage(winRate)).withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -446,7 +484,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 margin: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: (winRate == 0.0 ? WinRateColors.getNewPhotoColor() : WinRateColors.getBorderColorFromPercentage(winRate)).withOpacity(0.8),
+                  color: (winRate == 0.0 ? WinRateColors.getNewPhotoColor() : WinRateColors.getBorderColorFromPercentage(winRate)).withValues(alpha: 0.8),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -499,7 +537,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withOpacity(0.8),
+                  Colors.black.withValues(alpha: 0.8),
                 ],
               ),
             ),
@@ -543,15 +581,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                color.withOpacity(0.2),
-                color.withOpacity(0.1),
+                color.withValues(alpha: 0.2),
+                color.withValues(alpha: 0.1),
               ],
             ),
             borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: color.withOpacity(0.5)),
+            border: Border.all(color: color.withValues(alpha: 0.5)),
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 spreadRadius: 1,
                 blurRadius: 6,
                 offset: const Offset(0, 3),
@@ -573,7 +611,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
           ),
         ),
       ],
@@ -594,7 +632,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.pink.withOpacity(0.3),
+              color: Colors.pink.withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -621,7 +659,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Row(

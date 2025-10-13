@@ -233,17 +233,17 @@ class _BeautifulSnackBarContentState extends State<_BeautifulSnackBarContent>
             color: _getLightBackgroundColor(),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: _getBackgroundColor().withOpacity(0.3),
+              color: _getBackgroundColor().withValues(alpha: 0.3),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: _getBackgroundColor().withOpacity(0.2),
+                color: _getBackgroundColor().withValues(alpha: 0.2),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -263,7 +263,7 @@ class _BeautifulSnackBarContentState extends State<_BeautifulSnackBarContent>
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: _getBackgroundColor().withOpacity(0.1),
+                        color: _getBackgroundColor().withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Icon(
@@ -320,7 +320,7 @@ class _BeautifulSnackBarContentState extends State<_BeautifulSnackBarContent>
                         },
                         icon: Icon(
                           Icons.close,
-                          color: _getTextColor().withOpacity(0.6),
+                          color: _getTextColor().withValues(alpha: 0.6),
                           size: 20,
                         ),
                         padding: EdgeInsets.zero,

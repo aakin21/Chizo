@@ -1,7 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:ui';
 import '../models/user_model.dart';
 import '../services/photo_upload_service.dart';
 import '../services/user_service.dart';
@@ -106,10 +105,8 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
       //   body: 'Fotoğraf istatistikleri süresi doldu. Tekrar 100 coin ile açabilirsiniz.',
       //   payload: 'photo_stats_expired',
       // );
-      
-      print('Bildirim gönderildi: İstatistikler süresi doldu');
     } catch (e) {
-      print('Bildirim gönderme hatası: $e');
+      // Hata sessizce yutulur
     }
   }
 
@@ -121,7 +118,7 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
         return DateTime.parse(timeString);
       }
     } catch (e) {
-      print('Error parsing unlock time: $e');
+      // Hata sessizce yutulur
     }
     return null;
   }
@@ -131,7 +128,7 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('photo_unlock_$photoId', expiryTime.toIso8601String());
     } catch (e) {
-      print('Error storing unlock time: $e');
+      // Hata sessizce yutulur
     }
   }
 
@@ -140,7 +137,7 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('photo_unlock_$photoId');
     } catch (e) {
-      print('Error removing unlock time: $e');
+      // Hata sessizce yutulur
     }
   }
 
@@ -152,10 +149,8 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
       //   body: 'Fotoğraf istatistikleri 24 saat boyunca görüntülenebilir. 100 coin harcandı.',
       //   payload: 'photo_stats_unlocked',
       // );
-      
-      print('Bildirim gönderildi: İstatistikler 24 saat açık, 100 coin harcandı');
     } catch (e) {
-      print('Bildirim gönderme hatası: $e');
+      // Hata sessizce yutulur
     }
   }
 
@@ -436,6 +431,8 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
       
       final result = await PhotoUploadService.uploadPhoto(currentSlot);
       
+      if (!mounted) return;
+
       if (result['success']) {
         widget.onPhotoChanged?.call();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -472,7 +469,9 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
     try {
       final slot = widget.photoData!['photo_order'] as int;
       final result = await PhotoUploadService.deletePhoto(slot);
-      
+
+      if (!mounted) return;
+
       if (result['success']) {
         widget.onPhotoChanged?.call();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -547,6 +546,8 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
       );
       
       if (!coinUpdateSuccess) {
+        if (!mounted) return;
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('❌ Yeterli coin yok!'),

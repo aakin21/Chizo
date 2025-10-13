@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../services/hot_streak_notification_service.dart';
 import '../services/hotstreak_notification_test_service.dart';
 
 class HotstreakNotificationExample extends StatefulWidget {
+  const HotstreakNotificationExample({super.key});
+
   @override
   _HotstreakNotificationExampleState createState() => _HotstreakNotificationExampleState();
 }

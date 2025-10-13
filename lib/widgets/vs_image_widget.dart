@@ -116,7 +116,7 @@ class VSPainter extends CustomPainter {
     // Draw light beam effect
     final lightPaint = Paint()
       ..style = PaintingStyle.fill
-      ..color = Colors.white.withOpacity(0.8);
+      ..color = Colors.white.withValues(alpha: 0.8);
     canvas.drawRect(
       Rect.fromLTWH(size.width * 0.24, 0, size.width * 0.02, size.height),
       lightPaint,
@@ -234,7 +234,7 @@ class VSPainter extends CustomPainter {
     final outlinePaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = const Color(0xFFFF6B35).withOpacity(0.3);
+      ..color = const Color(0xFFFF6B35).withValues(alpha: 0.3);
 
     canvas.drawPath(vPath, outlinePaint);
     canvas.drawPath(sPath, outlinePaint);

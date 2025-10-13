@@ -131,7 +131,7 @@ class _GenderSelectorState extends State<GenderSelector> {
             ),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: const Color(0xFFFF6B35).withOpacity(0.3),
+              color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -143,7 +143,7 @@ class _GenderSelectorState extends State<GenderSelector> {
                 margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: isSelected 
-                      ? const Color(0xFFFF6B35).withOpacity(0.2)
+                      ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                   border: isSelected 

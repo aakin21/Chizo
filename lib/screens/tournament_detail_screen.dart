@@ -12,9 +12,9 @@ class TournamentDetailScreen extends StatefulWidget {
   final TournamentModel tournament;
 
   const TournamentDetailScreen({
-    Key? key,
+    super.key,
     required this.tournament,
-  }) : super(key: key);
+  });
 
   @override
   State<TournamentDetailScreen> createState() => _TournamentDetailScreenState();
@@ -348,7 +348,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                           child: Stack(
                             children: [
                               // Fotoğraf
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 height: double.infinity,
                                 child: user1['tournament_photo_url'] != null
@@ -378,7 +378,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                                   width: double.infinity,
                                   height: double.infinity,
                                   decoration: BoxDecoration(
-                                    color: Colors.purple.withOpacity(0.3),
+                                    color: Colors.purple.withValues(alpha: 0.3),
                                   ),
                                   child: const Center(
                                     child: Icon(
@@ -402,7 +402,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                                       end: Alignment.bottomCenter,
                                       colors: [
                                         Colors.transparent,
-                                        Colors.black.withOpacity(0.8),
+                                        Colors.black.withValues(alpha: 0.8),
                                       ],
                                     ),
                                   ),
@@ -425,14 +425,14 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                   ),
                   
                   // VS sembolü - Güzel ikon
-                  Container(
+                  SizedBox(
                     height: 60,
                     child: Center(
                       child: Container(
                         width: 50,
                         height: 50,
                         decoration: BoxDecoration(
-                          color: Colors.purple.withOpacity(0.2),
+                          color: Colors.purple.withValues(alpha: 0.2),
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: Colors.purple,
@@ -472,7 +472,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                           child: Stack(
                             children: [
                               // Fotoğraf
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 height: double.infinity,
                                 child: user2['tournament_photo_url'] != null
@@ -502,7 +502,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                                   width: double.infinity,
                                   height: double.infinity,
                                   decoration: BoxDecoration(
-                                    color: Colors.purple.withOpacity(0.3),
+                                    color: Colors.purple.withValues(alpha: 0.3),
                                   ),
                                   child: const Center(
                                     child: Icon(
@@ -526,7 +526,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                                       end: Alignment.bottomCenter,
                                       colors: [
                                         Colors.transparent,
-                                        Colors.black.withOpacity(0.8),
+                                        Colors.black.withValues(alpha: 0.8),
                                       ],
                                     ),
                                   ),
@@ -884,10 +884,10 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
         width: double.infinity,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -896,7 +896,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -931,7 +931,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
             ),
             Icon(
               Icons.arrow_forward_ios,
-              color: color.withOpacity(0.7),
+              color: color.withValues(alpha: 0.7),
               size: 16,
             ),
           ],
@@ -1007,14 +1007,14 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                const Color(0xFFFF6B35).withOpacity(0.1), // Hafif turuncu
-                                const Color(0xFFFF8C42).withOpacity(0.05), // Daha hafif turuncu
+                                const Color(0xFFFF6B35).withValues(alpha: 0.1), // Hafif turuncu
+                                const Color(0xFFFF8C42).withValues(alpha: 0.05), // Daha hafif turuncu
                               ],
                             )
                           : null,
                       color: rank > 3 ? Colors.grey[800] : null,
                       borderRadius: BorderRadius.circular(8),
-                      border: rank <= 3 ? Border.all(color: const Color(0xFFFF6B35).withOpacity(0.3)) : null,
+                      border: rank <= 3 ? Border.all(color: const Color(0xFFFF6B35).withValues(alpha: 0.3)) : null,
                     ),
                     child: Row(
                       children: [
@@ -1195,7 +1195,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                         // Avatar - Turnuva fotoğrafını öncelikle göster
                         CircleAvatar(
                           radius: 20,
-                          backgroundColor: Colors.purple.withOpacity(0.2),
+                          backgroundColor: Colors.purple.withValues(alpha: 0.2),
                           child: (participant['tournament_photo_url'] != null)
                               ? ClipOval(
                                   child: Image.network(
@@ -1285,7 +1285,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                             child: Container(
                               padding: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.2),
+                                color: Colors.red.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: const Icon(
@@ -1801,7 +1801,7 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.2),
+                  color: Colors.blue.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
@@ -1830,9 +1830,9 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(0.1),
+                    color: Colors.orange.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                    border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1902,9 +1902,9 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
+                    color: Colors.blue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                    border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     children: [

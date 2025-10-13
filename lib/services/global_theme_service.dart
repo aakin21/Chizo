@@ -28,27 +28,21 @@ class GlobalThemeService {
 
   // Theme değiştir
   Future<void> changeTheme(String theme) async {
-    print('🎨 GlobalThemeService - Changing theme to: $theme');
-    print('🎨 GlobalThemeService - Active callbacks: ${_themeChangeCallbacks.length}');
-    
     // Önce theme ayarını kaydet
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('selected_theme', theme);
-    
+
     // Kısa bir gecikme - theme ayarının kaydedilmesi için
     await Future.delayed(const Duration(milliseconds: 100));
-    
+
     // Tüm callback'leri çağır
     for (int i = 0; i < _themeChangeCallbacks.length; i++) {
       try {
-        print('🎨 GlobalThemeService - Calling callback $i');
         _themeChangeCallbacks[i](theme);
       } catch (e) {
-        print('❌ Theme callback error: $e');
+        // Hata sessizce yutulur
       }
     }
-    
-    print('🎨 GlobalThemeService - Theme change completed');
   }
 
   // Mevcut theme'i al

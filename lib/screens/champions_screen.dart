@@ -127,7 +127,7 @@ class _ChampionsScreenState extends State<ChampionsScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: _getTournamentTypeColor(champion['tournament_type']).withOpacity(0.2),
+                color: _getTournamentTypeColor(champion['tournament_type']).withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -284,10 +284,10 @@ class _ChampionsScreenState extends State<ChampionsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
           width: 2,
         ),
       ),
@@ -320,7 +320,7 @@ class _ChampionsScreenState extends State<ChampionsScreen> {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 0.2),
               shape: BoxShape.circle,
               border: Border.all(
                 color: color,

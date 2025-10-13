@@ -613,7 +613,7 @@ class NotificationService {
                 .eq('user_id', user.id);
           }
 
-          print('✅ Cleaned up ${excessCount} excess notifications');
+          print('✅ Cleaned up $excessCount excess notifications');
         }
       }
     } catch (e) {

@@ -282,8 +282,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            const Color(0xFFFF6B35).withOpacity(0.1),
-                            const Color(0xFFFF8C42).withOpacity(0.1),
+                            const Color(0xFFFF6B35).withValues(alpha: 0.1),
+                            const Color(0xFFFF8C42).withValues(alpha: 0.1),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(20),
@@ -358,23 +358,23 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isDarkTheme 
-                ? const Color(0xFFFF6B35).withOpacity(0.3)
-                : const Color(0xFFFF6B35).withOpacity(0.1),
+                ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                : const Color(0xFFFF6B35).withValues(alpha: 0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
               color: isDarkTheme 
-                  ? const Color(0xFFFF6B35).withOpacity(0.2)
-                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                  ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
               spreadRadius: 1,
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
             BoxShadow(
               color: isDarkTheme 
-                  ? Colors.black.withOpacity(0.3)
-                  : Colors.grey.withOpacity(0.05),
+                  ? Colors.black.withValues(alpha: 0.3)
+                  : Colors.grey.withValues(alpha: 0.05),
               spreadRadius: 1,
               blurRadius: 4,
               offset: const Offset(0, 2),
@@ -399,7 +399,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFFF6B35).withOpacity(0.3),
+                    color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
                     spreadRadius: 1,
                     blurRadius: 4,
                     offset: const Offset(0, 2),
@@ -458,7 +458,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: _getStatusColor(tournament.status).withOpacity(0.1),
+                color: _getStatusColor(tournament.status).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(

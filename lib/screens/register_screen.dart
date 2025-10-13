@@ -6,6 +6,8 @@ import '../widgets/compact_language_selector.dart';
 import '../widgets/country_selector.dart';
 import '../widgets/gender_selector.dart';
 import '../services/global_language_service.dart';
+import '../services/global_theme_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterScreen extends StatefulWidget {
   final Function(Locale)? onLanguageChanged;
@@ -24,7 +26,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? _selectedCountryCode;
   String? _selectedGenderCode;
   bool _isLoading = false;
+  String _currentTheme = 'Koyu';
 
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentTheme();
+    
+    // Global theme service'e callback kaydet
+    GlobalThemeService().setThemeChangeCallback((theme) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    });
+  }
+
+
+  Future<void> _loadCurrentTheme() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final theme = prefs.getString('selected_theme') ?? 'Koyu';
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = 'Koyu';
+        });
+      }
+    }
+  }
 
   void register() async {
     final l10n = AppLocalizations.of(context)!;
@@ -86,6 +122,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'created_at': DateTime.now().toIso8601String(),
           'updated_at': DateTime.now().toIso8601String(),
         });
+
+        if (!mounted) return;
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(l10n.registrationSuccessful)),
@@ -179,6 +217,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _passwordController.dispose();
     _usernameController.dispose();
     _ageController.dispose();
+    // Callback'i temizle
+    GlobalThemeService().clearAllCallbacks();
     super.dispose();
   }
 
@@ -238,7 +278,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFFF6B35).withOpacity(0.3),
+                        color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
                         blurRadius: 15,
                         offset: const Offset(0, 8),
                       ),
@@ -261,7 +301,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     color: Colors.white,
                     shadows: [
                       Shadow(
-                        color: const Color(0xFFFF6B35).withOpacity(0.5),
+                        color: const Color(0xFFFF6B35).withValues(alpha: 0.5),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -334,12 +374,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: const Color(0xFFFF6B35).withOpacity(0.3),
+                      color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
                       width: 1,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFFF6B35).withOpacity(0.1),
+                        color: const Color(0xFFFF6B35).withValues(alpha: 0.1),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -371,12 +411,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: const Color(0xFFFF6B35).withOpacity(0.3),
+                      color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
                       width: 1,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFFF6B35).withOpacity(0.1),
+                        color: const Color(0xFFFF6B35).withValues(alpha: 0.1),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -409,7 +449,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFFF6B35).withOpacity(0.3),
+                        color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
                         blurRadius: 15,
                         offset: const Offset(0, 8),
                       ),
@@ -502,12 +542,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFFFF6B35).withOpacity(0.3),
+          color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFF6B35).withOpacity(0.1),
+            color: const Color(0xFFFF6B35).withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'voting_tab.dart';
 import 'profile_tab.dart';
-import 'turnuva_tab.dart';
+// TODO: Turnuva özelliği gelecek güncellemede aktif edilecek
+// import 'turnuva_tab.dart';
 import 'settings_tab.dart';
 import 'store_tab.dart';
-import 'leaderboard_tab.dart';
+// TODO: Leaderboard özelliği gelecek güncellemede aktif edilecek
+// import 'leaderboard_tab.dart';
 import 'notification_center_screen.dart';
 import '../services/streak_service.dart';
 import '../l10n/app_localizations.dart';
@@ -28,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _checkStreakOnLoad();
   }
-
 
   Future<void> _checkStreakOnLoad() async {
     if (!_streakChecked) {
@@ -175,10 +176,12 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       case 'profile':
         return ProfileTab(onRefresh: _refreshProfile);
-      case 'tournament':
-        return TurnuvaTab();
-      case 'leaderboard':
-        return const LeaderboardTab();
+      // TODO: Turnuva özelliği gelecek güncellemede aktif edilecek
+      // case 'tournament':
+      //   return TurnuvaTab();
+      // TODO: Leaderboard özelliği gelecek güncellemede aktif edilecek
+      // case 'leaderboard':
+      //   return const LeaderboardTab();
       case 'notifications':
         return const NotificationCenterScreen();
       case 'store':
@@ -289,16 +292,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     page: 'profile',
                     color: const Color(0xFFFF8C42), // Açık turuncu ton
                   ),
-                  _buildNavigationButton(
-                    icon: Icons.emoji_events,
-                    page: 'tournament',
-                    color: const Color(0xFFE55A2B), // Koyu turuncu ton
-                  ),
-                  _buildNavigationButton(
-                    icon: Icons.leaderboard,
-                    page: 'leaderboard',
-                    color: const Color(0xFFFF6B35), // Ana turuncu ton
-                  ),
+                  // TODO: Turnuva özelliği gelecek güncellemede aktif edilecek
+                  // _buildNavigationButton(
+                  //   icon: Icons.emoji_events,
+                  //   page: 'tournament',
+                  //   color: const Color(0xFFE55A2B), // Koyu turuncu ton
+                  // ),
+                  // TODO: Leaderboard özelliği gelecek güncellemede aktif edilecek
+                  // _buildNavigationButton(
+                  //   icon: Icons.leaderboard,
+                  //   page: 'leaderboard',
+                  //   color: const Color(0xFFFF6B35), // Ana turuncu ton
+                  // ),
                   _buildNavigationButton(
                     icon: Icons.notifications,
                     page: 'notifications',

@@ -4,6 +4,7 @@ import '../services/notification_history_service.dart';
 import '../models/notification_model.dart';
 import '../l10n/app_localizations.dart';
 import '../services/language_service.dart';
+import '../services/global_theme_service.dart';
 
 class NotificationCenterScreen extends StatefulWidget {
   const NotificationCenterScreen({super.key});
@@ -25,6 +26,8 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
   
   // Dil değişkeni
   String _currentLanguage = 'tr';
+  // ignore: unused_field
+  String _currentTheme = 'Koyu';
 
   @override
   void initState() {
@@ -32,6 +35,41 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
     _loadNotifications();
     _loadNotificationSettings();
     _loadCurrentLanguage();
+    _loadCurrentTheme();
+    
+    // Global theme service'e callback kaydet
+    GlobalThemeService().setThemeChangeCallback((theme) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // Callback'i temizle
+    GlobalThemeService().clearAllCallbacks();
+    super.dispose();
+  }
+
+  Future<void> _loadCurrentTheme() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final theme = prefs.getString('selected_theme') ?? 'Koyu';
+      if (mounted) {
+        setState(() {
+          _currentTheme = theme;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _currentTheme = 'Koyu';
+        });
+      }
+    }
   }
 
   @override
@@ -49,21 +87,25 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
       _tournamentNotifications = prefs.getBool('notification_tournament') ?? true;
       _winCelebrationNotifications = prefs.getBool('notification_win_celebration') ?? true;
       _streakReminderNotifications = prefs.getBool('notification_streak_reminder') ?? true;
-      
-      setState(() {});
+
+      if (mounted) {
+        setState(() {});
+      }
     } catch (e) {
-      print('Error loading notification preferences: $e');
+      // Error loading notification preferences
     }
   }
 
   Future<void> _loadCurrentLanguage() async {
     try {
       final locale = await LanguageService.getCurrentLocale();
-      setState(() {
-        _currentLanguage = locale.languageCode;
-      });
+      if (mounted) {
+        setState(() {
+          _currentLanguage = locale.languageCode;
+        });
+      }
     } catch (e) {
-      print('Error loading current language: $e');
+      // Error loading current language
     }
   }
 
@@ -72,49 +114,57 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
     try {
       // Önce fazla bildirimleri temizle
       await NotificationHistoryService.cleanupExcessNotifications();
-      
+
       final notificationList = await NotificationHistoryService.getNotificationHistory();
       final unread = await NotificationHistoryService.getUnreadCount();
-      
-      setState(() {
-        notifications = notificationList;
-        unreadCount = unread;
-        isLoading = false;
-      });
+
+      if (mounted) {
+        setState(() {
+          notifications = notificationList;
+          unreadCount = unread;
+          isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() => isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error loading notifications: $e')),
-      );
+      if (mounted) {
+        setState(() => isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading notifications: $e')),
+        );
+      }
     }
   }
 
   Future<void> _markAsRead(NotificationModel notification) async {
     if (notification.isRead) return;
-    
+
     try {
       await NotificationHistoryService.markAsRead(notification.id);
-      setState(() {
-        final index = notifications.indexWhere((n) => n.id == notification.id);
-        if (index != -1) {
-          notifications[index] = notification.copyWith(
-            isRead: true,
-            readAt: DateTime.now(),
-          );
-        }
-        unreadCount = unreadCount > 0 ? unreadCount - 1 : 0;
-      });
+      if (mounted) {
+        setState(() {
+          final index = notifications.indexWhere((n) => n.id == notification.id);
+          if (index != -1) {
+            notifications[index] = notification.copyWith(
+              isRead: true,
+              readAt: DateTime.now(),
+            );
+          }
+          unreadCount = unreadCount > 0 ? unreadCount - 1 : 0;
+        });
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error marking notification as read: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error marking notification as read: $e')),
+        );
+      }
     }
   }
 
   Future<void> _deleteNotification(NotificationModel notification) async {
     try {
       final success = await NotificationHistoryService.deleteNotification(notification.id);
-      if (success) {
+      if (success && mounted) {
         setState(() {
           notifications.removeWhere((n) => n.id == notification.id);
           if (!notification.isRead) {
@@ -126,33 +176,42 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error deleting notification: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error deleting notification: $e')),
+        );
+      }
     }
   }
 
   Future<void> _markAllAsRead() async {
     try {
       await NotificationHistoryService.markAllAsRead();
-      setState(() {
-        notifications = notifications.map((n) => n.copyWith(
-          isRead: true,
-          readAt: DateTime.now(),
-        )).toList();
-        unreadCount = 0;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('All notifications marked as read')),
-      );
+      if (mounted) {
+        setState(() {
+          notifications = notifications.map((n) => n.copyWith(
+            isRead: true,
+            readAt: DateTime.now(),
+          )).toList();
+          unreadCount = 0;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('All notifications marked as read')),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error marking all as read: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error marking all as read: $e')),
+        );
+      }
     }
   }
 
   Future<void> _deleteAllNotifications() async {
+    // Capture the parent context before showing the dialog
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -168,17 +227,21 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
               Navigator.pop(context);
               try {
                 await NotificationHistoryService.deleteAllNotifications();
-                setState(() {
-                  notifications.clear();
-                  unreadCount = 0;
-                });
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('All notifications deleted')),
-                );
+                if (mounted) {
+                  setState(() {
+                    notifications.clear();
+                    unreadCount = 0;
+                  });
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(content: Text('All notifications deleted')),
+                  );
+                }
               } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Error deleting all notifications: $e')),
-                );
+                if (mounted) {
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(content: Text('Error deleting all notifications: $e')),
+                  );
+                }
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -191,21 +254,25 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
 
   Future<void> _saveNotificationSettings() async {
     final l10n = AppLocalizations.of(context)!;
-    
+
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('notification_all', _notificationsEnabled);
       await prefs.setBool('notification_tournament', _tournamentNotifications);
       await prefs.setBool('notification_win_celebration', _winCelebrationNotifications);
       await prefs.setBool('notification_streak_reminder', _streakReminderNotifications);
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Bildirim ayarları kaydedildi')),
-      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Bildirim ayarları kaydedildi')),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${l10n.error}: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${l10n.error}: $e')),
+        );
+      }
     }
   }
 
@@ -216,7 +283,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
         Container(
           height: 4, // Çizgiyi incelttim
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          color: const Color(0xFFFF6B35).withOpacity(0.3), // Daha soluk turuncu
+          color: const Color(0xFFFF6B35).withValues(alpha: 0.3), // Daha soluk turuncu
         ),
         Expanded(
           child: _buildScrollableContent(),
@@ -283,7 +350,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                 title: Text(_getLocalizedText('notifications')),
                 subtitle: Text(_getLocalizedText('notificationSettingsDescription')),
                 value: _notificationsEnabled,
-                activeColor: const Color(0xFFFF6B35), // Ana turuncu ton
+                activeThumbColor: const Color(0xFFFF6B35), // Ana turuncu ton
                 onChanged: (value) {
                   setState(() {
                     _notificationsEnabled = value;
@@ -299,9 +366,9 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                   gradient: LinearGradient(
                     colors: [
                       Colors.transparent,
-                      const Color(0xFFFF6B35).withOpacity(0.3),
-                      const Color(0xFFFF6B35).withOpacity(0.6),
-                      const Color(0xFFFF6B35).withOpacity(0.3),
+                      const Color(0xFFFF6B35).withValues(alpha: 0.3),
+                      const Color(0xFFFF6B35).withValues(alpha: 0.6),
+                      const Color(0xFFFF6B35).withValues(alpha: 0.3),
                       Colors.transparent,
                     ],
                     stops: const [0.0, 0.2, 0.5, 0.8, 1.0],
@@ -319,7 +386,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                   title: Text(_getLocalizedText('tournamentNotifications')),
                   subtitle: Text(_getLocalizedText('tournamentNotificationsDescription')),
                   value: _tournamentNotifications,
-                  activeColor: const Color(0xFFFF6B35), // Ana turuncu ton
+                  activeThumbColor: const Color(0xFFFF6B35), // Ana turuncu ton
                   onChanged: (value) {
                     setState(() {
                       _tournamentNotifications = value;
@@ -335,9 +402,9 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                     gradient: LinearGradient(
                       colors: [
                         Colors.transparent,
-                        const Color(0xFFFF6B35).withOpacity(0.3),
-                        const Color(0xFFFF6B35).withOpacity(0.6),
-                        const Color(0xFFFF6B35).withOpacity(0.3),
+                        const Color(0xFFFF6B35).withValues(alpha: 0.3),
+                        const Color(0xFFFF6B35).withValues(alpha: 0.6),
+                        const Color(0xFFFF6B35).withValues(alpha: 0.3),
                         Colors.transparent,
                       ],
                       stops: const [0.0, 0.2, 0.5, 0.8, 1.0],
@@ -352,7 +419,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                   title: Text(_getLocalizedText('winCelebrationNotifications')),
                   subtitle: Text(_getLocalizedText('winCelebrationNotificationsDescription')),
                   value: _winCelebrationNotifications,
-                  activeColor: const Color(0xFFFF6B35), // Ana turuncu ton
+                  activeThumbColor: const Color(0xFFFF6B35), // Ana turuncu ton
                   onChanged: (value) {
                     setState(() {
                       _winCelebrationNotifications = value;
@@ -368,9 +435,9 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                     gradient: LinearGradient(
                       colors: [
                         Colors.transparent,
-                        const Color(0xFFFF6B35).withOpacity(0.3),
-                        const Color(0xFFFF6B35).withOpacity(0.6),
-                        const Color(0xFFFF6B35).withOpacity(0.3),
+                        const Color(0xFFFF6B35).withValues(alpha: 0.3),
+                        const Color(0xFFFF6B35).withValues(alpha: 0.6),
+                        const Color(0xFFFF6B35).withValues(alpha: 0.3),
                         Colors.transparent,
                       ],
                       stops: const [0.0, 0.2, 0.5, 0.8, 1.0],
@@ -385,7 +452,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                   title: Text(_getLocalizedText('streakReminderNotifications')),
                   subtitle: Text(_getLocalizedText('streakReminderNotificationsDescription')),
                   value: _streakReminderNotifications,
-                  activeColor: const Color(0xFFFF6B35), // Ana turuncu ton
+                  activeThumbColor: const Color(0xFFFF6B35), // Ana turuncu ton
                   onChanged: (value) {
                     setState(() {
                       _streakReminderNotifications = value;
@@ -401,9 +468,9 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                     gradient: LinearGradient(
                       colors: [
                         Colors.transparent,
-                        const Color(0xFFFF6B35).withOpacity(0.3),
-                        const Color(0xFFFF6B35).withOpacity(0.6),
-                        const Color(0xFFFF6B35).withOpacity(0.3),
+                        const Color(0xFFFF6B35).withValues(alpha: 0.3),
+                        const Color(0xFFFF6B35).withValues(alpha: 0.6),
+                        const Color(0xFFFF6B35).withValues(alpha: 0.3),
                         Colors.transparent,
                       ],
                       stops: const [0.0, 0.2, 0.5, 0.8, 1.0],
@@ -513,7 +580,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
       },
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: getNotificationColor(notification.type).withOpacity(0.2),
+          backgroundColor: getNotificationColor(notification.type).withValues(alpha: 0.2),
           child: Text(
             getNotificationIcon(notification.type),
             style: TextStyle(fontSize: 20),

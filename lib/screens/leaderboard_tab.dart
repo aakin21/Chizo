@@ -119,23 +119,23 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isDarkTheme 
-                ? const Color(0xFFFF6B35).withOpacity(0.3)
-                : const Color(0xFFFF6B35).withOpacity(0.1),
+                ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                : const Color(0xFFFF6B35).withValues(alpha: 0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
               color: isDarkTheme 
-                  ? const Color(0xFFFF6B35).withOpacity(0.2)
-                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                  ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
               spreadRadius: 1,
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
             BoxShadow(
               color: isDarkTheme 
-                  ? Colors.black.withOpacity(0.3)
-                  : Colors.grey.withOpacity(0.05),
+                  ? Colors.black.withValues(alpha: 0.3)
+                  : Colors.grey.withValues(alpha: 0.05),
               spreadRadius: 1,
               blurRadius: 4,
               offset: const Offset(0, 2),
@@ -216,7 +216,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
       case 3:
         return const Color(0xFFE55A2B); // Koyu turuncu ton - 3. sıra
       default:
-        return const Color(0xFFFF6B35).withOpacity(0.7); // Ana turuncu ton (şeffaf) - diğer sıralar
+        return const Color(0xFFFF6B35).withValues(alpha: 0.7); // Ana turuncu ton (şeffaf) - diğer sıralar
     }
   }
 

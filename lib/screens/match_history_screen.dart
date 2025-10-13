@@ -329,7 +329,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.7),
+                  color: Colors.black.withValues(alpha: 0.7),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -372,7 +372,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Icon(
@@ -489,23 +489,23 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isDarkTheme 
-              ? const Color(0xFFFF6B35).withOpacity(0.3)
-              : const Color(0xFFFF6B35).withOpacity(0.1),
+              ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+              : const Color(0xFFFF6B35).withValues(alpha: 0.1),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
             color: isDarkTheme 
-                ? const Color(0xFFFF6B35).withOpacity(0.2)
-                : const Color(0xFFFF6B35).withOpacity(0.1),
+                ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                : const Color(0xFFFF6B35).withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
             color: isDarkTheme 
-                ? Colors.black.withOpacity(0.3)
-                : Colors.grey.withOpacity(0.05),
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.grey.withValues(alpha: 0.05),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -537,7 +537,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
               padding: const EdgeInsets.all(8),
               margin: const EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
+                color: Colors.green.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: Colors.green),
               ),
@@ -677,8 +677,8 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
           child: CircleAvatar(
             radius: 30,
             backgroundColor: isDarkTheme 
-                ? const Color(0xFFFF6B35).withOpacity(0.2) // Turuncu arka plan
-                : const Color(0xFFFF6B35).withOpacity(0.1), // Turuncu arka plan
+                ? const Color(0xFFFF6B35).withValues(alpha: 0.2) // Turuncu arka plan
+                : const Color(0xFFFF6B35).withValues(alpha: 0.1), // Turuncu arka plan
             backgroundImage: user.matchPhotos != null && 
                               user.matchPhotos!.isNotEmpty &&
                               user.matchPhotos!.first['photo_url'] != null

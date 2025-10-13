@@ -100,5 +100,8 @@ coverage/
 .env.test.local
 .env.production.local
 
+# Android local properties (personal SDK paths)
+android/local.properties
+
 # Supabase
 .supabase/

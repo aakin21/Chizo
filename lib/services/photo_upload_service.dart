@@ -318,10 +318,10 @@ class PhotoUploadService {
           .from('profile-images')
           .remove(['user_photos/$fileName']);
 
-      // Mark as inactive in database
+      // Completely remove from database instead of just marking as inactive
       await _client
           .from('user_photos')
-          .update({'is_active': false})
+          .delete()
           .eq('id', photoResponse['id']);
 
       return {

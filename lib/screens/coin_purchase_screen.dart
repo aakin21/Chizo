@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../services/payment_service.dart';
 import '../services/user_service.dart';
 import '../models/user_model.dart';
+import '../services/global_theme_service.dart';
 import '../l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CoinPurchaseScreen extends StatefulWidget {
   const CoinPurchaseScreen({super.key});
@@ -26,6 +28,7 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
     setState(() => isLoading = true);
     try {
       final user = await UserService.getCurrentUser();
+      if (!mounted) return;
       setState(() {
         currentUser = user;
         isLoading = false;
@@ -46,6 +49,7 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
       
       if (success) {
         await loadUserData();
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.purchaseSuccessful)),
         );

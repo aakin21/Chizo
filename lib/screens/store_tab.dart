@@ -162,23 +162,23 @@ class _StoreTabState extends State<StoreTab> {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isDarkTheme 
-                      ? const Color(0xFFFF6B35).withOpacity(0.3)
-                      : const Color(0xFFFF6B35).withOpacity(0.1),
+                      ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                      : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
                     color: isDarkTheme 
-                        ? const Color(0xFFFF6B35).withOpacity(0.2)
-                        : const Color(0xFFFF6B35).withOpacity(0.1),
+                        ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                        : const Color(0xFFFF6B35).withValues(alpha: 0.1),
                     spreadRadius: 1,
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
                   BoxShadow(
                     color: isDarkTheme 
-                        ? Colors.black.withOpacity(0.3)
-                        : Colors.grey.withOpacity(0.05),
+                        ? Colors.black.withValues(alpha: 0.3)
+                        : Colors.grey.withValues(alpha: 0.05),
                     spreadRadius: 1,
                     blurRadius: 4,
                     offset: const Offset(0, 2),
@@ -276,23 +276,23 @@ class _StoreTabState extends State<StoreTab> {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isDarkTheme 
-                ? const Color(0xFFFF6B35).withOpacity(0.3)
-                : const Color(0xFFFF6B35).withOpacity(0.1),
+                ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                : const Color(0xFFFF6B35).withValues(alpha: 0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
               color: isDarkTheme 
-                  ? const Color(0xFFFF6B35).withOpacity(0.2)
-                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                  ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
               spreadRadius: 1,
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
             BoxShadow(
               color: isDarkTheme 
-                  ? Colors.black.withOpacity(0.3)
-                  : Colors.grey.withOpacity(0.05),
+                  ? Colors.black.withValues(alpha: 0.3)
+                  : Colors.grey.withValues(alpha: 0.05),
               spreadRadius: 1,
               blurRadius: 4,
               offset: const Offset(0, 2),
@@ -353,23 +353,23 @@ class _StoreTabState extends State<StoreTab> {
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isDarkTheme 
-                ? const Color(0xFFFF6B35).withOpacity(0.3)
-                : const Color(0xFFFF6B35).withOpacity(0.1),
+                ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                : const Color(0xFFFF6B35).withValues(alpha: 0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
               color: isDarkTheme 
-                  ? const Color(0xFFFF6B35).withOpacity(0.2)
-                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                  ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
               spreadRadius: 1,
               blurRadius: 6,
               offset: const Offset(0, 3),
             ),
             BoxShadow(
               color: isDarkTheme 
-                  ? Colors.black.withOpacity(0.3)
-                  : Colors.grey.withOpacity(0.05),
+                  ? Colors.black.withValues(alpha: 0.3)
+                  : Colors.grey.withValues(alpha: 0.05),
               spreadRadius: 1,
               blurRadius: 3,
               offset: const Offset(0, 1),
@@ -452,23 +452,23 @@ class _StoreTabState extends State<StoreTab> {
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isDarkTheme 
-                ? const Color(0xFFFF6B35).withOpacity(0.3)
-                : const Color(0xFFFF6B35).withOpacity(0.1),
+                ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
+                : const Color(0xFFFF6B35).withValues(alpha: 0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
               color: isDarkTheme 
-                  ? const Color(0xFFFF6B35).withOpacity(0.2)
-                  : const Color(0xFFFF6B35).withOpacity(0.1),
+                  ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
+                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
               spreadRadius: 1,
               blurRadius: 6,
               offset: const Offset(0, 3),
             ),
             BoxShadow(
               color: isDarkTheme 
-                  ? Colors.black.withOpacity(0.3)
-                  : Colors.grey.withOpacity(0.05),
+                  ? Colors.black.withValues(alpha: 0.3)
+                  : Colors.grey.withValues(alpha: 0.05),
               spreadRadius: 1,
               blurRadius: 3,
               offset: const Offset(0, 1),
