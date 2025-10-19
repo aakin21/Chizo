@@ -163,17 +163,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('selected_theme', theme);
     await Future.delayed(const Duration(milliseconds: 100));
-    
+
     if (mounted) {
       setState(() {
         _selectedTheme = theme;
-      });
-      
-      // Tema değişikliği sonrası tüm widget'ları güncelle
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          setState(() {});
-        }
+        _appKey = UniqueKey(); // Tüm uygulamayı yeniden oluştur
       });
     }
   }
@@ -182,22 +176,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     switch (_selectedTheme) {
       case 'Beyaz':
         return ColorScheme.fromSeed(
-          seedColor: Colors.white, 
+          seedColor: Colors.white,
           brightness: Brightness.light
         );
       case 'Koyu':
         return ColorScheme.fromSeed(
-          seedColor: Colors.grey.shade900, 
+          seedColor: Colors.grey.shade900,
           brightness: Brightness.dark
-        );
-      case 'Pembemsi':
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFFC2185B), 
-          brightness: Brightness.light
         );
       default:
         return ColorScheme.fromSeed(
-          seedColor: Colors.white, 
+          seedColor: Colors.white,
           brightness: Brightness.light
         );
     }

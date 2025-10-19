@@ -53,6 +53,6 @@ class GlobalThemeService {
 
   // Desteklenen theme'ler
   static List<String> getSupportedThemes() {
-    return ['Beyaz', 'Koyu', 'Pembemsi'];
+    return ['Beyaz', 'Koyu'];
   }
 }

@@ -28,7 +28,7 @@ class _SettingsTabState extends State<SettingsTab> {
   
   
 
-  final List<String> _themeOptions = ['Beyaz', 'Koyu', 'Pembemsi'];
+  final List<String> _themeOptions = ['Beyaz', 'Koyu'];
   String _selectedTheme = 'Koyu';
 
   @override
@@ -74,8 +74,6 @@ class _SettingsTabState extends State<SettingsTab> {
         return AppLocalizations.of(context)!.whiteThemeName;
       case 'Koyu':
         return AppLocalizations.of(context)!.darkThemeName;
-      case 'Pembemsi':
-        return AppLocalizations.of(context)!.pinkThemeName;
       default:
         return theme;
     }
@@ -87,8 +85,6 @@ class _SettingsTabState extends State<SettingsTab> {
         return AppLocalizations.of(context)!.lightWhiteTheme;
       case 'Koyu':
         return AppLocalizations.of(context)!.darkMaterialTheme;
-      case 'Pembemsi':
-        return AppLocalizations.of(context)!.lightPinkTheme;
       default:
         return '';
     }
