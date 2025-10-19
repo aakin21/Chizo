@@ -91,29 +91,19 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
   Future<void> _applyTheme(String theme) async {
-    // Global theme servisini kullan - restart atmıyor
+    // Sadece GlobalThemeService'i kullan - bu main.dart'taki changeTheme'i tetikler
     await GlobalThemeService().changeTheme(theme);
-    
-    setState(() {
-      _selectedTheme = theme;
-    });
-    
-    // Tema değişikliği sonrası tüm sayfaları güncellemek için
-    // WidgetsBinding.instance.addPostFrameCallback kullan
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Tüm widget'ların rebuild olması için
-      if (mounted) {
-        setState(() {});
-      }
-    });
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context)!.themeChanged(_getThemeName(theme))),
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 2),
-      ),
-    );
+
+    // SnackBar göster
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.themeChanged(_getThemeName(theme))),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
 
@@ -289,11 +279,16 @@ class _SettingsTabState extends State<SettingsTab> {
                 value: theme,
                 groupValue: _selectedTheme,
                 onChanged: (value) async {
-                  setState(() {
-                    _selectedTheme = value!;
-                  });
-                  // Tema değiştir ve uygula
-                  await _applyTheme(theme);
+                  if (value != null) {
+                    // Tema değiştir - GlobalThemeService main.dart'ı güncelleyecek
+                    await _applyTheme(value);
+                    // Local state'i güncelle
+                    if (mounted) {
+                      setState(() {
+                        _selectedTheme = value;
+                      });
+                    }
+                  }
                 },
               )),
             ],
