@@ -160,16 +160,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   void changeTheme(String theme) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selected_theme', theme);
-    await Future.delayed(const Duration(milliseconds: 100));
-
+    // Önce UI'yi hemen güncelle (anında görünür değişiklik)
     if (mounted) {
       setState(() {
         _selectedTheme = theme;
         _appKey = UniqueKey(); // Tüm uygulamayı yeniden oluştur
       });
     }
+
+    // Sonra SharedPreferences'a kaydet (arka planda)
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selected_theme', theme);
   }
 
   ColorScheme _getThemeColorScheme() {

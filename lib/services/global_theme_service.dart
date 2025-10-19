@@ -32,10 +32,7 @@ class GlobalThemeService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('selected_theme', theme);
 
-    // Kısa bir gecikme - theme ayarının kaydedilmesi için
-    await Future.delayed(const Duration(milliseconds: 100));
-
-    // Tüm callback'leri çağır
+    // Tüm callback'leri hemen çağır (gecikme yok)
     for (int i = 0; i < _themeChangeCallbacks.length; i++) {
       try {
         _themeChangeCallbacks[i](theme);
