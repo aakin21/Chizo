@@ -19,6 +19,8 @@ class TurnuvaTab extends StatefulWidget {
 }
 
 class _TurnuvaTabState extends State<TurnuvaTab> {
+  // Theme callback reference
+  late final Function(String) _themeCallback;
   List<TournamentModel> tournaments = [];
   bool isLoading = true;
   UserModel? currentUser;
@@ -32,11 +34,14 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     _loadCurrentTheme();
     
     // Global theme service'e callback kaydet
-    GlobalThemeService().setThemeChangeCallback((theme) {
+    _themeCallback = (theme) {
       if (mounted) {
         setState(() {
           _currentTheme = theme;
         });
+      }
+    };
+    GlobalThemeService().setThemeChangeCallback(_themeCallback);
       }
     });
   }
@@ -44,7 +49,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   @override
   void dispose() {
     // Callback'i temizle
-    GlobalThemeService().clearAllCallbacks();
+    GlobalThemeService().removeThemeChangeCallback(_themeCallback);
     super.dispose();
   }
 
@@ -551,19 +556,23 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     // Önce kullanıcının coin'ini kontrol et
     final currentUser = await UserService.getCurrentUser();
     if (currentUser == null) {
-      BeautifulSnackBar.showError(
-        context,
-        message: 'Kullanıcı bilgileri alınamadı',
-      );
+      if (mounted) {
+        BeautifulSnackBar.showError(
+          context,
+          message: 'Kullanıcı bilgileri alınamadı',
+        );
+      }
       return;
     }
 
     const requiredCoins = 5000;
     if (currentUser.coins < requiredCoins) {
-      BeautifulSnackBar.showWarning(
-        context,
-        message: 'Private turnuva oluşturmak için $requiredCoins coin gerekli. Mevcut coin: ${currentUser.coins}',
-      );
+      if (mounted) {
+        BeautifulSnackBar.showWarning(
+          context,
+          message: 'Private turnuva oluşturmak için $requiredCoins coin gerekli. Mevcut coin: ${currentUser.coins}',
+        );
+      }
       return;
     }
 
@@ -580,14 +589,15 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
 
     final isDarkTheme = _currentTheme == 'Koyu';
     
-    await showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          backgroundColor: isDarkTheme ? const Color(0xFF1E1E1E) : null,
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+    if (mounted) {
+      await showDialog(
+        context: context,
+        builder: (context) => StatefulBuilder(
+          builder: (context, setDialogState) => AlertDialog(
+            backgroundColor: isDarkTheme ? const Color(0xFF1E1E1E) : null,
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
               Row(
                 children: [
                   const Icon(Icons.add_circle, color: Colors.purple),
@@ -844,9 +854,10 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
               child: const Text('Oluştur'),
             ),
           ],
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   // Private turnuva oluştur

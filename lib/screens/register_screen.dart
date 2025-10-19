@@ -123,30 +123,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'updated_at': DateTime.now().toIso8601String(),
         });
 
-        if (!mounted) return;
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.registrationSuccessful)),
+          );
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.registrationSuccessful)),
-        );
-
-        // Login ekranına yönlendir
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
-        );
+          // Login ekranına yönlendir
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
+          );
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.userAlreadyExists)),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.userAlreadyExists)),
+          );
+        }
       }
     } catch (e) {
       String errorMessage = _getLocalizedErrorMessage(e.toString());
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMessage),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } finally {
       setState(() => _isLoading = false);
     }

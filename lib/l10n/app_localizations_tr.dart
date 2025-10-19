@@ -1579,4 +1579,29 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get referralCoinsEarned => 'Davetlerden Kazanılan Coin';
+
+  @override
+  String get store => 'Mağaza';
+
+  @override
+  String get tournamentAccessGranted =>
+      'Turnuvaya erişim sağlandı. Katılmak için \"Katıl\" butonuna basın.';
+
+  @override
+  String get joinFailed => 'Katılım başarısız';
+
+  @override
+  String get visibleInMatchesDesc => 'Diğer kullanıcılar sizi görebilir';
+
+  @override
+  String get cropImage => 'Fotoğrafı Kırp';
+
+  @override
+  String get cropImageDone => 'Tamam';
+
+  @override
+  String get cropImageCancel => 'İptal';
+
+  @override
+  String get cropImageInstructions => 'Fotoğrafınızı kare formata kırpın';
 }

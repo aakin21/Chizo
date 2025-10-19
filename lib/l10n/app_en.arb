@@ -1908,5 +1908,26 @@
   "referralCoinsEarned": "Coins Earned from Referrals",
   "@referralCoinsEarned": {
     "description": "Coins earned from referrals amount"
+  },
+  "store": "Store",
+  "tournamentAccessGranted": "Tournament access granted. Press the \"Join\" button to participate.",
+  "joinFailed": "Join failed",
+  "visibleInMatchesDesc": "Other users can see you",
+  
+  "cropImage": "Crop Image",
+  "@cropImage": {
+    "description": "Crop image screen title"
+  },
+  "cropImageDone": "Done",
+  "@cropImageDone": {
+    "description": "Done button for crop screen"
+  },
+  "cropImageCancel": "Cancel",
+  "@cropImageCancel": {
+    "description": "Cancel button for crop screen"
+  },
+  "cropImageInstructions": "Crop your image to square format",
+  "@cropImageInstructions": {
+    "description": "Instructions for crop screen"
   }
 }

@@ -29,27 +29,30 @@ class _ProfileTabState extends State<ProfileTab> {
   bool isUpdating = false;
   List<Map<String, dynamic>> userPhotos = [];
   String _currentTheme = 'Koyu';
+  // Theme callback'ini sakla
+  late final Function(String) _themeCallback;
 
   @override
   void initState() {
     super.initState();
     loadUserData();
     _loadCurrentTheme();
-    
-    // Global theme service'e callback kaydet
-    GlobalThemeService().setThemeChangeCallback((theme) {
+
+    // Global theme service'e callback kaydet ve referansını sakla
+    _themeCallback = (theme) {
       if (mounted) {
         setState(() {
           _currentTheme = theme;
         });
       }
-    });
+    };
+    GlobalThemeService().setThemeChangeCallback(_themeCallback);
   }
 
   @override
   void dispose() {
-    // Callback'i temizle
-    GlobalThemeService().clearAllCallbacks();
+    // Sadece kendi callback'ini temizle
+    GlobalThemeService().removeThemeChangeCallback(_themeCallback);
     super.dispose();
   }
 
@@ -112,7 +115,6 @@ class _ProfileTabState extends State<ProfileTab> {
         });
       }
     } catch (e) {
-      // // print('ProfileTab: Error loading user data: $e');
       if (mounted) {
         setState(() => isLoading = false);
       }
@@ -165,7 +167,11 @@ class _ProfileTabState extends State<ProfileTab> {
     if (currentUser == null) return;
     final l10n = AppLocalizations.of(context)!;
 
+    // Debug existing photos first
+    await PhotoUploadService.debugUserPhotos(currentUser!.id);
+    
     final nextSlot = await PhotoUploadService.getNextAvailableSlot(currentUser!.id);
+    print('DEBUG: Next available slot: $nextSlot');
     if (nextSlot == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.allPhotoSlotsFull)),
@@ -174,6 +180,7 @@ class _ProfileTabState extends State<ProfileTab> {
     }
 
     final canUploadResult = await PhotoUploadService.canUploadPhoto(nextSlot);
+    print('DEBUG: Can upload result: $canUploadResult');
     if (!canUploadResult['canUpload']) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(canUploadResult['message'])),
@@ -182,6 +189,7 @@ class _ProfileTabState extends State<ProfileTab> {
     }
 
     final requiredCoins = canUploadResult['requiredCoins'] as int;
+    print('DEBUG: Required coins for slot $nextSlot: $requiredCoins');
     
     showDialog(
       context: context,
@@ -224,7 +232,7 @@ class _ProfileTabState extends State<ProfileTab> {
     setState(() => isUpdating = true);
     
     try {
-      final result = await PhotoUploadService.uploadPhoto(slot);
+      final result = await PhotoUploadService.uploadPhoto(slot, context: context);
       
       if (result['success']) {
         await loadUserData();
@@ -911,7 +919,7 @@ class _ProfileTabState extends State<ProfileTab> {
                                 MaterialPageRoute(
                                   builder: (context) => Scaffold(
                                     appBar: AppBar(
-                                      title: const Text("Mağaza"),
+                                      title: Text(AppLocalizations.of(context)!.store),
                                       leading: BackButton(
                                         onPressed: () => Navigator.pop(context),
                                       ),

@@ -198,19 +198,23 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
         // Veriyi kaydet
         await _saveUnlockData();
         
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('✅ $coinCost coin harcandı! Son $matchCount maçınız 24 saat boyunca görüntüleniyor.'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('✅ $coinCost coin harcandı! Son $matchCount maçınız 24 saat boyunca görüntüleniyor.'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.insufficientCoins),
-            backgroundColor: Colors.red,
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.insufficientCoins),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -63,7 +63,6 @@ class _SettingsTabState extends State<SettingsTab> {
         _currentUser = user;
       });
     } catch (e) {
-      // // print('Error loading user data: $e');
     }
   }
 
@@ -329,7 +328,7 @@ class _SettingsTabState extends State<SettingsTab> {
               ListTile(
                 leading: const Icon(Icons.visibility, color: Color(0xFFFF6B35)),
                 title: Text(AppLocalizations.of(context)!.visibleInMatches),
-                subtitle: const Text("Diğer kullanıcılar sizi görebilir"),
+                subtitle: Text(AppLocalizations.of(context)!.visibleInMatchesDesc),
                 trailing: Switch(
                   value: _currentUser?.isVisible ?? false,
                   activeThumbColor: const Color(0xFFFF6B35), // Turuncu aktif renk

@@ -758,5 +758,26 @@
   "markAllAsRead": "Alle als gelesen markieren",
   "@markAllAsRead": {
     "description": "Alle als gelesen markieren Button"
+  },
+  "store": "Geschäft",
+  "tournamentAccessGranted": "Turnier Zugang gewährt. Drücken Sie die \"Beitreten\" Taste um teilzunehmen.",
+  "joinFailed": "Beitritt fehlgeschlagen",
+  "visibleInMatchesDesc": "Andere Benutzer können Sie sehen",
+  
+  "cropImage": "Bild Zuschneiden",
+  "@cropImage": {
+    "description": "Bild zuschneiden Bildschirmtitel"
+  },
+  "cropImageDone": "Fertig",
+  "@cropImageDone": {
+    "description": "Fertig Button für Zuschneiden Bildschirm"
+  },
+  "cropImageCancel": "Abbrechen",
+  "@cropImageCancel": {
+    "description": "Abbrechen Button für Zuschneiden Bildschirm"
+  },
+  "cropImageInstructions": "Schneiden Sie Ihr Bild auf quadratisches Format zu",
+  "@cropImageInstructions": {
+    "description": "Anweisungen für Zuschneiden Bildschirm"
   }
 }

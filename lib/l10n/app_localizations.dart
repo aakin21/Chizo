@@ -2939,6 +2939,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Coins Earned from Referrals'**
   String get referralCoinsEarned;
+
+  /// No description provided for @store.
+  ///
+  /// In en, this message translates to:
+  /// **'Store'**
+  String get store;
+
+  /// No description provided for @tournamentAccessGranted.
+  ///
+  /// In en, this message translates to:
+  /// **'Tournament access granted. Press the \"Join\" button to participate.'**
+  String get tournamentAccessGranted;
+
+  /// No description provided for @joinFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Join failed'**
+  String get joinFailed;
+
+  /// No description provided for @visibleInMatchesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Other users can see you'**
+  String get visibleInMatchesDesc;
+
+  /// Crop image screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Crop Image'**
+  String get cropImage;
+
+  /// Done button for crop screen
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get cropImageDone;
+
+  /// Cancel button for crop screen
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cropImageCancel;
+
+  /// Instructions for crop screen
+  ///
+  /// In en, this message translates to:
+  /// **'Crop your image to square format'**
+  String get cropImageInstructions;
 }
 
 class _AppLocalizationsDelegate

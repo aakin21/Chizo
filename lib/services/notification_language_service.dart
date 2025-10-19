@@ -113,22 +113,22 @@ class NotificationLanguageService {
     switch (language) {
       case 'en':
         return {
-          'title': '💰 Coin Reward',
+          'title': 'Coin Reward',
           'body': 'Congratulations! You earned $coins coins!',
         };
       case 'de':
         return {
-          'title': '💰 Münzen-Belohnung',
+          'title': 'Münzen-Belohnung',
           'body': 'Herzlichen Glückwunsch! Sie haben $coins Münzen verdient!',
         };
       case 'es':
         return {
-          'title': '💰 Recompensa de Monedas',
+          'title': 'Recompensa de Monedas',
           'body': '¡Felicidades! ¡Ganaste $coins monedas!',
         };
       default: // Turkish
         return {
-          'title': '💰 Coin Ödülü',
+          'title': 'Coin Ödülü',
           'body': 'Tebrikler! $coins coin kazandınız!',
         };
     }
@@ -143,22 +143,22 @@ class NotificationLanguageService {
     switch (language) {
       case 'en':
         return {
-          'title': '💰 Coins Purchased!',
+          'title': 'Coins Purchased!',
           'body': 'You purchased $coins coins ($price $currency)',
         };
       case 'de':
         return {
-          'title': '💰 Münzen gekauft!',
+          'title': 'Münzen gekauft!',
           'body': 'Sie haben $coins Münzen gekauft ($price $currency)',
         };
       case 'es':
         return {
-          'title': '💰 ¡Monedas Compradas!',
+          'title': '¡Monedas Compradas!',
           'body': 'Compraste $coins monedas ($price $currency)',
         };
       default: // Turkish
         return {
-          'title': '💰 Coin Satın Alındı!',
+          'title': 'Coin Satın Alındı!',
           'body': '$coins coin satın aldınız ($price $currency)',
         };
     }
@@ -172,22 +172,22 @@ class NotificationLanguageService {
     switch (language) {
       case 'en':
         return {
-          'title': '💸 Coins Spent',
+          'title': 'Coins Spent',
           'body': '$coins coins spent. $description',
         };
       case 'de':
         return {
-          'title': '💸 Münzen ausgegeben',
+          'title': 'Münzen ausgegeben',
           'body': '$coins Münzen ausgegeben. $description',
         };
       case 'es':
         return {
-          'title': '💸 Monedas Gastadas',
+          'title': 'Monedas Gastadas',
           'body': '$coins monedas gastadas. $description',
         };
       default: // Turkish
         return {
-          'title': '💸 Coin Harcandı',
+          'title': 'Coin Harcandı',
           'body': '$coins coin harcandı. $description',
         };
     }

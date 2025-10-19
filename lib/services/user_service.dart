@@ -16,11 +16,9 @@ class UserService {
     try {
       final authUser = _client.auth.currentUser;
       if (authUser == null) {
-        // // print('No authenticated user');
         return null;
       }
 
-      // // print('Getting current user - Auth ID: ${authUser.id}, Email: ${authUser.email}');
 
       // Auth ID ile kullanıcıyı bul
       final response = await _client
@@ -30,7 +28,6 @@ class UserService {
           .maybeSingle();
 
       if (response == null) {
-        // // print('User not found, creating new user record');
         // Yeni kullanıcı oluştur
         final newUserData = {
           'auth_id': authUser.id,
@@ -54,14 +51,11 @@ class UserService {
             .select()
             .single();
       
-        // // print('New user created with ID: ${insertResponse['id']}');
         return UserModel.fromJson(insertResponse);
       }
 
-      // // print('User found - ID: ${response['id']}, Matches: ${response['total_matches']}, Wins: ${response['wins']}');
       return UserModel.fromJson(response);
     } catch (e) {
-      // // print('Error getting current user: $e');
       return null;
     }
   }
@@ -103,7 +97,6 @@ class UserService {
 
       return true;
     } catch (e) {
-      // // print('Error updating profile: $e');
       return false;
     }
   }
@@ -131,7 +124,6 @@ class UserService {
 
       return true;
     } catch (e) {
-      // // print('Error updating premium visibility: $e');
       return false;
     }
   }
@@ -169,7 +161,6 @@ class UserService {
 
       return true;
     } catch (e) {
-      // // print('Error updating coins: $e');
       return false;
     }
   }
@@ -190,7 +181,6 @@ class UserService {
           .map((json) => CoinTransactionModel.fromJson(json))
           .toList();
     } catch (e) {
-      // // print('Error getting coin transactions: $e');
       return [];
     }
   }
@@ -211,7 +201,6 @@ class UserService {
 
       return true;
     } catch (e) {
-      // // print('Error updating country preferences: $e');
       return false;
     }
   }
@@ -232,7 +221,6 @@ class UserService {
 
       return true;
     } catch (e) {
-      // // print('Error updating age range preferences: $e');
       return false;
     }
   }
@@ -240,7 +228,6 @@ class UserService {
   // Kullanıcı istatistiklerini güncelle (oy verdikten sonra)
   static Future<void> updateUserStats(String userId, bool isWinner) async {
     try {
-      // // print('Updating stats for user: $userId, isWinner: $isWinner');
       
       // Mevcut istatistikleri al
       final currentUserResponse = await _client
@@ -252,14 +239,11 @@ class UserService {
       final currentMatches = currentUserResponse['total_matches'] ?? 0;
       final currentWins = currentUserResponse['wins'] ?? 0;
       
-      // // print('Current user data: {total_matches: $currentMatches, wins: $currentWins}');
       
       // Yeni istatistikleri hesapla
       final newMatches = currentMatches + 1;
       final newWins = isWinner ? currentWins + 1 : currentWins;
       
-      // // print('Current matches: $currentMatches, current wins: $currentWins');
-      // // print('Updating with data: {total_matches: $newMatches, wins: $newWins, updated_at: ${DateTime.now().toIso8601String()}}');
       
       // İstatistikleri güncelle
       await _client
@@ -271,10 +255,8 @@ class UserService {
           })
           .eq('id', userId);
       
-      // // print('Update result: $updateResult');
-      // // print('User stats updated: $userId, matches: $newMatches, wins: $newWins');
     } catch (e) {
-      // // print('Error updating user stats: $e');
+      print('Error: $e');
     }
   }
 
@@ -293,7 +275,6 @@ class UserService {
 
       return UserModel.fromJson(response);
     } catch (e) {
-      // // print('Error getting user by ID: $e');
       return null;
     }
   }
@@ -302,7 +283,7 @@ class UserService {
   static Future<void> sendCoinRewardNotification(String userId, int coins, String reason) async {
     try {
       await NotificationService.sendLocalNotification(
-        title: '💰 Coin Ödülü!',
+        title: 'Coin Ödülü!',
         body: '$coins coin kazandınız: $reason',
         type: 'coin_reward',
         data: {
@@ -311,14 +292,14 @@ class UserService {
         },
       );
     } catch (e) {
-      // // print('Error sending coin reward notification: $e');
+      print('Error: $e');
     }
   }
 
   static Future<void> sendStreakRewardNotification(String userId, int streak, int coins) async {
     try {
       await NotificationService.sendLocalNotification(
-        title: '🔥 Streak Ödülü!',
+        title: 'Streak Ödülü!',
         body: '$streak günlük streak ile $coins coin kazandınız!',
         type: 'coin_reward',
         data: {
@@ -327,7 +308,7 @@ class UserService {
         },
       );
     } catch (e) {
-      // // print('Error sending streak reward notification: $e');
+      print('Error: $e');
     }
   }
 
@@ -426,7 +407,17 @@ class UserService {
         }
       } else {
         // Coin harcandı (negatif miktar)
-        print('💸 Sending spent notification: ${amount.abs()}');
+        print('Sending spent notification for negative amount: ${amount.abs()}');
+        await CoinTransactionNotificationService.sendCoinSpentNotification(
+          coinAmount: amount.abs(),
+          reason: type,
+          itemName: description,
+        );
+      }
+
+      // Ayrıca type 'spent' ise de harcama bildirimi gönder
+      if (type == 'spent') {
+        print('Sending spent notification for type=spent: ${amount.abs()}');
         await CoinTransactionNotificationService.sendCoinSpentNotification(
           coinAmount: amount.abs(),
           reason: type,

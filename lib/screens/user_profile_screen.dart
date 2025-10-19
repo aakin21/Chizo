@@ -691,19 +691,22 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   Future<void> _showInstagramDialog() async {
     final currentUser = await UserService.getCurrentUser();
     if (currentUser == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Kullanıcı bulunamadı'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Kullanıcı bulunamadı'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
       return;
     }
 
     if (currentUser.coins < 100) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
           title: const Text('Yetersiz Coin'),
           content: Text(
             'Instagram profilini görüntülemek için 100 coin gerekiyor.\n\nMevcut coin: ${currentUser.coins}\nGerekli coin: 100',
@@ -714,111 +717,114 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               child: const Text('Tamam'),
             ),
           ],
-        ),
-      );
+          ),
+        );
+      }
       return;
     }
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Instagram Profili Görüntüle'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.camera_alt,
-              size: 48,
-              color: Color(0xFFE4405F),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '${widget.user.username} kullanıcısının Instagram profilini görüntülemek istiyor musunuz?',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(8),
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Instagram Profili Görüntüle'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.camera_alt,
+                size: 48,
+                color: Color(0xFFE4405F),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Mevcut Coin:'),
-                  Text(
-                    '${currentUser.coins}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
+              const SizedBox(height: 16),
+              Text(
+                '${widget.user.username} kullanıcısının Instagram profilini görüntülemek istiyor musunuz?',
+                textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.red[50],
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.red[200]!),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Ödenecek Coin:'),
-                  Text(
-                    '100',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Mevcut Coin:'),
+                    Text(
+                      '${currentUser.coins}',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.green[50],
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.green[200]!),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Kalan Coin:'),
-                  Text(
-                    '${currentUser.coins - 100}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.red[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.red[200]!),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Ödenecek Coin:'),
+                    Text(
+                      '100',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.green[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.green[200]!),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Kalan Coin:'),
+                    Text(
+                      '${currentUser.coins - 100}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('İptal'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                await _payAndShowInstagram();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFE4405F),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('100 Coin Öde & Görüntüle'),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('İptal'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              await _payAndShowInstagram();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE4405F),
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('100 Coin Öde & Görüntüle'),
-          ),
-        ],
-      ),
-    );
+      );
+    }
   }
 
   Future<void> _payAndShowInstagram() async {
@@ -867,14 +873,16 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       }
     } catch (e) {
       // Loading'i kapat
-      Navigator.pop(context);
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Hata: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        Navigator.pop(context);
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Hata: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 

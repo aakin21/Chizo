@@ -101,13 +101,13 @@ class NotificationTypes {
 class NotificationIcons {
   static const String tournament = '🏆';
   static const String vote = '🗳️';
-  static const String coin = '💰';
+  static const String coin = '';
   static const String fire = '🔥';
   static const String match = '⚔️';
   static const String profile = '👤';
   static const String system = '📢';
-  static const String purchase = '💳';
-  static const String spent = '💸';
+  static const String purchase = '';
+  static const String spent = '';
   static const String referral = '🎁';
   static const String achievement = '🏅';
   static const String reminder = '⏰';
