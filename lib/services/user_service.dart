@@ -164,29 +164,8 @@ class UserService {
         'created_at': DateTime.now().toIso8601String(),
       });
 
-      // Coin transaction bildirimi gönder
+      // Coin transaction bildirimi gönder (sadece bir kez)
       await _sendCoinTransactionNotification(amount, type, description);
-
-      // Dil desteği ile bildirim gönder
-      if (amount > 0) {
-        // Coin kazanıldı
-        await NotificationService.sendLocalizedNotification(
-          type: 'coin_reward',
-          data: {
-            'coins': amount.toString(),
-            'description': description,
-          },
-        );
-      } else {
-        // Coin harcandı
-        await NotificationService.sendLocalizedNotification(
-          type: 'coin_spent',
-          data: {
-            'coins': amount.abs().toString(),
-            'description': description,
-          },
-        );
-      }
 
       return true;
     } catch (e) {
@@ -432,17 +411,7 @@ class UserService {
         }
       } else {
         // Coin harcandı (negatif miktar)
-        print('💸 Sending spent notification for negative amount: ${amount.abs()}');
-        await CoinTransactionNotificationService.sendCoinSpentNotification(
-          coinAmount: amount.abs(),
-          reason: type,
-          itemName: description,
-        );
-      }
-      
-      // Ayrıca type 'spent' ise de harcama bildirimi gönder
-      if (type == 'spent') {
-        print('💸 Sending spent notification for type=spent: ${amount.abs()}');
+        print('💸 Sending spent notification: ${amount.abs()}');
         await CoinTransactionNotificationService.sendCoinSpentNotification(
           coinAmount: amount.abs(),
           reason: type,
