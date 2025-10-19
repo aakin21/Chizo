@@ -77,7 +77,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
     super.didChangeDependencies();
     // Dil değişikliğini dinle ve bildirimleri yenile
     _loadCurrentLanguage();
-    setState(() {}); // UI'yi güncelle
+    if (mounted) setState(() {}); // UI'yi güncelle
   }
 
   Future<void> _loadNotificationSettings() async {
@@ -110,7 +110,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
   }
 
   Future<void> _loadNotifications() async {
-    setState(() => isLoading = true);
+    if (mounted) setState(() => isLoading = true);
     try {
       // Önce fazla bildirimleri temizle
       await NotificationHistoryService.cleanupExcessNotifications();
@@ -352,9 +352,11 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                 value: _notificationsEnabled,
                 activeThumbColor: const Color(0xFFFF6B35), // Ana turuncu ton
                 onChanged: (value) {
-                  setState(() {
-                    _notificationsEnabled = value;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      _notificationsEnabled = value;
+                    });
+                  }
                   _saveNotificationSettings();
                 },
               ),
@@ -388,9 +390,11 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                   value: _tournamentNotifications,
                   activeThumbColor: const Color(0xFFFF6B35), // Ana turuncu ton
                   onChanged: (value) {
-                    setState(() {
-                      _tournamentNotifications = value;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        _tournamentNotifications = value;
+                      });
+                    }
                     _saveNotificationSettings();
                   },
                 ),
@@ -421,9 +425,11 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                   value: _winCelebrationNotifications,
                   activeThumbColor: const Color(0xFFFF6B35), // Ana turuncu ton
                   onChanged: (value) {
-                    setState(() {
-                      _winCelebrationNotifications = value;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        _winCelebrationNotifications = value;
+                      });
+                    }
                     _saveNotificationSettings();
                   },
                 ),
@@ -454,9 +460,11 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                   value: _streakReminderNotifications,
                   activeThumbColor: const Color(0xFFFF6B35), // Ana turuncu ton
                   onChanged: (value) {
-                    setState(() {
-                      _streakReminderNotifications = value;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        _streakReminderNotifications = value;
+                      });
+                    }
                     _saveNotificationSettings();
                   },
                 ),
@@ -655,24 +663,24 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
         }
       case 'coin_reward':
         switch (currentLanguage) {
-          case 'en': return '💰 Coins Earned!';
-          case 'de': return '💰 Münzen verdient!';
-          case 'es': return '💰 ¡Monedas Ganadas!';
-          default: return '💰 Coin Kazanıldı!';
+          case 'en': return 'Coins Earned!';
+          case 'de': return 'Münzen verdient!';
+          case 'es': return '¡Monedas Ganadas!';
+          default: return 'Coin Kazanıldı!';
         }
       case 'coin_purchase':
         switch (currentLanguage) {
-          case 'en': return '💰 Coins Purchased!';
-          case 'de': return '💰 Münzen gekauft!';
-          case 'es': return '💰 ¡Monedas Compradas!';
-          default: return '💰 Coin Satın Alındı!';
+          case 'en': return 'Coins Purchased!';
+          case 'de': return 'Münzen gekauft!';
+          case 'es': return '¡Monedas Compradas!';
+          default: return 'Coin Satın Alındı!';
         }
       case 'coin_spent':
         switch (currentLanguage) {
-          case 'en': return '💸 Coins Spent';
-          case 'de': return '💸 Münzen ausgegeben';
-          case 'es': return '💸 Monedas Gastadas';
-          default: return '💸 Coin Harcandı';
+          case 'en': return 'Coins Spent';
+          case 'de': return 'Münzen ausgegeben';
+          case 'es': return 'Monedas Gastadas';
+          default: return 'Coin Harcandı';
         }
       case 'system_announcement':
         switch (currentLanguage) {

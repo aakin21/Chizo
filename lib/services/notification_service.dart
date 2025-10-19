@@ -458,12 +458,22 @@ class NotificationService {
         }
       }
 
-      const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      // Coin bildirimleri için custom icon kullan
+      String iconPath = '@mipmap/ic_launcher';
+      String? largeIconPath;
+      
+      if (type != null && (type.contains('coin') || type.contains('spent') || type.contains('purchase') || type.contains('reward'))) {
+        iconPath = '@drawable/coin_icon';
+        largeIconPath = '@drawable/coin_icon';
+      }
+
+      final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
         'chizo_notifications',
         'Chizo Notifications',
         channelDescription: 'Notifications for Chizo app',
         importance: Importance.high,
-        icon: '@mipmap/ic_launcher',
+        icon: iconPath,
+        largeIcon: largeIconPath != null ? DrawableResourceAndroidBitmap(largeIconPath) : null,
       );
 
       const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
@@ -472,7 +482,7 @@ class NotificationService {
         presentSound: true,
       );
 
-      const NotificationDetails details = NotificationDetails(
+      final NotificationDetails details = NotificationDetails(
         android: androidDetails,
         iOS: iosDetails,
       );

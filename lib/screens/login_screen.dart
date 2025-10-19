@@ -68,41 +68,50 @@ class _LoginScreenState extends State<LoginScreen> {
         if (usersRow == null) {
           // Sign out and inform user
           await Supabase.instance.client.auth.signOut();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.accountDeletedPleaseRegister),
-              backgroundColor: Colors.red,
-            ),
-          );
-          setState(() { _isLoading = false; });
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.accountDeletedPleaseRegister),
+                backgroundColor: Colors.red,
+              ),
+            );
+            setState(() { _isLoading = false; });
+          }
           return;
         }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.loginSuccessful)),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.loginSuccessful)),
+          );
+        }
 
-        if (!mounted) return;
-        // HomeScreen’e yönlendir (username parametresi yok)
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const HomeScreen(),
-          ),
-        );
+        // HomeScreen'e yönlendir (username parametresi yok)
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const HomeScreen(),
+            ),
+          );
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.loginError)),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.loginError)),
+          );
+        }
       }
     } catch (e) {
       String errorMessage = _getLocalizedErrorMessage(e.toString());
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMessage),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } finally {
       setState(() {
         _isLoading = false;

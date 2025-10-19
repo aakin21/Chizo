@@ -807,6 +807,9 @@
   },
   "visibleInMatchesSubtitle": "Diğer kullanıcılar sizi görebilir",
   "store": "Mağaza",
+  "tournamentAccessGranted": "Turnuvaya erişim sağlandı. Katılmak için \"Katıl\" butonuna basın.",
+  "joinFailed": "Katılım başarısız",
+  "visibleInMatchesDesc": "Diğer kullanıcılar sizi görebilir",
   "purchaseCoins": "Coin Satın Al",
   "watchAds": "Reklam İzle",
   "watchAdForCoins": "Reklam İzleyerek Coin Kazan",
@@ -897,5 +900,22 @@
   "referralCoinsEarned": "Davetlerden Kazanılan Coin",
   "@referralCoinsEarned": {
     "description": "Davetlerden kazanılan coin miktarı"
+  },
+  
+  "cropImage": "Fotoğrafı Kırp",
+  "@cropImage": {
+    "description": "Kırpma ekranı başlığı"
+  },
+  "cropImageDone": "Tamam",
+  "@cropImageDone": {
+    "description": "Kırpma ekranı tamam butonu"
+  },
+  "cropImageCancel": "İptal",
+  "@cropImageCancel": {
+    "description": "Kırpma ekranı iptal butonu"
+  },
+  "cropImageInstructions": "Fotoğrafınızı kare formata kırpın",
+  "@cropImageInstructions": {
+    "description": "Kırpma ekranı talimatları"
   }
 }

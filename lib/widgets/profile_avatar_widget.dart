@@ -429,7 +429,7 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
       // Mevcut fotoğrafın slot numarasını bul veya yeni slot ata
       final currentSlot = widget.photoData?['photo_order'] as int? ?? 1;
       
-      final result = await PhotoUploadService.uploadPhoto(currentSlot);
+      final result = await PhotoUploadService.uploadPhoto(currentSlot, context: context);
       
       if (!mounted) return;
 
@@ -437,8 +437,9 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
         widget.onPhotoChanged?.call();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Fotoğraf başarıyla yüklendi'),
+            content: Text('✅ Fotoğraf başarıyla yüklendi ve kare formata kırpıldı'),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
           ),
         );
       } else {

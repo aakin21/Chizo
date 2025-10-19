@@ -302,7 +302,7 @@ class UserService {
   static Future<void> sendCoinRewardNotification(String userId, int coins, String reason) async {
     try {
       await NotificationService.sendLocalNotification(
-        title: '💰 Coin Ödülü!',
+        title: 'Coin Ödülü!',
         body: '$coins coin kazandınız: $reason',
         type: 'coin_reward',
         data: {
@@ -318,7 +318,7 @@ class UserService {
   static Future<void> sendStreakRewardNotification(String userId, int streak, int coins) async {
     try {
       await NotificationService.sendLocalNotification(
-        title: '🔥 Streak Ödülü!',
+        title: 'Streak Ödülü!',
         body: '$streak günlük streak ile $coins coin kazandınız!',
         type: 'coin_reward',
         data: {
@@ -411,7 +411,17 @@ class UserService {
         }
       } else {
         // Coin harcandı (negatif miktar)
-        print('💸 Sending spent notification: ${amount.abs()}');
+        print('Sending spent notification for negative amount: ${amount.abs()}');
+        await CoinTransactionNotificationService.sendCoinSpentNotification(
+          coinAmount: amount.abs(),
+          reason: type,
+          itemName: description,
+        );
+      }
+
+      // Ayrıca type 'spent' ise de harcama bildirimi gönder
+      if (type == 'spent') {
+        print('Sending spent notification for type=spent: ${amount.abs()}');
         await CoinTransactionNotificationService.sendCoinSpentNotification(
           coinAmount: amount.abs(),
           reason: type,

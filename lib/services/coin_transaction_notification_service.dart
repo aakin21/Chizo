@@ -51,7 +51,7 @@ class CoinTransactionNotificationService {
     required String itemName,
   }) async {
     try {
-      print('💸 Sending coin spent notification: $coinAmount coins for $itemName ($reason)');
+      print('🪙 Sending coin spent notification: $coinAmount coins for $itemName ($reason)');
       
       await NotificationService.sendLocalizedNotification(
         type: 'coin_spent',
@@ -109,7 +109,7 @@ class CoinTransactionNotificationService {
   }) async {
     try {
       await NotificationService.sendLocalNotification(
-        title: '🎁 Günlük Giriş Ödülü!',
+        title: 'Günlük Giriş Ödülü!',
         body: 'Günlük giriş ödülü: $coinAmount coin! (Hot streak: $streakDays gün)',
         type: NotificationTypes.coinReward,
         data: {
@@ -131,7 +131,7 @@ class CoinTransactionNotificationService {
   }) async {
     try {
       await NotificationService.sendLocalNotification(
-        title: '🏆 Maç Kazanma Ödülü!',
+        title: 'Maç Kazanma Ödülü!',
         body: '$opponentName karşısında kazandınız! $coinAmount coin kazandınız!',
         type: NotificationTypes.coinReward,
         data: {
@@ -154,7 +154,7 @@ class CoinTransactionNotificationService {
   }) async {
     try {
       await NotificationService.sendLocalNotification(
-        title: '🏆 Turnuva Ödülü!',
+        title: 'Turnuva Ödülü!',
         body: '$tournamentName turnuvasında $position. oldunuz! $coinAmount coin kazandınız!',
         type: NotificationTypes.coinReward,
         data: {
@@ -176,7 +176,7 @@ class CoinTransactionNotificationService {
   }) async {
     try {
       await NotificationService.sendLocalNotification(
-        title: '🗳️ Oylama Ödülü!',
+        title: 'Oylama Ödülü!',
         body: '$matchTitle oylamasından $coinAmount coin kazandınız!',
         type: NotificationTypes.coinReward,
         data: {
@@ -197,7 +197,7 @@ class CoinTransactionNotificationService {
   }) async {
     try {
       await NotificationService.sendLocalNotification(
-        title: '👥 Referans Ödülü!',
+        title: 'Referans Ödülü!',
         body: '$referredUserName kullanıcısını davet ettiniz! $coinAmount coin kazandınız!',
         type: NotificationTypes.coinReward,
         data: {
@@ -218,7 +218,7 @@ class CoinTransactionNotificationService {
   }) async {
     try {
       await NotificationService.sendLocalNotification(
-        title: '🏅 Başarı Ödülü!',
+        title: 'Başarı Ödülü!',
         body: '$achievementName başarısını tamamladınız! $coinAmount coin kazandınız!',
         type: NotificationTypes.coinReward,
         data: {
@@ -239,7 +239,7 @@ class CoinTransactionNotificationService {
   }) async {
     try {
       await NotificationService.sendLocalNotification(
-        title: '🎁 Bonus Ödülü!',
+        title: 'Bonus Ödülü!',
         body: '$bonusType bonusundan $coinAmount coin kazandınız!',
         type: NotificationTypes.coinReward,
         data: {
@@ -260,7 +260,7 @@ class CoinTransactionNotificationService {
   }) async {
     try {
       await NotificationService.sendLocalNotification(
-        title: '🎉 Özel Etkinlik Ödülü!',
+        title: 'Özel Etkinlik Ödülü!',
         body: '$eventName etkinliğinden $coinAmount coin kazandınız!',
         type: NotificationTypes.coinReward,
         data: {

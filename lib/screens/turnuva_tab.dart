@@ -551,19 +551,23 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     // Önce kullanıcının coin'ini kontrol et
     final currentUser = await UserService.getCurrentUser();
     if (currentUser == null) {
-      BeautifulSnackBar.showError(
-        context,
-        message: 'Kullanıcı bilgileri alınamadı',
-      );
+      if (mounted) {
+        BeautifulSnackBar.showError(
+          context,
+          message: 'Kullanıcı bilgileri alınamadı',
+        );
+      }
       return;
     }
 
     const requiredCoins = 5000;
     if (currentUser.coins < requiredCoins) {
-      BeautifulSnackBar.showWarning(
-        context,
-        message: 'Private turnuva oluşturmak için $requiredCoins coin gerekli. Mevcut coin: ${currentUser.coins}',
-      );
+      if (mounted) {
+        BeautifulSnackBar.showWarning(
+          context,
+          message: 'Private turnuva oluşturmak için $requiredCoins coin gerekli. Mevcut coin: ${currentUser.coins}',
+        );
+      }
       return;
     }
 
@@ -580,14 +584,15 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
 
     final isDarkTheme = _currentTheme == 'Koyu';
     
-    await showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          backgroundColor: isDarkTheme ? const Color(0xFF1E1E1E) : null,
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+    if (mounted) {
+      await showDialog(
+        context: context,
+        builder: (context) => StatefulBuilder(
+          builder: (context, setDialogState) => AlertDialog(
+            backgroundColor: isDarkTheme ? const Color(0xFF1E1E1E) : null,
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
               Row(
                 children: [
                   const Icon(Icons.add_circle, color: Colors.purple),
@@ -844,9 +849,10 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
               child: const Text('Oluştur'),
             ),
           ],
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   // Private turnuva oluştur

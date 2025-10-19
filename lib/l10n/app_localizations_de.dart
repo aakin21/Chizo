@@ -1596,4 +1596,30 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get referralCoinsEarned => 'Coins Earned from Referrals';
+
+  @override
+  String get store => 'Geschäft';
+
+  @override
+  String get tournamentAccessGranted =>
+      'Turnier Zugang gewährt. Drücken Sie die \"Beitreten\" Taste um teilzunehmen.';
+
+  @override
+  String get joinFailed => 'Beitritt fehlgeschlagen';
+
+  @override
+  String get visibleInMatchesDesc => 'Andere Benutzer können Sie sehen';
+
+  @override
+  String get cropImage => 'Bild Zuschneiden';
+
+  @override
+  String get cropImageDone => 'Fertig';
+
+  @override
+  String get cropImageCancel => 'Abbrechen';
+
+  @override
+  String get cropImageInstructions =>
+      'Schneiden Sie Ihr Bild auf quadratisches Format zu';
 }

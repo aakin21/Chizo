@@ -754,6 +754,27 @@
   "markAllAsRead": "Marcar Todo como Leído",
   "@markAllAsRead": {
     "description": "Botón de marcar todo como leído"
+  },
+  "store": "Tienda",
+  "tournamentAccessGranted": "Acceso al torneo concedido. Presiona el botón \"Unirse\" para participar.",
+  "joinFailed": "Error al unirse",
+  "visibleInMatchesDesc": "Otros usuarios pueden verte",
+  
+  "cropImage": "Recortar Imagen",
+  "@cropImage": {
+    "description": "Título de pantalla de recorte de imagen"
+  },
+  "cropImageDone": "Hecho",
+  "@cropImageDone": {
+    "description": "Botón Hecho para pantalla de recorte"
+  },
+  "cropImageCancel": "Cancelar",
+  "@cropImageCancel": {
+    "description": "Botón Cancelar para pantalla de recorte"
+  },
+  "cropImageInstructions": "Recorta tu imagen a formato cuadrado",
+  "@cropImageInstructions": {
+    "description": "Instrucciones para pantalla de recorte"
   }
 }
 

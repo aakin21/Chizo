@@ -1575,4 +1575,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get referralCoinsEarned => 'Coins Earned from Referrals';
+
+  @override
+  String get store => 'Store';
+
+  @override
+  String get tournamentAccessGranted =>
+      'Tournament access granted. Press the \"Join\" button to participate.';
+
+  @override
+  String get joinFailed => 'Join failed';
+
+  @override
+  String get visibleInMatchesDesc => 'Other users can see you';
+
+  @override
+  String get cropImage => 'Crop Image';
+
+  @override
+  String get cropImageDone => 'Done';
+
+  @override
+  String get cropImageCancel => 'Cancel';
+
+  @override
+  String get cropImageInstructions => 'Crop your image to square format';
 }

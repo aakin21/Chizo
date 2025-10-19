@@ -476,59 +476,62 @@ class _StoreTabState extends State<StoreTab> {
           ],
         ),
         child: ListTile(
-        leading: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: Colors.grey.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Icon(
-            Icons.play_circle,
-            color: Colors.grey,
-          ),
-        ),
-        title: Text(
-          l10n.watchAd,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: isDarkTheme ? Colors.white : null,
-          ),
-        ),
-        subtitle: Text(
-          '50 ${l10n.coins}',
-          style: TextStyle(
-            color: isDarkTheme ? Colors.white70 : null,
-          ),
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '${_getAdCount()}/3', 
-              style: TextStyle(
-                fontSize: 12,
-                color: isDarkTheme ? Colors.white70 : null,
-              ),
+          leading: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: Colors.grey.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(8),
             ),
-            const SizedBox(height: 4),
-            ElevatedButton(
-              onPressed: _canWatchAd() ? _watchAdForCoins : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _canWatchAd() 
-                  ? const Color(0xFFFF6B35) // Ana turuncu ton
-                  : Colors.grey[400], // Devre dışı durumda gri
-                foregroundColor: Colors.white,
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+            child: const Icon(
+              Icons.play_circle,
+              color: Colors.grey,
+            ),
+          ),
+          title: Text(
+            l10n.watchAd,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: isDarkTheme ? Colors.white : null,
+            ),
+          ),
+          subtitle: Text(
+            '50 ${l10n.coins}',
+            style: TextStyle(
+              color: isDarkTheme ? Colors.white70 : null,
+            ),
+          ),
+          trailing: Flexible(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '${_getAdCount()}/3', 
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDarkTheme ? Colors.white70 : null,
+                  ),
                 ),
-              ),
-              child: const Text('İzle'),
+                const SizedBox(height: 4),
+                ElevatedButton(
+                  onPressed: _canWatchAd() ? _watchAdForCoins : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _canWatchAd() 
+                      ? const Color(0xFFFF6B35) // Ana turuncu ton
+                      : Colors.grey[400], // Devre dışı durumda gri
+                    foregroundColor: Colors.white,
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text('İzle'),
+                ),
+              ],
             ),
-          ],
-        ),
-        onTap: _canWatchAd() ? _watchAdForCoins : null,
+          ),
+          onTap: _canWatchAd() ? _watchAdForCoins : null,
         ),
       ),
     );

@@ -2014,7 +2014,7 @@ class TournamentService {
         print('Error inserting into tournament_viewers: $e');
         return {
           'success': true,
-          'message': 'Turnuvaya erişim sağlandı. Katılmak için "Katıl" butonuna basın.',
+          'message': 'Tournament access granted. Press the "Join" button to participate.',
           'tournament_name': tournament['name']
         };
       }
@@ -2026,7 +2026,7 @@ class TournamentService {
       };
     } catch (e) {
       // // print('Error joining private tournament: $e');
-      return {'success': false, 'message': 'Katılım başarısız: $e'};
+      return {'success': false, 'message': 'Join failed: $e'};
     }
   }
 

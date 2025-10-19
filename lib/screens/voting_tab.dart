@@ -164,10 +164,10 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     } catch (e) {
       if (mounted) {
         setState(() => isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
+        );
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
-      );
     }
   }
 
@@ -191,20 +191,24 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
       );
       
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.tournamentVotingSaved),
-            backgroundColor: Colors.purple,
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.tournamentVotingSaved),
+              backgroundColor: Colors.purple,
+            ),
+          );
+        }
         _nextMatch();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.tournamentVotingFailed),
-            backgroundColor: Colors.red,
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.tournamentVotingFailed),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
       return;
     }
@@ -215,13 +219,13 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
       // İlk fotoğrafı seç (photo_order = 1)
       final sortedPhotos = List<Map<String, dynamic>>.from(selectedUser.matchPhotos!);
       sortedPhotos.sort((a, b) {
-        final orderA = a['photo_order'] as int? ?? 0;
-        final orderB = b['photo_order'] as int? ?? 0;
+        final orderA = _safeIntFromDynamic(a['photo_order']) ?? 0;
+        final orderB = _safeIntFromDynamic(b['photo_order']) ?? 0;
         return orderA.compareTo(orderB);
       });
       
       // Seçilen fotoğrafın sırasını kaydet
-      selectedPhotoOrder = sortedPhotos.first['photo_order'] as int? ?? 1;
+      selectedPhotoOrder = _safeIntFromDynamic(sortedPhotos.first['photo_order']) ?? 1;
     }
 
     // Tek tık - direkt oy verme + slider
@@ -935,7 +939,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
   Widget _buildPhotoCarousel(List<Map<String, dynamic>> photos, String userId, String matchId) {
     // Seçilen fotoğraf sırasını bul
     final selectedPhoto = photos.firstWhere(
-      (photo) => (photo['photo_order'] as int? ?? 0) == selectedPhotoOrder,
+      (photo) => (_safeIntFromDynamic(photo['photo_order']) ?? 0) == selectedPhotoOrder,
       orElse: () => photos.first, // Bulunamazsa ilk fotoğrafı kullan
     );
     
@@ -1728,6 +1732,15 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         },
       ),
     );
+  }
+
+  /// Safely convert dynamic value to int
+  int? _safeIntFromDynamic(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
 }
