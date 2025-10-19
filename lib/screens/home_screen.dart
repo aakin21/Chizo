@@ -285,12 +285,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildNavigationButton(
                     icon: Icons.how_to_vote,
                     page: 'home',
-                    color: const Color(0xFFFF6B35), // Ana turuncu ton
+                    color: const Color(0xFFE55A2B), // Koyu turuncu ton
                   ),
                   _buildNavigationButton(
                     icon: Icons.person,
                     page: 'profile',
-                    color: const Color(0xFFFF8C42), // Açık turuncu ton
+                    color: const Color(0xFFE55A2B), // Koyu turuncu ton
                   ),
                   // TODO: Turnuva özelliği gelecek güncellemede aktif edilecek
                   // _buildNavigationButton(
@@ -302,12 +302,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   // _buildNavigationButton(
                   //   icon: Icons.leaderboard,
                   //   page: 'leaderboard',
-                  //   color: const Color(0xFFFF6B35), // Ana turuncu ton
+                  //   color: const Color(0xFFE55A2B), // Koyu turuncu ton
                   // ),
                   _buildNavigationButton(
                     icon: Icons.notifications,
                     page: 'notifications',
-                    color: const Color(0xFFFF8C42), // Açık turuncu ton
+                    color: const Color(0xFFE55A2B), // Koyu turuncu ton
                   ),
                   _buildNavigationButton(
                     icon: Icons.store,
@@ -317,7 +317,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildNavigationButton(
                     icon: Icons.settings,
                     page: 'settings',
-                    color: const Color(0xFFFF6B35), // Ana turuncu ton
+                    color: const Color(0xFFE55A2B), // Koyu turuncu ton
                   ),
                 ],
               ),

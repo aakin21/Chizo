@@ -38,8 +38,6 @@ class _StoreTabState extends State<StoreTab> {
       }
     };
     GlobalThemeService().setThemeChangeCallback(_themeCallback);
-      }
-    });
   }
 
   @override
