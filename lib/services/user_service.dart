@@ -339,8 +339,8 @@ class UserService {
       
       // Pozitif miktar = kazanılan, negatif miktar = harcanan
       if (amount > 0) {
-        // Coin kazanıldı
-        if (type == 'earned' || type == 'reward') {
+        // Coin kazanıldı veya satın alındı
+        if (type == 'earned' || type == 'reward' || type == 'purchased') {
           if (description.contains('tahmin')) {
             await CoinTransactionNotificationService.sendCoinEarnedFromPredictionNotification(
               coinAmount: amount,
@@ -399,8 +399,13 @@ class UserService {
               eventName: description,
             );
           } else if (description.contains('satın alma')) {
-            // Coin satın alma bildirimi - duplicate bildirim kaldırıldı
-            // UserService.updateCoins içinde zaten bildirim gönderiliyor
+            // Coin satın alma bildirimi
+            print('💳 Sending coin purchase notification: $amount coins');
+            await CoinTransactionNotificationService.sendCoinPurchaseNotification(
+              coinAmount: amount,
+              price: 0.0, // Fiyat bilgisi description'dan parse edilebilir
+              currency: 'USD',
+            );
           } else if (description.contains('istatistik')) {
             await CoinTransactionNotificationService.sendCoinSpentNotification(
               coinAmount: amount.abs(),
