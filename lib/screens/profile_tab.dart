@@ -712,9 +712,41 @@ class _ProfileTabState extends State<ProfileTab> {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
+                              // Coin icon and cost
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFD700).withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: const Color(0xFFFFD700).withValues(alpha: 0.5),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.monetization_on,
+                                      color: const Color(0xFFFFD700),
+                                      size: 16,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '50',
+                                      style: TextStyle(
+                                        color: isDarkTheme ? Colors.white : const Color(0xFFD4AF37),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 8),
                               IconButton(
                                 icon: const Icon(Icons.edit, size: 20),
-                                onPressed: () => _showEditDialog('username', currentUser!.username),
+                                onPressed: () => _showUsernameChangeDialog(),
                               ),
                             ],
                           ),
@@ -970,64 +1002,47 @@ class _ProfileTabState extends State<ProfileTab> {
 
                       const SizedBox(height: 16),
 
-                      // Ülke Seçimi
+                      // Ülke Seçimi (Readonly - sadece kayıtta değiştirilebilir)
                       Card(
                         elevation: 0,
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: isDarkTheme 
+                            gradient: isDarkTheme
                                 ? LinearGradient(
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      const Color(0xFF1E1E1E), // Koyu gri
-                                      const Color(0xFF2D2D2D), // Daha koyu gri
+                                      const Color(0xFF1E1E1E).withValues(alpha: 0.5), // Soluk koyu gri
+                                      const Color(0xFF2D2D2D).withValues(alpha: 0.5), // Soluk daha koyu gri
                                     ],
                                   )
                                 : LinearGradient(
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      Colors.white,
-                                      const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                                      Colors.white.withValues(alpha: 0.7),
+                                      const Color(0xFFFFF8F5).withValues(alpha: 0.5), // Soluk açık turuncu ton
                                     ],
                                   ),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: isDarkTheme 
-                                  ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
-                                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
+                              color: isDarkTheme
+                                  ? const Color(0xFFFF6B35).withValues(alpha: 0.15)
+                                  : const Color(0xFFFF6B35).withValues(alpha: 0.05),
                               width: 1,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: isDarkTheme 
-                                    ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
-                                    : const Color(0xFFFF6B35).withValues(alpha: 0.1),
-                                spreadRadius: 1,
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                              BoxShadow(
-                                color: isDarkTheme 
-                                    ? Colors.black.withValues(alpha: 0.3)
-                                    : Colors.grey.withValues(alpha: 0.05),
-                                spreadRadius: 1,
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
                           ),
                           child: ListTile(
-                          leading: const Icon(
+                          enabled: false, // Disable interaction
+                          leading: Icon(
                             Icons.public,
-                            color: Color(0xFFFF8C42), // Açık turuncu ton
+                            color: const Color(0xFFFF8C42).withValues(alpha: 0.5), // Soluk turuncu
                             size: 28,
                           ),
                           title: Text(
                             'Ülke',
                             style: TextStyle(
-                              color: isDarkTheme ? Colors.white : null,
+                              color: isDarkTheme ? Colors.white.withValues(alpha: 0.5) : Colors.grey,
                             ),
                           ),
                           subtitle: FutureBuilder<String?>(
@@ -1036,77 +1051,63 @@ class _ProfileTabState extends State<ProfileTab> {
                               return Text(
                                 snapshot.data ?? 'Ülkenizi seçin',
                                 style: TextStyle(
-                                  color: isDarkTheme ? Colors.white70 : null,
+                                  color: isDarkTheme ? Colors.white.withValues(alpha: 0.4) : Colors.grey[600],
                                 ),
                               );
                             },
                           ),
-                          trailing: const Icon(Icons.arrow_forward_ios),
-                          onTap: () => _showCountrySelector(),
+                          trailing: Icon(
+                            Icons.lock_outline,
+                            size: 18,
+                            color: Colors.grey.withValues(alpha: 0.5),
+                          ),
                         ),
                         ),
                       ),
 
                       const SizedBox(height: 16),
 
-                      // Cinsiyet Seçimi
+                      // Cinsiyet Seçimi (Readonly - sadece kayıtta değiştirilebilir)
                       Card(
                         elevation: 0,
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: isDarkTheme 
+                            gradient: isDarkTheme
                                 ? LinearGradient(
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      const Color(0xFF1E1E1E), // Koyu gri
-                                      const Color(0xFF2D2D2D), // Daha koyu gri
+                                      const Color(0xFF1E1E1E).withValues(alpha: 0.5), // Soluk koyu gri
+                                      const Color(0xFF2D2D2D).withValues(alpha: 0.5), // Soluk daha koyu gri
                                     ],
                                   )
                                 : LinearGradient(
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      Colors.white,
-                                      const Color(0xFFFFF8F5), // Çok açık turuncu ton
+                                      Colors.white.withValues(alpha: 0.7),
+                                      const Color(0xFFFFF8F5).withValues(alpha: 0.5), // Soluk açık turuncu ton
                                     ],
                                   ),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: isDarkTheme 
-                                  ? const Color(0xFFFF6B35).withValues(alpha: 0.3)
-                                  : const Color(0xFFFF6B35).withValues(alpha: 0.1),
+                              color: isDarkTheme
+                                  ? const Color(0xFFFF6B35).withValues(alpha: 0.15)
+                                  : const Color(0xFFFF6B35).withValues(alpha: 0.05),
                               width: 1,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: isDarkTheme 
-                                    ? const Color(0xFFFF6B35).withValues(alpha: 0.2)
-                                    : const Color(0xFFFF6B35).withValues(alpha: 0.1),
-                                spreadRadius: 1,
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                              BoxShadow(
-                                color: isDarkTheme 
-                                    ? Colors.black.withValues(alpha: 0.3)
-                                    : Colors.grey.withValues(alpha: 0.05),
-                                spreadRadius: 1,
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
                           ),
                           child: ListTile(
-                          leading: const Icon(
+                          enabled: false, // Disable interaction
+                          leading: Icon(
                             Icons.person,
-                            color: Color(0xFFE55A2B), // Koyu turuncu ton
+                            color: const Color(0xFFE55A2B).withValues(alpha: 0.5), // Soluk koyu turuncu
                             size: 28,
                           ),
                           title: Text(
                             'Cinsiyet',
                             style: TextStyle(
-                              color: isDarkTheme ? Colors.white : null,
+                              color: isDarkTheme ? Colors.white.withValues(alpha: 0.5) : Colors.grey,
                             ),
                           ),
                           subtitle: FutureBuilder<String?>(
@@ -1115,13 +1116,16 @@ class _ProfileTabState extends State<ProfileTab> {
                               return Text(
                                 snapshot.data ?? 'Cinsiyetinizi seçin',
                                 style: TextStyle(
-                                  color: isDarkTheme ? Colors.white70 : null,
+                                  color: isDarkTheme ? Colors.white.withValues(alpha: 0.4) : Colors.grey[600],
                                 ),
                               );
                             },
                           ),
-                          trailing: const Icon(Icons.arrow_forward_ios),
-                          onTap: () => _showGenderSelector(),
+                          trailing: Icon(
+                            Icons.lock_outline,
+                            size: 18,
+                            color: Colors.grey.withValues(alpha: 0.5),
+                          ),
                         ),
                         ),
                       ),
@@ -1433,10 +1437,143 @@ class _ProfileTabState extends State<ProfileTab> {
     );
   }
 
+  // Kullanıcı adı değiştirme (50 coin)
+  void _showUsernameChangeDialog() {
+    final controller = TextEditingController(text: currentUser!.username);
+    const requiredCoins = 50;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            const Text('Kullanıcı Adı Değiştir'),
+            const Spacer(),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFD700).withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFFFFD700).withValues(alpha: 0.5),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.monetization_on,
+                    color: Color(0xFFFFD700),
+                    size: 16,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '$requiredCoins',
+                    style: const TextStyle(
+                      color: Color(0xFFD4AF37),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                labelText: 'Yeni kullanıcı adı',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.person),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Mevcut coinleriniz: ${currentUser!.coins}',
+              style: TextStyle(
+                color: currentUser!.coins >= requiredCoins ? Colors.green : Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (currentUser!.coins < requiredCoins) ...[
+              const SizedBox(height: 8),
+              const Text(
+                'Yetersiz coin! Mağazadan coin satın alabilirsiniz.',
+                style: TextStyle(color: Colors.red, fontSize: 12),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('İptal'),
+          ),
+          if (currentUser!.coins >= requiredCoins)
+            ElevatedButton(
+              onPressed: () async {
+                if (controller.text.trim().isNotEmpty && controller.text.trim() != currentUser!.username) {
+                  Navigator.pop(context);
+                  await _updateUsernameWithCoins(controller.text.trim(), requiredCoins);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF6B35),
+              ),
+              child: const Text('Değiştir'),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _updateUsernameWithCoins(String newUsername, int cost) async {
+    try {
+      setState(() => isUpdating = true);
+
+      // First update username
+      final success = await UserService.updateProfile(username: newUsername);
+
+      if (success) {
+        // Then deduct coins
+        await UserService.updateCoins(-cost, 'spent', 'Kullanıcı adı değişikliği');
+
+        await loadUserData();
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('✅ Kullanıcı adınız güncellendi ($cost coin harcandı)'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Kullanıcı adı güncellenemedi'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Hata: $e'), backgroundColor: Colors.red),
+      );
+    } finally {
+      setState(() => isUpdating = false);
+    }
+  }
+
   Future<void> _updateUserInfo(String field, String value) async {
     try {
       bool success = false;
-      
+
       switch (field) {
         case 'username':
           success = await UserService.updateProfile(username: value);
@@ -1448,7 +1585,7 @@ class _ProfileTabState extends State<ProfileTab> {
           success = await UserService.updateProfile(profession: value);
           break;
       }
-      
+
       if (success) {
         await loadUserData();
         if (!mounted) return;
