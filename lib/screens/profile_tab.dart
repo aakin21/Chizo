@@ -29,27 +29,30 @@ class _ProfileTabState extends State<ProfileTab> {
   bool isUpdating = false;
   List<Map<String, dynamic>> userPhotos = [];
   String _currentTheme = 'Koyu';
+  // Theme callback'ini sakla
+  late final Function(String) _themeCallback;
 
   @override
   void initState() {
     super.initState();
     loadUserData();
     _loadCurrentTheme();
-    
-    // Global theme service'e callback kaydet
-    GlobalThemeService().setThemeChangeCallback((theme) {
+
+    // Global theme service'e callback kaydet ve referansını sakla
+    _themeCallback = (theme) {
       if (mounted) {
         setState(() {
           _currentTheme = theme;
         });
       }
-    });
+    };
+    GlobalThemeService().setThemeChangeCallback(_themeCallback);
   }
 
   @override
   void dispose() {
-    // Callback'i temizle
-    GlobalThemeService().clearAllCallbacks();
+    // Sadece kendi callback'ini temizle
+    GlobalThemeService().removeThemeChangeCallback(_themeCallback);
     super.dispose();
   }
 
@@ -112,7 +115,6 @@ class _ProfileTabState extends State<ProfileTab> {
         });
       }
     } catch (e) {
-      // // print('ProfileTab: Error loading user data: $e');
       if (mounted) {
         setState(() => isLoading = false);
       }

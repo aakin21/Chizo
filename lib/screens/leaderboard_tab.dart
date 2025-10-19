@@ -14,6 +14,8 @@ class LeaderboardTab extends StatefulWidget {
 }
 
 class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStateMixin {
+  // Theme callback reference
+  late final Function(String) _themeCallback;
   late TabController _tabController;
   List<UserModel> _topWinners = [];
   List<UserModel> _topWinRate = [];
@@ -28,11 +30,14 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
     _loadCurrentTheme();
     
     // Global theme service'e callback kaydet
-    GlobalThemeService().setThemeChangeCallback((theme) {
+    _themeCallback = (theme) {
       if (mounted) {
         setState(() {
           _currentTheme = theme;
         });
+      }
+    };
+    GlobalThemeService().setThemeChangeCallback(_themeCallback);
       }
     });
   }
@@ -59,7 +64,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
   void dispose() {
     _tabController.dispose();
     // Callback'i temizle
-    GlobalThemeService().clearAllCallbacks();
+    GlobalThemeService().removeThemeChangeCallback(_themeCallback);
     super.dispose();
   }
 

@@ -19,17 +19,22 @@ void main() async {
   try {
     await Firebase.initializeApp();
   } catch (e) {
-    // Firebase initialization failed
+    print('Firebase initialization failed: $e');
+    // App can continue without Firebase
   }
 
   // Supabase initialize
+  // TODO: CRITICAL SECURITY - Move these credentials to environment variables!
+  // Currently exposed in source code - anyone can access the database
   try {
     await Supabase.initialize(
       url: 'https://rsuptwsgnpgsvlqigitq.supabase.co',
       anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdXB0d3NnbnBnc3ZscWlnaXRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5NjMzODUsImV4cCI6MjA3MzUzOTM4NX0.KiLkHJ22FhJkc8BnkLrTZpk-_gM81bTiCfe0gh3-DfM',
     );
   } catch (e) {
-    // Supabase initialization failed
+    print('CRITICAL: Supabase initialization failed: $e');
+    // App cannot work without Supabase - this is a fatal error
+    rethrow;
   }
 
   // Initialize notification services

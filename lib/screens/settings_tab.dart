@@ -63,7 +63,6 @@ class _SettingsTabState extends State<SettingsTab> {
         _currentUser = user;
       });
     } catch (e) {
-      // // print('Error loading user data: $e');
     }
   }
 

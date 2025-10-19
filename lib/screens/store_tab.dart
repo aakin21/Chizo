@@ -14,6 +14,8 @@ class StoreTab extends StatefulWidget {
 }
 
 class _StoreTabState extends State<StoreTab> {
+  // Theme callback reference
+  late final Function(String) _themeCallback;
   UserModel? _currentUser;
   bool _isLoading = true;
   int _adWatchCount = 0;
@@ -28,11 +30,14 @@ class _StoreTabState extends State<StoreTab> {
     _loadCurrentTheme();
     
     // Global theme service'e callback kaydet
-    GlobalThemeService().setThemeChangeCallback((theme) {
+    _themeCallback = (theme) {
       if (mounted) {
         setState(() {
           _currentTheme = theme;
         });
+      }
+    };
+    GlobalThemeService().setThemeChangeCallback(_themeCallback);
       }
     });
   }
@@ -40,7 +45,7 @@ class _StoreTabState extends State<StoreTab> {
   @override
   void dispose() {
     // Callback'i temizle
-    GlobalThemeService().clearAllCallbacks();
+    GlobalThemeService().removeThemeChangeCallback(_themeCallback);
     super.dispose();
   }
 

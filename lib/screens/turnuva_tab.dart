@@ -19,6 +19,8 @@ class TurnuvaTab extends StatefulWidget {
 }
 
 class _TurnuvaTabState extends State<TurnuvaTab> {
+  // Theme callback reference
+  late final Function(String) _themeCallback;
   List<TournamentModel> tournaments = [];
   bool isLoading = true;
   UserModel? currentUser;
@@ -32,11 +34,14 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     _loadCurrentTheme();
     
     // Global theme service'e callback kaydet
-    GlobalThemeService().setThemeChangeCallback((theme) {
+    _themeCallback = (theme) {
       if (mounted) {
         setState(() {
           _currentTheme = theme;
         });
+      }
+    };
+    GlobalThemeService().setThemeChangeCallback(_themeCallback);
       }
     });
   }
@@ -44,7 +49,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   @override
   void dispose() {
     // Callback'i temizle
-    GlobalThemeService().clearAllCallbacks();
+    GlobalThemeService().removeThemeChangeCallback(_themeCallback);
     super.dispose();
   }
 

@@ -71,28 +71,32 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     return baseColor.withValues(alpha: alpha);
   }
 
+  // Theme callback'ini sakla
+  late final Function(String) _themeCallback;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _loadCurrentTheme();
     loadMatches();
-    
-    // Global theme service'e callback kaydet
-    GlobalThemeService().setThemeChangeCallback((theme) {
+
+    // Global theme service'e callback kaydet ve referansını sakla
+    _themeCallback = (theme) {
       if (mounted) {
         setState(() {
           _currentTheme = theme;
         });
       }
-    });
+    };
+    GlobalThemeService().setThemeChangeCallback(_themeCallback);
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    // Callback'i temizle
-    GlobalThemeService().clearAllCallbacks();
+    // Sadece kendi callback'ini temizle
+    GlobalThemeService().removeThemeChangeCallback(_themeCallback);
     super.dispose();
   }
 
@@ -293,7 +297,6 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         return users.firstWhere((user) => user.id == winnerId);
       }
     } catch (e) {
-      // // print('Error getting winner user: $e');
       return null;
     }
   }
@@ -919,7 +922,6 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
       
       return usersWithPhotos;
     } catch (e) {
-      // // print('Error getting match users with photos: $e');
       return [];
     }
   }
@@ -1440,14 +1442,12 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         }
       }
     } catch (e) {
-      // // print('Error updating photo stats for match: $e');
     }
   }
 
   /// Get the photo that was displayed for a user in a specific match
   Map<String, dynamic>? _getDisplayedPhotoForUser(UserModel user, String matchId) {
     if (user.matchPhotos == null || user.matchPhotos!.isEmpty) {
-      // // print('Warning: No match photos for user ${user.id}');
       return null;
     }
 
@@ -1459,9 +1459,6 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     final selectedPhoto = photos[photoIndex];
     
     // Debug için fotoğraf bilgilerini yazdır
-    // // print('Selected photo for user ${user.id}: ${selectedPhoto['photo_url']}');
-    // // print('Photo ID: ${selectedPhoto['id']}');
-    // // print('Photo order: ${selectedPhoto['photo_order']}');
     
     return selectedPhoto;
   }
