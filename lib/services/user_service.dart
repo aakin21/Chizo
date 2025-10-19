@@ -407,6 +407,16 @@ class UserService {
               reason: 'photo_stats_view',
               itemName: 'Fotoğraf İstatistikleri',
             );
+          } else {
+            // Genel coin kazanıldı bildirimi (yukarıdaki hiçbir kelime eşleşmediyse)
+            print('💰 Sending general coin reward notification: $amount coins');
+            await NotificationService.sendLocalizedNotification(
+              type: 'coin_reward',
+              data: {
+                'coins': amount.toString(),
+                'description': description,
+              },
+            );
           }
         }
       } else {
