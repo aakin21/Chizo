@@ -63,28 +63,33 @@ await Supabase.initialize(
 
 ---
 
-### 2. Fake Payment System
+### 2. ✅ Fake Payment System - DOCUMENTED (Ready for Implementation)
 **File:** `lib/services/payment_service.dart`
-**Severity:** CRITICAL
-**Issue:** Payment simulation always returns `true` - users get coins for free
-**Risk:** Complete revenue loss, users can get unlimited coins
+**Severity:** CRITICAL → Documentation Complete
+**Issue:** Payment simulation currently in TEST MODE - users can get coins without real payment
+**Risk:** Revenue loss if deployed to production without real IAP
 
-**Current Code:**
+**Status:**
+- ✅ Code prepared for In-App Purchase integration
+- ✅ Product IDs defined (`com.chizo.coins.small`, `.medium`, `.large`, `.xlarge`)
+- ✅ Complete implementation guide created (`IN_APP_PURCHASE_GUIDE.md`)
+- ✅ TEST MODE clearly marked with warnings
+- ⚠️ Requires: App Store Connect and Google Play Console product setup
+
+**Current Code (TEST MODE):**
 ```dart
-static Future<bool> _simulatePayment(double amount, String paymentMethod) async {
-  await Future.delayed(const Duration(seconds: 2));
-  return true; // Always returns true!
-}
+// ⚠️ TEST MODU - Gerçek para alınmıyor!
+print('⚠️ TEST MODE: Simulating purchase for ${package['description']}');
 ```
 
-**Solution:**
-Implement real payment gateway:
-- Option 1: Stripe (recommended for credit cards)
-- Option 2: RevenueCat (recommended for in-app purchases)
-- Option 3: Google Pay / Apple Pay integration
+**Next Steps:**
+1. Follow `IN_APP_PURCHASE_GUIDE.md` for step-by-step implementation
+2. Set up products in App Store Connect and Google Play Console
+3. Uncomment real IAP code in `payment_service.dart`
+4. Test with sandbox accounts
+5. Remove TEST MODE code before production release
 
-**Temporary Fix (for testing only):**
-Remove store functionality entirely until payment integration is complete.
+**See:** `IN_APP_PURCHASE_GUIDE.md` for complete implementation instructions
 
 ---
 
