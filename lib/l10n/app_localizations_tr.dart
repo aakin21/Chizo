@@ -98,6 +98,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get spanish => 'İspanyolca';
 
   @override
+  String get french => 'Fransızca';
+
+  @override
   String get turkishLanguage => 'Türkçe';
 
   @override
@@ -105,6 +108,12 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get germanLanguage => 'Almanca';
+
+  @override
+  String get spanishLanguage => 'İspanyolca';
+
+  @override
+  String get frenchLanguage => 'Fransızca';
 
   @override
   String get coins => 'Coin';
@@ -1133,6 +1142,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get allCountriesSelected => 'Tüm ülkeler seçili';
 
   @override
+  String get countrySelectionSubtitle =>
+      'Hangi ülkelerden oylanmak istediğinizi seçin';
+
+  @override
   String get ageRangeSelection => 'Yaş Aralığı Seçimi';
 
   @override
@@ -1142,6 +1155,14 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get allAgeRangesSelected => 'Tüm yaş aralıkları seçili';
+
+  @override
+  String get ageRangeSelectionSubtitle =>
+      'Hangi yaş aralıklarından oylanmak istediğinizi seçin';
+
+  @override
+  String get selectCountriesDialogSubtitle =>
+      'Hangi ülkelerden oylanmak istediğinizi seçin:';
 
   @override
   String get editUsername => 'Kullanıcı Adı Düzenle';

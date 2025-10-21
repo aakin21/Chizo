@@ -5,7 +5,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../widgets/compact_language_selector.dart';
 import '../utils/constants.dart';
 import '../l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/login_screen.dart';
 import '../utils/navigation.dart';
 import '../services/account_service.dart';
@@ -25,17 +24,13 @@ class SettingsTab extends StatefulWidget {
 class _SettingsTabState extends State<SettingsTab> {
   UserModel? _currentUser;
   bool _isLoggingOut = false;
-  
-  
 
   final List<String> _themeOptions = ['Beyaz', 'Koyu'];
-  String _selectedTheme = 'Koyu';
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
-    _loadSavedTheme();
   }
 
   @override
@@ -43,16 +38,6 @@ class _SettingsTabState extends State<SettingsTab> {
     super.didChangeDependencies();
     // Dil değişikliğini dinle ve UI'yi güncelle
     setState(() {});
-  }
-
-
-
-  Future<void> _loadSavedTheme() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedTheme = prefs.getString('selected_theme') ?? 'Koyu';
-    setState(() {
-      _selectedTheme = savedTheme;
-    });
   }
 
 
@@ -90,7 +75,7 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
   Future<void> _applyTheme(String theme) async {
-    // Sadece GlobalThemeService'i kullan - bu main.dart'taki changeTheme'i tetikler
+    // GlobalThemeService ile temayı değiştir - ValueNotifier otomatik olarak tüm dinleyicileri güncelleyecek
     await GlobalThemeService().changeTheme(theme);
 
     // SnackBar göster
@@ -248,45 +233,43 @@ class _SettingsTabState extends State<SettingsTab> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkTheme = _selectedTheme == 'Koyu';
-    
-    return Container(
-      decoration: isDarkTheme 
-          ? BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF121212), // Çok koyu gri
-                  Color(0xFF1A1A1A), // Koyu gri
-                ],
-              ),
-            )
-          : null,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-        children: [
+    return ValueListenableBuilder<String>(
+      valueListenable: GlobalThemeService().themeNotifier,
+      builder: (context, selectedTheme, child) {
+        final isDarkTheme = selectedTheme == 'Koyu';
+
+        return Container(
+          decoration: isDarkTheme
+              ? BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xFF121212), // Çok koyu gri
+                      Color(0xFF1A1A1A), // Koyu gri
+                    ],
+                  ),
+                )
+              : null,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+            children: [
           
           // Tema ve Görünüm
           _buildSectionCard(
+            selectedTheme: selectedTheme,
             title: AppLocalizations.of(context)!.themeSelection,
             children: [
               ..._themeOptions.map((theme) => RadioListTile<String>(
                 title: Text(_getThemeName(theme)),
                 subtitle: Text(_getThemeDescription(theme)),
                 value: theme,
-                groupValue: _selectedTheme,
+                groupValue: selectedTheme,
                 onChanged: (value) async {
                   if (value != null) {
-                    // Tema değiştir - GlobalThemeService main.dart'ı güncelleyecek
+                    // Tema değiştir - GlobalThemeService ValueNotifier'ı güncelleyecek
                     await _applyTheme(value);
-                    // Local state'i güncelle
-                    if (mounted) {
-                      setState(() {
-                        _selectedTheme = value;
-                      });
-                    }
                   }
                 },
               )),
@@ -295,9 +278,10 @@ class _SettingsTabState extends State<SettingsTab> {
 
           const SizedBox(height: 24),
 
-          
+
           // Uygulama Ayarları
           _buildSectionCard(
+            selectedTheme: selectedTheme,
             title: AppLocalizations.of(context)!.appSettings,
             children: [
               ListTile(
@@ -320,9 +304,10 @@ class _SettingsTabState extends State<SettingsTab> {
           ),
           
           const SizedBox(height: 24),
-          
+
           // Match Ayarları
           _buildSectionCard(
+            selectedTheme: selectedTheme,
             title: '⚔️ Match Ayarları',
             children: [
               ListTile(
@@ -353,28 +338,29 @@ class _SettingsTabState extends State<SettingsTab> {
               // Yaş Aralığı Tercihleri
               ListTile(
                 leading: const Icon(Icons.cake, color: Color(0xFFFF6B35)),
-                title: const Text('Yaş Aralığı Tercihleri'),
-                subtitle: const Text('Hangi yaş aralıklarından oylanmak istediğinizi seçin'),
+                title: Text(AppLocalizations.of(context)!.ageRangeSelection),
+                subtitle: Text(AppLocalizations.of(context)!.ageRangeSelectionSubtitle),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () => _showAgeRangePreferencesDialog(),
               ),
               // Ülke Tercihleri
               ListTile(
                 leading: const Icon(Icons.public, color: Color(0xFFFF6B35)),
-                title: const Text('Ülke Tercihleri'),
-                subtitle: const Text('Hangi ülkelerden oylanmak istediğinizi seçin'),
+                title: Text(AppLocalizations.of(context)!.countrySelection),
+                subtitle: Text(AppLocalizations.of(context)!.countrySelectionSubtitle),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () => _showCountryPreferencesDialog(),
               ),
             ],
           ),
-          
-          
-          
+
+
+
           const SizedBox(height: 24),
-          
+
           // Dil Ayarları
           _buildSectionCard(
+            selectedTheme: selectedTheme,
             title: '🌍 ${AppLocalizations.of(context)!.language}',
             children: [
               ListTile(
@@ -395,6 +381,7 @@ class _SettingsTabState extends State<SettingsTab> {
 
           // Davet Sistemi
           _buildSectionCard(
+            selectedTheme: selectedTheme,
             title: "Referral Link",
             children: [
               Text(
@@ -425,6 +412,7 @@ class _SettingsTabState extends State<SettingsTab> {
 
           // Hesap İşlemleri - En alt kısımda
           _buildSectionCard(
+            selectedTheme: selectedTheme,
             title: AppLocalizations.of(context)!.accountOperations,
             children: [
               ListTile(
@@ -452,18 +440,21 @@ class _SettingsTabState extends State<SettingsTab> {
           ),
           
           const SizedBox(height: 24),
-          
-        ],
-        ),
-      ),
+
+            ],
+            ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildSectionCard({
+    required String selectedTheme,
     required String title,
     required List<Widget> children,
   }) {
-    final isDarkTheme = _selectedTheme == 'Koyu';
+    final isDarkTheme = selectedTheme == 'Koyu';
     
     // Children arasına çizgiler ekle (referral link hariç)
     List<Widget> childrenWithDividers = [];
@@ -557,7 +548,7 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
   void _showDailyStreakDialog() {
-    final isDarkTheme = _selectedTheme == 'Koyu';
+    final isDarkTheme = GlobalThemeService().currentTheme == 'Koyu';
     
     showDialog(
       context: context,
@@ -667,7 +658,7 @@ class _SettingsTabState extends State<SettingsTab> {
   // Yaş aralığı tercihleri dialog'u
   void _showAgeRangePreferencesDialog() {
     if (_currentUser == null) return;
-    final isDarkTheme = _selectedTheme == 'Koyu';
+    final isDarkTheme = GlobalThemeService().currentTheme == 'Koyu';
     
     // Mevcut seçili yaş aralıklarını al (eğer yoksa tüm yaş aralıkları seçili olsun)
     List<String> selectedAgeRanges = _currentUser!.ageRangePreferences ?? AppConstants.ageRanges;
@@ -704,7 +695,7 @@ class _SettingsTabState extends State<SettingsTab> {
         builder: (context, setDialogState) => AlertDialog(
           backgroundColor: isDarkTheme ? const Color(0xFF1E1E1E) : null,
           title: Text(
-            'Yaş Aralığı Tercihleri',
+            AppLocalizations.of(context)!.ageRangeSelection,
             style: TextStyle(
               color: isDarkTheme ? Colors.white : null,
             ),
@@ -858,7 +849,7 @@ class _SettingsTabState extends State<SettingsTab> {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.grey[600], // Gri yazı rengi
               ),
-              child: const Text('İptal'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -878,7 +869,7 @@ class _SettingsTabState extends State<SettingsTab> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Kaydet'),
+              child: Text(AppLocalizations.of(context)!.save),
             ),
           ],
         ),
@@ -888,7 +879,7 @@ class _SettingsTabState extends State<SettingsTab> {
 
   // Ülke tercihleri dialog'u
   void _showCountryPreferencesDialog() {
-    final isDarkTheme = _selectedTheme == 'Koyu';
+    final isDarkTheme = GlobalThemeService().currentTheme == 'Koyu';
     List<String> selectedCountries = _currentUser?.countryPreferences ?? AppConstants.countries;
     
     showDialog(
@@ -897,7 +888,7 @@ class _SettingsTabState extends State<SettingsTab> {
         builder: (context, setDialogState) => AlertDialog(
           backgroundColor: isDarkTheme ? const Color(0xFF1E1E1E) : null,
           title: Text(
-            'Ülke Tercihleri',
+            AppLocalizations.of(context)!.countrySelection,
             style: TextStyle(
               color: isDarkTheme ? Colors.white : null,
             ),
@@ -928,7 +919,7 @@ class _SettingsTabState extends State<SettingsTab> {
             child: Column(
               children: [
                 Text(
-                  'Hangi ülkelerden oylanmak istediğinizi seçin:',
+                  AppLocalizations.of(context)!.selectCountriesDialogSubtitle,
                   style: TextStyle(
                     color: isDarkTheme ? Colors.white70 : null,
                   ),
@@ -970,7 +961,7 @@ class _SettingsTabState extends State<SettingsTab> {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.grey[600], // Gri yazı rengi
               ),
-              child: const Text('İptal'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -985,7 +976,7 @@ class _SettingsTabState extends State<SettingsTab> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Kaydet'),
+              child: Text(AppLocalizations.of(context)!.save),
             ),
           ],
         ),
@@ -1000,12 +991,12 @@ class _SettingsTabState extends State<SettingsTab> {
       if (success) {
         await _loadUserData();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Yaş aralığı tercihleri güncellendi')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.ageRangePreferencesUpdated)),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Güncelleme sırasında hata oluştu')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.ageRangePreferencesUpdateFailed)),
       );
     }
   }
@@ -1017,12 +1008,12 @@ class _SettingsTabState extends State<SettingsTab> {
       if (success) {
         await _loadUserData();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ülke tercihleri güncellendi')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.countryPreferencesUpdated)),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Güncelleme sırasında hata oluştu')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.countryPreferencesUpdateFailed)),
       );
     }
   }

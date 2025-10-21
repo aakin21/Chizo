@@ -141,9 +141,12 @@
   
   "german": "German",
   "spanish": "Spanish",
+  "french": "French",
   "turkishLanguage": "Turkish",
   "englishLanguage": "English",
   "germanLanguage": "German",
+  "spanishLanguage": "Spanish",
+  "frenchLanguage": "French",
   "@german": {
     "description": "German language option"
   },
@@ -1447,9 +1450,12 @@
   "countrySelection": "Country Selection",
   "countriesSelected": "{count} countries selected",
   "allCountriesSelected": "All countries selected",
+  "countrySelectionSubtitle": "Select the countries you want to be voted from",
   "ageRangeSelection": "Age Range Selection",
   "ageRangesSelected": "{count} age ranges selected",
   "allAgeRangesSelected": "All age ranges selected",
+  "ageRangeSelectionSubtitle": "Select the age ranges you want to be voted from",
+  "selectCountriesDialogSubtitle": "Select the countries you want to be voted from:",
   "editUsername": "Edit Username",
   "enterUsername": "Enter your username",
   "editAge": "Edit Age",

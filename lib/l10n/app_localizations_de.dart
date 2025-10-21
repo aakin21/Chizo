@@ -98,6 +98,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get spanish => 'Spanisch';
 
   @override
+  String get french => 'Französisch';
+
+  @override
   String get turkishLanguage => 'Türkisch';
 
   @override
@@ -105,6 +108,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get germanLanguage => 'Deutsch';
+
+  @override
+  String get spanishLanguage => 'Spanisch';
+
+  @override
+  String get frenchLanguage => 'Französisch';
 
   @override
   String get coins => 'Münzen';
@@ -1149,6 +1158,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get allCountriesSelected => 'Alle Länder ausgewählt';
 
   @override
+  String get countrySelectionSubtitle =>
+      'Wählen Sie die Länder aus, von denen Sie bewertet werden möchten';
+
+  @override
   String get ageRangeSelection => 'Altersbereich-Auswahl';
 
   @override
@@ -1158,6 +1171,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get allAgeRangesSelected => 'Alle Altersbereiche ausgewählt';
+
+  @override
+  String get ageRangeSelectionSubtitle =>
+      'Wählen Sie die Altersbereiche aus, von denen Sie bewertet werden möchten';
+
+  @override
+  String get selectCountriesDialogSubtitle =>
+      'Wählen Sie die Länder aus, von denen Sie bewertet werden möchten:';
 
   @override
   String get editUsername => 'Benutzername bearbeiten';

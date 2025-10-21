@@ -8,6 +8,7 @@ import 'package:intl/intl.dart' as intl;
 import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
 import 'app_localizations_tr.dart';
 
 // ignore_for_file: type=lint
@@ -100,6 +101,7 @@ abstract class AppLocalizations {
     Locale('tr'),
     Locale('de'),
     Locale('es'),
+    Locale('fr'),
   ];
 
   /// The title of the application
@@ -276,6 +278,12 @@ abstract class AppLocalizations {
   /// **'Spanish'**
   String get spanish;
 
+  /// No description provided for @french.
+  ///
+  /// In en, this message translates to:
+  /// **'French'**
+  String get french;
+
   /// No description provided for @turkishLanguage.
   ///
   /// In en, this message translates to:
@@ -293,6 +301,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'German'**
   String get germanLanguage;
+
+  /// No description provided for @spanishLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Spanish'**
+  String get spanishLanguage;
+
+  /// No description provided for @frenchLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'French'**
+  String get frenchLanguage;
 
   /// Coins label
   ///
@@ -2106,6 +2126,12 @@ abstract class AppLocalizations {
   /// **'All countries selected'**
   String get allCountriesSelected;
 
+  /// No description provided for @countrySelectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the countries you want to be voted from'**
+  String get countrySelectionSubtitle;
+
   /// No description provided for @ageRangeSelection.
   ///
   /// In en, this message translates to:
@@ -2123,6 +2149,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All age ranges selected'**
   String get allAgeRangesSelected;
+
+  /// No description provided for @ageRangeSelectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the age ranges you want to be voted from'**
+  String get ageRangeSelectionSubtitle;
+
+  /// No description provided for @selectCountriesDialogSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the countries you want to be voted from:'**
+  String get selectCountriesDialogSubtitle;
 
   /// No description provided for @editUsername.
   ///
@@ -3000,7 +3038,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['de', 'en', 'es', 'tr'].contains(locale.languageCode);
+      <String>['de', 'en', 'es', 'fr', 'tr'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -3015,6 +3053,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
     case 'tr':
       return AppLocalizationsTr();
   }

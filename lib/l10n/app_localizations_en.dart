@@ -98,6 +98,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get spanish => 'Spanish';
 
   @override
+  String get french => 'French';
+
+  @override
   String get turkishLanguage => 'Turkish';
 
   @override
@@ -105,6 +108,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get germanLanguage => 'German';
+
+  @override
+  String get spanishLanguage => 'Spanish';
+
+  @override
+  String get frenchLanguage => 'French';
 
   @override
   String get coins => 'Coins';
@@ -1130,6 +1139,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get allCountriesSelected => 'All countries selected';
 
   @override
+  String get countrySelectionSubtitle =>
+      'Select the countries you want to be voted from';
+
+  @override
   String get ageRangeSelection => 'Age Range Selection';
 
   @override
@@ -1139,6 +1152,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get allAgeRangesSelected => 'All age ranges selected';
+
+  @override
+  String get ageRangeSelectionSubtitle =>
+      'Select the age ranges you want to be voted from';
+
+  @override
+  String get selectCountriesDialogSubtitle =>
+      'Select the countries you want to be voted from:';
 
   @override
   String get editUsername => 'Edit Username';
