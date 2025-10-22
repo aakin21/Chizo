@@ -9,40 +9,66 @@ class NotificationHistoryService {
     int limit = 20,
     int offset = 0,
   }) async {
+    print('🔍 DEBUG: getNotificationHistory called!');
     try {
       final user = _client.auth.currentUser;
-      if (user == null) return [];
+      print('🔍 DEBUG: Current user: ${user?.id}');
+
+      if (user == null) {
+        print('❌ DEBUG: No user logged in!');
+        return [];
+      }
 
       // users tablosundan gerçek user_id al
+      print('🔍 DEBUG: Querying users table for auth_id: ${user.id}');
       final userRecord = await _client
           .from('users')
           .select('id')
           .eq('auth_id', user.id)
           .maybeSingle();
 
+      print('🔍 DEBUG: User record: $userRecord');
+
       if (userRecord == null) {
         print('❌ User not found in users table for auth_id: ${user.id}');
         return [];
       }
 
+      final userId = userRecord['id'];
+      print('🔍 DEBUG: Real user_id: $userId');
+
       // Maksimum 20 bildirim limiti
       final actualLimit = limit > 20 ? 20 : limit;
 
       // Gerçek user_id ile bildirimleri getir
+      print('🔍 DEBUG: Querying notifications for user_id: $userId');
       final response = await _client
           .from('notifications')
           .select()
-          .eq('user_id', userRecord['id'])
+          .eq('user_id', userId)
           .order('created_at', ascending: false)
           .range(offset, offset + actualLimit - 1);
 
       print('✅ Loaded ${(response as List).length} notifications');
+      print('🔍 DEBUG: First notification raw: ${(response as List).isNotEmpty ? response[0] : "none"}');
 
-      return (response as List)
-          .map((json) => NotificationModel.fromJson(json))
-          .toList();
-    } catch (e) {
+      final notifications = <NotificationModel>[];
+      for (var json in (response as List)) {
+        try {
+          final notification = NotificationModel.fromJson(json);
+          notifications.add(notification);
+          print('✅ Parsed notification: ${notification.title}');
+        } catch (e) {
+          print('❌ Failed to parse notification: $e');
+          print('❌ JSON: $json');
+        }
+      }
+
+      print('✅ Total parsed: ${notifications.length}');
+      return notifications;
+    } catch (e, stackTrace) {
       print('❌ Failed to get notification history: $e');
+      print('❌ Stack trace: $stackTrace');
       return [];
     }
   }
