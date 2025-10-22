@@ -38,8 +38,6 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
       }
     };
     GlobalThemeService().setThemeChangeCallback(_themeCallback);
-      }
-    });
   }
 
   Future<void> _loadCurrentTheme() async {

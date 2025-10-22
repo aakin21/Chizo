@@ -920,37 +920,15 @@ class TournamentService {
         return false; // Zaten katılmış
       }
 
-      // Turnuvaya katıl
-      await _client.from('tournament_participants').insert({
-        'tournament_id': tournamentId,
-        'user_id': currentUser.id,
-        'joined_at': DateTime.now().toIso8601String(),
-        'is_eliminated': false,
-        'score': 0,
-        'tournament_photo_url': null, // Turnuva fotoğrafı henüz yüklenmedi
-        // 'photo_uploaded': false, // Bu kolon veritabanında yok, kaldırıldı
+      // Atomic tournament join (race condition önlendi)
+      final result = await _client.rpc('join_tournament', params: {
+        'p_tournament_id': tournamentId,
+        'p_user_id': currentUser.id,
+        'p_photo_id': currentUser.id, // photo_id yerine user_id kullan (geçici)
       });
 
-      // Entry fee'yi düş (sadece sistem turnuvaları için)
-      if (!tournament['is_private']) {
-        await UserService.updateCoins(
-          -tournament['entry_fee'], 
-          'spent', 
-          'Turnuva katılım ücreti'
-        );
-      }
-
-      // Turnuva katılımcı sayısını güncelle
-      try {
-        await _client.rpc('increment_tournament_participants', params: {
-          'tournament_id': tournamentId,
-        });
-      } catch (rpcError) {
-        // RPC başarısız olursa manuel güncelleme yap
-        await _client
-            .from('tournaments')
-            .update({'current_participants': tournament['current_participants'] + 1})
-            .eq('id', tournamentId);
+      if (result == null || result.isEmpty || result[0]['success'] != true) {
+        return false;
       }
 
       // Turnuva başlatma mantığı - YENİ SİSTEM:

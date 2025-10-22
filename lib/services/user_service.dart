@@ -128,33 +128,24 @@ class UserService {
     }
   }
 
-  // Coin ekle/çıkar
+  // Coin ekle/çıkar (ATOMIC - Race condition fixed)
   static Future<bool> updateCoins(int amount, String type, String description) async {
     try {
       final authUser = _client.auth.currentUser;
       if (authUser == null) return false;
 
-      // Kullanıcının mevcut coin sayısını al
       final currentUser = await getCurrentUser();
       if (currentUser == null) return false;
 
-      final newCoinAmount = currentUser.coins + amount;
-      if (newCoinAmount < 0) return false; // Yetersiz coin
-
-      // Coin miktarını güncelle
-      await _client
-          .from('users')
-          .update({'coins': newCoinAmount})
-          .eq('auth_id', authUser.id);
-
-      // Coin transaction kaydı ekle
-      await _client.from('coin_transactions').insert({
-        'user_id': currentUser.id,
-        'amount': amount,
-        'type': type,
-        'description': description,
-        'created_at': DateTime.now().toIso8601String(),
+      // Atomic database function kullan (race condition önlendi)
+      final response = await _client.rpc('update_user_coins', params: {
+        'p_user_id': currentUser.id,
+        'p_amount': amount,
+        'p_transaction_type': type,
+        'p_description': description,
       });
+
+      if (response == null || response.isEmpty) return false;
 
       // Coin transaction bildirimi gönder (sadece bir kez)
       await _sendCoinTransactionNotification(amount, type, description);

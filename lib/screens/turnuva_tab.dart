@@ -42,8 +42,6 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       }
     };
     GlobalThemeService().setThemeChangeCallback(_themeCallback);
-      }
-    });
   }
 
   @override

@@ -281,12 +281,18 @@ class NotificationService {
       final user = _supabase.auth.currentUser;
       if (user == null) return;
 
-      // Use auth_id directly for notifications
-      final databaseUserId = user.id;
+      // users tablosundan gerçek user_id al
+      final userRecord = await _supabase
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+
+      if (userRecord == null) return;
 
       final notification = NotificationModel(
         id: message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString(),
-        userId: databaseUserId,
+        userId: userRecord['id'],
         type: message.data['type'] ?? 'system_announcement',
         title: message.notification?.title ?? 'Notification',
         body: message.notification?.body ?? '',
@@ -296,8 +302,6 @@ class NotificationService {
       );
 
       await _supabase.from('notifications').insert(notification.toJson());
-      
-      // Yeni bildirim eklendikten sonra fazla bildirimleri temizle
       await _cleanupExcessNotifications();
     } catch (e) {
       print('❌ Failed to save notification: $e');
@@ -313,16 +317,21 @@ class NotificationService {
       final user = _supabase.auth.currentUser;
       if (user == null) return [];
 
-      // Maksimum 20 bildirim limiti
-      final actualLimit = limit > 20 ? 20 : limit;
+      // users tablosundan gerçek user_id al
+      final userRecord = await _supabase
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
 
-      // Use auth_id directly for notifications
-      final databaseUserId = user.id;
+      if (userRecord == null) return [];
+
+      final actualLimit = limit > 20 ? 20 : limit;
 
       final response = await _supabase
           .from('notifications')
           .select()
-          .eq('user_id', databaseUserId)
+          .eq('user_id', userRecord['id'])
           .order('created_at', ascending: false)
           .range(offset, offset + actualLimit - 1);
 
@@ -359,8 +368,14 @@ class NotificationService {
       final user = _supabase.auth.currentUser;
       if (user == null) return false;
 
-      // Use auth_id directly for notifications
-      final databaseUserId = user.id;
+      // users tablosundan gerçek user_id al
+      final userRecord = await _supabase
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+
+      if (userRecord == null) return false;
 
       await _supabase
           .from('notifications')
@@ -368,7 +383,7 @@ class NotificationService {
             'is_read': true,
             'read_at': DateTime.now().toIso8601String(),
           })
-          .eq('user_id', databaseUserId)
+          .eq('user_id', userRecord['id'])
           .eq('is_read', false);
 
       return true;
@@ -384,13 +399,19 @@ class NotificationService {
       final user = _supabase.auth.currentUser;
       if (user == null) return 0;
 
-      // Use auth_id directly for notifications
-      final databaseUserId = user.id;
+      // users tablosundan gerçek user_id al
+      final userRecord = await _supabase
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+
+      if (userRecord == null) return 0;
 
       final response = await _supabase
           .from('notifications')
           .select('id')
-          .eq('user_id', databaseUserId)
+          .eq('user_id', userRecord['id'])
           .eq('is_read', false);
 
       return (response as List).length;
@@ -560,13 +581,23 @@ class NotificationService {
     try {
       final user = _supabase.auth.currentUser;
       if (user == null) {
-        print('❌ No authenticated user found');
         return;
       }
 
-      // Use the user's auth_id directly
+      // users tablosundan gerçek user_id al
+      final userRecord = await _supabase
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+
+      if (userRecord == null) {
+        print('❌ User not found in users table for auth_id: ${user.id}');
+        return;
+      }
+
       final notificationData = {
-        'user_id': user.id, // Use auth_id directly
+        'user_id': userRecord['id'],
         'type': type ?? 'system_announcement',
         'title': title,
         'body': body,
@@ -576,11 +607,9 @@ class NotificationService {
       };
 
       await _supabase.from('notifications').insert(notificationData);
-      
-      // Yeni bildirim eklendikten sonra fazla bildirimleri temizle
       await _cleanupExcessNotifications();
     } catch (e) {
-      print('❌ Failed to save local notification to database: $e');
+      print('❌ Failed to save notification: $e');
     }
   }
 
@@ -590,40 +619,42 @@ class NotificationService {
       final user = _supabase.auth.currentUser;
       if (user == null) return;
 
-      // Toplam bildirim sayısını kontrol et
+      // users tablosundan gerçek user_id al
+      final userRecord = await _supabase
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+
+      if (userRecord == null) return;
+
       final countResponse = await _supabase
           .from('notifications')
           .select('id')
-          .eq('user_id', user.id);
+          .eq('user_id', userRecord['id']);
 
       final totalCount = countResponse.length;
-      
+
       if (totalCount > 20) {
-        // 20'den fazla bildirim varsa, en eski olanları sil
         final excessCount = totalCount - 20;
-        
-        // En eski bildirimleri bul
+
         final oldNotifications = await _supabase
             .from('notifications')
             .select('id')
-            .eq('user_id', user.id)
-            .order('created_at', ascending: true) // En eski önce
+            .eq('user_id', userRecord['id'])
+            .order('created_at', ascending: true)
             .limit(excessCount);
 
         if (oldNotifications.isNotEmpty) {
-          // Eski bildirimlerin ID'lerini al
           final idsToDelete = oldNotifications.map((n) => n['id']).toList();
-          
-          // Eski bildirimleri sil
+
           for (final id in idsToDelete) {
             await _supabase
                 .from('notifications')
                 .delete()
                 .eq('id', id)
-                .eq('user_id', user.id);
+                .eq('user_id', userRecord['id']);
           }
-
-          print('✅ Cleaned up $excessCount excess notifications');
         }
       }
     } catch (e) {

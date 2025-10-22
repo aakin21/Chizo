@@ -277,36 +277,14 @@ class MatchService {
     }
   }
 
-  // Kullanıcı istatistiklerini güncelle
+  // Kullanıcı istatistiklerini güncelle (ATOMIC - Race condition fixed)
   static Future<void> _updateUserStats(String userId, bool isWinner) async {
     try {
-      
-      // Kullanıcının mevcut istatistiklerini al
-      final user = await _client
-          .from('users')
-          .select('total_matches, wins')
-          .eq('id', userId)
-          .maybeSingle();
-
-      if (user == null) {
-        return;
-      }
-
-      final currentMatches = user['total_matches'] ?? 0;
-      final currentWins = user['wins'] ?? 0;
-
-      // İstatistikleri güncelle
-      final updateData = {
-        'total_matches': currentMatches + 1,
-        'wins': isWinner ? currentWins + 1 : currentWins,
-        'updated_at': DateTime.now().toIso8601String(),
-      };
-      
-      
-      await _client
-          .from('users')
-          .update(updateData)
-          .eq('id', userId);
+      // Atomic database function kullan (race condition önlendi)
+      await _client.rpc('update_user_stats', params: {
+        'p_user_id': userId,
+        'p_is_winner': isWinner,
+      });
 
     } catch (e) {
       // Eğer total_matches veya wins kolonları yoksa, sadece updated_at'i güncelle

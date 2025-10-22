@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/user_service.dart';
+import 'package:uuid/uuid.dart';
 // TODO: Uncomment after adding in_app_purchase package
 // import 'package:in_app_purchase/in_app_purchase.dart';
 
@@ -164,13 +165,16 @@ class PaymentService {
         'TEST - Coin satın alma - ${package['description']}'
       );
 
-      // Ödeme kaydını ekle
+      // Ödeme kaydını ekle (transaction_id ile)
+      final transactionId = const Uuid().v4();
+
       await _client.from('payments').insert({
         'user_id': currentUser.id,
         'package_id': packageId,
         'amount': package['price'],
         'coins': package['coins'],
         'payment_method': 'TEST_MODE',
+        'transaction_id': transactionId,
         'status': 'completed',
         'created_at': DateTime.now().toIso8601String(),
       });

@@ -409,14 +409,8 @@ class PhotoUploadService {
         return {'success': false, 'message': 'Failed to save photo record to database'};
       }
 
-      // Create initial photo statistics for the new photo
+      // Photo stats artık user_photos içinde (wins=0, total_matches=0 default)
       final photoId = insertResponse.first['id'];
-      try {
-        await _createInitialPhotoStats(photoId);
-      } catch (e) {
-        print('WARNING: Failed to create initial photo stats for photo $photoId: $e');
-        // Don't fail the entire upload for this
-      }
 
       return {
         'success': true,
@@ -569,74 +563,40 @@ class PhotoUploadService {
     }
   }
 
-  /// Get photo statistics for a specific photo
+  /// Get photo statistics for a specific photo (user_photos kullan - photo_stats silindi)
   static Future<Map<String, dynamic>?> getPhotoStats(String photoId) async {
     try {
       final response = await _client
-          .from('photo_stats')
-          .select('*')
-          .eq('photo_id', photoId)
+          .from('user_photos')
+          .select('wins, total_matches, created_at, updated_at')
+          .eq('id', photoId)
           .maybeSingle();
 
-      if (response == null) {
-        // Create initial stats if not exists
-        return await _createInitialPhotoStats(photoId);
-      }
-
       return response;
     } catch (e) {
-      // print('Error getting photo stats: $e');
       return null;
     }
   }
 
-  /// Create initial photo statistics
-  static Future<Map<String, dynamic>?> _createInitialPhotoStats(String photoId) async {
-    try {
-      // Check if photo_stats table exists and is accessible
-      final response = await _client
-          .from('photo_stats')
-          .insert({
-            'photo_id': photoId,
-            'wins': 0,
-            'total_matches': 0,
-          })
-          .select()
-          .single();
-
-      print('DEBUG: Successfully created photo stats for photo $photoId');
-      return response;
-    } catch (e) {
-      print('ERROR: Failed to create initial photo stats for photo $photoId: $e');
-      print('ERROR: This might be due to:');
-      print('ERROR: 1. photo_stats table does not exist');
-      print('ERROR: 2. Database permissions issue');
-      print('ERROR: 3. Network connectivity issue');
-      print('ERROR: 4. Invalid photo_id: $photoId');
-      return null;
-    }
-  }
-
-  /// Update photo statistics (increment win or total matches)
+  /// Update photo statistics - user_photos kullan (photo_stats silindi)
   static Future<bool> updatePhotoStats(String photoId, {bool isWin = false}) async {
     try {
-      // Get current stats
       final currentStats = await getPhotoStats(photoId);
       if (currentStats == null) return false;
 
-      final newWins = isWin 
-          ? (currentStats['wins'] as int) + 1 
-          : (currentStats['wins'] as int);
-      final newTotalMatches = (currentStats['total_matches'] as int) + 1;
+      final newWins = isWin
+          ? (currentStats['wins'] as int? ?? 0) + 1
+          : (currentStats['wins'] as int? ?? 0);
+      final newTotalMatches = (currentStats['total_matches'] as int? ?? 0) + 1;
 
-      // Update stats
       await _client
-          .from('photo_stats')
+          .from('user_photos')
           .update({
             'wins': newWins,
             'total_matches': newTotalMatches,
+            'updated_at': DateTime.now().toIso8601String(),
           })
-          .eq('photo_id', photoId);
+          .eq('id', photoId);
 
       return true;
     } catch (e) {
