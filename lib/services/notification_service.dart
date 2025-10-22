@@ -4,6 +4,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/notification_model.dart';
+import '../models/notification_channel.dart';
 import 'notification_language_service.dart';
 import 'dart:convert';
 
@@ -494,22 +495,33 @@ class NotificationService {
     Map<String, dynamic>? data,
   }) async {
     try {
-      // Bildirim ayarlarını kontrol et
-      if (type != null) {
-        final prefs = await SharedPreferences.getInstance();
-        final isEnabled = prefs.getBool('notification_$type') ?? true;
-        if (!isEnabled) {
-          // Ayarlar kapalı olsa bile veritabanına kaydet (uygulama içinde görünsün)
-          await _saveLocalNotificationToDatabase(title, body, type, data);
-          return;
-        }
+      // 1. HER ZAMAN database'e kaydet (uygulama içi bildirim listesi için)
+      await _saveLocalNotificationToDatabase(title, body, type, data);
+
+      // 2. Telefona push gönderilmeli mi kontrol et
+      if (type == null || !NotificationChannelConfig.shouldSendPush(type)) {
+        // IN_APP_ONLY - Sadece database'e kaydedildi, telefona gönderilmeyecek
+        print('📋 IN_APP_ONLY notification saved: $type');
+        return;
       }
+
+      // 3. PUSH - Kullanıcı ayarlarını kontrol et
+      final prefs = await SharedPreferences.getInstance();
+      final isEnabled = prefs.getBool('notification_$type') ?? true;
+      if (!isEnabled) {
+        // Kullanıcı bu bildirimi kapatmış
+        print('🔕 Push notification disabled by user: $type');
+        return;
+      }
+
+      // 4. Telefona push notification gönder
+      print('📱 Sending PUSH notification: $type');
 
       // Coin bildirimleri için custom icon kullan
       String iconPath = '@mipmap/ic_launcher';
       String? largeIconPath;
-      
-      if (type != null && (type.contains('coin') || type.contains('spent') || type.contains('purchase') || type.contains('reward'))) {
+
+      if (type.contains('coin') || type.contains('spent') || type.contains('purchase') || type.contains('reward')) {
         iconPath = '@drawable/coin_icon';
         largeIconPath = '@drawable/coin_icon';
       }
@@ -535,7 +547,7 @@ class NotificationService {
       );
 
       final notificationId = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-      
+
       await _localNotifications.show(
         notificationId,
         title,
@@ -544,8 +556,7 @@ class NotificationService {
         payload: data != null ? json.encode(data) : null,
       );
 
-      // Save to database
-      await _saveLocalNotificationToDatabase(title, body, type, data);
+      print('✅ Push notification sent successfully: $type');
     } catch (e) {
       print('❌ Failed to send local notification: $e');
     }
