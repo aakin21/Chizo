@@ -177,6 +177,32 @@ class NotificationService {
     }
   }
 
+  // Public helper methods for debugging
+
+  /// Get the current FCM token
+  static Future<String?> getFCMToken() async {
+    if (_fcmToken != null) return _fcmToken;
+    try {
+      _fcmToken = await _firebaseMessaging.getToken();
+      return _fcmToken;
+    } catch (e) {
+      print('❌ Failed to get FCM token: $e');
+      return null;
+    }
+  }
+
+  /// Check if notification permissions are granted
+  static Future<bool> hasPermission() async {
+    try {
+      final settings = await _firebaseMessaging.getNotificationSettings();
+      return settings.authorizationStatus == AuthorizationStatus.authorized ||
+             settings.authorizationStatus == AuthorizationStatus.provisional;
+    } catch (e) {
+      print('❌ Failed to check permission: $e');
+      return false;
+    }
+  }
+
   /// Setup message handlers
   static void _setupMessageHandlers() {
     // Handle background messages

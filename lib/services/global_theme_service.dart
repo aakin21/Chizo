@@ -1,9 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GlobalThemeService {
   static final GlobalThemeService _instance = GlobalThemeService._internal();
   factory GlobalThemeService() => _instance;
   GlobalThemeService._internal();
+
+  // ValueNotifier for theme changes
+  final ValueNotifier<String> themeNotifier = ValueNotifier<String>('Koyu');
+
+  // Current theme getter
+  String get currentTheme => themeNotifier.value;
 
   // Birden fazla callback'i desteklemek için liste
   final List<Function(String)> _themeChangeCallbacks = [];
@@ -32,6 +39,9 @@ class GlobalThemeService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('selected_theme', theme);
 
+    // ValueNotifier'ı güncelle
+    themeNotifier.value = theme;
+
     // Tüm callback'leri hemen çağır (gecikme yok)
     for (int i = 0; i < _themeChangeCallbacks.length; i++) {
       try {
@@ -45,7 +55,9 @@ class GlobalThemeService {
   // Mevcut theme'i al
   Future<String> getCurrentTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('selected_theme') ?? 'Koyu';
+    final theme = prefs.getString('selected_theme') ?? 'Koyu';
+    themeNotifier.value = theme;
+    return theme;
   }
 
   // Desteklenen theme'ler

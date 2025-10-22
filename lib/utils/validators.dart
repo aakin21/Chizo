@@ -1,5 +1,6 @@
-/// Input validation utilities for Chizo app
-/// Provides validation for email, username, age, and other user inputs
+/// Input validation utilities for Chizo app.
+/// Provides validation for email, username, age, and other user inputs.
+library;
 
 class Validators {
   // Email validation
@@ -72,7 +73,7 @@ class Validators {
     final cleaned = trimmed.startsWith('@') ? trimmed.substring(1) : trimmed;
 
     // Instagram username rules: 1-30 chars, alphanumeric, dots, underscores
-    if (cleaned.length < 1 || cleaned.length > 30) return false;
+    if (cleaned.isEmpty || cleaned.length > 30) return false;
 
     final instagramRegex = RegExp(r'^[a-zA-Z0-9._]+$');
     return instagramRegex.hasMatch(cleaned);
@@ -88,7 +89,7 @@ class Validators {
     if (trimmed.length < 2 || trimmed.length > 50) return false;
 
     // Only letters, spaces, and basic punctuation
-    final professionRegex = RegExp(r'^[a-zA-ZçÇğĞıİöÖşŞüÜ\s\-\'\.]+$');
+    final professionRegex = RegExp(r'^[a-zA-ZçÇğĞıİöÖşŞüÜ\s\-' "'" r'.]+$');
     return professionRegex.hasMatch(trimmed);
   }
 
@@ -149,7 +150,7 @@ class Validators {
     if (trimmed.length < 2) return 'Meslek en az 2 karakter olmalı';
     if (trimmed.length > 50) return 'Meslek en fazla 50 karakter olabilir';
 
-    if (!RegExp(r'^[a-zA-ZçÇğĞıİöÖşŞüÜ\s\-\'\.]+$').hasMatch(trimmed)) {
+    if (!RegExp(r'^[a-zA-ZçÇğĞıİöÖşŞüÜ\s\-' "'" r'.]+$').hasMatch(trimmed)) {
       return 'Geçersiz karakter kullanıldı';
     }
 
