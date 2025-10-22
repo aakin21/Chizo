@@ -13,16 +13,30 @@ class NotificationHistoryService {
       final user = _client.auth.currentUser;
       if (user == null) return [];
 
+      // users tablosundan gerçek user_id al
+      final userRecord = await _client
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+
+      if (userRecord == null) {
+        print('❌ User not found in users table for auth_id: ${user.id}');
+        return [];
+      }
+
       // Maksimum 20 bildirim limiti
       final actualLimit = limit > 20 ? 20 : limit;
 
-      // Use auth_id directly for notifications
+      // Gerçek user_id ile bildirimleri getir
       final response = await _client
           .from('notifications')
           .select()
-          .eq('user_id', user.id)
+          .eq('user_id', userRecord['id'])
           .order('created_at', ascending: false)
           .range(offset, offset + actualLimit - 1);
+
+      print('✅ Loaded ${(response as List).length} notifications');
 
       return (response as List)
           .map((json) => NotificationModel.fromJson(json))
@@ -58,10 +72,19 @@ class NotificationHistoryService {
       final user = _client.auth.currentUser;
       if (user == null) return false;
 
+      // users tablosundan gerçek user_id al
+      final userRecord = await _client
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+
+      if (userRecord == null) return false;
+
       await _client
           .from('notifications')
           .delete()
-          .eq('user_id', user.id);
+          .eq('user_id', userRecord['id']);
 
       return true;
     } catch (e) {
@@ -86,37 +109,46 @@ class NotificationHistoryService {
       final user = _client.auth.currentUser;
       if (user == null) return;
 
+      // users tablosundan gerçek user_id al
+      final userRecord = await _client
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+
+      if (userRecord == null) return;
+
       // Toplam bildirim sayısını kontrol et
       final countResponse = await _client
           .from('notifications')
           .select('id')
-          .eq('user_id', user.id);
+          .eq('user_id', userRecord['id']);
 
       final totalCount = countResponse.length;
-      
+
       if (totalCount > 20) {
         // 20'den fazla bildirim varsa, en eski olanları sil
         final excessCount = totalCount - 20;
-        
+
         // En eski bildirimleri bul
         final oldNotifications = await _client
             .from('notifications')
             .select('id')
-            .eq('user_id', user.id)
+            .eq('user_id', userRecord['id'])
             .order('created_at', ascending: true) // En eski önce
             .limit(excessCount);
 
         if (oldNotifications.isNotEmpty) {
           // Eski bildirimlerin ID'lerini al
           final idsToDelete = oldNotifications.map((n) => n['id']).toList();
-          
+
           // Eski bildirimleri sil
           for (final id in idsToDelete) {
             await _client
                 .from('notifications')
                 .delete()
                 .eq('id', id)
-                .eq('user_id', user.id);
+                .eq('user_id', userRecord['id']);
           }
 
           print('✅ Cleaned up $excessCount excess notifications');
@@ -133,10 +165,19 @@ class NotificationHistoryService {
       final user = _client.auth.currentUser;
       if (user == null) return 0;
 
+      // users tablosundan gerçek user_id al
+      final userRecord = await _client
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+
+      if (userRecord == null) return 0;
+
       final response = await _client
           .from('notifications')
           .select('id')
-          .eq('user_id', user.id)
+          .eq('user_id', userRecord['id'])
           .eq('is_read', false);
 
       return (response as List).length;
@@ -170,13 +211,22 @@ class NotificationHistoryService {
       final user = _client.auth.currentUser;
       if (user == null) return false;
 
+      // users tablosundan gerçek user_id al
+      final userRecord = await _client
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+
+      if (userRecord == null) return false;
+
       await _client
           .from('notifications')
           .update({
             'is_read': true,
             'read_at': DateTime.now().toIso8601String(),
           })
-          .eq('user_id', user.id)
+          .eq('user_id', userRecord['id'])
           .eq('is_read', false);
 
       return true;
@@ -192,10 +242,19 @@ class NotificationHistoryService {
       final user = _client.auth.currentUser;
       if (user == null) return false;
 
+      // users tablosundan gerçek user_id al
+      final userRecord = await _client
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+
+      if (userRecord == null) return false;
+
       await _client
           .from('notifications')
           .delete()
-          .eq('user_id', user.id)
+          .eq('user_id', userRecord['id'])
           .inFilter('id', notificationIds);
 
       return true;
