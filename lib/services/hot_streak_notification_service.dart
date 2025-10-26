@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/notification_model.dart';
 import 'notification_service.dart';
@@ -21,7 +22,7 @@ class HotStreakNotificationService {
       );
 
     } catch (e) {
-      print('❌ Failed to send hot streak reminder: $e');
+      debugPrint('❌ Failed to send hot streak reminder: $e');
     }
   }
 
@@ -40,7 +41,7 @@ class HotStreakNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send hot streak reward notification: $e');
+      debugPrint('❌ Failed to send hot streak reward notification: $e');
     }
   }
 
@@ -55,7 +56,7 @@ class HotStreakNotificationService {
         streakDays: streakDays,
       );
     } catch (e) {
-      print('❌ Failed to send daily login reward notification: $e');
+      debugPrint('❌ Failed to send daily login reward notification: $e');
     }
   }
 
@@ -70,7 +71,7 @@ class HotStreakNotificationService {
         lastLoginTime: lastLoginTime,
       );
     } catch (e) {
-      print('❌ Failed to schedule hot streak reminder: $e');
+      debugPrint('❌ Failed to schedule hot streak reminder: $e');
     }
   }
 
@@ -98,7 +99,7 @@ class HotStreakNotificationService {
       }
 
     } catch (e) {
-      print('❌ Failed to check daily reminders: $e');
+      debugPrint('❌ Failed to check daily reminders: $e');
     }
   }
 
@@ -121,9 +122,9 @@ class HotStreakNotificationService {
           ])
           .lt('created_at', sevenDaysAgo.toIso8601String());
 
-      print('✅ Old hot streak notifications cleaned up');
+      debugPrint('✅ Old hot streak notifications cleaned up');
     } catch (e) {
-      print('❌ Failed to cleanup old notifications: $e');
+      debugPrint('❌ Failed to cleanup old notifications: $e');
     }
   }
 }

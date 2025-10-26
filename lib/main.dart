@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'services/language_service.dart';
@@ -15,24 +17,43 @@ import 'utils/navigation.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Disable debug prints in production/release builds
+  if (kReleaseMode) {
+    debugPrint = (String? message, {int? wrapWidth}) {};
+  }
+
+  // Load environment variables
+  try {
+    await dotenv.load(fileName: '.env');
+  } catch (e) {
+    debugPrint('Error loading .env file: $e');
+    rethrow;
+  }
+
   // Firebase initialize
   try {
     await Firebase.initializeApp();
   } catch (e) {
-    print('Firebase initialization failed: $e');
+    debugPrint('Firebase initialization failed: $e');
     // App can continue without Firebase
   }
 
   // Supabase initialize
-  // TODO: CRITICAL SECURITY - Move these credentials to environment variables!
-  // Currently exposed in source code - anyone can access the database
+  // ✅ SECURITY FIX: Credentials now loaded from .env file
   try {
+    final supabaseUrl = dotenv.env['SUPABASE_URL'];
+    final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
+
+    if (supabaseUrl == null || supabaseAnonKey == null) {
+      throw Exception('Missing Supabase credentials in .env file');
+    }
+
     await Supabase.initialize(
-      url: 'https://rsuptwsgnpgsvlqigitq.supabase.co',
-      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdXB0d3NnbnBnc3ZscWlnaXRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5NjMzODUsImV4cCI6MjA3MzUzOTM4NX0.KiLkHJ22FhJkc8BnkLrTZpk-_gM81bTiCfe0gh3-DfM',
+      url: supabaseUrl,
+      anonKey: supabaseAnonKey,
     );
   } catch (e) {
-    print('CRITICAL: Supabase initialization failed: $e');
+    debugPrint('CRITICAL: Supabase initialization failed: $e');
     // App cannot work without Supabase - this is a fatal error
     rethrow;
   }

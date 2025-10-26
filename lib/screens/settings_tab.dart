@@ -48,6 +48,8 @@ class _SettingsTabState extends State<SettingsTab> {
         _currentUser = user;
       });
     } catch (e) {
+      // User not loaded, will show default UI
+      debugPrint('Failed to load user in settings: $e');
     }
   }
 
@@ -119,12 +121,15 @@ class _SettingsTabState extends State<SettingsTab> {
                     child: Text('Hesabı silme sebebiniz nedir?', style: Theme.of(context).textTheme.bodyMedium),
                   ),
                   const SizedBox(height: 8),
-                  ...reasons.map((r) => RadioListTile<String>(
-                        title: Text(r),
-                        value: r,
-                        groupValue: selectedReason,
-                        onChanged: (val) => setInnerState(() => selectedReason = val),
-                      )),
+                  RadioGroup<String>(
+                    onChanged: (val) => setInnerState(() => selectedReason = val),
+                    child: Column(
+                      children: reasons.map((r) => RadioListTile<String>(
+                            title: Text(r),
+                            value: r,
+                          )).toList(),
+                    ),
+                  ),
                 ],
               ),
               actions: [
@@ -142,7 +147,10 @@ class _SettingsTabState extends State<SettingsTab> {
                             await AccountService.deleteAccountCompletely(
                               reason: selectedReason!,
                             );
-                          } catch (_) {}
+                          } catch (e) {
+                            // Account deletion failed, but proceed to logout anyway
+                            debugPrint('Account deletion failed: $e');
+                          }
                           // Redirect to login
                           final nav = rootNavigatorKey.currentState;
                           nav?.pushAndRemoveUntil(
@@ -261,18 +269,21 @@ class _SettingsTabState extends State<SettingsTab> {
             selectedTheme: selectedTheme,
             title: AppLocalizations.of(context)!.themeSelection,
             children: [
-              ..._themeOptions.map((theme) => RadioListTile<String>(
-                title: Text(_getThemeName(theme)),
-                subtitle: Text(_getThemeDescription(theme)),
-                value: theme,
-                groupValue: selectedTheme,
+              RadioGroup<String>(
                 onChanged: (value) async {
                   if (value != null) {
                     // Tema değiştir - GlobalThemeService ValueNotifier'ı güncelleyecek
                     await _applyTheme(value);
                   }
                 },
-              )),
+                child: Column(
+                  children: _themeOptions.map((theme) => RadioListTile<String>(
+                    title: Text(_getThemeName(theme)),
+                    subtitle: Text(_getThemeDescription(theme)),
+                    value: theme,
+                  )).toList(),
+                ),
+              ),
             ],
           ),
 
@@ -319,16 +330,19 @@ class _SettingsTabState extends State<SettingsTab> {
                   activeThumbColor: const Color(0xFFFF6B35), // Turuncu aktif renk
                   activeTrackColor: const Color(0xFFFF6B35).withValues(alpha: 0.3), // Hafif turuncu track
                   onChanged: (value) async {
+                    // Context'i ve mesajları önce al (async'ten önce)
+                    final scaffoldMessenger = ScaffoldMessenger.of(context);
+                    final visibleMessage = AppLocalizations.of(context)!.nowVisibleInMatches;
+                    final notVisibleMessage = AppLocalizations.of(context)!.removedFromMatches;
+
                     final success = await UserService.updateProfile(isVisible: value);
                     if (success) {
                       await _loadUserData();
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      if (!mounted) return;
+                      final message = value ? visibleMessage : notVisibleMessage;
+                      scaffoldMessenger.showSnackBar(
                         SnackBar(
-                          content: Text(
-                            value
-                              ? AppLocalizations.of(context)!.nowVisibleInMatches
-                              : AppLocalizations.of(context)!.removedFromMatches
-                          ),
+                          content: Text(message),
                         ),
                       );
                     }
@@ -624,21 +638,12 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
 
-  Future<void> _copyReferralLink() async {
-    // Clipboard functionality would be implemented here
-    // For now, just show a snackbar
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context)!.linkCopied),
-        backgroundColor: Colors.green,
-      ),
-    );
-  }
 
   Future<void> _shareReferralLink() async {
     final link = UserService.generateReferralLink();
     // Share functionality would be implemented here
     // For now, just show a snackbar
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${AppLocalizations.of(context)!.shareLink}: $link'),
@@ -990,11 +995,13 @@ class _SettingsTabState extends State<SettingsTab> {
       final success = await UserService.updateAgeRangePreferences(ageRanges);
       if (success) {
         await _loadUserData();
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.ageRangePreferencesUpdated)),
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context)!.ageRangePreferencesUpdateFailed)),
       );
@@ -1007,11 +1014,13 @@ class _SettingsTabState extends State<SettingsTab> {
       final success = await UserService.updateCountryPreferences(countries);
       if (success) {
         await _loadUserData();
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.countryPreferencesUpdated)),
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context)!.countryPreferencesUpdateFailed)),
       );

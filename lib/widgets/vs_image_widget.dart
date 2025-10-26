@@ -37,7 +37,7 @@ class _VSImageWidgetState extends State<VSImageWidget> {
     super.didUpdateWidget(oldWidget);
     // Theme değiştiğinde widget'ı yenile
     if (oldWidget.theme != widget.theme) {
-      // print('🔄 VS WIDGET THEME CHANGED: ${oldWidget.theme.name} -> ${widget.theme.name}');
+      // debugPrint('🔄 VS WIDGET THEME CHANGED: ${oldWidget.theme.name} -> ${widget.theme.name}');
       setState(() {});
     }
   }
@@ -50,7 +50,7 @@ class VSPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // print('🎨 VS PAINTER DRAWING: ${theme.name} theme');
+    // debugPrint('🎨 VS PAINTER DRAWING: ${theme.name} theme');
     switch (theme) {
       case VSTheme.pink:
         _drawPinkTheme(canvas, size);

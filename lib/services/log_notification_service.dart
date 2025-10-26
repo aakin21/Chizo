@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/notification_model.dart';
 
@@ -44,7 +45,7 @@ class LogNotificationService {
           .map((json) => NotificationModel.fromJson(json))
           .toList();
     } catch (e) {
-      print('❌ Failed to get log notifications: $e');
+      debugPrint('❌ Failed to get log notifications: $e');
       return [];
     }
   }
@@ -64,9 +65,9 @@ class LogNotificationService {
           .eq('is_log', true)
           .lt('created_at', thirtyDaysAgo.toIso8601String());
 
-      print('✅ Old log notifications cleaned up');
+      debugPrint('✅ Old log notifications cleaned up');
     } catch (e) {
-      print('❌ Failed to cleanup old logs: $e');
+      debugPrint('❌ Failed to cleanup old logs: $e');
     }
   }
 }

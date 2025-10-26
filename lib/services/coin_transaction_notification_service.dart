@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import '../models/notification_model.dart';
 import 'notification_service.dart';
 
@@ -21,7 +22,7 @@ class CoinTransactionNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send coin purchase notification: $e');
+      debugPrint('❌ Failed to send coin purchase notification: $e');
     }
   }
 
@@ -40,7 +41,7 @@ class CoinTransactionNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send coin earned from prediction notification: $e');
+      debugPrint('❌ Failed to send coin earned from prediction notification: $e');
     }
   }
 
@@ -51,7 +52,7 @@ class CoinTransactionNotificationService {
     required String itemName,
   }) async {
     try {
-      print('🪙 Sending coin spent notification: $coinAmount coins for $itemName ($reason)');
+      debugPrint('🪙 Sending coin spent notification: $coinAmount coins for $itemName ($reason)');
       
       await NotificationService.sendLocalizedNotification(
         type: 'coin_spent',
@@ -61,9 +62,9 @@ class CoinTransactionNotificationService {
         },
       );
       
-      print('✅ Coin spent notification sent successfully');
+      debugPrint('✅ Coin spent notification sent successfully');
     } catch (e) {
-      print('❌ Failed to send coin spent notification: $e');
+      debugPrint('❌ Failed to send coin spent notification: $e');
     }
   }
 
@@ -80,7 +81,7 @@ class CoinTransactionNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send coin earned from ad notification: $e');
+      debugPrint('❌ Failed to send coin earned from ad notification: $e');
     }
   }
 
@@ -98,7 +99,7 @@ class CoinTransactionNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send coin earned from hot streak notification: $e');
+      debugPrint('❌ Failed to send coin earned from hot streak notification: $e');
     }
   }
 
@@ -119,7 +120,7 @@ class CoinTransactionNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send coin earned from daily login notification: $e');
+      debugPrint('❌ Failed to send coin earned from daily login notification: $e');
     }
   }
 
@@ -142,7 +143,7 @@ class CoinTransactionNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send coin earned from match win notification: $e');
+      debugPrint('❌ Failed to send coin earned from match win notification: $e');
     }
   }
 
@@ -165,7 +166,7 @@ class CoinTransactionNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send coin earned from tournament notification: $e');
+      debugPrint('❌ Failed to send coin earned from tournament notification: $e');
     }
   }
 
@@ -186,7 +187,7 @@ class CoinTransactionNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send coin earned from voting notification: $e');
+      debugPrint('❌ Failed to send coin earned from voting notification: $e');
     }
   }
 
@@ -207,7 +208,7 @@ class CoinTransactionNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send coin earned from referral notification: $e');
+      debugPrint('❌ Failed to send coin earned from referral notification: $e');
     }
   }
 
@@ -228,7 +229,7 @@ class CoinTransactionNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send coin earned from achievement notification: $e');
+      debugPrint('❌ Failed to send coin earned from achievement notification: $e');
     }
   }
 
@@ -249,7 +250,7 @@ class CoinTransactionNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send coin earned from bonus notification: $e');
+      debugPrint('❌ Failed to send coin earned from bonus notification: $e');
     }
   }
 
@@ -270,7 +271,7 @@ class CoinTransactionNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send coin earned from special event notification: $e');
+      debugPrint('❌ Failed to send coin earned from special event notification: $e');
     }
   }
 }

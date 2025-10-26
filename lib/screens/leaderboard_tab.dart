@@ -84,7 +84,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
         _isLoading = false;
       });
     } catch (e) {
-      // print('Error loading leaderboard data: $e');
+      // debugPrint('Error loading leaderboard data: $e');
       setState(() {
         _isLoading = false;
       });
@@ -180,7 +180,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
             ),
          trailing: GestureDetector(
            onTap: () {
-             // print('🎯 Avatar tapped for user: ${user.username}');
+             // debugPrint('🎯 Avatar tapped for user: ${user.username}');
              _navigateToUserProfile(user);
            },
            child: user.matchPhotos != null && user.matchPhotos!.isNotEmpty
@@ -199,7 +199,7 @@ class _LeaderboardTabState extends State<LeaderboardTab> with TickerProviderStat
   }
 
   void _navigateToUserProfile(UserModel user) {
-    // print('🎯 Navigating to profile for user: ${user.username}');
+    // debugPrint('🎯 Navigating to profile for user: ${user.username}');
     
     Navigator.push(
       context,

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/match_model.dart';
 import '../models/user_model.dart';
@@ -44,14 +45,31 @@ class MatchService {
           .map((json) => UserModel.fromJson(json))
           .toList();
 
-      // Her kullanıcı için çoklu fotoğrafları yükle
+      if (users.isEmpty) return [];
+
+      // ✅ PERFORMANCE FIX: Batch load all photos in single query (fixes N+1 query problem)
+      final userIds = users.map((u) => u.id).toList();
+
+      // Single query to get all photos for all users
+      final allPhotosResponse = await _client
+          .from('user_photos')
+          .select('*')
+          .inFilter('user_id', userIds)
+          .eq('is_active', true)
+          .order('photo_order', ascending: true);
+
+      // Group photos by user_id
+      final photosByUserId = <String, List<Map<String, dynamic>>>{};
+      for (final photo in allPhotosResponse) {
+        final userId = photo['user_id'] as String;
+        photosByUserId.putIfAbsent(userId, () => []).add(photo);
+      }
+
+      // Attach photos to each user
       for (int i = 0; i < users.length; i++) {
         final user = users[i];
-        final photos = await PhotoUploadService.getUserPhotos(user.id);
-        
-        // Tüm fotoğrafları kullan (artık profil fotoğrafı yok)
-        final allPhotos = List<Map<String, dynamic>>.from(photos);
-        
+        final userPhotos = photosByUserId[user.id] ?? [];
+
         // UserModel'e çoklu fotoğrafları ekle
         users[i] = UserModel(
           id: user.id,
@@ -73,12 +91,13 @@ class MatchService {
           lastLoginDate: user.lastLoginDate,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,
-          matchPhotos: allPhotos,
+          matchPhotos: userPhotos,
         );
       }
 
       return users;
     } catch (e) {
+      debugPrint('Error getting random users for match: $e');
       return [];
     }
   }
@@ -100,6 +119,7 @@ class MatchService {
 
       return true;
     } catch (e) {
+      debugPrint('Error completing match $matchId: $e');
       return false;
     }
   }
@@ -296,6 +316,8 @@ class MatchService {
             })
             .eq('id', userId);
       } catch (e2) {
+        // ✅ FIX: Log error instead of silent failure
+        debugPrint('Warning: Failed to update user timestamp for $userId: $e2');
       }
     }
   }
@@ -322,7 +344,7 @@ class MatchService {
         // Coin kazanmak için win rate prediction sistemi kullanılıyor
       }
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
     }
   }
 
@@ -385,7 +407,7 @@ class MatchService {
       // Debug: Tüm kullanıcıları göster
       // final allUsers = await _client.from('users').select();
       // for (var user in allUsers) {
-      //   // // print('User: ${user['username']}, is_visible: ${user['is_visible']}, gender: ${user['gender']}, country: ${user['country']}');
+      //   // // debugPrint('User: ${user['username']}, is_visible: ${user['is_visible']}, gender: ${user['gender']}, country: ${user['country']}');
       // }
 
 

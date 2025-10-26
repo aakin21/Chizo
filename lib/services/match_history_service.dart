@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
 import '../models/match_model.dart';
@@ -41,7 +42,7 @@ class MatchHistoryService {
         }
 
         // Fotoğrafları şimdilik yükleme - lazy loading yapacağız
-        print('👤 Added opponent: ${opponent.username} (photos will be loaded on demand)');
+        debugPrint('👤 Added opponent: ${opponent.username} (photos will be loaded on demand)');
 
         matchHistory.add({
           'match': MatchModel.fromJson(match),
@@ -53,7 +54,7 @@ class MatchHistoryService {
 
       return matchHistory;
     } catch (e) {
-      // print('Error getting match history: $e');
+      // debugPrint('Error getting match history: $e');
       return [];
     }
   }
@@ -95,7 +96,7 @@ class MatchHistoryService {
         'most_frequent_count': maxCount,
       };
     } catch (e) {
-      // print('Error getting match stats: $e');
+      // debugPrint('Error getting match stats: $e');
       return {
         'total_matches': 0,
         'wins': 0,
@@ -110,7 +111,7 @@ class MatchHistoryService {
   /// Load photos for a specific user (lazy loading)
   static Future<UserModel?> loadUserPhotos(UserModel user) async {
     try {
-      print('🔍 Lazy loading photos for: ${user.id}');
+      debugPrint('🔍 Lazy loading photos for: ${user.id}');
       
       final photosResponse = await _client
           .from('user_photos')
@@ -124,14 +125,14 @@ class MatchHistoryService {
         final userData = user.toJson();
         userData['match_photos'] = photosResponse;
         final updatedUser = UserModel.fromJson(userData);
-        print('✅ Lazy loaded ${photosResponse.length} photos for ${user.username}');
+        debugPrint('✅ Lazy loaded ${photosResponse.length} photos for ${user.username}');
         return updatedUser;
       } else {
-        print('❌ No photos found for ${user.username}');
+        debugPrint('❌ No photos found for ${user.username}');
         return user;
       }
     } catch (e) {
-      print('❌ Error lazy loading photos: $e');
+      debugPrint('❌ Error lazy loading photos: $e');
       return user;
     }
   }

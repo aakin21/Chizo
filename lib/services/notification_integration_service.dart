@@ -1,14 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'notification_service.dart';
 import 'tournament_notification_service.dart';
 import 'hot_streak_notification_service.dart';
-import 'notification_test_service.dart';
 import 'notification_settings_service.dart';
 
 class NotificationIntegrationService {
   /// Initialize all notification services
   static Future<void> initializeAll() async {
     try {
-      print('🔔 Initializing notification services...');
+      debugPrint('🔔 Initializing notification services...');
       
       // Initialize main notification service
       await NotificationService.initialize();
@@ -16,30 +16,29 @@ class NotificationIntegrationService {
       // Initialize notification settings
       await NotificationSettingsService.resetToDefaults();
       
-      print('✅ All notification services initialized');
+      debugPrint('✅ All notification services initialized');
     } catch (e) {
-      print('❌ Failed to initialize notification services: $e');
+      debugPrint('❌ Failed to initialize notification services: $e');
     }
   }
 
   /// Test notification system
-  static Future<void> testNotificationSystem() async {
-    try {
-      print('🧪 Testing notification system...');
-
-      // Run comprehensive test
-      await NotificationTestService.runComprehensiveTest();
-      
-      print('✅ Notification system test completed');
-    } catch (e) {
-      print('❌ Notification system test failed: $e');
-    }
-  }
+  /// REMOVED: NotificationTestService is a debug/test service and removed from production
+  // static Future<void> testNotificationSystem() async {
+  //   try {
+  //     debugPrint('🧪 Testing notification system...');
+  //     // Run comprehensive test
+  //     await NotificationTestService.runComprehensiveTest();
+  //     debugPrint('✅ Notification system test completed');
+  //   } catch (e) {
+  //     debugPrint('❌ Notification system test failed: $e');
+  //   }
+  // }
 
   /// Quick test notification system
   static Future<void> quickTestNotificationSystem() async {
     try {
-      print('🧪 Quick testing notification system...');
+      debugPrint('🧪 Quick testing notification system...');
 
       // Test basic notification
       await NotificationService.sendLocalNotification(
@@ -49,16 +48,16 @@ class NotificationIntegrationService {
         data: {'test': true, 'quick': true},
       );
 
-      print('✅ Quick notification test completed');
+      debugPrint('✅ Quick notification test completed');
     } catch (e) {
-      print('❌ Quick notification test failed: $e');
+      debugPrint('❌ Quick notification test failed: $e');
     }
   }
 
   /// Schedule test notifications
   static Future<void> scheduleTestNotifications() async {
     try {
-      print('⏰ Scheduling test notifications...');
+      debugPrint('⏰ Scheduling test notifications...');
 
       final now = DateTime.now();
       final startTime = now.add(Duration(minutes: 2));
@@ -86,9 +85,9 @@ class NotificationIntegrationService {
         lastLoginTime: now,
       );
 
-      print('✅ Test notifications scheduled');
+      debugPrint('✅ Test notifications scheduled');
     } catch (e) {
-      print('❌ Failed to schedule test notifications: $e');
+      debugPrint('❌ Failed to schedule test notifications: $e');
     }
   }
 }

@@ -17,17 +17,18 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
   List<NotificationModel> notifications = [];
   bool isLoading = true;
   int unreadCount = 0;
-  
+
   // Notification Settings
   bool _notificationsEnabled = true;
   bool _tournamentNotifications = true;
   bool _winCelebrationNotifications = true;
   bool _streakReminderNotifications = true;
-  
+
   // Dil değişkeni
   String _currentLanguage = 'tr';
   // ignore: unused_field
   String _currentTheme = 'Koyu';
+  late final Function(String) _themeCallback;
 
   @override
   void initState() {
@@ -36,21 +37,22 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
     _loadNotificationSettings();
     _loadCurrentLanguage();
     _loadCurrentTheme();
-    
-    // Global theme service'e callback kaydet
-    GlobalThemeService().setThemeChangeCallback((theme) {
+
+    // Global theme service'e callback kaydet (callback referansını sakla)
+    _themeCallback = (theme) {
       if (mounted) {
         setState(() {
           _currentTheme = theme;
         });
       }
-    });
+    };
+    GlobalThemeService().setThemeChangeCallback(_themeCallback);
   }
 
   @override
   void dispose() {
-    // Callback'i temizle
-    GlobalThemeService().clearAllCallbacks();
+    // Sadece bu ekranın callback'ini temizle (diğer ekranlarınkini değil!)
+    GlobalThemeService().removeThemeChangeCallback(_themeCallback);
     super.dispose();
   }
 

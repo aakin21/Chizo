@@ -103,7 +103,7 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
         }
       }
     } catch (e) {
-      print('Error checking unlock status: $e');
+      debugPrint('Error checking unlock status: $e');
     }
   }
 
@@ -139,7 +139,7 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('country_stats_unlock_$authUserId', expiryTime.toIso8601String());
     } catch (e) {
-      print('Error storing unlock time: $e');
+      debugPrint('Error storing unlock time: $e');
     }
   }
 
@@ -151,7 +151,7 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('country_stats_unlock_$authUserId');
     } catch (e) {
-      print('Error removing unlock time: $e');
+      debugPrint('Error removing unlock time: $e');
     }
   }
 

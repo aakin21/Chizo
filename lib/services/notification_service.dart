@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -20,19 +21,19 @@ class NotificationService {
   /// Initialize notification service
   static Future<void> initialize() async {
     if (_isInitialized) {
-      print('🔔 NotificationService already initialized');
+      debugPrint('🔔 NotificationService already initialized');
       return;
     }
 
     try {
-      print('🔔 Initializing NotificationService...');
+      debugPrint('🔔 Initializing NotificationService...');
       
       // Initialize Firebase (sadece mobile için)
       try {
         await Firebase.initializeApp();
-        print('✅ Firebase initialized successfully');
+        debugPrint('✅ Firebase initialized successfully');
       } catch (e) {
-        print('⚠️ Firebase initialization failed (web platform): $e');
+        debugPrint('⚠️ Firebase initialization failed (web platform): $e');
         // Web'de Firebase olmadan devam et
         _isInitialized = true;
         return;
@@ -40,24 +41,24 @@ class NotificationService {
       
       // Initialize local notifications
       await _initializeLocalNotifications();
-      print('✅ Local notifications initialized');
+      debugPrint('✅ Local notifications initialized');
       
       // Request permissions
       await _requestPermissions();
-      print('✅ Permissions requested');
+      debugPrint('✅ Permissions requested');
       
       // Get FCM token
       await _getFCMToken();
-      print('✅ FCM token obtained');
+      debugPrint('✅ FCM token obtained');
       
       // Setup message handlers
       _setupMessageHandlers();
-      print('✅ Message handlers setup');
+      debugPrint('✅ Message handlers setup');
       
       _isInitialized = true;
-      print('✅ NotificationService initialization completed');
+      debugPrint('✅ NotificationService initialization completed');
     } catch (e) {
-      print('❌ NotificationService initialization failed: $e');
+      debugPrint('❌ NotificationService initialization failed: $e');
     }
   }
 
@@ -131,7 +132,7 @@ class NotificationService {
         criticalAlert: true,
       );
       
-      print('🔔 Notification permission status: ${settings.authorizationStatus}');
+      debugPrint('🔔 Notification permission status: ${settings.authorizationStatus}');
       
       // Request local notification permissions for Android
       final androidPlugin = _localNotifications
@@ -139,11 +140,11 @@ class NotificationService {
       
       if (androidPlugin != null) {
         final granted = await androidPlugin.requestNotificationsPermission();
-        print('🔔 Android notification permission granted: $granted');
+        debugPrint('🔔 Android notification permission granted: $granted');
       }
       
     } catch (e) {
-      print('❌ Failed to request permissions: $e');
+      debugPrint('❌ Failed to request permissions: $e');
     }
   }
 
@@ -155,7 +156,7 @@ class NotificationService {
         await _saveTokenToDatabase(_fcmToken);
       }
     } catch (e) {
-      print('❌ Failed to get FCM token: $e');
+      debugPrint('❌ Failed to get FCM token: $e');
     }
   }
 
@@ -174,7 +175,7 @@ class NotificationService {
       });
 
     } catch (e) {
-      print('❌ Failed to save FCM token: $e');
+      debugPrint('❌ Failed to save FCM token: $e');
     }
   }
 
@@ -187,7 +188,7 @@ class NotificationService {
       _fcmToken = await _firebaseMessaging.getToken();
       return _fcmToken;
     } catch (e) {
-      print('❌ Failed to get FCM token: $e');
+      debugPrint('❌ Failed to get FCM token: $e');
       return null;
     }
   }
@@ -199,7 +200,7 @@ class NotificationService {
       return settings.authorizationStatus == AuthorizationStatus.authorized ||
              settings.authorizationStatus == AuthorizationStatus.provisional;
     } catch (e) {
-      print('❌ Failed to check permission: $e');
+      debugPrint('❌ Failed to check permission: $e');
       return false;
     }
   }
@@ -218,7 +219,7 @@ class NotificationService {
 
   /// Handle foreground messages
   static Future<void> _handleForegroundMessage(RemoteMessage message) async {
-    print('📱 Foreground message received: ${message.messageId}');
+    debugPrint('📱 Foreground message received: ${message.messageId}');
     
     // Show local notification
     await _showLocalNotification(message);
@@ -229,7 +230,7 @@ class NotificationService {
 
   /// Handle notification tap
   static Future<void> _handleNotificationTap(RemoteMessage message) async {
-    print('👆 Notification tapped: ${message.messageId}');
+    debugPrint('👆 Notification tapped: ${message.messageId}');
     
     // Handle navigation based on notification data
     _handleNotificationNavigation(message.data);
@@ -237,7 +238,7 @@ class NotificationService {
 
   /// Handle local notification tap
   static void _onNotificationTapped(NotificationResponse response) {
-    print('👆 Local notification tapped: ${response.id}');
+    debugPrint('👆 Local notification tapped: ${response.id}');
     
     // Handle navigation based on notification data
     if (response.payload != null) {
@@ -253,18 +254,18 @@ class NotificationService {
     switch (type) {
       case NotificationTypes.tournamentUpdate:
         // Navigate to tournament tab
-        print('Navigate to tournament');
+        debugPrint('Navigate to tournament');
         break;
       case NotificationTypes.votingResult:
         // Navigate to voting tab
-        print('Navigate to voting');
+        debugPrint('Navigate to voting');
         break;
       case NotificationTypes.coinReward:
         // Navigate to profile tab
-        print('Navigate to profile');
+        debugPrint('Navigate to profile');
         break;
       default:
-        print('Navigate to home');
+        debugPrint('Navigate to home');
         break;
     }
   }
@@ -331,7 +332,7 @@ class NotificationService {
       await _supabase.from('notifications').insert(notification.toJson());
       await _cleanupExcessNotifications();
     } catch (e) {
-      print('❌ Failed to save notification: $e');
+      debugPrint('❌ Failed to save notification: $e');
     }
   }
 
@@ -366,7 +367,7 @@ class NotificationService {
           .map((json) => NotificationModel.fromJson(json))
           .toList();
     } catch (e) {
-      print('❌ Failed to get notifications: $e');
+      debugPrint('❌ Failed to get notifications: $e');
       return [];
     }
   }
@@ -384,7 +385,7 @@ class NotificationService {
 
       return true;
     } catch (e) {
-      print('❌ Failed to mark notification as read: $e');
+      debugPrint('❌ Failed to mark notification as read: $e');
       return false;
     }
   }
@@ -415,7 +416,7 @@ class NotificationService {
 
       return true;
     } catch (e) {
-      print('❌ Failed to mark all notifications as read: $e');
+      debugPrint('❌ Failed to mark all notifications as read: $e');
       return false;
     }
   }
@@ -443,7 +444,7 @@ class NotificationService {
 
       return (response as List).length;
     } catch (e) {
-      print('❌ Failed to get unread count: $e');
+      debugPrint('❌ Failed to get unread count: $e');
       return 0;
     }
   }
@@ -453,7 +454,7 @@ class NotificationService {
     try {
       await _firebaseMessaging.subscribeToTopic(topic);
     } catch (e) {
-      print('❌ Failed to subscribe to topic: $e');
+      debugPrint('❌ Failed to subscribe to topic: $e');
     }
   }
 
@@ -462,7 +463,7 @@ class NotificationService {
     try {
       await _firebaseMessaging.unsubscribeFromTopic(topic);
     } catch (e) {
-      print('❌ Failed to unsubscribe from topic: $e');
+      debugPrint('❌ Failed to unsubscribe from topic: $e');
     }
   }
 
@@ -472,7 +473,7 @@ class NotificationService {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getBool('notification_$type');
     } catch (e) {
-      print('❌ Failed to get notification preference: $e');
+      debugPrint('❌ Failed to get notification preference: $e');
       return null;
     }
   }
@@ -483,7 +484,7 @@ class NotificationService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('notification_$type', enabled);
     } catch (e) {
-      print('❌ Failed to update notification preference: $e');
+      debugPrint('❌ Failed to update notification preference: $e');
     }
   }
 
@@ -501,7 +502,7 @@ class NotificationService {
       // 2. Telefona push gönderilmeli mi kontrol et
       if (type == null || !NotificationChannelConfig.shouldSendPush(type)) {
         // IN_APP_ONLY - Sadece database'e kaydedildi, telefona gönderilmeyecek
-        print('📋 IN_APP_ONLY notification saved: $type');
+        debugPrint('📋 IN_APP_ONLY notification saved: $type');
         return;
       }
 
@@ -510,12 +511,12 @@ class NotificationService {
       final isEnabled = prefs.getBool('notification_$type') ?? true;
       if (!isEnabled) {
         // Kullanıcı bu bildirimi kapatmış
-        print('🔕 Push notification disabled by user: $type');
+        debugPrint('🔕 Push notification disabled by user: $type');
         return;
       }
 
       // 4. Telefona push notification gönder
-      print('📱 Sending PUSH notification: $type');
+      debugPrint('📱 Sending PUSH notification: $type');
 
       // Coin bildirimleri için custom icon kullan
       String iconPath = '@mipmap/ic_launcher';
@@ -556,9 +557,9 @@ class NotificationService {
         payload: data != null ? json.encode(data) : null,
       );
 
-      print('✅ Push notification sent successfully: $type');
+      debugPrint('✅ Push notification sent successfully: $type');
     } catch (e) {
-      print('❌ Failed to send local notification: $e');
+      debugPrint('❌ Failed to send local notification: $e');
     }
   }
 
@@ -580,7 +581,7 @@ class NotificationService {
         data: data,
       );
     } catch (e) {
-      print('❌ Failed to send localized notification: $e');
+      debugPrint('❌ Failed to send localized notification: $e');
     }
   }
 
@@ -604,7 +605,7 @@ class NotificationService {
         data: data,
       );
     } catch (e) {
-      print('❌ Failed to send localized notification: $e');
+      debugPrint('❌ Failed to send localized notification: $e');
     }
   }
 
@@ -629,7 +630,7 @@ class NotificationService {
           .maybeSingle();
 
       if (userRecord == null) {
-        print('❌ User not found in users table for auth_id: ${user.id}');
+        debugPrint('❌ User not found in users table for auth_id: ${user.id}');
         return;
       }
 
@@ -646,7 +647,7 @@ class NotificationService {
       await _supabase.from('notifications').insert(notificationData);
       await _cleanupExcessNotifications();
     } catch (e) {
-      print('❌ Failed to save notification: $e');
+      debugPrint('❌ Failed to save notification: $e');
     }
   }
 
@@ -695,7 +696,7 @@ class NotificationService {
         }
       }
     } catch (e) {
-      print('❌ Failed to cleanup excess notifications: $e');
+      debugPrint('❌ Failed to cleanup excess notifications: $e');
     }
   }
 
@@ -730,7 +731,7 @@ class NotificationService {
         );
       }
     } catch (e) {
-      print('❌ Failed to schedule tournament notifications: $e');
+      debugPrint('❌ Failed to schedule tournament notifications: $e');
     }
   }
 
@@ -765,7 +766,7 @@ class NotificationService {
         );
       }
     } catch (e) {
-      print('❌ Failed to schedule elimination notifications: $e');
+      debugPrint('❌ Failed to schedule elimination notifications: $e');
     }
   }
 
@@ -787,7 +788,7 @@ class NotificationService {
         );
       }
     } catch (e) {
-      print('❌ Failed to schedule hot streak reminder: $e');
+      debugPrint('❌ Failed to schedule hot streak reminder: $e');
     }
   }
 
@@ -809,7 +810,7 @@ class NotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send photo milestone notification: $e');
+      debugPrint('❌ Failed to send photo milestone notification: $e');
     }
   }
 
@@ -827,7 +828,7 @@ class NotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send total milestone notification: $e');
+      debugPrint('❌ Failed to send total milestone notification: $e');
     }
   }
 
@@ -841,7 +842,7 @@ class NotificationService {
     Map<String, dynamic>? data,
   }) async {
     try {
-      print('⏰ Scheduling notification: $title for ${scheduledTime.toIso8601String()}');
+      debugPrint('⏰ Scheduling notification: $title for ${scheduledTime.toIso8601String()}');
       
       const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
         'chizo_notifications',
@@ -872,12 +873,12 @@ class NotificationService {
         payload: data != null ? json.encode(data) : null,
       );
 
-      print('✅ Notification scheduled successfully');
+      debugPrint('✅ Notification scheduled successfully');
 
       // Save to database
       await _saveLocalNotificationToDatabase(title, body, type, data);
     } catch (e) {
-      print('❌ Failed to schedule notification: $e');
+      debugPrint('❌ Failed to schedule notification: $e');
     }
   }
 }
@@ -887,13 +888,13 @@ class NotificationService {
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   try {
     await Firebase.initializeApp();
-    print('📱 Background message received: ${message.messageId}');
+    debugPrint('📱 Background message received: ${message.messageId}');
     
     // Handle background message
     if (message.notification != null) {
-      print('📱 Background notification: ${message.notification!.title}');
+      debugPrint('📱 Background notification: ${message.notification!.title}');
     }
   } catch (e) {
-    print('❌ Background message handler error: $e');
+    debugPrint('❌ Background message handler error: $e');
   }
 }

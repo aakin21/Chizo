@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/notification_model.dart';
 
@@ -9,40 +10,66 @@ class NotificationHistoryService {
     int limit = 20,
     int offset = 0,
   }) async {
+    debugPrint('🔍 DEBUG: getNotificationHistory called!');
     try {
       final user = _client.auth.currentUser;
-      if (user == null) return [];
+      debugPrint('🔍 DEBUG: Current user: ${user?.id}');
+
+      if (user == null) {
+        debugPrint('❌ DEBUG: No user logged in!');
+        return [];
+      }
 
       // users tablosundan gerçek user_id al
+      debugPrint('🔍 DEBUG: Querying users table for auth_id: ${user.id}');
       final userRecord = await _client
           .from('users')
           .select('id')
           .eq('auth_id', user.id)
           .maybeSingle();
 
+      debugPrint('🔍 DEBUG: User record: $userRecord');
+
       if (userRecord == null) {
-        print('❌ User not found in users table for auth_id: ${user.id}');
+        debugPrint('❌ User not found in users table for auth_id: ${user.id}');
         return [];
       }
+
+      final userId = userRecord['id'];
+      debugPrint('🔍 DEBUG: Real user_id: $userId');
 
       // Maksimum 20 bildirim limiti
       final actualLimit = limit > 20 ? 20 : limit;
 
       // Gerçek user_id ile bildirimleri getir
+      debugPrint('🔍 DEBUG: Querying notifications for user_id: $userId');
       final response = await _client
           .from('notifications')
           .select()
-          .eq('user_id', userRecord['id'])
+          .eq('user_id', userId)
           .order('created_at', ascending: false)
           .range(offset, offset + actualLimit - 1);
 
-      print('✅ Loaded ${(response as List).length} notifications');
+      debugPrint('✅ Loaded ${(response as List).length} notifications');
+      debugPrint('🔍 DEBUG: First notification raw: ${(response as List).isNotEmpty ? response[0] : "none"}');
 
-      return (response as List)
-          .map((json) => NotificationModel.fromJson(json))
-          .toList();
-    } catch (e) {
-      print('❌ Failed to get notification history: $e');
+      final notifications = <NotificationModel>[];
+      for (var json in (response as List)) {
+        try {
+          final notification = NotificationModel.fromJson(json);
+          notifications.add(notification);
+          debugPrint('✅ Parsed notification: ${notification.title}');
+        } catch (e) {
+          debugPrint('❌ Failed to parse notification: $e');
+          debugPrint('❌ JSON: $json');
+        }
+      }
+
+      debugPrint('✅ Total parsed: ${notifications.length}');
+      return notifications;
+    } catch (e, stackTrace) {
+      debugPrint('❌ Failed to get notification history: $e');
+      debugPrint('❌ Stack trace: $stackTrace');
       return [];
     }
   }
@@ -61,7 +88,7 @@ class NotificationHistoryService {
 
       return true;
     } catch (e) {
-      print('❌ Failed to delete notification: $e');
+      debugPrint('❌ Failed to delete notification: $e');
       return false;
     }
   }
@@ -88,7 +115,7 @@ class NotificationHistoryService {
 
       return true;
     } catch (e) {
-      print('❌ Failed to delete all notifications: $e');
+      debugPrint('❌ Failed to delete all notifications: $e');
       return false;
     }
   }
@@ -97,9 +124,9 @@ class NotificationHistoryService {
   static Future<void> initializeNotificationCleanup() async {
     try {
       await cleanupExcessNotifications();
-      print('✅ Notification cleanup initialized');
+      debugPrint('✅ Notification cleanup initialized');
     } catch (e) {
-      print('❌ Failed to initialize notification cleanup: $e');
+      debugPrint('❌ Failed to initialize notification cleanup: $e');
     }
   }
 
@@ -151,11 +178,11 @@ class NotificationHistoryService {
                 .eq('user_id', userRecord['id']);
           }
 
-          print('✅ Cleaned up $excessCount excess notifications');
+          debugPrint('✅ Cleaned up $excessCount excess notifications');
         }
       }
     } catch (e) {
-      print('❌ Failed to cleanup excess notifications: $e');
+      debugPrint('❌ Failed to cleanup excess notifications: $e');
     }
   }
 
@@ -182,7 +209,7 @@ class NotificationHistoryService {
 
       return (response as List).length;
     } catch (e) {
-      print('❌ Failed to get unread count: $e');
+      debugPrint('❌ Failed to get unread count: $e');
       return 0;
     }
   }
@@ -200,7 +227,7 @@ class NotificationHistoryService {
 
       return true;
     } catch (e) {
-      print('❌ Failed to mark notification as read: $e');
+      debugPrint('❌ Failed to mark notification as read: $e');
       return false;
     }
   }
@@ -231,7 +258,7 @@ class NotificationHistoryService {
 
       return true;
     } catch (e) {
-      print('❌ Failed to mark all notifications as read: $e');
+      debugPrint('❌ Failed to mark all notifications as read: $e');
       return false;
     }
   }
@@ -259,7 +286,7 @@ class NotificationHistoryService {
 
       return true;
     } catch (e) {
-      print('❌ Failed to delete selected notifications: $e');
+      debugPrint('❌ Failed to delete selected notifications: $e');
       return false;
     }
   }

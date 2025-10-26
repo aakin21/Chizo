@@ -574,10 +574,12 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
       
       // Timer başlat
       _startAutoLockTimer();
-      
+
       // Bildirim gönder
       await _sendUnlockNotification();
-      
+
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('✅ İstatistikler 24 saat açık! 100 coin harcandı.'),
@@ -586,6 +588,8 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
         ),
       );
     } catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Kilidi açma başarısız'),
@@ -593,7 +597,9 @@ class _ProfileAvatarWidgetState extends State<ProfileAvatarWidget> {
         ),
       );
     } finally {
-      setState(() => isUpdating = false);
+      if (mounted) {
+        setState(() => isUpdating = false);
+      }
     }
   }
 }

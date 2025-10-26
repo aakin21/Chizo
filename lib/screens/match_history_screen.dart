@@ -23,6 +23,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
   bool hasWeeklyAccess = false; // 1 haftalık erişim var mı
   DateTime? weeklyAccessExpiry; // Haftalık erişimin ne zaman sona ereceği
   String _currentTheme = 'Koyu';
+  late final Function(String) _themeCallback;
 
   @override
   void initState() {
@@ -30,21 +31,22 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
     _loadSavedUnlockData();
     _loadMatchHistory();
     _loadCurrentTheme();
-    
-    // Global theme service'e callback kaydet
-    GlobalThemeService().setThemeChangeCallback((theme) {
+
+    // Global theme service'e callback kaydet (callback referansını sakla)
+    _themeCallback = (theme) {
       if (mounted) {
         setState(() {
           _currentTheme = theme;
         });
       }
-    });
+    };
+    GlobalThemeService().setThemeChangeCallback(_themeCallback);
   }
 
   @override
   void dispose() {
-    // Callback'i temizle
-    GlobalThemeService().clearAllCallbacks();
+    // Sadece bu ekranın callback'ini temizle (diğer ekranlarınkini değil!)
+    GlobalThemeService().removeThemeChangeCallback(_themeCallback);
     super.dispose();
   }
 
@@ -86,7 +88,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
         });
       }
     } catch (e) {
-      // print('Error loading match history: $e');
+      // debugPrint('Error loading match history: $e');
       setState(() {
         isLoading = false;
       });
@@ -120,9 +122,9 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
             : null;
       });
       
-      print('📱 Loaded saved unlock data: $unlockedMatches matches, weekly: $hasWeeklyAccess');
+      debugPrint('📱 Loaded saved unlock data: $unlockedMatches matches, weekly: $hasWeeklyAccess');
     } catch (e) {
-      print('❌ Error loading saved unlock data: $e');
+      debugPrint('❌ Error loading saved unlock data: $e');
     }
   }
 
@@ -150,9 +152,9 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
         await prefs.remove('match_history_weekly_expiry_$userId');
       }
       
-      print('💾 Saved unlock data: $unlockedMatches matches, weekly: $hasWeeklyAccess');
+      debugPrint('💾 Saved unlock data: $unlockedMatches matches, weekly: $hasWeeklyAccess');
     } catch (e) {
-      print('❌ Error saving unlock data: $e');
+      debugPrint('❌ Error saving unlock data: $e');
     }
   }
 
@@ -217,6 +219,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
         }
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
@@ -226,17 +229,21 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
   Future<void> _unlockWeeklyAccess() async {
     try {
       final success = await UserService.updateCoins(-500, 'spent', '1 hafta sınırsız maç görüntüleme özelliği açıldı (7 gün geçerli)');
-      
+
+      if (!mounted) return;
+
       if (success) {
         setState(() {
           hasWeeklyAccess = true;
           weeklyAccessExpiry = DateTime.now().add(const Duration(days: 7)); // 1 hafta geçerli
           unlockedMatches = 50; // Tüm maçları aç
         });
-        
+
         // Veriyi kaydet
         await _saveUnlockData();
-        
+
+        if (!mounted) return;
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('✅ 500 coin harcandı! 1 hafta boyunca sınırsız erişim!'),
@@ -252,6 +259,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );

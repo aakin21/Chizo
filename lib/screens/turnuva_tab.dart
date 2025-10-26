@@ -86,12 +86,14 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       
       // Mevcut turnuvaların name_key alanlarını güncelle
       await TournamentService.updateExistingTournamentNameKeys();
-      
+
+      if (!mounted) return;
+
       // Kullanıcının diline göre turnuvaları getir
       final currentLanguage = Localizations.localeOf(context).languageCode;
       final activeTournaments = await TournamentService.getActiveTournaments(language: currentLanguage);
       final user = await UserService.getCurrentUser();
-      
+
       if (!mounted) return;
       
       // Her turnuva için kullanıcının katılım durumunu kontrol et
@@ -911,6 +913,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
         // Turnuvaları yenile
         loadTournaments();
       } else {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(result['message']),
@@ -919,6 +922,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Hata: $e'),
@@ -1031,6 +1035,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
     try {
       final result = await TournamentService.joinPrivateTournament(privateKey);
 
+      if (!mounted) return;
+
       if (result['success']) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -1039,7 +1045,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
             duration: const Duration(seconds: 3),
           ),
         );
-        
+
         // Turnuvaları yenile
         loadTournaments();
       } else {
@@ -1051,6 +1057,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Hata: $e'),

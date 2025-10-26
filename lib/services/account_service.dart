@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart';
 
 class AccountService {
   static final SupabaseClient _client = Supabase.instance.client;
@@ -17,8 +18,9 @@ class AccountService {
         'reason': reason,
         'details': details,
       });
-    } catch (_) {
-      // Table may not exist; ignore
+    } catch (e) {
+      // ✅ FIX: Log error instead of silent failure
+      debugPrint('Warning: Failed to store delete feedback (table may not exist): $e');
     }
   }
 
@@ -43,8 +45,9 @@ class AccountService {
       if (toRemove.isNotEmpty) {
         await _client.storage.from('profile-images').remove(toRemove);
       }
-    } catch (_) {
-      // ignore storage errors
+    } catch (e) {
+      // ✅ FIX: Log error instead of silent failure
+      debugPrint('Warning: Failed to delete user storage files: $e');
     }
   }
 
@@ -52,8 +55,9 @@ class AccountService {
   static Future<void> _deleteWhere(String table, String column, String value) async {
     try {
       await _client.from(table).delete().eq(column, value);
-    } catch (_) {
-      // ignore
+    } catch (e) {
+      // ✅ FIX: Log error instead of silent failure
+      debugPrint('Warning: Failed to delete from $table where $column=$value: $e');
     }
   }
 
@@ -85,8 +89,9 @@ class AccountService {
       if (userRowId != null) {
         await _deleteUserStorageFiles(userRowId);
       }
-    } catch (_) {
-      // ignore
+    } catch (e) {
+      // ✅ FIX: Log error instead of silent failure
+      debugPrint('Warning: Failed during storage cleanup phase: $e');
     }
 
     // 3) Relational data deletions (best-effort)
@@ -125,8 +130,9 @@ class AccountService {
         // 4) Core user row last
         await _deleteWhere('users', 'id', userRowId);
       }
-    } catch (_) {
-      // ignore
+    } catch (e) {
+      // ✅ FIX: Log error instead of silent failure
+      debugPrint('Warning: Failed during relational data deletion phase: $e');
     }
 
     // 5) Ask Edge Function to remove auth user (requires setup)
@@ -134,14 +140,18 @@ class AccountService {
       await _client.functions.invoke('delete-user', body: {
         'userId': authId,
       });
-    } catch (_) {
-      // If not configured yet, ignore
+    } catch (e) {
+      // ✅ FIX: Log error instead of silent failure
+      debugPrint('Warning: Failed to invoke delete-user function (may not be configured): $e');
     }
 
     // 6) Finally sign out (caller will handle navigation)
     try {
       await _client.auth.signOut();
-    } catch (_) {}
+    } catch (e) {
+      // ✅ FIX: Log error instead of silent failure
+      debugPrint('Warning: Failed to sign out: $e');
+    }
   }
 }
 

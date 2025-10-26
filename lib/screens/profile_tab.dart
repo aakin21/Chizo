@@ -9,8 +9,6 @@ import '../services/global_theme_service.dart';
 import 'match_history_screen.dart';
 import 'country_ranking_screen.dart';
 import 'store_tab.dart';
-import '../widgets/country_selector.dart';
-import '../widgets/gender_selector.dart';
 import '../widgets/profile_avatar_widget.dart';
 import '../services/country_service.dart';
 
@@ -117,10 +115,10 @@ class _ProfileTabState extends State<ProfileTab> {
     } catch (e) {
       if (mounted) {
         setState(() => isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
+        );
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
-      );
     }
   }
 
@@ -171,7 +169,10 @@ class _ProfileTabState extends State<ProfileTab> {
     await PhotoUploadService.debugUserPhotos(currentUser!.id);
     
     final nextSlot = await PhotoUploadService.getNextAvailableSlot(currentUser!.id);
-    print('DEBUG: Next available slot: $nextSlot');
+    debugPrint('DEBUG: Next available slot: $nextSlot');
+
+    if (!mounted) return;
+
     if (nextSlot == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.allPhotoSlotsFull)),
@@ -180,7 +181,10 @@ class _ProfileTabState extends State<ProfileTab> {
     }
 
     final canUploadResult = await PhotoUploadService.canUploadPhoto(nextSlot);
-    print('DEBUG: Can upload result: $canUploadResult');
+    debugPrint('DEBUG: Can upload result: $canUploadResult');
+
+    if (!mounted) return;
+
     if (!canUploadResult['canUpload']) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(canUploadResult['message'])),
@@ -189,8 +193,8 @@ class _ProfileTabState extends State<ProfileTab> {
     }
 
     final requiredCoins = canUploadResult['requiredCoins'] as int;
-    print('DEBUG: Required coins for slot $nextSlot: $requiredCoins');
-    
+    debugPrint('DEBUG: Required coins for slot $nextSlot: $requiredCoins');
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -244,6 +248,7 @@ class _ProfileTabState extends State<ProfileTab> {
           ),
         );
       } else {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${AppLocalizations.of(context)!.error}: ${result['message']}'),
@@ -252,6 +257,7 @@ class _ProfileTabState extends State<ProfileTab> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${AppLocalizations.of(context)!.error}: $e'),
@@ -259,7 +265,9 @@ class _ProfileTabState extends State<ProfileTab> {
         ),
       );
     } finally {
-      setState(() => isUpdating = false);
+      if (mounted) {
+        setState(() => isUpdating = false);
+      }
     }
   }
 
@@ -1352,9 +1360,13 @@ class _ProfileTabState extends State<ProfileTab> {
         });
       }
 
+      if (!mounted) return;
+
       setState(() {
         isUpdating = false;
       });
+
+      if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -1363,10 +1375,14 @@ class _ProfileTabState extends State<ProfileTab> {
         ),
       );
     } catch (e) {
+      if (!mounted) return;
+
       setState(() {
         isUpdating = false;
       });
-      
+
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Güncelleme sırasında hata oluştu'),
@@ -1562,6 +1578,8 @@ class _ProfileTabState extends State<ProfileTab> {
           ),
         );
       } else {
+        if (!mounted) return;
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Kullanıcı adı güncellenemedi'),
@@ -1570,11 +1588,15 @@ class _ProfileTabState extends State<ProfileTab> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Hata: $e'), backgroundColor: Colors.red),
       );
     } finally {
-      setState(() => isUpdating = false);
+      if (mounted) {
+        setState(() => isUpdating = false);
+      }
     }
   }
 
@@ -1604,6 +1626,8 @@ class _ProfileTabState extends State<ProfileTab> {
           ),
         );
       } else {
+        if (!mounted) return;
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.updateFailed),
@@ -1612,6 +1636,8 @@ class _ProfileTabState extends State<ProfileTab> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
@@ -1879,31 +1905,6 @@ class _ProfileTabState extends State<ProfileTab> {
     );
   }
 
-  // Ülke seçici
-  void _showCountrySelector() {
-    showDialog(
-      context: context,
-      builder: (context) => CountrySelector(
-        onCountrySelected: (country) async {
-          Navigator.pop(context);
-          await _updateCountry(country ?? '');
-        },
-      ),
-    );
-  }
-
-  // Cinsiyet seçici
-  void _showGenderSelector() {
-    showDialog(
-      context: context,
-      builder: (context) => GenderSelector(
-        onGenderSelected: (gender) async {
-          Navigator.pop(context);
-          await _updateGender(gender ?? '');
-        },
-      ),
-    );
-  }
 
   // Yaş güncelleme
   Future<void> _updateAge(int age) async {
@@ -1917,42 +1918,8 @@ class _ProfileTabState extends State<ProfileTab> {
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Güncelleme sırasında hata oluştu')),
-      );
-    }
-  }
+      if (!mounted) return;
 
-  // Ülke güncelleme
-  Future<void> _updateCountry(String countryCode) async {
-    try {
-      final success = await UserService.updateProfile(countryCode: countryCode);
-      if (success) {
-        await loadUserData();
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ülke bilgisi güncellendi')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Güncelleme sırasında hata oluştu')),
-      );
-    }
-  }
-
-  // Cinsiyet güncelleme
-  Future<void> _updateGender(String genderCode) async {
-    try {
-      final success = await UserService.updateProfile(genderCode: genderCode);
-      if (success) {
-        await loadUserData();
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Cinsiyet bilgisi güncellendi')),
-        );
-      }
-    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Güncelleme sırasında hata oluştu')),
       );

@@ -19,7 +19,7 @@ class ImageService {
       
       return image;
     } catch (e) {
-      // print('Error picking image from gallery: $e');
+      // debugPrint('Error picking image from gallery: $e');
       return null;
     }
   }
@@ -36,7 +36,7 @@ class ImageService {
       
       return image;
     } catch (e) {
-      // print('Error picking image from camera: $e');
+      // debugPrint('Error picking image from camera: $e');
       return null;
     }
   }
@@ -46,12 +46,12 @@ class ImageService {
     try {
       final user = _client.auth.currentUser;
       if (user == null) {
-        // print('No authenticated user');
+        // debugPrint('No authenticated user');
         return null;
       }
 
-      // print('User email: ${user.email}');
-      // print('File path: ${imageFile.path}');
+      // debugPrint('User email: ${user.email}');
+      // debugPrint('File path: ${imageFile.path}');
 
       // Dosya uzantısını kontrol et ve düzelt
       String finalFileName = fileName;
@@ -64,36 +64,36 @@ class ImageService {
       // Kullanıcı ID'si ile dosya adı oluştur (RLS policy için gerekli)
       final uniqueFileName = '${user.id}_${DateTime.now().millisecondsSinceEpoch}_$finalFileName';
       
-      // print('Final file name: $uniqueFileName');
+      // debugPrint('Final file name: $uniqueFileName');
       
       // XFile'dan bytes al
       final Uint8List fileBytes = await imageFile.readAsBytes();
-      // print('File bytes length: ${fileBytes.length}');
+      // debugPrint('File bytes length: ${fileBytes.length}');
       
       // İlk birkaç byte'ı kontrol et (dosya tipi için)
       if (fileBytes.isNotEmpty) {
-        // print('First bytes: ${fileBytes.take(10).toList()}');
+        // debugPrint('First bytes: ${fileBytes.take(10).toList()}');
       }
       
-      // print('About to upload to storage...');
+      // debugPrint('About to upload to storage...');
       
       // Storage'a yükle
       await _client.storage
           .from('profile-images')
           .uploadBinary(uniqueFileName, fileBytes);
 
-      // print('Upload result: $uploadResult');
+      // debugPrint('Upload result: $uploadResult');
 
       // Public URL'i al
       final imageUrl = _client.storage
           .from('profile-images')
           .getPublicUrl(uniqueFileName);
 
-      // print('Image URL: $imageUrl');
+      // debugPrint('Image URL: $imageUrl');
       return imageUrl;
     } catch (e) {
-      // print('Error uploading image: $e');
-      // print('Error type: ${e.runtimeType}');
+      // debugPrint('Error uploading image: $e');
+      // debugPrint('Error type: ${e.runtimeType}');
       return null;
     }
   }
@@ -110,7 +110,7 @@ class ImageService {
       
       return true;
     } catch (e) {
-      // print('Error deleting image: $e');
+      // debugPrint('Error deleting image: $e');
       return false;
     }
   }

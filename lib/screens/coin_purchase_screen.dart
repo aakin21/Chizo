@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/payment_service.dart';
 import '../services/user_service.dart';
 import '../models/user_model.dart';
-import '../services/global_theme_service.dart';
 import '../l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CoinPurchaseScreen extends StatefulWidget {
   const CoinPurchaseScreen({super.key});

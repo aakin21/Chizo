@@ -120,7 +120,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         });
       }
     } catch (e) {
-      print('Error in _loadMatches: $e');
+      debugPrint('Error in _loadMatches: $e');
     }
   }
 
@@ -217,19 +217,27 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
       return;
     }
 
-      // Seçilen kullanıcının fotoğraf sırasını kaydet
+    // Seçilen kullanıcının match'te gösterilen fotoğrafını kaydet
     final selectedUser = await _getWinnerUser(winnerId);
     if (selectedUser != null && selectedUser.matchPhotos != null && selectedUser.matchPhotos!.isNotEmpty) {
-      // İlk fotoğrafı seç (photo_order = 1)
-      final sortedPhotos = List<Map<String, dynamic>>.from(selectedUser.matchPhotos!);
-      sortedPhotos.sort((a, b) {
-        final orderA = _safeIntFromDynamic(a['photo_order']) ?? 0;
-        final orderB = _safeIntFromDynamic(b['photo_order']) ?? 0;
-        return orderA.compareTo(orderB);
-      });
-      
-      // Seçilen fotoğrafın sırasını kaydet
-      selectedPhotoOrder = _safeIntFromDynamic(sortedPhotos.first['photo_order']) ?? 1;
+      // Match ID'yi al
+      final isTournament = currentItem['is_tournament'] as bool;
+      String matchId = '';
+
+      if (!isTournament) {
+        final match = currentItem['match'] as MatchModel;
+        matchId = match.id;
+      }
+
+      // Match'te gösterilen fotoğrafı bul (hash algoritması ile)
+      final displayedPhoto = _getDisplayedPhotoForUser(selectedUser, matchId);
+      if (displayedPhoto != null) {
+        // Match'te gösterilen fotoğrafın order'ını kaydet
+        selectedPhotoOrder = _safeIntFromDynamic(displayedPhoto['photo_order']) ?? 1;
+      } else {
+        // Fotoğraf bulunamazsa ilk fotoğrafı kullan
+        selectedPhotoOrder = 1;
+      }
     }
 
     // Tek tık - direkt oy verme + slider
@@ -267,6 +275,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         });
       }
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context)!.votingError(''))),
       );
@@ -343,35 +352,52 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         actualWinRate: targetUser.winRate,
       );
 
+      if (!mounted) return;
+
       if (result['success']) {
-        // Başarı mesajı göster
+        // Tahmin kaydedildi - doğru veya yanlış mesajını göster
         String message;
         if (result['is_correct']) {
           message = AppLocalizations.of(context)!.correctPredictionMessage;
         } else {
           message = AppLocalizations.of(context)!.wrongPredictionMessage;
         }
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(message),
             backgroundColor: result['is_correct'] ? Colors.green : Colors.orange,
           ),
         );
-
-        // Profil sayfasını yenile
-        widget.onVoteCompleted?.call();
-
-        // Match'i tamamla ve yeni match'e geç
-        _completeMatchAndMoveNext();
       } else {
+        // Tahmin kaydedilemedi - hata mesajı göster
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['message'])),
+          SnackBar(
+            content: Text(result['message']),
+            backgroundColor: Colors.red,
+          ),
         );
       }
+
+      // ✅ BAŞARILI OLSUN YA DA OLMASIN - Her zaman bir sonraki match'e geç
+      // Profil sayfasını yenile
+      widget.onVoteCompleted?.call();
+
+      // Match'i tamamla ve yeni match'e geç
+      _completeMatchAndMoveNext();
     } catch (e) {
+      // Exception durumunda bile mesaj göster VE devam et
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
+        SnackBar(
+          content: Text('${AppLocalizations.of(context)!.error}: $e'),
+          backgroundColor: Colors.red,
+        ),
       );
+
+      // ✅ Exception olsa bile bir sonraki match'e geç
+      widget.onVoteCompleted?.call();
+      _completeMatchAndMoveNext();
     }
   }
 
@@ -939,12 +965,21 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
   }
 
   Widget _buildPhotoCarousel(List<Map<String, dynamic>> photos, String userId, String matchId) {
-    // Seçilen fotoğraf sırasını bul
-    final selectedPhoto = photos.firstWhere(
-      (photo) => (_safeIntFromDynamic(photo['photo_order']) ?? 0) == selectedPhotoOrder,
-      orElse: () => photos.first, // Bulunamazsa ilk fotoğrafı kullan
-    );
-    
+    Map<String, dynamic> selectedPhoto;
+
+    // Eğer prediction veya preview modundaysa: selectedPhotoOrder kullan
+    if (matchId == 'prediction' || matchId == 'preview') {
+      selectedPhoto = photos.firstWhere(
+        (photo) => (_safeIntFromDynamic(photo['photo_order']) ?? 0) == selectedPhotoOrder,
+        orElse: () => photos.first,
+      );
+    } else {
+      // Match modundaysa: Hash algoritması ile fotoğrafı belirle
+      final combinedHash = (userId.hashCode.abs() + matchId.hashCode.abs() + photos.length * 23) % photos.length;
+      final photoIndex = photos.length > 1 ? combinedHash : 0;
+      selectedPhoto = photos[photoIndex];
+    }
+
     return CachedNetworkImage(
       imageUrl: selectedPhoto['photo_url'],
       fit: BoxFit.contain,
@@ -1022,6 +1057,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         // Bilgiyi göster
         _showPremiumInfoResult(info, type);
       } else {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.insufficientCoins),
@@ -1030,6 +1066,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
@@ -1142,6 +1179,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         if (await canLaunchUrl(webUrl)) {
           await launchUrl(webUrl, mode: LaunchMode.externalApplication);
         } else {
+          if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context)!.instagramCannotBeOpened),
@@ -1151,6 +1189,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         }
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)!.instagramOpenError(e.toString())),
@@ -1442,6 +1481,8 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         }
       }
     } catch (e) {
+      // ✅ FIX: Log error instead of silent failure
+      debugPrint('Warning: Failed to update photo stats for match ${match.id}: $e');
     }
   }
 
@@ -1781,19 +1822,22 @@ class _ReportDialogState extends State<ReportDialog> {
         children: [
           const Text('Bildirim Sebebi'),
           const SizedBox(height: 16),
-          
+
           // Reason selection
-          ...reportReasons.map((reason) => RadioListTile<String>(
-            title: Text(reason['name']!),
-            value: reason['key']!,
-            groupValue: selectedReason,
+          RadioGroup<String>(
             onChanged: (value) {
               setState(() {
                 selectedReason = value;
               });
             },
-          )),
-          
+            child: Column(
+              children: reportReasons.map((reason) => RadioListTile<String>(
+                title: Text(reason['name']!),
+                value: reason['key']!,
+              )).toList(),
+            ),
+          ),
+
           const SizedBox(height: 16),
           
           // Description field
@@ -1840,14 +1884,16 @@ class _ReportDialogState extends State<ReportDialog> {
         matchId: widget.matchId,
         reportedUserId: widget.reportedUserId,
         reason: selectedReason!,
-        description: _descriptionController.text.trim().isEmpty 
-          ? null 
+        description: _descriptionController.text.trim().isEmpty
+          ? null
           : _descriptionController.text.trim(),
       );
 
+      if (!mounted) return;
       Navigator.pop(context);
       widget.onReportSubmitted(success);
     } catch (e) {
+      if (!mounted) return;
       Navigator.pop(context);
       widget.onReportSubmitted(false);
     }

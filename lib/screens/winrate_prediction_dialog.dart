@@ -246,12 +246,14 @@ class _WinRatePredictionDialogState extends State<WinRatePredictionDialog> {
         // Callback'i çağır
         widget.onPredictionComplete();
       } else {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.predictionSaveError)),
         );
       }
-      
+
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );

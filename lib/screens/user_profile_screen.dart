@@ -4,9 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/user_model.dart';
 import '../services/photo_upload_service.dart';
 import '../services/user_service.dart';
-import '../services/global_theme_service.dart';
 import '../utils/win_rate_colors.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final UserModel user;
@@ -23,47 +21,11 @@ class UserProfileScreen extends StatefulWidget {
 class _UserProfileScreenState extends State<UserProfileScreen> {
   List<Map<String, dynamic>> _photoStats = [];
   bool _isLoading = true;
-  String _currentTheme = 'Koyu';
 
   @override
   void initState() {
     super.initState();
     _loadPhotoStats();
-    _loadCurrentTheme();
-    
-    // Global theme service'e callback kaydet
-    GlobalThemeService().setThemeChangeCallback((theme) {
-      if (mounted) {
-        setState(() {
-          _currentTheme = theme;
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    // Callback'i temizle
-    GlobalThemeService().clearAllCallbacks();
-    super.dispose();
-  }
-
-  Future<void> _loadCurrentTheme() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final theme = prefs.getString('selected_theme') ?? 'Koyu';
-      if (mounted) {
-        setState(() {
-          _currentTheme = theme;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _currentTheme = 'Koyu';
-        });
-      }
-    }
   }
 
   Future<void> _loadPhotoStats() async {
@@ -78,7 +40,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      // print('Error loading photo stats: $e');
+      // debugPrint('Error loading photo stats: $e');
       setState(() {
         _isLoading = false;
       });
@@ -845,6 +807,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         'Instagram profil görüntüleme - ${widget.user.username}',
       );
 
+      if (!mounted) return;
+
       // Loading'i kapat
       Navigator.pop(context);
 
@@ -856,6 +820,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         if (await canLaunchUrl(uri)) {
           await launchUrl(uri, mode: LaunchMode.externalApplication);
         } else {
+          if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Instagram uygulaması açılamadı'),
@@ -864,6 +829,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           );
         }
       } else {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Coin ödemesi başarısız oldu'),

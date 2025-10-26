@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'user_service.dart';
 import '../l10n/app_localizations.dart';
+import '../utils/constants.dart';
 
 class PhotoUploadService {
   static final SupabaseClient _client = Supabase.instance.client;
@@ -32,7 +33,7 @@ class PhotoUploadService {
 
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
-      // print('Error getting user photos: $e');
+      // debugPrint('Error getting user photos: $e');
       return [];
     }
   }
@@ -74,7 +75,7 @@ class PhotoUploadService {
 
       return photosWithStats;
     } catch (e) {
-      // print('Error getting user photo stats: $e');
+      // debugPrint('Error getting user photo stats: $e');
       return [];
     }
   }
@@ -116,7 +117,7 @@ class PhotoUploadService {
       
       return null;
     } catch (e) {
-      // print('Error uploading tournament photo: $e');
+      // debugPrint('Error uploading tournament photo: $e');
       return null;
     }
   }
@@ -130,17 +131,17 @@ class PhotoUploadService {
           .select('photo_order, is_active')
           .eq('user_id', userId);
       
-      print('DEBUG: All photos for user $userId: $allPhotos');
+      debugPrint('DEBUG: All photos for user $userId: $allPhotos');
       
       // Only consider active photos for slot usage (handle null is_active as true for backward compatibility)
       final activePhotos = allPhotos.where((photo) => 
         photo['is_active'] == true || photo['is_active'] == null).toList();
       
-      print('DEBUG: Active photos: $activePhotos');
+      debugPrint('DEBUG: Active photos: $activePhotos');
       
       // If we have photos but no photo_order values, assign them sequentially
       if (activePhotos.isNotEmpty && activePhotos.every((photo) => photo['photo_order'] == null)) {
-        print('DEBUG: All photos have null photo_order, assigning sequential numbers');
+        debugPrint('DEBUG: All photos have null photo_order, assigning sequential numbers');
         // Assign sequential numbers to existing photos
         for (int i = 0; i < activePhotos.length; i++) {
           final photoId = activePhotos[i]['id'];
@@ -166,18 +167,18 @@ class PhotoUploadService {
           .where((order) => order > 0)
           .toSet();
       
-      print('DEBUG: Used slots: $usedSlots');
+      debugPrint('DEBUG: Used slots: $usedSlots');
       
       for (int i = 1; i <= 5; i++) {
         if (!usedSlots.contains(i)) {
-          print('DEBUG: Found available slot: $i');
+          debugPrint('DEBUG: Found available slot: $i');
           return i;
         }
       }
       
       return null; // All slots are full
     } catch (e) {
-      print('DEBUG: Error getting next available slot: $e');
+      debugPrint('DEBUG: Error getting next available slot: $e');
       return null;
     }
   }
@@ -190,7 +191,7 @@ class PhotoUploadService {
         return {'canUpload': false, 'message': 'User not found'};
       }
 
-      print('DEBUG: Checking if user can upload to slot $slot');
+      debugPrint('DEBUG: Checking if user can upload to slot $slot');
       
       // Get all photos to check slot usage
       final allPhotos = await _client
@@ -198,7 +199,7 @@ class PhotoUploadService {
           .select('photo_order, is_active, id')
           .eq('user_id', currentUser.id);
       
-      print('DEBUG: All photos for user ${currentUser.id}: $allPhotos');
+      debugPrint('DEBUG: All photos for user ${currentUser.id}: $allPhotos');
       
       // Only consider active photos for slot usage (handle null is_active as true for backward compatibility)
       final activePhotos = allPhotos.where((photo) => 
@@ -219,13 +220,13 @@ class PhotoUploadService {
 
       // Check if slot is already used
       if (usedSlots.contains(slot)) {
-        print('DEBUG: Slot $slot is already used by photos: $usedSlots');
+        debugPrint('DEBUG: Slot $slot is already used by photos: $usedSlots');
         // Find the existing photo in this slot
         final existingPhoto = activePhotos.firstWhere(
           (photo) => _safeIntFromDynamic(photo['photo_order']) == slot,
           orElse: () => {},
         );
-        print('DEBUG: Existing photo in slot $slot: $existingPhoto');
+        debugPrint('DEBUG: Existing photo in slot $slot: $existingPhoto');
         return {'canUpload': false, 'message': 'Photo slot $slot is already used. Please delete the existing photo first.'};
       }
 
@@ -249,7 +250,7 @@ class PhotoUploadService {
         'message': 'Can upload photo'
       };
     } catch (e) {
-      // print('Error checking photo upload: $e');
+      // debugPrint('Error checking photo upload: $e');
       return {'canUpload': false, 'message': 'Error checking upload permission'};
     }
   }
@@ -280,19 +281,56 @@ class PhotoUploadService {
         return {'success': false, 'message': 'No image selected'};
       }
 
+      // ✅ SECURITY VALIDATIONS
+
+      // 1. Check file size
+      final fileSize = await image.length();
+      if (fileSize > AppConstants.maxFileSize) {
+        final sizeMB = (fileSize / (1024 * 1024)).toStringAsFixed(2);
+        final maxSizeMB = (AppConstants.maxFileSize / (1024 * 1024)).toStringAsFixed(0);
+        return {
+          'success': false,
+          'message': 'File too large: ${sizeMB}MB. Maximum allowed: ${maxSizeMB}MB'
+        };
+      }
+
+      // 2. Check file extension
+      final extension = image.name.split('.').last.toLowerCase();
+      if (!AppConstants.allowedImageTypes.contains(extension)) {
+        return {
+          'success': false,
+          'message': 'Invalid file type: $extension. Allowed types: ${AppConstants.allowedImageTypes.join(', ')}'
+        };
+      }
+
+      // 3. Check MIME type (basic validation)
+      final mimeType = image.mimeType?.toLowerCase();
+      if (mimeType != null && !AppConstants.allowedMimeTypes.contains(mimeType)) {
+        return {
+          'success': false,
+          'message': 'Invalid image format. Please upload a JPEG or PNG image.'
+        };
+      }
+
+      debugPrint('✅ Image validation passed: size=${(fileSize / 1024).toStringAsFixed(0)}KB, type=$extension');
+
+      if (context != null && !context.mounted) {
+        return {'success': false, 'message': 'Context is no longer valid'};
+      }
+
       // Crop image to iPhone portrait format (3:4 aspect ratio)
       XFile? croppedFile;
       try {
-        print('DEBUG: Starting image crop for slot $slot');
+        debugPrint('DEBUG: Starting image crop for slot $slot');
         croppedFile = await _cropImageToiPhoneFormat(image, context);
         if (croppedFile == null) {
-          print('DEBUG: Image cropping returned null (user cancelled)');
+          debugPrint('DEBUG: Image cropping returned null (user cancelled)');
           return {'success': false, 'message': 'Image cropping cancelled'};
         }
-        print('DEBUG: Image cropping completed successfully');
+        debugPrint('DEBUG: Image cropping completed successfully');
       } catch (e) {
-        print('ERROR: Image cropping failed for slot $slot: $e');
-        print('ERROR: Stack trace: ${StackTrace.current}');
+        debugPrint('ERROR: Image cropping failed for slot $slot: $e');
+        debugPrint('ERROR: Stack trace: ${StackTrace.current}');
         
         // Check if it's a UCropActivity error
         if (e.toString().contains('UCropActivity') || e.toString().contains('ActivityNotFoundException')) {
@@ -330,7 +368,7 @@ class PhotoUploadService {
           }
         }
       } catch (e) {
-        print('ERROR: Storage upload failed: $e');
+        debugPrint('ERROR: Storage upload failed: $e');
         return {'success': false, 'message': 'Failed to upload image to storage. Please try again.'};
       }
 
@@ -374,11 +412,11 @@ class PhotoUploadService {
           throw Exception('Database insert returned empty response');
         }
       } catch (e) {
-        print('ERROR: Database insert failed for slot $slot: $e');
-        print('ERROR: This might be due to:');
-        print('ERROR: 1. Duplicate photo_order constraint (slot $slot already exists)');
-        print('ERROR: 2. Database connection issue');
-        print('ERROR: 3. Invalid user_id or photo_url');
+        debugPrint('ERROR: Database insert failed for slot $slot: $e');
+        debugPrint('ERROR: This might be due to:');
+        debugPrint('ERROR: 1. Duplicate photo_order constraint (slot $slot already exists)');
+        debugPrint('ERROR: 2. Database connection issue');
+        debugPrint('ERROR: 3. Invalid user_id or photo_url');
         
         // If database insert fails, delete the uploaded image and refund coins
         try {
@@ -386,7 +424,7 @@ class PhotoUploadService {
               .from('profile-images')
               .remove([filePath]);
         } catch (storageError) {
-          print('ERROR: Failed to clean up uploaded file: $storageError');
+          debugPrint('ERROR: Failed to clean up uploaded file: $storageError');
         }
         
         if (requiredCoins > 0) {
@@ -397,7 +435,7 @@ class PhotoUploadService {
               'Photo upload failed - refund'
             );
           } catch (coinError) {
-            print('ERROR: Failed to refund coins: $coinError');
+            debugPrint('ERROR: Failed to refund coins: $coinError');
           }
         }
         
@@ -410,7 +448,7 @@ class PhotoUploadService {
       }
 
       // Photo stats artık user_photos içinde (wins=0, total_matches=0 default)
-      final photoId = insertResponse.first['id'];
+      // Photo ID is available in insertResponse.first['id'] if needed
 
       return {
         'success': true,
@@ -420,8 +458,8 @@ class PhotoUploadService {
         'coinsSpent': requiredCoins,
       };
     } catch (e) {
-      print('ERROR: Photo upload failed for slot $slot: $e');
-      print('ERROR: Stack trace: ${StackTrace.current}');
+      debugPrint('ERROR: Photo upload failed for slot $slot: $e');
+      debugPrint('ERROR: Stack trace: ${StackTrace.current}');
       return {'success': false, 'message': 'Photo upload failed. Please try again.'};
     }
   }
@@ -463,7 +501,7 @@ class PhotoUploadService {
         'slot': slot,
       };
     } catch (e) {
-      // print('Error deleting photo: $e');
+      // debugPrint('Error deleting photo: $e');
       return {'success': false, 'message': 'Error deleting photo: $e'};
     }
   }
@@ -500,7 +538,7 @@ class PhotoUploadService {
         'message': 'Photos reordered successfully',
       };
     } catch (e) {
-      // print('Error reordering photos: $e');
+      // debugPrint('Error reordering photos: $e');
       return {'success': false, 'message': 'Error reordering photos: $e'};
     }
   }
@@ -522,7 +560,7 @@ class PhotoUploadService {
   /// Debug method to check existing photos for a user
   static Future<void> debugUserPhotos(String userId) async {
     try {
-      print('=== DEBUG: Checking photos for user $userId ===');
+      debugPrint('=== DEBUG: Checking photos for user $userId ===');
       
       final allPhotos = await _client
           .from('user_photos')
@@ -530,25 +568,25 @@ class PhotoUploadService {
           .eq('user_id', userId)
           .order('created_at', ascending: true);
       
-      print('DEBUG: Total photos found: ${allPhotos.length}');
+      debugPrint('DEBUG: Total photos found: ${allPhotos.length}');
       for (var photo in allPhotos) {
-        print('DEBUG: Photo ID: ${photo['id']}, Order: ${photo['photo_order']}, Active: ${photo['is_active']}, Created: ${photo['created_at']}');
+        debugPrint('DEBUG: Photo ID: ${photo['id']}, Order: ${photo['photo_order']}, Active: ${photo['is_active']}, Created: ${photo['created_at']}');
       }
       
       final activePhotos = allPhotos.where((photo) => 
         photo['is_active'] == true || photo['is_active'] == null).toList();
       
-      print('DEBUG: Active photos: ${activePhotos.length}');
+      debugPrint('DEBUG: Active photos: ${activePhotos.length}');
       final usedSlots = activePhotos
           .where((photo) => photo['photo_order'] != null)
           .map((photo) => _safeIntFromDynamic(photo['photo_order']))
           .where((order) => order != null && order > 0)
           .toSet();
       
-      print('DEBUG: Used slots: $usedSlots');
-      print('=== END DEBUG ===');
+      debugPrint('DEBUG: Used slots: $usedSlots');
+      debugPrint('=== END DEBUG ===');
     } catch (e) {
-      print('ERROR: Failed to debug user photos: $e');
+      debugPrint('ERROR: Failed to debug user photos: $e');
     }
   }
 
@@ -558,7 +596,7 @@ class PhotoUploadService {
       final photos = await getUserPhotos(userId);
       return photos.length;
     } catch (e) {
-      // print('Error getting photo count: $e');
+      // debugPrint('Error getting photo count: $e');
       return 0;
     }
   }
@@ -600,7 +638,7 @@ class PhotoUploadService {
 
       return true;
     } catch (e) {
-      // print('Error updating photo stats: $e');
+      // debugPrint('Error updating photo stats: $e');
       return false;
     }
   }
@@ -613,7 +651,7 @@ class PhotoUploadService {
 
       return currentUser.coins >= 50;
     } catch (e) {
-      // print('Error checking photo stats view permission: $e');
+      // debugPrint('Error checking photo stats view permission: $e');
       return false;
     }
   }
@@ -632,21 +670,24 @@ class PhotoUploadService {
         'Photo statistics view'
       );
     } catch (e) {
-      // print('Error paying for photo stats view: $e');
+      // debugPrint('Error paying for photo stats view: $e');
       return false;
     }
   }
 
   /// Crop image to iPhone portrait format (3:4 aspect ratio)
+  ///
+  /// [context] is used only for localization BEFORE any async operations,
+  /// so it's safe from use_build_context_synchronously warnings.
   static Future<XFile?> _cropImageToiPhoneFormat(XFile imageFile, BuildContext? context) async {
     try {
-      print('DEBUG: Starting image crop with file: ${imageFile.path}');
-      
-      // Get localized strings
+      debugPrint('DEBUG: Starting image crop with file: ${imageFile.path}');
+
+      // Get localized strings BEFORE any async operations (safe to use context here)
       String cropTitle = 'Crop Image';
       String doneButton = 'Done';
       String cancelButton = 'Cancel';
-      
+
       if (context != null) {
         final l10n = AppLocalizations.of(context);
         if (l10n != null) {
@@ -656,7 +697,7 @@ class PhotoUploadService {
         }
       }
 
-      print('DEBUG: Calling ImageCropper with title: $cropTitle');
+      debugPrint('DEBUG: Calling ImageCropper with title: $cropTitle');
       
       final croppedFile = await ImageCropper().cropImage(
         sourcePath: imageFile.path,
@@ -690,14 +731,14 @@ class PhotoUploadService {
         ],
       );
 
-      print('DEBUG: ImageCropper returned: ${croppedFile?.path}');
+      debugPrint('DEBUG: ImageCropper returned: ${croppedFile?.path}');
       return croppedFile != null ? XFile(croppedFile.path) : null;
     } catch (e) {
-      print('ERROR: Image cropping failed: $e');
-      print('ERROR: This might be due to:');
-      print('ERROR: 1. UCropActivity not found in AndroidManifest.xml');
-      print('ERROR: 2. Image file path is invalid: ${imageFile.path}');
-      print('ERROR: 3. Image cropper plugin issue');
+      debugPrint('ERROR: Image cropping failed: $e');
+      debugPrint('ERROR: This might be due to:');
+      debugPrint('ERROR: 1. UCropActivity not found in AndroidManifest.xml');
+      debugPrint('ERROR: 2. Image file path is invalid: ${imageFile.path}');
+      debugPrint('ERROR: 3. Image cropper plugin issue');
       rethrow; // Re-throw to be caught by the calling method
     }
   }

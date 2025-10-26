@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/user_service.dart';
 
@@ -17,29 +18,42 @@ class PredictionService {
         return {'success': false, 'message': 'Kullanıcı giriş yapmamış'};
       }
 
+      // users tablosundan gerçek user_id al
+      final userRecord = await _client
+          .from('users')
+          .select('id')
+          .eq('auth_id', currentUser.id)
+          .maybeSingle();
+
+      if (userRecord == null) {
+        return {'success': false, 'message': 'Kullanıcı bulunamadı'};
+      }
+
+      final userId = userRecord['id'];
+
       // Tahmin doğru mu kontrol et
       final isCorrect = actualWinRate >= minRange && actualWinRate <= maxRange;
-      
+
       // Coin ödülü hesapla - sadece 1 coin
       int rewardCoins = 0;
       if (isCorrect) {
         rewardCoins = 1; // Her zaman 1 coin
-        
+
         // Coin'i kullanıcıya ekle
         final success = await UserService.updateCoins(
-          rewardCoins, 
-          'earned', 
+          rewardCoins,
+          'earned',
           'Win rate tahmini doğru'
         );
-        
+
         if (!success) {
           return {'success': false, 'message': 'Coin eklenirken hata oluştu'};
         }
       }
 
-      // Prediction'ı veritabanına kaydet
+      // Prediction'ı veritabanına kaydet (gerçek user_id ile)
       await _client.from('winrate_predictions').insert({
-        'user_id': currentUser.id,
+        'user_id': userId, // ✅ Gerçek user_id kullan (auth_id değil!)
         'winner_id': winnerId,
         'predicted_min': minRange,
         'predicted_max': maxRange,
@@ -54,13 +68,14 @@ class PredictionService {
         'is_correct': isCorrect,
         'reward_coins': rewardCoins,
         'actual_winrate': actualWinRate,
-        'message': isCorrect 
+        'message': isCorrect
             ? 'Tebrikler! Doğru tahmin ettin ve 1 coin kazandın!'
             : 'Maalesef yanlış tahmin ettin. Gerçek kazanma oranı: ${actualWinRate.toStringAsFixed(1)}%',
       };
-    } catch (e) {
-      // print('Error submitting prediction: $e');
-      return {'success': false, 'message': 'Tahmin kaydedilirken hata oluştu'};
+    } catch (e, stackTrace) {
+      debugPrint('❌ Error submitting prediction: $e');
+      debugPrint('❌ Stack trace: $stackTrace');
+      return {'success': false, 'message': 'Tahmin kaydedilirken hata oluştu: $e'};
     }
   }
 
@@ -71,19 +86,30 @@ class PredictionService {
       final currentUser = _client.auth.currentUser;
       if (currentUser == null) return [];
 
+      // users tablosundan gerçek user_id al
+      final userRecord = await _client
+          .from('users')
+          .select('id')
+          .eq('auth_id', currentUser.id)
+          .maybeSingle();
+
+      if (userRecord == null) return [];
+
+      final userId = userRecord['id'];
+
       final response = await _client
           .from('winrate_predictions')
           .select('''
             *,
             winner:users!winrate_predictions_winner_id_fkey(username, profile_image_url)
           ''')
-          .eq('user_id', currentUser.id)
+          .eq('user_id', userId) // ✅ Gerçek user_id kullan
           .order('created_at', ascending: false)
           .limit(limit);
 
       return (response as List).cast<Map<String, dynamic>>();
     } catch (e) {
-      // print('Error getting user predictions: $e');
+      // debugPrint('Error getting user predictions: $e');
       return [];
     }
   }
@@ -96,10 +122,23 @@ class PredictionService {
         return {'total_predictions': 0, 'correct_predictions': 0, 'total_coins_earned': 0, 'accuracy': 0.0};
       }
 
+      // users tablosundan gerçek user_id al
+      final userRecord = await _client
+          .from('users')
+          .select('id')
+          .eq('auth_id', currentUser.id)
+          .maybeSingle();
+
+      if (userRecord == null) {
+        return {'total_predictions': 0, 'correct_predictions': 0, 'total_coins_earned': 0, 'accuracy': 0.0};
+      }
+
+      final userId = userRecord['id'];
+
       final response = await _client
           .from('winrate_predictions')
           .select('is_correct, reward_coins')
-          .eq('user_id', currentUser.id);
+          .eq('user_id', userId); // ✅ Gerçek user_id kullan
 
       int totalPredictions = response.length;
       int correctPredictions = response.where((p) => p['is_correct'] == true).length;
@@ -113,7 +152,7 @@ class PredictionService {
         'accuracy': accuracy,
       };
     } catch (e) {
-      // print('Error getting prediction stats: $e');
+      // debugPrint('Error getting prediction stats: $e');
       return {'total_predictions': 0, 'correct_predictions': 0, 'total_coins_earned': 0, 'accuracy': 0.0};
     }
   }
@@ -153,7 +192,7 @@ class PredictionService {
 
       return sortedUsers.take(limit).toList();
     } catch (e) {
-      // print('Error getting top predictors: $e');
+      // debugPrint('Error getting top predictors: $e');
       return [];
     }
   }

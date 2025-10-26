@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
 import 'coin_transaction_notification_service.dart';
@@ -128,16 +129,24 @@ class UserService {
     }
   }
 
-  // Coin ekle/çıkar (ATOMIC - Race condition fixed)
+  // ✅ SECURITY FIX: Coin ekle/çıkar (ATOMIC - Race condition fixed)
+  // Uses database function to prevent race conditions during concurrent coin updates
   static Future<bool> updateCoins(int amount, String type, String description) async {
     try {
       final authUser = _client.auth.currentUser;
-      if (authUser == null) return false;
+      if (authUser == null) {
+        debugPrint('Error: No authenticated user for coin update');
+        return false;
+      }
 
       final currentUser = await getCurrentUser();
-      if (currentUser == null) return false;
+      if (currentUser == null) {
+        debugPrint('Error: Could not fetch current user for coin update');
+        return false;
+      }
 
       // Atomic database function kullan (race condition önlendi)
+      // This function locks the user row during update to prevent concurrent modifications
       final response = await _client.rpc('update_user_coins', params: {
         'p_user_id': currentUser.id,
         'p_amount': amount,
@@ -145,13 +154,18 @@ class UserService {
         'p_description': description,
       });
 
-      if (response == null || response.isEmpty) return false;
+      // Check if the RPC function returned success
+      if (response == false) {
+        debugPrint('Error: update_user_coins RPC returned false');
+        return false;
+      }
 
       // Coin transaction bildirimi gönder (sadece bir kez)
       await _sendCoinTransactionNotification(amount, type, description);
 
       return true;
     } catch (e) {
+      debugPrint('Error updating coins: $e');
       return false;
     }
   }
@@ -247,7 +261,7 @@ class UserService {
           .eq('id', userId);
       
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
     }
   }
 
@@ -283,7 +297,7 @@ class UserService {
         },
       );
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
     }
   }
 
@@ -299,7 +313,7 @@ class UserService {
         },
       );
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
     }
   }
 
@@ -372,7 +386,7 @@ class UserService {
             );
           } else if (description.contains('satın alma')) {
             // Coin satın alma bildirimi
-            print('💳 Sending coin purchase notification: $amount coins');
+            debugPrint('💳 Sending coin purchase notification: $amount coins');
             await CoinTransactionNotificationService.sendCoinPurchaseNotification(
               coinAmount: amount,
               price: 0.0, // Fiyat bilgisi description'dan parse edilebilir
@@ -386,7 +400,7 @@ class UserService {
             );
           } else {
             // Genel coin kazanıldı bildirimi (yukarıdaki hiçbir kelime eşleşmediyse)
-            print('💰 Sending general coin reward notification: $amount coins');
+            debugPrint('💰 Sending general coin reward notification: $amount coins');
             await NotificationService.sendLocalizedNotification(
               type: 'coin_reward',
               data: {
@@ -398,7 +412,7 @@ class UserService {
         }
       } else {
         // Coin harcandı (negatif miktar)
-        print('Sending spent notification for negative amount: ${amount.abs()}');
+        debugPrint('Sending spent notification for negative amount: ${amount.abs()}');
         await CoinTransactionNotificationService.sendCoinSpentNotification(
           coinAmount: amount.abs(),
           reason: type,
@@ -408,7 +422,7 @@ class UserService {
 
       // Ayrıca type 'spent' ise de harcama bildirimi gönder
       if (type == 'spent') {
-        print('Sending spent notification for type=spent: ${amount.abs()}');
+        debugPrint('Sending spent notification for type=spent: ${amount.abs()}');
         await CoinTransactionNotificationService.sendCoinSpentNotification(
           coinAmount: amount.abs(),
           reason: type,
@@ -416,7 +430,7 @@ class UserService {
         );
       }
     } catch (e) {
-      print('❌ Failed to send coin transaction notification: $e');
+      debugPrint('❌ Failed to send coin transaction notification: $e');
     }
   }
 
@@ -460,7 +474,7 @@ class UserService {
         'coinsEarned': coinsEarned,
       };
     } catch (e) {
-      print('Error getting referral stats: $e');
+      debugPrint('Error getting referral stats: $e');
       return {'totalReferrals': 0, 'coinsEarned': 0};
     }
   }
@@ -508,7 +522,7 @@ class UserService {
       
       return true;
     } catch (e) {
-      print('Error processing referral: $e');
+      debugPrint('Error processing referral: $e');
       return false;
     }
   }

@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/user_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 // TODO: Uncomment after adding in_app_purchase package
 // import 'package:in_app_purchase/in_app_purchase.dart';
@@ -68,7 +69,7 @@ class PaymentService {
           await _iap.queryProductDetails({productId});
 
       if (productResponse.productDetails.isEmpty) {
-        print('Product not found: $productId');
+        debugPrint('Product not found: $productId');
         return false;
       }
 
@@ -82,7 +83,7 @@ class PaymentService {
       return await _iap.buyConsumable(purchaseParam: purchaseParam);
 
     } catch (e) {
-      print('Error purchasing coins: $e');
+      debugPrint('Error purchasing coins: $e');
       return false;
     }
   }
@@ -98,7 +99,7 @@ class PaymentService {
           await _deliverCoins(purchase);
         } else if (purchase.status == PurchaseStatus.error) {
           // Hata - kullanıcıya bildir
-          print('Purchase error: ${purchase.error}');
+          debugPrint('Purchase error: ${purchase.error}');
         }
 
         // Purchase'ı tamamlandı olarak işaretle
@@ -140,12 +141,13 @@ class PaymentService {
       });
 
     } catch (e) {
-      print('Error delivering coins: $e');
+      debugPrint('Error delivering coins: $e');
     }
   }
   */
 
-  // ŞİMDİLİK SADECE TEST İÇİN - PRODUCTION'DA KALDIRILACAK!
+  // TEST MODE - Only works in debug builds
+  // ✅ SECURITY FIX: Test mode now protected by kDebugMode
   static Future<bool> purchaseCoins(String packageId, String paymentMethod) async {
     try {
       final currentUser = _client.auth.currentUser;
@@ -154,34 +156,47 @@ class PaymentService {
       final package = coinPackages[packageId];
       if (package == null) return false;
 
-      // ⚠️ TEST MODU - Gerçek para alınmıyor!
-      print('⚠️ TEST MODE: Simulating purchase for ${package['description']}');
-      await Future.delayed(const Duration(seconds: 1));
+      // ✅ SECURITY: Test mode only enabled in debug builds
+      // In production (release builds), this will throw an error
+      if (paymentMethod == 'TEST_MODE') {
+        if (!kDebugMode) {
+          debugPrint('ERROR: Test mode is not available in production builds');
+          throw Exception('Test mode is not available in production builds');
+        }
 
-      // Coin'leri kullanıcıya ekle
-      await UserService.updateCoins(
-        package['coins']!,
-        'purchased',
-        'TEST - Coin satın alma - ${package['description']}'
-      );
+        debugPrint('⚠️ DEBUG MODE ONLY: Simulating purchase for ${package['description']}');
+        await Future.delayed(const Duration(seconds: 1));
 
-      // Ödeme kaydını ekle (transaction_id ile)
-      final transactionId = const Uuid().v4();
+        // Coin'leri kullanıcıya ekle
+        await UserService.updateCoins(
+          package['coins']!,
+          'purchased',
+          'TEST - Coin satın alma - ${package['description']}'
+        );
 
-      await _client.from('payments').insert({
-        'user_id': currentUser.id,
-        'package_id': packageId,
-        'amount': package['price'],
-        'coins': package['coins'],
-        'payment_method': 'TEST_MODE',
-        'transaction_id': transactionId,
-        'status': 'completed',
-        'created_at': DateTime.now().toIso8601String(),
-      });
+        // Ödeme kaydını ekle (transaction_id ile)
+        final transactionId = const Uuid().v4();
 
-      return true;
+        await _client.from('payments').insert({
+          'user_id': currentUser.id,
+          'package_id': packageId,
+          'amount': package['price'],
+          'coins': package['coins'],
+          'payment_method': 'TEST_MODE',
+          'transaction_id': transactionId,
+          'status': 'completed',
+          'created_at': DateTime.now().toIso8601String(),
+        });
+
+        return true;
+      }
+
+      // TODO: Real payment implementation here
+      // When in_app_purchase is implemented, this is where the real payment code goes
+      throw UnimplementedError('Real payment processing not yet implemented. Please implement in_app_purchase.');
+
     } catch (e) {
-      print('Error purchasing coins: $e');
+      debugPrint('Error purchasing coins: $e');
       return false;
     }
   }
@@ -200,7 +215,7 @@ class PaymentService {
 
       return (response as List).cast<Map<String, dynamic>>();
     } catch (e) {
-      // print('Error getting payment history: $e');
+      // debugPrint('Error getting payment history: $e');
       return [];
     }
   }

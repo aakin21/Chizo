@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/notification_model.dart';
 
@@ -8,7 +9,7 @@ class NotificationSettingsService {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getBool('notification_$type') ?? true; // Default: enabled
     } catch (e) {
-      print('❌ Failed to get notification setting: $e');
+      debugPrint('❌ Failed to get notification setting: $e');
       return true; // Default: enabled
     }
   }
@@ -19,7 +20,7 @@ class NotificationSettingsService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('notification_$type', enabled);
     } catch (e) {
-      print('❌ Failed to set notification setting: $e');
+      debugPrint('❌ Failed to set notification setting: $e');
     }
   }
 
@@ -38,7 +39,7 @@ class NotificationSettingsService {
         'system_announcements': prefs.getBool('notification_${NotificationTypes.systemAnnouncement}') ?? true,
       };
     } catch (e) {
-      print('❌ Failed to get all notification settings: $e');
+      debugPrint('❌ Failed to get all notification settings: $e');
       return {};
     }
   }
@@ -51,7 +52,7 @@ class NotificationSettingsService {
         await prefs.setBool('notification_${entry.key}', entry.value);
       }
     } catch (e) {
-      print('❌ Failed to set all notification settings: $e');
+      debugPrint('❌ Failed to set all notification settings: $e');
     }
   }
 
@@ -61,7 +62,7 @@ class NotificationSettingsService {
       final isEnabled = await isNotificationEnabled(type);
       return isEnabled;
     } catch (e) {
-      print('❌ Failed to check if notification should be sent: $e');
+      debugPrint('❌ Failed to check if notification should be sent: $e');
       return true; // Default: send notification
     }
   }
@@ -88,7 +89,7 @@ class NotificationSettingsService {
         await prefs.setBool(entry.key, entry.value);
       }
     } catch (e) {
-      print('❌ Failed to reset notification settings: $e');
+      debugPrint('❌ Failed to reset notification settings: $e');
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:math';
@@ -89,7 +90,7 @@ class TournamentService {
               .where((tournament) => seenIds.add(tournament['id'] as int))
               .toList();
         } catch (e) {
-          print('Error: $e');
+          debugPrint('Error: $e');
       // Private turnuva sorgusu hatası
         }
       }
@@ -144,7 +145,7 @@ class TournamentService {
       return ids;
     } catch (e) {
       // Tablo yoksa veya hata varsa boş liste döndür
-      print('Error getting user viewed tournaments: $e');
+      debugPrint('Error getting user viewed tournaments: $e');
       return [];
     }
   }
@@ -172,7 +173,7 @@ class TournamentService {
           );
       
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
     }
   }
 
@@ -183,7 +184,7 @@ class TournamentService {
     try {
       await create5000CoinTournaments();
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
       // Error creating weekly tournaments
     }
   }
@@ -208,7 +209,7 @@ class TournamentService {
         await _create5000CoinTournament('Kadın');
       }
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
       // Error creating 5000 coin tournaments
     }
   }
@@ -247,7 +248,7 @@ class TournamentService {
         'countdown_start_date': null,
       });
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
       // Error creating 5000 coin tournament
     }
   }
@@ -261,16 +262,16 @@ class TournamentService {
           .eq('entry_fee', 5000)
           .eq('is_system_tournament', true);
       
-      print('🔍 DEBUG: 5000 coin turnuvalar:');
+      debugPrint('🔍 DEBUG: 5000 coin turnuvalar:');
       for (var tournament in tournaments) {
-        print('  - ID: ${tournament['id']}');
-        print('    Name: ${tournament['name']}');
-        print('    Name Key: ${tournament['name_key']}');
-        print('    Gender: ${tournament['gender']}');
-        print('    ---');
+        debugPrint('  - ID: ${tournament['id']}');
+        debugPrint('    Name: ${tournament['name']}');
+        debugPrint('    Name Key: ${tournament['name_key']}');
+        debugPrint('    Gender: ${tournament['gender']}');
+        debugPrint('    ---');
       }
     } catch (e) {
-      print('❌ DEBUG: Error checking tournament name keys: $e');
+      debugPrint('❌ DEBUG: Error checking tournament name keys: $e');
     }
   }
 
@@ -301,7 +302,7 @@ class TournamentService {
         }
         
         if (newNameKey != null && currentNameKey != newNameKey) {
-          print('🔄 DEBUG: Updating tournament $tournamentId name_key to $newNameKey');
+          debugPrint('🔄 DEBUG: Updating tournament $tournamentId name_key to $newNameKey');
           await _client
               .from('tournaments')
               .update({
@@ -312,7 +313,7 @@ class TournamentService {
         }
       }
     } catch (e) {
-      print('❌ DEBUG: Error updating tournament name keys: $e');
+      debugPrint('❌ DEBUG: Error updating tournament name keys: $e');
     }
   }
 
@@ -357,7 +358,7 @@ class TournamentService {
         }
       }
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
       // Error checking 5000 coin tournaments
     }
   }
@@ -376,7 +377,7 @@ class TournamentService {
           .eq('id', tournamentId);
           
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
       // Error starting 5000 coin tournament
     }
   }
@@ -413,7 +414,7 @@ class TournamentService {
         }
       }
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
       // Error updating 5000 coin tournament phases
     }
   }
@@ -453,7 +454,7 @@ class TournamentService {
       }
           
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
       // Error advancing 5000 coin tournament to quarter finals
     }
   }
@@ -493,7 +494,7 @@ class TournamentService {
       }
           
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
       // Error advancing 5000 coin tournament to semi finals
     }
   }
@@ -610,7 +611,7 @@ class TournamentService {
       // Yeni 5000 coinlik turnuva oluştur
       await create5000CoinTournaments();
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
       // Error completing 5000 coin tournament
     }
   }
@@ -641,7 +642,7 @@ class TournamentService {
       }
       
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
       // Error creating 5000 coin quarter final matches
     }
   }
@@ -670,7 +671,7 @@ class TournamentService {
       }
       
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
       // Error creating 5000 coin semi final matches
     }
   }
@@ -691,7 +692,7 @@ class TournamentService {
       });
       
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
       // Error creating 5000 coin final match
     }
   }
@@ -840,7 +841,7 @@ class TournamentService {
       });
       
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
       // Error saving tournament winners
     }
   }
@@ -1071,7 +1072,7 @@ class TournamentService {
 
       return result;
     } catch (e) {
-      print('Error getting private tournament leaderboard: $e');
+      debugPrint('Error getting private tournament leaderboard: $e');
       return [];
     }
   }
@@ -1123,7 +1124,7 @@ class TournamentService {
 
       return participants;
     } catch (e) {
-      print('Error getting tournament leaderboard: $e');
+      debugPrint('Error getting tournament leaderboard: $e');
       return [];
     }
   }
@@ -1230,14 +1231,14 @@ class TournamentService {
   // Turnuva fotoğrafı yükle
   static Future<bool> uploadTournamentPhoto(String tournamentId, String photoUrl) async {
     try {
-      print('🎯 UPLOAD DEBUG: Starting photo upload for tournament $tournamentId');
+      debugPrint('🎯 UPLOAD DEBUG: Starting photo upload for tournament $tournamentId');
       
       final user = _client.auth.currentUser;
       if (user == null) {
-        print('❌ UPLOAD DEBUG: No authenticated user');
+        debugPrint('❌ UPLOAD DEBUG: No authenticated user');
         return false;
       }
-      print('✅ UPLOAD DEBUG: User authenticated: ${user.id}');
+      debugPrint('✅ UPLOAD DEBUG: User authenticated: ${user.id}');
 
       // Kullanıcının users tablosundaki ID'sini al (auth_id -> users.id)
       final currentUserRecord = await _client
@@ -1247,14 +1248,14 @@ class TournamentService {
           .maybeSingle();
 
       if (currentUserRecord == null) {
-        print('❌ UPLOAD DEBUG: Current user record not found');
+        debugPrint('❌ UPLOAD DEBUG: Current user record not found');
         return false;
       }
       final currentUserId = currentUserRecord['id'];
-      print('✅ UPLOAD DEBUG: Current user ID: $currentUserId');
+      debugPrint('✅ UPLOAD DEBUG: Current user ID: $currentUserId');
 
       // Kullanıcının turnuvaya katılıp katılmadığını kontrol et
-      print('🎯 UPLOAD DEBUG: Checking participation...');
+      debugPrint('🎯 UPLOAD DEBUG: Checking participation...');
       final participation = await _client
           .from('tournament_participants')
           .select('id')
@@ -1263,13 +1264,13 @@ class TournamentService {
           .maybeSingle();
 
       if (participation == null) {
-        print('❌ UPLOAD DEBUG: User not participating in tournament');
+        debugPrint('❌ UPLOAD DEBUG: User not participating in tournament');
         return false;
       }
-      print('✅ UPLOAD DEBUG: User is participating, participation ID: ${participation['id']}');
+      debugPrint('✅ UPLOAD DEBUG: User is participating, participation ID: ${participation['id']}');
 
       // Turnuva fotoğrafını güncelle
-      print('🎯 UPLOAD DEBUG: Updating tournament photo...');
+      debugPrint('🎯 UPLOAD DEBUG: Updating tournament photo...');
       await _client
           .from('tournament_participants')
           .update({
@@ -1278,10 +1279,10 @@ class TournamentService {
           .eq('tournament_id', tournamentId)
           .eq('user_id', currentUserId);
 
-      print('✅ UPLOAD DEBUG: Photo upload successful');
+      debugPrint('✅ UPLOAD DEBUG: Photo upload successful');
       return true;
     } catch (e) {
-      print('❌ UPLOAD DEBUG: Error uploading photo: $e');
+      debugPrint('❌ UPLOAD DEBUG: Error uploading photo: $e');
       return false;
     }
   }
@@ -1466,7 +1467,7 @@ class TournamentService {
       unvotedMatches.shuffle(Random());
       return unvotedMatches;
     } catch (e) {
-      print('Error getting private tournament matches for voting: $e');
+      debugPrint('Error getting private tournament matches for voting: $e');
       return [];
     }
   }
@@ -1474,11 +1475,11 @@ class TournamentService {
   // Private turnuva oylaması yap
   static Future<bool> voteForPrivateTournamentMatch(String tournamentId, String winnerId, String loserId) async {
     try {
-      print('🎯 PRIVATE VOTE: Starting vote for tournament $tournamentId, winner: $winnerId, loser: $loserId');
+      debugPrint('🎯 PRIVATE VOTE: Starting vote for tournament $tournamentId, winner: $winnerId, loser: $loserId');
       
       final user = _client.auth.currentUser;
       if (user == null) {
-        print('❌ PRIVATE VOTE: No authenticated user');
+        debugPrint('❌ PRIVATE VOTE: No authenticated user');
         return false;
       }
 
@@ -1490,12 +1491,12 @@ class TournamentService {
           .maybeSingle();
       
       if (currentUserRecord == null) {
-        print('❌ PRIVATE VOTE: Current user record not found');
+        debugPrint('❌ PRIVATE VOTE: Current user record not found');
         return false;
       }
 
       final currentUserId = currentUserRecord['id'];
-      print('✅ PRIVATE VOTE: Current user ID: $currentUserId');
+      debugPrint('✅ PRIVATE VOTE: Current user ID: $currentUserId');
 
       // Bu match için daha önce oy verilmiş mi kontrol et
       final existingVote = await _client
@@ -1508,7 +1509,7 @@ class TournamentService {
           .maybeSingle();
 
       if (existingVote != null) {
-        print('❌ PRIVATE VOTE: User already voted for this match');
+        debugPrint('❌ PRIVATE VOTE: User already voted for this match');
         return false;
       }
 
@@ -1523,7 +1524,7 @@ class TournamentService {
           .maybeSingle();
 
       if (existingVoteReverse != null) {
-        print('❌ PRIVATE VOTE: User already voted for this match (reverse)');
+        debugPrint('❌ PRIVATE VOTE: User already voted for this match (reverse)');
         return false;
       }
 
@@ -1537,20 +1538,20 @@ class TournamentService {
         'created_at': DateTime.now().toIso8601String(),
       });
 
-      print('✅ PRIVATE VOTE: Vote recorded successfully');
+      debugPrint('✅ PRIVATE VOTE: Vote recorded successfully');
 
       // Kazananın skorunu artır (match kazanma sayısı) - Manuel güncelleme
-      print('🎯 PRIVATE VOTE: Updating wins count for winner: $winnerId');
+      debugPrint('🎯 PRIVATE VOTE: Updating wins count for winner: $winnerId');
       
       try {
         await _client.rpc('increment_private_tournament_wins', params: {
           'tournament_id': tournamentId,
           'user_id': winnerId,
         });
-        print('✅ PRIVATE VOTE: RPC call successful');
+        debugPrint('✅ PRIVATE VOTE: RPC call successful');
       } catch (rpcError) {
         // RPC başarısız olursa manuel güncelleme yap
-        print('⚠️ PRIVATE VOTE: RPC failed, trying manual update: $rpcError');
+        debugPrint('⚠️ PRIVATE VOTE: RPC failed, trying manual update: $rpcError');
         
         // Mevcut wins_count'u al
         final currentRecord = await _client
@@ -1561,7 +1562,7 @@ class TournamentService {
             .maybeSingle();
         
         final currentWins = currentRecord?['wins_count'] ?? 0;
-        print('📊 PRIVATE VOTE: Current wins for user $winnerId: $currentWins');
+        debugPrint('📊 PRIVATE VOTE: Current wins for user $winnerId: $currentWins');
         
         // Wins count'u artır
         await _client
@@ -1570,12 +1571,12 @@ class TournamentService {
             .eq('tournament_id', tournamentId)
             .eq('user_id', winnerId);
         
-        print('✅ PRIVATE VOTE: Wins count updated to ${currentWins + 1}');
+        debugPrint('✅ PRIVATE VOTE: Wins count updated to ${currentWins + 1}');
       }
 
       return true;
     } catch (e) {
-      print('Error voting for private tournament match: $e');
+      debugPrint('Error voting for private tournament match: $e');
       return false;
     }
   }
@@ -1637,7 +1638,7 @@ class TournamentService {
       await _completePrivateTournamentsByEndDate();
       
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
       // Error updating tournament phases
     }
   }
@@ -1651,7 +1652,7 @@ class TournamentService {
   static Future<void> _startPrivateTournamentsByStartDate() async {
     try {
       final now = DateTime.now();
-      print('🔍 DEBUG: Private turnuva start date kontrolü - Şimdi: $now');
+      debugPrint('🔍 DEBUG: Private turnuva start date kontrolü - Şimdi: $now');
       
       // Start date'i gelmiş private turnuvaları getir
       final readyTournaments = await _client
@@ -1661,8 +1662,8 @@ class TournamentService {
           .eq('status', 'upcoming')
           .lte('start_date', now.toIso8601String());
       
-      print('🔍 DEBUG: Sorgu: start_date <= $now');
-      print('🔍 DEBUG: ISO String: ${now.toIso8601String()}');
+      debugPrint('🔍 DEBUG: Sorgu: start_date <= $now');
+      debugPrint('🔍 DEBUG: ISO String: ${now.toIso8601String()}');
       
       // Manuel test - tüm private turnuvaları getir
       final allPrivateTournaments = await _client
@@ -1670,15 +1671,15 @@ class TournamentService {
           .select('id, name, start_date, current_participants, status')
           .eq('is_private', true);
       
-      print('🔍 DEBUG: Tüm private turnuvalar: ${allPrivateTournaments.length} adet');
+      debugPrint('🔍 DEBUG: Tüm private turnuvalar: ${allPrivateTournaments.length} adet');
       for (var tournament in allPrivateTournaments) {
-        print('  - ${tournament['name']} - Start: ${tournament['start_date']}, Status: ${tournament['status']}');
+        debugPrint('  - ${tournament['name']} - Start: ${tournament['start_date']}, Status: ${tournament['status']}');
       }
       
-      print('📋 DEBUG: Start date geçmiş private turnuvalar: ${readyTournaments.length} adet');
+      debugPrint('📋 DEBUG: Start date geçmiş private turnuvalar: ${readyTournaments.length} adet');
       
       for (var tournament in readyTournaments) {
-        print('🔍 DEBUG: ${tournament['name']} - Start: ${tournament['start_date']}, Katılımcı: ${tournament['current_participants']}');
+        debugPrint('🔍 DEBUG: ${tournament['name']} - Start: ${tournament['start_date']}, Katılımcı: ${tournament['current_participants']}');
         // En az 2 katılımcı varsa turnuvayı başlat
         if (tournament['current_participants'] >= 2) {
           await _client
@@ -1691,7 +1692,7 @@ class TournamentService {
               })
               .eq('id', tournament['id']);
           
-          print('✅ DEBUG: Private tournament ${tournament['name']} started by start date');
+          debugPrint('✅ DEBUG: Private tournament ${tournament['name']} started by start date');
         } else {
           // Yeterli katılımcı yoksa turnuvayı tamamla
           await _client
@@ -1702,11 +1703,11 @@ class TournamentService {
               })
               .eq('id', tournament['id']);
           
-          print('❌ DEBUG: Private tournament ${tournament['name']} completed due to insufficient participants');
+          debugPrint('❌ DEBUG: Private tournament ${tournament['name']} completed due to insufficient participants');
         }
       }
     } catch (e) {
-      print('❌ DEBUG: Error starting private tournaments by start date: $e');
+      debugPrint('❌ DEBUG: Error starting private tournaments by start date: $e');
     }
   }
 
@@ -1735,7 +1736,7 @@ class TournamentService {
         
       }
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
     }
   }
 
@@ -1961,7 +1962,7 @@ class TournamentService {
         });
       } catch (e) {
         // Eğer tablo yoksa veya başka hata varsa, sadece mesaj döndür
-        print('Error inserting into tournament_viewers: $e');
+        debugPrint('Error inserting into tournament_viewers: $e');
         return {
           'success': true,
           'message': 'Tournament access granted. Press the "Join" button to participate.',
@@ -2218,7 +2219,7 @@ class TournamentService {
         );
       }
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
     }
   }
 
@@ -2240,7 +2241,7 @@ class TournamentService {
         );
       }
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
     }
   }
 
@@ -2256,7 +2257,7 @@ class TournamentService {
         '$tournamentName turnuvasına başarıyla katıldınız!',
       );
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
     }
   }
 
@@ -2271,21 +2272,21 @@ class TournamentService {
         'created_at': DateTime.now().toIso8601String(),
       });
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
     }
   }
 
   // Katılımcıyı turnuvadan at
   static Future<bool> kickParticipant(String tournamentId, String userId) async {
     try {
-      print('🎯 KICK DEBUG: Starting kick participant for tournament $tournamentId, user $userId');
+      debugPrint('🎯 KICK DEBUG: Starting kick participant for tournament $tournamentId, user $userId');
       
       final user = _client.auth.currentUser;
       if (user == null) {
-        print('❌ KICK DEBUG: No authenticated user');
+        debugPrint('❌ KICK DEBUG: No authenticated user');
         return false;
       }
-      print('✅ KICK DEBUG: User authenticated: ${user.id}');
+      debugPrint('✅ KICK DEBUG: User authenticated: ${user.id}');
 
       // Kullanıcının users tablosundaki ID'sini al (auth_id -> users.id)
       final currentUserRecord = await _client
@@ -2295,11 +2296,11 @@ class TournamentService {
           .maybeSingle();
 
       if (currentUserRecord == null) {
-        print('❌ KICK DEBUG: Current user record not found');
+        debugPrint('❌ KICK DEBUG: Current user record not found');
         return false;
       }
       final currentUserId = currentUserRecord['id'];
-      print('✅ KICK DEBUG: Current user ID: $currentUserId');
+      debugPrint('✅ KICK DEBUG: Current user ID: $currentUserId');
 
       // Turnuva bilgilerini al ve admin kontrolü yap
       final tournament = await _client
@@ -2309,10 +2310,10 @@ class TournamentService {
           .single();
 
       if (tournament['creator_id'] != currentUserId) {
-        print('❌ KICK DEBUG: User is not admin of tournament');
+        debugPrint('❌ KICK DEBUG: User is not admin of tournament');
         return false;
       }
-      print('✅ KICK DEBUG: User is admin, proceeding with kick');
+      debugPrint('✅ KICK DEBUG: User is admin, proceeding with kick');
 
       // Katılımcıyı turnuvadan çıkar
       await _client
@@ -2321,10 +2322,10 @@ class TournamentService {
           .eq('tournament_id', tournamentId)
           .eq('user_id', userId);
 
-      print('✅ KICK DEBUG: Participant kicked successfully');
+      debugPrint('✅ KICK DEBUG: Participant kicked successfully');
       return true;
     } catch (e) {
-      print('❌ KICK DEBUG: Error kicking participant: $e');
+      debugPrint('❌ KICK DEBUG: Error kicking participant: $e');
       return false;
     }
   }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/notification_model.dart';
 import 'notification_service.dart';
@@ -26,7 +27,7 @@ class MilestoneNotificationService {
         }
       }
     } catch (e) {
-      print('❌ Failed to check photo milestones: $e');
+      debugPrint('❌ Failed to check photo milestones: $e');
     }
   }
 
@@ -42,7 +43,7 @@ class MilestoneNotificationService {
         );
       }
     } catch (e) {
-      print('❌ Failed to check total milestones: $e');
+      debugPrint('❌ Failed to check total milestones: $e');
     }
   }
 
@@ -80,7 +81,7 @@ class MilestoneNotificationService {
         );
       }
     } catch (e) {
-      print('❌ Failed to check all milestones: $e');
+      debugPrint('❌ Failed to check all milestones: $e');
     }
   }
 
@@ -98,7 +99,7 @@ class MilestoneNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send hot streak reward notification: $e');
+      debugPrint('❌ Failed to send hot streak reward notification: $e');
     }
   }
 
@@ -118,7 +119,7 @@ class MilestoneNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send daily login reward notification: $e');
+      debugPrint('❌ Failed to send daily login reward notification: $e');
     }
   }
 }

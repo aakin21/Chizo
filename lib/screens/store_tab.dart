@@ -628,14 +628,16 @@ class _StoreTabState extends State<StoreTab> {
 
     // Simulate 3 seconds of ad watching
     Future.delayed(const Duration(seconds: 3), () async {
+      if (!mounted) return;
       Navigator.pop(context); // Close loading dialog
-      
+
       // Reklam izleme sayacını güncelle
       await _updateAdWatchCount();
-      
+
       // Add coins
       _addCoins(5);
-      
+
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.coinsEarned(5)),
@@ -671,6 +673,7 @@ class _StoreTabState extends State<StoreTab> {
           _loadUserData();
         });
       } else {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Coin eklenirken hata oluştu!'),
@@ -679,7 +682,8 @@ class _StoreTabState extends State<StoreTab> {
         );
       }
     } catch (e) {
-      print('❌ Error adding coins: $e');
+      debugPrint('❌ Error adding coins: $e');
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${l10n.error}: $e'),
@@ -768,11 +772,13 @@ class _StoreTabState extends State<StoreTab> {
 
     // Simulate 2 seconds of processing
     Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted) return;
       Navigator.pop(context); // Close loading dialog
-      
+
       // Add coins
       _addCoins(coins);
-      
+
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('$coins ${l10n.coins} eklendi!'),

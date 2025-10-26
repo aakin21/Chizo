@@ -1574,7 +1574,9 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
         // Kullanıcı fotoğraf seçmedi
         return;
       }
-      
+
+      if (!mounted) return;
+
       // Loading dialog göster
       showDialog(
         context: context,
@@ -1599,18 +1601,20 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
       
       // Loading dialog'u kapat
       if (mounted) Navigator.pop(context);
-      
+
       if (success) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Turnuvaya başarıyla katıldınız!'),
             backgroundColor: Colors.green,
           ),
         );
-        
+
         // Verileri yenile
         await _loadData();
       } else {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Fotoğraf yükleme başarısız!'),
@@ -1618,11 +1622,12 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
           ),
         );
       }
-      
+
     } catch (e) {
       // Loading dialog'u kapat
       if (mounted) Navigator.pop(context);
-      
+
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Fotoğraf yükleme hatası: $e'),
@@ -1634,43 +1639,43 @@ class _TournamentDetailScreenState extends State<TournamentDetailScreen> {
 
   Future<bool> _uploadPhotoAndJoinTournament(XFile imageFile) async {
     try {
-      print('🎯 DEBUG: Starting photo upload and join process');
+      debugPrint('🎯 DEBUG: Starting photo upload and join process');
       
       // Önce turnuvaya katıl (fotoğraf olmadan)
-      print('🎯 DEBUG: Joining tournament...');
+      debugPrint('🎯 DEBUG: Joining tournament...');
       final joinSuccess = await TournamentService.joinTournament(widget.tournament.id);
-      print('🎯 DEBUG: Join result: $joinSuccess');
+      debugPrint('🎯 DEBUG: Join result: $joinSuccess');
       
       if (!joinSuccess) {
-        print('❌ DEBUG: Failed to join tournament');
+        debugPrint('❌ DEBUG: Failed to join tournament');
         return false;
       }
       
       // Fotoğrafı base64'e çevir (geçici çözüm)
-      print('🎯 DEBUG: Converting photo to base64...');
+      debugPrint('🎯 DEBUG: Converting photo to base64...');
       final bytes = await imageFile.readAsBytes();
       final base64Image = 'data:image/jpeg;base64,${base64Encode(bytes)}';
-      print('🎯 DEBUG: Base64 length: ${base64Image.length}');
+      debugPrint('🎯 DEBUG: Base64 length: ${base64Image.length}');
       
       // TournamentService'deki uploadTournamentPhoto fonksiyonunu kullan
-      print('🎯 DEBUG: Uploading photo to tournament...');
+      debugPrint('🎯 DEBUG: Uploading photo to tournament...');
       final uploadSuccess = await TournamentService.uploadTournamentPhoto(
         widget.tournament.id,
         base64Image,
       );
-      print('🎯 DEBUG: Upload result: $uploadSuccess');
+      debugPrint('🎯 DEBUG: Upload result: $uploadSuccess');
       
       if (uploadSuccess) {
-        print('✅ DEBUG: Photo upload successful, refreshing data...');
+        debugPrint('✅ DEBUG: Photo upload successful, refreshing data...');
         // Verileri yenile
         await _loadData();
         return true;
       } else {
-        print('❌ DEBUG: Photo upload failed');
+        debugPrint('❌ DEBUG: Photo upload failed');
         return false;
       }
     } catch (e) {
-      print('❌ DEBUG: Error uploading photo and joining tournament: $e');
+      debugPrint('❌ DEBUG: Error uploading photo and joining tournament: $e');
       return false;
     }
   }

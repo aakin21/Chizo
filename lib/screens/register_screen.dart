@@ -6,8 +6,6 @@ import '../widgets/compact_language_selector.dart';
 import '../widgets/country_selector.dart';
 import '../widgets/gender_selector.dart';
 import '../services/global_language_service.dart';
-import '../services/global_theme_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterScreen extends StatefulWidget {
   final Function(Locale)? onLanguageChanged;
@@ -26,40 +24,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? _selectedCountryCode;
   String? _selectedGenderCode;
   bool _isLoading = false;
-  String _currentTheme = 'Koyu';
 
   @override
   void initState() {
     super.initState();
-    _loadCurrentTheme();
-    
-    // Global theme service'e callback kaydet
-    GlobalThemeService().setThemeChangeCallback((theme) {
-      if (mounted) {
-        setState(() {
-          _currentTheme = theme;
-        });
-      }
-    });
-  }
-
-
-  Future<void> _loadCurrentTheme() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final theme = prefs.getString('selected_theme') ?? 'Koyu';
-      if (mounted) {
-        setState(() {
-          _currentTheme = theme;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _currentTheme = 'Koyu';
-        });
-      }
-    }
+    // Theme tracking removed - this screen doesn't use theme
   }
 
   void register() async {
@@ -221,8 +190,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _passwordController.dispose();
     _usernameController.dispose();
     _ageController.dispose();
-    // Callback'i temizle
-    GlobalThemeService().clearAllCallbacks();
     super.dispose();
   }
 

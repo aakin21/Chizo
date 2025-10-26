@@ -1,65 +1,65 @@
 /// Bildirim kanalları - Telefona push mu yoksa sadece app içi mi?
 enum NotificationChannel {
   /// Telefona push notification gönder + Database'e kaydet
-  PUSH,
+  push,
 
   /// Sadece database'e kaydet (telefona gönderme)
-  IN_APP_ONLY,
+  inAppOnly,
 }
 
 /// Bildirim tiplerinin kanal ayarları
 class NotificationChannelConfig {
   static const Map<String, NotificationChannel> channels = {
     // 🔥 HOT STREAK - PUSH (Kritik!)
-    'hotstreak_broken': NotificationChannel.PUSH,
-    'hotstreak_milestone': NotificationChannel.PUSH,
-    'hotstreak_reminder': NotificationChannel.PUSH,
-    'hotstreak_reward': NotificationChannel.IN_APP_ONLY, // Coin ödülü, app içi
-    'hotstreak_active': NotificationChannel.IN_APP_ONLY,
+    'hotstreak_broken': NotificationChannel.push,
+    'hotstreak_milestone': NotificationChannel.push,
+    'hotstreak_reminder': NotificationChannel.push,
+    'hotstreak_reward': NotificationChannel.inAppOnly, // Coin ödülü, app içi
+    'hotstreak_active': NotificationChannel.inAppOnly,
 
     // 🏆 TOURNAMENT - PUSH (Önemli!)
-    'tournament_start': NotificationChannel.PUSH,
-    'tournament_elimination_start': NotificationChannel.PUSH,
-    'elimination_start': NotificationChannel.PUSH,
-    'tournament_win': NotificationChannel.PUSH,
-    'tournament_end': NotificationChannel.IN_APP_ONLY,
-    'tournament_joined': NotificationChannel.IN_APP_ONLY,
-    'tournament_reminder': NotificationChannel.IN_APP_ONLY,
+    'tournament_start': NotificationChannel.push,
+    'tournament_elimination_start': NotificationChannel.push,
+    'elimination_start': NotificationChannel.push,
+    'tournament_win': NotificationChannel.push,
+    'tournament_end': NotificationChannel.inAppOnly,
+    'tournament_joined': NotificationChannel.inAppOnly,
+    'tournament_reminder': NotificationChannel.inAppOnly,
 
     // 🎯 WIN MILESTONES - PUSH (Önemli başarılar!)
-    'photo_milestone': NotificationChannel.PUSH, // 100, 200, 300... foto win
-    'total_milestone': NotificationChannel.PUSH, // 500, 1000, 1500... total win
+    'photo_milestone': NotificationChannel.push, // 100, 200, 300... foto win
+    'total_milestone': NotificationChannel.push, // 500, 1000, 1500... total win
 
     // 📢 SİSTEM - PUSH
-    'system_announcement': NotificationChannel.PUSH,
-    'app_update': NotificationChannel.PUSH,
-    'maintenance': NotificationChannel.PUSH,
+    'system_announcement': NotificationChannel.push,
+    'app_update': NotificationChannel.push,
+    'maintenance': NotificationChannel.push,
 
     // 💰 COIN İŞLEMLERİ - IN_APP_ONLY (Hepsi)
-    'coin_purchase': NotificationChannel.IN_APP_ONLY,
-    'coin_spent': NotificationChannel.IN_APP_ONLY,
-    'coin_reward': NotificationChannel.IN_APP_ONLY,
-    'coin_earned': NotificationChannel.IN_APP_ONLY,
+    'coin_purchase': NotificationChannel.inAppOnly,
+    'coin_spent': NotificationChannel.inAppOnly,
+    'coin_reward': NotificationChannel.inAppOnly,
+    'coin_earned': NotificationChannel.inAppOnly,
 
     // 🎯 PREDICTION - IN_APP_ONLY
-    'prediction_won': NotificationChannel.IN_APP_ONLY,
-    'prediction_lost': NotificationChannel.IN_APP_ONLY,
-    'voting_reminder': NotificationChannel.IN_APP_ONLY,
+    'prediction_won': NotificationChannel.inAppOnly,
+    'prediction_lost': NotificationChannel.inAppOnly,
+    'voting_reminder': NotificationChannel.inAppOnly,
 
     // ⚔️ MATCH - IN_APP_ONLY (Milestone hariç, o yukarıda)
-    'match_win': NotificationChannel.IN_APP_ONLY,
-    'match_loss': NotificationChannel.IN_APP_ONLY,
-    'match_draw': NotificationChannel.IN_APP_ONLY,
-    'match_result': NotificationChannel.IN_APP_ONLY,
+    'match_win': NotificationChannel.inAppOnly,
+    'match_loss': NotificationChannel.inAppOnly,
+    'match_draw': NotificationChannel.inAppOnly,
+    'match_result': NotificationChannel.inAppOnly,
   };
 
   /// Bildirim tipinin kanalını al (default: IN_APP_ONLY)
   static NotificationChannel getChannel(String type) {
-    return channels[type] ?? NotificationChannel.IN_APP_ONLY;
+    return channels[type] ?? NotificationChannel.inAppOnly;
   }
 
   /// Telefona push gönderilmeli mi?
   static bool shouldSendPush(String type) {
-    return getChannel(type) == NotificationChannel.PUSH;
+    return getChannel(type) == NotificationChannel.push;
   }
 }

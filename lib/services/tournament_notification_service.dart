@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/notification_model.dart';
 import 'notification_service.dart';
@@ -29,7 +30,7 @@ class TournamentNotificationService {
         'created_at': DateTime.now().toIso8601String(),
       });
     } catch (e) {
-      print('❌ Failed to schedule tournament notifications: $e');
+      debugPrint('❌ Failed to schedule tournament notifications: $e');
     }
   }
 
@@ -57,7 +58,7 @@ class TournamentNotificationService {
         'created_at': DateTime.now().toIso8601String(),
       });
     } catch (e) {
-      print('❌ Failed to schedule elimination notifications: $e');
+      debugPrint('❌ Failed to schedule elimination notifications: $e');
     }
   }
 
@@ -77,7 +78,7 @@ class TournamentNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send tournament update notification: $e');
+      debugPrint('❌ Failed to send tournament update notification: $e');
     }
   }
 
@@ -99,7 +100,7 @@ class TournamentNotificationService {
         },
       );
     } catch (e) {
-      print('❌ Failed to send voting result notification: $e');
+      debugPrint('❌ Failed to send voting result notification: $e');
     }
   }
 
@@ -113,7 +114,7 @@ class TournamentNotificationService {
           .delete()
           .lt('created_at', oneWeekAgo.toIso8601String());
     } catch (e) {
-      print('❌ Failed to cleanup old notifications: $e');
+      debugPrint('❌ Failed to cleanup old notifications: $e');
     }
   }
 }

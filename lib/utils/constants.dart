@@ -53,4 +53,10 @@ class AppConstants {
   static const int successColor = 0xFF4CAF50;
   static const int errorColor = 0xFFF44336;
   static const int warningColor = 0xFFFF9800;
+
+  // ✅ SECURITY: Photo upload security constants
+  static const int maxFileSize = 5 * 1024 * 1024; // 5MB max file size
+  static const int maxImageDimension = 2048; // 2048x2048 max dimensions
+  static const List<String> allowedImageTypes = ['jpg', 'jpeg', 'png'];
+  static const List<String> allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png'];
 }

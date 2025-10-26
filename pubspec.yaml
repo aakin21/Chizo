@@ -65,9 +65,11 @@ dependencies:
   
   # UUID generation
   uuid: ^4.4.0
-  
-  
-  # Internationalization  
+
+  # Environment variables
+  flutter_dotenv: ^5.1.0
+
+  # Internationalization
   flutter_localizations:
     sdk: flutter
   intl: ^0.20.2
@@ -93,13 +95,13 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-  
+
   # Enable generation of localization files
   generate: true
 
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - assets/images/
+  # Assets
+  assets:
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

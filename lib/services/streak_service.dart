@@ -116,7 +116,7 @@ class StreakService {
         };
       }
     } catch (e) {
-      // print('Error checking streak: $e');
+      // debugPrint('Error checking streak: $e');
       return {'success': false, 'message': 'Streak kontrolünde hata oluştu'};
     }
   }
@@ -160,7 +160,7 @@ class StreakService {
         'max_streak_reached': currentStreak >= 7,
       };
     } catch (e) {
-      // print('Error getting streak info: $e');
+      // debugPrint('Error getting streak info: $e');
       return {'success': false, 'message': 'Streak bilgisi alınamadı'};
     }
   }
