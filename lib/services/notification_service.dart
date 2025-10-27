@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,12 +12,16 @@ import 'dart:convert';
 
 class NotificationService {
   static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  static final FlutterLocalNotificationsPlugin _localNotifications = 
+  static final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
   static final SupabaseClient _supabase = Supabase.instance.client;
 
   static String? _fcmToken;
   static bool _isInitialized = false;
+
+  // Stream subscriptions to prevent memory leaks
+  static StreamSubscription<RemoteMessage>? _foregroundMessageSubscription;
+  static StreamSubscription<RemoteMessage>? _messageOpenedAppSubscription;
 
   /// Initialize notification service
   static Future<void> initialize() async {
@@ -207,14 +212,28 @@ class NotificationService {
 
   /// Setup message handlers
   static void _setupMessageHandlers() {
+    // Cancel existing subscriptions to prevent memory leaks
+    _foregroundMessageSubscription?.cancel();
+    _messageOpenedAppSubscription?.cancel();
+
     // Handle background messages
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     // Handle foreground messages
-    FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+    _foregroundMessageSubscription = FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
 
     // Handle notification taps
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationTap);
+    _messageOpenedAppSubscription = FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationTap);
+  }
+
+  /// Dispose and cleanup subscriptions
+  static Future<void> dispose() async {
+    await _foregroundMessageSubscription?.cancel();
+    await _messageOpenedAppSubscription?.cancel();
+    _foregroundMessageSubscription = null;
+    _messageOpenedAppSubscription = null;
+    _isInitialized = false;
+    debugPrint('🔔 NotificationService disposed');
   }
 
   /// Handle foreground messages

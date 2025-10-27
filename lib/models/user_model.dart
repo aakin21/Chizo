@@ -1,3 +1,5 @@
+import '../utils/safe_parsing.dart';
+
 class UserModel {
   final String id;
   final String username;
@@ -49,27 +51,25 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'],
-      username: json['username'],
-      email: json['email'],
-      coins: json['coins'] ?? 0,
-      age: json['age'],
-      countryCode: json['country_code'] ?? json['country'], // Backward compatibility
-      genderCode: json['gender_code'] ?? json['gender'], // Backward compatibility
-      instagramHandle: json['instagram_handle'],
-      profession: json['profession'],
-      isVisible: json['is_visible'] ?? true,
-      showInstagram: json['show_instagram'] ?? false,
-      showProfession: json['show_profession'] ?? false,
-      totalMatches: json['total_matches'] ?? 0,
-      wins: json['wins'] ?? 0,
-      currentStreak: json['current_streak'] ?? 0,
-      totalStreakDays: json['total_streak_days'] ?? 0,
-      lastLoginDate: json['last_login_date'] != null 
-          ? DateTime.parse(json['last_login_date']) 
-          : null,
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
+      id: SafeParsing.getRequiredString(json, 'id'),
+      username: SafeParsing.getRequiredString(json, 'username'),
+      email: SafeParsing.getRequiredString(json, 'email'),
+      coins: SafeParsing.getInt(json, 'coins', defaultValue: 0),
+      age: json['age'] as int?,
+      countryCode: SafeParsing.getOptionalString(json, 'country_code') ?? SafeParsing.getOptionalString(json, 'country'),
+      genderCode: SafeParsing.getOptionalString(json, 'gender_code') ?? SafeParsing.getOptionalString(json, 'gender'),
+      instagramHandle: SafeParsing.getOptionalString(json, 'instagram_handle'),
+      profession: SafeParsing.getOptionalString(json, 'profession'),
+      isVisible: SafeParsing.getBool(json, 'is_visible', defaultValue: true),
+      showInstagram: SafeParsing.getBool(json, 'show_instagram', defaultValue: false),
+      showProfession: SafeParsing.getBool(json, 'show_profession', defaultValue: false),
+      totalMatches: SafeParsing.getInt(json, 'total_matches', defaultValue: 0),
+      wins: SafeParsing.getInt(json, 'wins', defaultValue: 0),
+      currentStreak: SafeParsing.getInt(json, 'current_streak', defaultValue: 0),
+      totalStreakDays: SafeParsing.getInt(json, 'total_streak_days', defaultValue: 0),
+      lastLoginDate: SafeParsing.parseDateTime(json['last_login_date']),
+      createdAt: SafeParsing.parseDateTimeRequired(json['created_at']),
+      updatedAt: SafeParsing.parseDateTimeRequired(json['updated_at']),
       matchPhotos: json['match_photos'] != null 
           ? List<Map<String, dynamic>>.from(json['match_photos'])
           : json['user_photos'] != null 

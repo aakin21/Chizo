@@ -1,3 +1,5 @@
+import '../utils/safe_parsing.dart';
+
 class MatchModel {
   final String id;
   final String user1Id;
@@ -19,15 +21,13 @@ class MatchModel {
 
   factory MatchModel.fromJson(Map<String, dynamic> json) {
     return MatchModel(
-      id: json['id'],
-      user1Id: json['user1_id'],
-      user2Id: json['user2_id'],
-      winnerId: json['winner_id'],
-      createdAt: DateTime.parse(json['created_at']),
-      completedAt: json['completed_at'] != null 
-          ? DateTime.parse(json['completed_at']) 
-          : null,
-      isCompleted: json['is_completed'] ?? false,
+      id: SafeParsing.getRequiredString(json, 'id'),
+      user1Id: SafeParsing.getRequiredString(json, 'user1_id'),
+      user2Id: SafeParsing.getRequiredString(json, 'user2_id'),
+      winnerId: SafeParsing.getOptionalString(json, 'winner_id'),
+      createdAt: SafeParsing.parseDateTimeRequired(json['created_at']),
+      completedAt: SafeParsing.parseDateTime(json['completed_at']),
+      isCompleted: SafeParsing.getBool(json, 'is_completed', defaultValue: false),
     );
   }
 

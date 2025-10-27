@@ -1,3 +1,4 @@
+import '../utils/safe_parsing.dart';
 import '../l10n/app_localizations.dart';
 
 class TournamentModel {
@@ -78,18 +79,18 @@ class TournamentModel {
       currentParticipants: json['current_participants'] is int 
           ? json['current_participants'] 
           : int.tryParse(json['current_participants'].toString()) ?? 0,
-      startDate: DateTime.parse(json['start_date']),
-      endDate: DateTime.parse(json['end_date']),
+      startDate: SafeParsing.parseDateTimeRequired(json['start_date']),
+      endDate: SafeParsing.parseDateTimeRequired(json['end_date']),
       status: json['status'],
       winnerId: json['winner_id'],
       secondPlaceId: json['second_place_id'],
       thirdPlaceId: json['third_place_id'],
-      createdAt: DateTime.parse(json['created_at']),
+      createdAt: SafeParsing.parseDateTimeRequired(json['created_at']),
       gender: json['gender'],
       currentPhase: json['current_phase'],
       currentRound: json['current_round'],
-      phaseStartDate: json['phase_start_date'] != null ? DateTime.parse(json['phase_start_date']) : null,
-      registrationStartDate: json['registration_start_date'] != null ? DateTime.parse(json['registration_start_date']) : null,
+      phaseStartDate: SafeParsing.parseDateTime(json['phase_start_date']),
+      registrationStartDate: SafeParsing.parseDateTime(json['registration_start_date']),
       isPrivate: json['is_private'] ?? false,
       privateKey: json['private_key'],
       creatorId: json['creator_id'],

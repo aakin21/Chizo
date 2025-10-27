@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/safe_parsing.dart';
 
 class NotificationModel {
   final String id;
@@ -25,15 +26,15 @@ class NotificationModel {
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
-      id: json['id'] ?? '',
-      userId: json['user_id'] ?? '',
-      type: json['type'] ?? '',
-      title: json['title'] ?? '',
-      body: json['body'] ?? '',
-      data: json['data'],
-      isRead: json['is_read'] ?? false,
-      createdAt: DateTime.parse(json['created_at'] ?? DateTime.now().toIso8601String()),
-      readAt: json['read_at'] != null ? DateTime.parse(json['read_at']) : null,
+      id: SafeParsing.getRequiredString(json, 'id'),
+      userId: SafeParsing.getRequiredString(json, 'user_id'),
+      type: SafeParsing.getOptionalString(json, 'type') ?? 'general',
+      title: SafeParsing.getOptionalString(json, 'title') ?? '',
+      body: SafeParsing.getOptionalString(json, 'body') ?? '',
+      data: json['data'] as Map<String, dynamic>?,
+      isRead: SafeParsing.getBool(json, 'is_read', defaultValue: false),
+      createdAt: SafeParsing.parseDateTimeRequired(json['created_at']),
+      readAt: SafeParsing.parseDateTime(json['read_at']),
     );
   }
 

@@ -52,3 +52,9 @@
 -keepclasseswithmembernames class * {
     native <methods>;
 }
+
+# Google Play Core (not used, suppress warnings)
+-dontwarn com.google.android.play.core.**
+-dontwarn com.google.android.play.core.splitcompat.**
+-dontwarn com.google.android.play.core.splitinstall.**
+-dontwarn com.google.android.play.core.tasks.**

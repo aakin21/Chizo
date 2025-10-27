@@ -1,3 +1,4 @@
+import '../utils/safe_parsing.dart';
 class CoinTransactionModel {
   final String id;
   final String userId;
@@ -17,12 +18,12 @@ class CoinTransactionModel {
 
   factory CoinTransactionModel.fromJson(Map<String, dynamic> json) {
     return CoinTransactionModel(
-      id: json['id'],
-      userId: json['user_id'],
-      amount: json['amount'],
-      type: json['type'],
-      description: json['description'],
-      createdAt: DateTime.parse(json['created_at']),
+      id: SafeParsing.getRequiredString(json, 'id'),
+      userId: SafeParsing.getRequiredString(json, 'user_id'),
+      amount: SafeParsing.getInt(json, 'amount', defaultValue: 0),
+      type: SafeParsing.getOptionalString(json, 'type') ?? 'unknown',
+      description: SafeParsing.getOptionalString(json, 'description') ?? '',
+      createdAt: SafeParsing.parseDateTimeRequired(json['created_at']),
     );
   }
 

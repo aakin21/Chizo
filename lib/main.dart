@@ -22,46 +22,123 @@ void main() async {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
 
+  String? initializationError;
+
   // Load environment variables
   try {
     await dotenv.load(fileName: '.env');
   } catch (e) {
     debugPrint('Error loading .env file: $e');
-    rethrow;
+    initializationError = 'Yapılandırma dosyası yüklenemedi. Lütfen uygulamayı yeniden yükleyin.';
   }
 
   // Firebase initialize
-  try {
-    await Firebase.initializeApp();
-  } catch (e) {
-    debugPrint('Firebase initialization failed: $e');
-    // App can continue without Firebase
+  if (initializationError == null) {
+    try {
+      await Firebase.initializeApp();
+    } catch (e) {
+      debugPrint('Firebase initialization failed: $e');
+      // App can continue without Firebase
+    }
   }
 
   // Supabase initialize
   // ✅ SECURITY FIX: Credentials now loaded from .env file
-  try {
-    final supabaseUrl = dotenv.env['SUPABASE_URL'];
-    final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
+  if (initializationError == null) {
+    try {
+      final supabaseUrl = dotenv.env['SUPABASE_URL'];
+      final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
 
-    if (supabaseUrl == null || supabaseAnonKey == null) {
-      throw Exception('Missing Supabase credentials in .env file');
+      if (supabaseUrl == null || supabaseAnonKey == null) {
+        throw Exception('Missing Supabase credentials in .env file');
+      }
+
+      await Supabase.initialize(
+        url: supabaseUrl,
+        anonKey: supabaseAnonKey,
+      );
+    } catch (e) {
+      debugPrint('CRITICAL: Supabase initialization failed: $e');
+      initializationError = 'Bağlantı kurulamadı. Lütfen internet bağlantınızı kontrol edin ve uygulamayı yeniden başlatın.';
     }
-
-    await Supabase.initialize(
-      url: supabaseUrl,
-      anonKey: supabaseAnonKey,
-    );
-  } catch (e) {
-    debugPrint('CRITICAL: Supabase initialization failed: $e');
-    // App cannot work without Supabase - this is a fatal error
-    rethrow;
   }
 
-  // Initialize notification services
-  await NotificationIntegrationService.initializeAll();
+  // Initialize notification services (only if no errors)
+  if (initializationError == null) {
+    try {
+      await NotificationIntegrationService.initializeAll();
+    } catch (e) {
+      debugPrint('Notification service initialization failed: $e');
+      // App can continue without notifications
+    }
+  }
 
-  runApp(const MyApp());
+  // Run app or show error screen
+  if (initializationError != null) {
+    runApp(ErrorApp(errorMessage: initializationError));
+  } else {
+    runApp(const MyApp());
+  }
+}
+
+/// Error screen for fatal initialization failures
+class ErrorApp extends StatelessWidget {
+  final String errorMessage;
+
+  const ErrorApp({super.key, required this.errorMessage});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Chizo',
+      home: Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 64,
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'Başlatma Hatası',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  errorMessage,
+                  style: const TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 32),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    // On mobile, this will close the app
+                    // User can then restart it manually
+                  },
+                  icon: const Icon(Icons.close),
+                  label: const Text('Kapat'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class AuthWrapper extends StatelessWidget {
