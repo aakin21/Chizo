@@ -236,26 +236,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
               children: [
                 const SizedBox(height: 20),
                 
-                // Logo/Title
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-                  ),
-                  child: Image.asset(
-                    'chizoimage.png',
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.contain,
-                  ),
+                // Logo
+                Image.asset(
+                  'chizoimage.png',
+                  width: 120,
+                  height: 120,
+                  fit: BoxFit.contain,
                 ),
                 
                 const SizedBox(height: 20),
