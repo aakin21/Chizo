@@ -56,5 +56,13 @@
 	<!-- Firebase configuration -->
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
+
+	<!-- Camera and Photo Library Permissions -->
+	<key>NSCameraUsageDescription</key>
+	<string>Chizo needs access to your camera to take photos for your profile.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Chizo needs access to your photo library to select photos for your profile.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Chizo needs permission to save photos to your library.</string>
 </dict>
 </plist>
