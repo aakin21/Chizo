@@ -80,11 +80,20 @@ class NotificationHistoryService {
       final user = _client.auth.currentUser;
       if (user == null) return false;
 
+      // users tablosundan gerçek user_id al
+      final userRecord = await _client
+          .from('users')
+          .select('id')
+          .eq('auth_id', user.id)
+          .maybeSingle();
+
+      if (userRecord == null) return false;
+
       await _client
           .from('notifications')
           .delete()
           .eq('id', notificationId)
-          .eq('user_id', user.id);
+          .eq('user_id', userRecord['id']);
 
       return true;
     } catch (e) {
@@ -169,14 +178,12 @@ class NotificationHistoryService {
           // Eski bildirimlerin ID'lerini al
           final idsToDelete = oldNotifications.map((n) => n['id']).toList();
 
-          // Eski bildirimleri sil
-          for (final id in idsToDelete) {
-            await _client
-                .from('notifications')
-                .delete()
-                .eq('id', id)
-                .eq('user_id', userRecord['id']);
-          }
+          // Eski bildirimleri tek seferde sil
+          await _client
+              .from('notifications')
+              .delete()
+              .eq('user_id', userRecord['id'])
+              .inFilter('id', idsToDelete);
 
           debugPrint('✅ Cleaned up $excessCount excess notifications');
         }

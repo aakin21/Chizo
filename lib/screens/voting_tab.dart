@@ -168,15 +168,17 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     } catch (e) {
       if (mounted) {
         setState(() => isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
+          );
+        }
       }
     }
   }
 
   Future<void> _voteForUser(String winnerId) async {
-    if (currentMatchIndex >= votableItems.length) return;
+    if (currentMatchIndex < 0 || currentMatchIndex >= votableItems.length) return;
 
     final currentItem = votableItems[currentMatchIndex];
     final isTournament = currentItem['is_tournament'] as bool;
@@ -221,10 +223,9 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     final selectedUser = await _getWinnerUser(winnerId);
     if (selectedUser != null && selectedUser.matchPhotos != null && selectedUser.matchPhotos!.isNotEmpty) {
       // Match ID'yi al
-      final isTournament = currentItem['is_tournament'] as bool;
       String matchId = '';
 
-      if (!isTournament) {
+      if (!(currentItem['is_tournament'] as bool)) {
         final match = currentItem['match'] as MatchModel;
         matchId = match.id;
       }
@@ -260,8 +261,12 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     
     if (success) {
       // Update photo statistics for both users
-      await _updatePhotoStatsForMatch(match, winnerId);
-      
+      try {
+        await _updatePhotoStatsForMatch(match, winnerId);
+      } catch (e) {
+        debugPrint('Warning: Failed to update photo stats: $e');
+      }
+
       // Kazanan kullanıcıyı bul ve slider'ı göster
       final winner = await _getWinnerUser(winnerId);
       if (winner != null && mounted) {
@@ -285,6 +290,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
   Future<UserModel?> _getWinnerUser(String winnerId) async {
     try {
       // Match'teki kullanıcıları getir
+      if (currentMatchIndex < 0 || currentMatchIndex >= votableItems.length) return null;
       final currentItem = votableItems[currentMatchIndex];
       final isTournament = currentItem['is_tournament'] as bool;
       
@@ -303,7 +309,12 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         // Normal match için
         final match = currentItem['match'] as MatchModel;
         final users = await _getMatchUsers(match);
-        return users.firstWhere((user) => user.id == winnerId);
+        try {
+          return users.firstWhere((user) => user.id == winnerId);
+        } catch (e) {
+          // If no match found, return first user as fallback
+          return users.isNotEmpty ? users.first : null;
+        }
       }
     } catch (e) {
       return null;
@@ -409,7 +420,9 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
         selectedUserForPrediction = null;
         previewUser = null;
         showSinglePhotoPreview = false;
-        votableItems.removeAt(currentMatchIndex);
+        if (currentMatchIndex < votableItems.length) {
+          votableItems.removeAt(currentMatchIndex);
+        }
         if (currentMatchIndex >= votableItems.length) {
           currentMatchIndex = 0;
         }
@@ -965,6 +978,14 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
   }
 
   Widget _buildPhotoCarousel(List<Map<String, dynamic>> photos, String userId, String matchId) {
+    // Guard against empty photos list
+    if (photos.isEmpty) {
+      return Container(
+        color: Colors.grey[300],
+        child: const Icon(Icons.person, size: 50),
+      );
+    }
+
     Map<String, dynamic> selectedPhoto;
 
     // Eğer prediction veya preview modundaysa: selectedPhotoOrder kullan

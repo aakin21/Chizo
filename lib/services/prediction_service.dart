@@ -13,6 +13,11 @@ class PredictionService {
     required double actualWinRate,
   }) async {
     try {
+      // Validate input ranges
+      if (minRange < 0 || maxRange > 100 || minRange > maxRange) {
+        return {'success': false, 'message': 'Geçersiz tahmin aralığı'};
+      }
+
       final currentUser = _client.auth.currentUser;
       if (currentUser == null) {
         return {'success': false, 'message': 'Kullanıcı giriş yapmamış'};
@@ -26,10 +31,24 @@ class PredictionService {
           .maybeSingle();
 
       if (userRecord == null) {
+        debugPrint('❌ User not found for auth_id: ${currentUser.id}');
         return {'success': false, 'message': 'Kullanıcı bulunamadı'};
       }
 
       final userId = userRecord['id'];
+
+      // Check for duplicate predictions in the last 5 minutes
+      final recentPrediction = await _client
+          .from('winrate_predictions')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('winner_id', winnerId)
+          .gte('created_at', DateTime.now().subtract(const Duration(minutes: 5)).toIso8601String())
+          .maybeSingle();
+
+      if (recentPrediction != null) {
+        return {'success': false, 'message': 'Bu kullanıcı için yakın zamanda tahmin yaptınız'};
+      }
 
       // Tahmin doğru mu kontrol et
       final isCorrect = actualWinRate >= minRange && actualWinRate <= maxRange;
@@ -52,16 +71,28 @@ class PredictionService {
       }
 
       // Prediction'ı veritabanına kaydet (gerçek user_id ile)
-      await _client.from('winrate_predictions').insert({
-        'user_id': userId, // ✅ Gerçek user_id kullan (auth_id değil!)
-        'winner_id': winnerId,
-        'predicted_min': minRange,
-        'predicted_max': maxRange,
-        'actual_winrate': actualWinRate,
-        'is_correct': isCorrect,
-        'reward_coins': rewardCoins,
-        'created_at': DateTime.now().toIso8601String(),
-      });
+      try {
+        await _client.from('winrate_predictions').insert({
+          'user_id': userId, // ✅ Gerçek user_id kullan (auth_id değil!)
+          'winner_id': winnerId,
+          'predicted_min': minRange,
+          'predicted_max': maxRange,
+          'actual_winrate': actualWinRate,
+          'is_correct': isCorrect,
+          'reward_coins': rewardCoins,
+          'created_at': DateTime.now().toIso8601String(),
+        });
+      } catch (e) {
+        // Rollback coins if prediction insert fails
+        if (isCorrect && rewardCoins > 0) {
+          await UserService.updateCoins(
+            -rewardCoins,
+            'rollback',
+            'Tahmin kaydı başarısız oldu'
+          );
+        }
+        rethrow;
+      }
 
       return {
         'success': true,
