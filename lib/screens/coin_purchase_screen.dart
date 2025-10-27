@@ -45,7 +45,7 @@ class _CoinPurchaseScreenState extends State<CoinPurchaseScreen> {
     setState(() => isPurchasing = true);
     
     try {
-      final success = await PaymentService.purchaseCoins(packageId, 'simulated');
+      final success = await PaymentService.purchaseCoins(packageId, PaymentMethod.testMode);
       
       if (success) {
         await loadUserData();

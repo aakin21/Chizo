@@ -57,7 +57,104 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = response.user;
 
       if (user != null) {
-        // Ensure corresponding users row exists; otherwise treat as deleted account
+        // ✅ EMAIL VERIFICATION: Check if email is confirmed
+        if (user.emailConfirmedAt == null) {
+          // Email doğrulanmamış - giriş yapmasına izin verme
+          await Supabase.instance.client.auth.signOut();
+          if (mounted) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                backgroundColor: const Color(0xFF1E1E1E),
+                title: Row(
+                  children: const [
+                    Icon(Icons.email_outlined, color: Colors.orange),
+                    SizedBox(width: 12),
+                    Text(
+                      'Email Doğrulanmamış',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Lütfen email adresinize gönderilen doğrulama linkine tıklayarak hesabınızı aktifleştirin.',
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      '📧 ${user.email}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFFFF6B35),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      '💡 Email gelmedi mi? Spam/Gereksiz klasörünü kontrol edin.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[400],
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () async {
+                      // Doğrulama emailini tekrar gönder
+                      try {
+                        await Supabase.instance.client.auth.resend(
+                          type: OtpType.signup,
+                          email: user.email!,
+                        );
+                        if (mounted) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Doğrulama emaili tekrar gönderildi!'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Email gönderilemedi: $e'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    child: const Text(
+                      'Emaili Tekrar Gönder',
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFF6B35),
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('Tamam'),
+                  ),
+                ],
+              ),
+            );
+            setState(() { _isLoading = false; });
+          }
+          return;
+        }
+
+        // Email doğrulanmış - users tablosunu kontrol et
         final usersRow = await Supabase.instance.client
             .from('users')
             .select('id')
@@ -65,19 +162,35 @@ class _LoginScreenState extends State<LoginScreen> {
             .maybeSingle();
 
         if (!mounted) return;
+
+        // ✅ İlk giriş: users tablosunda kayıt yok, oluştur (email doğrulanmış olduğu için)
         if (usersRow == null) {
-          // Sign out and inform user
-          await Supabase.instance.client.auth.signOut();
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.accountDeletedPleaseRegister),
-                backgroundColor: Colors.red,
-              ),
-            );
-            setState(() { _isLoading = false; });
+          try {
+            await Supabase.instance.client.from('users').insert({
+              'auth_id': user.id,
+              'username': user.email!.split('@')[0], // Email'den username oluştur
+              'email': user.email!,
+              'coins': 100, // İlk kayıt bonusu
+              'is_visible': true,
+              'total_matches': 0,
+              'wins': 0,
+              'created_at': DateTime.now().toIso8601String(),
+              'updated_at': DateTime.now().toIso8601String(),
+            });
+            debugPrint('✅ User profile created successfully after email verification');
+          } catch (e) {
+            debugPrint('❌ Failed to create user profile: $e');
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Profil oluşturulamadı: $e'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              setState(() { _isLoading = false; });
+            }
+            return;
           }
-          return;
         }
 
         if (mounted) {
@@ -86,7 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         }
 
-        // HomeScreen'e yönlendir (username parametresi yok)
+        // HomeScreen'e yönlendir
         if (mounted) {
           Navigator.pushReplacement(
             context,
@@ -227,17 +340,13 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 40),
-                
                 // Logo
                 Image.asset(
                   'chizoimage.png',
-                  width: 120,
-                  height: 120,
-                  fit: BoxFit.contain,
+                  width: 230,
+                  height: 230,
+                  fit: BoxFit.cover,
                 ),
-                
-                const SizedBox(height: 40),
                 
                 Text(
                   'Chizo',

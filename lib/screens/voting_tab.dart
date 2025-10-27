@@ -13,7 +13,6 @@ import '../l10n/app_localizations.dart';
 import '../services/tournament_service.dart';
 import '../services/report_service.dart';
 import '../services/global_theme_service.dart';
-import '../widgets/vs_image_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 
@@ -1237,6 +1236,7 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
                   color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 10,
                   spreadRadius: 2,
+                  offset: const Offset(0, 6),
                 ),
               ],
             ),
@@ -1676,94 +1676,18 @@ class _VotingTabState extends State<VotingTab> with WidgetsBindingObserver {
     );
   }
 
-  /// Build VS image based on current theme
+  /// Build VS text
   Widget _buildVSImage() {
-    VSTheme theme;
-    
-    
-    // Check if we're in a tournament match (always use pink theme)
-    if (currentMatchIndex < votableItems.length) {
-      final currentItem = votableItems[currentMatchIndex];
-      final isTournament = currentItem['is_tournament'] as bool;
-      if (isTournament) {
-        theme = VSTheme.pink;
-      } else {
-        // For normal matches, use theme based on saved theme preference
-        theme = _getVSThemeFromAppTheme(_currentTheme);
-      }
-    } else {
-      // Default theme based on saved theme preference
-      theme = _getVSThemeFromAppTheme(_currentTheme);
-    }
-    
-    return Container(
-      key: ValueKey('vs_container_$_currentTheme'), // Theme değişikliğinde container'ı yenile
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: _getVSContainerBackgroundColor(_currentTheme),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: _getVSContainerBorderColor(_currentTheme),
-          width: 1,
-        ),
-      ),
-      child: VSImageWidget(
-        key: ValueKey('vs_${theme.name}_$_currentTheme'), // Theme değişikliğinde widget'ı yenile
-        theme: theme,
-        width: 60,
-        height: 30,
+    return const Text(
+      'vs',
+      style: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: Color(0xFFFF6B35),
       ),
     );
   }
 
-  /// Convert app theme string to VS theme enum
-  VSTheme _getVSThemeFromAppTheme(String appTheme) {
-    switch (appTheme) {
-      case 'Koyu':
-        return VSTheme.dark;
-      case 'Pembemsi':
-        return VSTheme.pink;
-      case 'Beyaz':
-      default:
-        return VSTheme.white;
-    }
-  }
-
-  /// Get VS container background color based on theme
-  Color _getVSContainerBackgroundColor(String appTheme) {
-    Color color;
-    switch (appTheme) {
-      case 'Koyu':
-        color = Colors.black.withValues(alpha: 0.8);
-        break;
-      case 'Pembemsi':
-        color = const Color(0xFFC2185B).withValues(alpha: 0.1);
-        break;
-      case 'Beyaz':
-      default:
-        color = Colors.white; // Beyaz arka plan
-        break;
-    }
-    return color;
-  }
-
-  /// Get VS container border color based on theme
-  Color _getVSContainerBorderColor(String appTheme) {
-    Color color;
-    switch (appTheme) {
-      case 'Koyu':
-        color = Colors.white;
-        break;
-      case 'Pembemsi':
-        color = const Color(0xFFC2185B);
-        break;
-      case 'Beyaz':
-      default:
-        color = const Color(0xFFFF6B35); // Ana turuncu ton
-        break;
-    }
-    return color;
-  }
 
   // Report Dialog
   void _showReportDialog(String reportedUserId, String matchId) {

@@ -41,20 +41,18 @@
       updated_at = NOW()
     WHERE id = p_user_id;
 
-    -- Record transaction
+    -- Record transaction (using 'type' column name to match database schema)
     INSERT INTO coin_transactions (
       user_id,
       amount,
-      transaction_type,
+      type,
       description,
-      balance_after,
       created_at
     ) VALUES (
       p_user_id,
       p_amount,
       p_transaction_type,
       p_description,
-      v_new_coins,
       NOW()
     );
 

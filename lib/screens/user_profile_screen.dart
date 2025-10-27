@@ -287,10 +287,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: winRate == 0.0 ? WinRateColors.getNewPhotoColor() : WinRateColors.getBorderColorFromPercentage(winRate),
-              width: 3,
-            ),
+          border: Border.all(
+            color: winRate == 0.0 ? WinRateColors.getNewPhotoColor() : WinRateColors.getBorderColorFromPercentage(winRate),
+            width: 3,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withValues(alpha: 0.3),

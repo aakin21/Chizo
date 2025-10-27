@@ -110,3 +110,4 @@ android/key.properties
 
 # Supabase
 .supabase/
+.continue/

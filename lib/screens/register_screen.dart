@@ -74,33 +74,73 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final user = res.user;
 
       if (user != null) {
-        // users tablosuna veri ekle
-        await Supabase.instance.client.from('users').insert({
-          'auth_id': user.id, // CRITICAL: Auth user ID'sini ekle
-          'username': _usernameController.text.trim(),
-          'email': _emailController.text.trim(),
-          'coins': 100, // Yeni kullanıcılara 100 coin hediye
-          'age': _ageController.text.trim().isNotEmpty 
-              ? int.tryParse(_ageController.text.trim()) 
-              : null,
-          'country_code': _selectedCountryCode,
-          'gender_code': _selectedGenderCode,
-          'is_visible': true,
-          'total_matches': 0,
-          'wins': 0,
-          'created_at': DateTime.now().toIso8601String(),
-          'updated_at': DateTime.now().toIso8601String(),
-        });
+        // ✅ EMAIL VERIFICATION: Kullanıcı email'ini doğrulayana kadar users tablosuna eklenmesin
+        // Sadece auth'da kayıt olsun, email doğrulama sonrası login'de users tablosuna eklenecek
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.registrationSuccessful)),
-          );
-
-          // Login ekranına yönlendir
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged)),
+          // Başarılı kayıt mesajı - email doğrulama gerekli
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => AlertDialog(
+              backgroundColor: const Color(0xFF1E1E1E),
+              title: Row(
+                children: const [
+                  Icon(Icons.email, color: Color(0xFFFF6B35)),
+                  SizedBox(width: 12),
+                  Text(
+                    'Email Doğrulama Gerekli',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Kayıt işleminiz başarıyla tamamlandı! Hesabınızı aktifleştirmek için lütfen email adresinize gönderilen doğrulama linkine tıklayın.',
+                    style: TextStyle(fontSize: 16, color: Colors.white70),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    '📧 ${_emailController.text.trim()}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFFF6B35),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    '💡 Email gelmedi mi? Spam/Gereksiz klasörünü kontrol edin.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[400],
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context); // Dialog'u kapat
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LoginScreen(onLanguageChanged: widget.onLanguageChanged),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.check),
+                  label: const Text('Anladım'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFF6B35),
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            ),
           );
         }
       } else {
@@ -234,17 +274,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
-                const SizedBox(height: 20),
-                
                 // Logo
                 Image.asset(
                   'chizoimage.png',
-                  width: 120,
-                  height: 120,
-                  fit: BoxFit.contain,
+                  width: 230,
+                  height: 230,
+                  fit: BoxFit.cover,
                 ),
-                
-                const SizedBox(height: 20),
                 
                 Text(
                   'Chizo',

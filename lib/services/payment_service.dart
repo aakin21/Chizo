@@ -5,6 +5,8 @@ import 'package:uuid/uuid.dart';
 // TODO: Uncomment after adding in_app_purchase package
 // import 'package:in_app_purchase/in_app_purchase.dart';
 
+enum PaymentMethod { testMode, inAppPurchase }
+
 class PaymentService {
   static final SupabaseClient _client = Supabase.instance.client;
 
@@ -148,7 +150,7 @@ class PaymentService {
 
   // TEST MODE - Only works in debug builds
   // ✅ SECURITY FIX: Test mode now protected by kDebugMode
-  static Future<bool> purchaseCoins(String packageId, String paymentMethod) async {
+  static Future<bool> purchaseCoins(String packageId, PaymentMethod paymentMethod) async {
     try {
       final currentUser = _client.auth.currentUser;
       if (currentUser == null) return false;
@@ -158,7 +160,7 @@ class PaymentService {
 
       // ✅ SECURITY: Test mode only enabled in debug builds
       // In production (release builds), this will throw an error
-      if (paymentMethod == 'TEST_MODE') {
+      if (paymentMethod == PaymentMethod.testMode) {
         if (!kDebugMode) {
           debugPrint('ERROR: Test mode is not available in production builds');
           throw Exception('Test mode is not available in production builds');

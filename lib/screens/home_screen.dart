@@ -283,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildNavigationButton(
-                    icon: Icons.how_to_vote,
+                    icon: Icons.compare_arrows,
                     page: 'home',
                     color: const Color(0xFFE55A2B), // Koyu turuncu ton
                   ),

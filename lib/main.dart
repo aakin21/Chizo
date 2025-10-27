@@ -24,43 +24,45 @@ void main() async {
 
   String? initializationError;
 
-  // Load environment variables
+  // Load environment variables only in debug/profile. In release, use dart-define.
   try {
-    await dotenv.load(fileName: '.env');
+    if (!kReleaseMode) {
+      await dotenv.load(fileName: '.env');
+    }
   } catch (e) {
     debugPrint('Error loading .env file: $e');
-    initializationError = 'Yapılandırma dosyası yüklenemedi. Lütfen uygulamayı yeniden yükleyin.';
+    // Continue; release may rely on dart-define
   }
 
   // Firebase initialize
-  if (initializationError == null) {
-    try {
-      await Firebase.initializeApp();
-    } catch (e) {
-      debugPrint('Firebase initialization failed: $e');
-      // App can continue without Firebase
-    }
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    debugPrint('Firebase initialization failed: $e');
+    // App can continue without Firebase
   }
 
   // Supabase initialize
-  // ✅ SECURITY FIX: Credentials now loaded from .env file
-  if (initializationError == null) {
-    try {
-      final supabaseUrl = dotenv.env['SUPABASE_URL'];
-      final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
+  // ✅ SECURITY: Credentials loaded from dart-define in release, .env in debug/profile
+  try {
+    final supabaseUrl = kReleaseMode
+        ? const String.fromEnvironment('SUPABASE_URL')
+        : (dotenv.env['SUPABASE_URL'] ?? '');
+    final supabaseAnonKey = kReleaseMode
+        ? const String.fromEnvironment('SUPABASE_ANON_KEY')
+        : (dotenv.env['SUPABASE_ANON_KEY'] ?? '');
 
-      if (supabaseUrl == null || supabaseAnonKey == null) {
-        throw Exception('Missing Supabase credentials in .env file');
-      }
-
-      await Supabase.initialize(
-        url: supabaseUrl,
-        anonKey: supabaseAnonKey,
-      );
-    } catch (e) {
-      debugPrint('CRITICAL: Supabase initialization failed: $e');
-      initializationError = 'Bağlantı kurulamadı. Lütfen internet bağlantınızı kontrol edin ve uygulamayı yeniden başlatın.';
+    if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
+      throw Exception('Missing Supabase credentials');
     }
+
+    await Supabase.initialize(
+      url: supabaseUrl,
+      anonKey: supabaseAnonKey,
+    );
+  } catch (e) {
+    debugPrint('CRITICAL: Supabase initialization failed: $e');
+    initializationError = 'Bağlantı kurulamadı. Lütfen internet bağlantınızı kontrol edin ve uygulamayı yeniden başlatın.';
   }
 
   // Initialize notification services (only if no errors)
