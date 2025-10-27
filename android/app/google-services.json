@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "123456789",
-    "project_id": "chizo-app",
-    "storage_bucket": "chizo-app.appspot.com"
+    "project_number": "719914772795",
+    "project_id": "chizo-68952",
+    "storage_bucket": "chizo-68952.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:123456789:android:abcdef123456",
+        "mobilesdk_app_id": "1:719914772795:android:15c5136dfdf832cd5faf1e",
         "android_client_info": {
           "package_name": "com.chizo.app"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "123456789-abcdef123456.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDummyKeyForTesting123456789"
+          "current_key": "AIzaSyDnBkVYNzuuc0Ob3R4hPiMugDvVmtylNk4"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "123456789-abcdef123456.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

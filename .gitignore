@@ -103,5 +103,10 @@ coverage/
 # Android local properties (personal SDK paths)
 android/local.properties
 
+# Android signing keys (IMPORTANT: Never commit!)
+android/key.properties
+*.keystore
+*.jks
+
 # Supabase
 .supabase/
