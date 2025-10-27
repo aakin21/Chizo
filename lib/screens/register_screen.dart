@@ -240,12 +240,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFFFF6B35), // Ana turuncu
-                        Color(0xFFFF8C42), // Açık turuncu
-                      ],
-                    ),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
@@ -255,10 +250,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ],
                   ),
-                  child: const Icon(
-                    Icons.person_add,
-                    size: 40,
-                    color: Colors.white,
+                  child: Image.asset(
+                    'chizoimage.png',
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.contain,
                   ),
                 ),
                 
