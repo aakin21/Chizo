@@ -158,7 +158,7 @@ class _CountryRankingScreenState extends State<CountryRankingScreen> {
   Future<void> _purchaseCountryStats() async {
     try {
       // Gerçek coin harcama sistemi
-      final success = await UserService.updateCoins(-500, 'spent', 'Ülke istatistikleri görüntüleme');
+      final success = await UserService.updateCoins(-500, 'spent', AppLocalizations.of(context)!.countryStats);
       
       if (!success) {
         if (mounted) {

@@ -1769,18 +1769,23 @@ class _ReportDialogState extends State<ReportDialog> {
           const SizedBox(height: 16),
 
           // Reason selection
-          RadioGroup<String>(
-            onChanged: (value) {
-              setState(() {
-                selectedReason = value;
-              });
-            },
-            child: Column(
-              children: reportReasons.map((reason) => RadioListTile<String>(
-                title: Text(reason['name']!),
-                value: reason['key']!,
-              )).toList(),
-            ),
+          Column(
+            children: reportReasons.map((reason) => RadioListTile<String>(
+              title: Text(reason['name']!),
+              value: reason['key']!,
+              groupValue: selectedReason,
+              fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return const Color(0xFFFF6B35); // Seçiliyken turuncu dolu
+                }
+                return Colors.grey.shade400; // Seçili değilken gri boş
+              }),
+              onChanged: (value) {
+                setState(() {
+                  selectedReason = value;
+                });
+              },
+            )).toList(),
           ),
 
           const SizedBox(height: 16),

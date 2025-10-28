@@ -65,6 +65,78 @@ class _SettingsTabState extends State<SettingsTab> {
     }
   }
 
+  String _getLocalizedCountryName(String countryKey) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (countryKey) {
+      case 'turkey':
+        return l10n.turkey;
+      case 'germany':
+        return l10n.germany;
+      case 'france':
+        return l10n.france;
+      case 'italy':
+        return l10n.italy;
+      case 'spain':
+        return l10n.spain;
+      case 'netherlands':
+        return l10n.netherlands;
+      case 'belgium':
+        return l10n.belgium;
+      case 'austria':
+        return l10n.austria;
+      case 'switzerland':
+        return l10n.switzerland;
+      case 'poland':
+        return l10n.poland;
+      case 'czech_republic':
+        return l10n.czech_republic;
+      case 'hungary':
+        return l10n.hungary;
+      case 'romania':
+        return l10n.romania;
+      case 'bulgaria':
+        return l10n.bulgaria;
+      case 'croatia':
+        return l10n.croatia;
+      case 'slovenia':
+        return l10n.slovenia;
+      case 'slovakia':
+        return l10n.slovakia;
+      case 'estonia':
+        return l10n.estonia;
+      case 'latvia':
+        return l10n.latvia;
+      case 'lithuania':
+        return l10n.lithuania;
+      case 'finland':
+        return l10n.finland;
+      case 'sweden':
+        return l10n.sweden;
+      case 'norway':
+        return l10n.norway;
+      case 'denmark':
+        return l10n.denmark;
+      case 'portugal':
+        return l10n.portugal;
+      case 'greece':
+        return l10n.greece;
+      case 'cyprus':
+        return l10n.cyprus;
+      case 'malta':
+        return l10n.malta;
+      case 'luxembourg':
+        return l10n.luxembourg;
+      case 'ireland':
+        return l10n.ireland;
+      case 'united_kingdom':
+        return l10n.united_kingdom;
+      case 'iceland':
+        return l10n.iceland;
+      default:
+        return countryKey;
+    }
+  }
+
   String _getThemeDescription(String theme) {
     switch (theme) {
       case 'Beyaz':
@@ -96,11 +168,12 @@ class _SettingsTabState extends State<SettingsTab> {
 
   Future<void> _deleteAccount() async {
     String? selectedReason;
+    final l10n = AppLocalizations.of(context)!;
     final reasons = <String>[
-      'Sıkıldım',
-      'Yetersiz uygulama',
-      'Biraz araya ihtiyacım var',
-      'Daha iyi bir uygulama buldum',
+      l10n.deleteReasonBored,
+      l10n.deleteReasonPoorApp,
+      l10n.deleteReasonNeedBreak,
+      l10n.deleteReasonFoundBetter,
     ];
 
     await showDialog(
@@ -118,17 +191,22 @@ class _SettingsTabState extends State<SettingsTab> {
                   const SizedBox(height: 12),
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: Text('Hesabı silme sebebiniz nedir?', style: Theme.of(context).textTheme.bodyMedium),
+                    child: Text(AppLocalizations.of(context)!.deleteAccountReasonPrompt, style: Theme.of(context).textTheme.bodyMedium),
                   ),
                   const SizedBox(height: 8),
-                  RadioGroup<String>(
-                    onChanged: (val) => setInnerState(() => selectedReason = val),
-                    child: Column(
-                      children: reasons.map((r) => RadioListTile<String>(
-                            title: Text(r),
-                            value: r,
-                          )).toList(),
-                    ),
+                  Column(
+                    children: reasons.map((r) => RadioListTile<String>(
+                          title: Text(r),
+                          value: r,
+                          groupValue: selectedReason,
+                          fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return const Color(0xFFFF6B35); // Seçiliyken turuncu dolu
+                            }
+                            return Colors.grey.shade400; // Seçili değilken gri boş
+                          }),
+                          onChanged: (val) => setInnerState(() => selectedReason = val),
+                        )).toList(),
                   ),
                 ],
               ),
@@ -269,20 +347,25 @@ class _SettingsTabState extends State<SettingsTab> {
             selectedTheme: selectedTheme,
             title: AppLocalizations.of(context)!.themeSelection,
             children: [
-              RadioGroup<String>(
-                onChanged: (value) async {
-                  if (value != null) {
-                    // Tema değiştir - GlobalThemeService ValueNotifier'ı güncelleyecek
-                    await _applyTheme(value);
-                  }
-                },
-                child: Column(
-                  children: _themeOptions.map((theme) => RadioListTile<String>(
-                    title: Text(_getThemeName(theme)),
-                    subtitle: Text(_getThemeDescription(theme)),
-                    value: theme,
-                  )).toList(),
-                ),
+              Column(
+                children: _themeOptions.map((theme) => RadioListTile<String>(
+                  title: Text(_getThemeName(theme)),
+                  subtitle: Text(_getThemeDescription(theme)),
+                  value: theme,
+                  groupValue: selectedTheme, // Şu anda seçili olan tema
+                  fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return const Color(0xFFFF6B35); // Seçiliyken turuncu dolu
+                    }
+                    return Colors.grey.shade400; // Seçili değilken gri boş
+                  }),
+                  onChanged: (value) async {
+                    if (value != null) {
+                      // Tema değiştir - GlobalThemeService ValueNotifier'ı güncelleyecek
+                      await _applyTheme(value);
+                    }
+                  },
+                )).toList(),
               ),
             ],
           ),
@@ -319,7 +402,7 @@ class _SettingsTabState extends State<SettingsTab> {
           // Match Ayarları
           _buildSectionCard(
             selectedTheme: selectedTheme,
-            title: '⚔️ Match Ayarları',
+            title: AppLocalizations.of(context)!.matchSettings,
             children: [
               ListTile(
                 leading: const Icon(Icons.visibility, color: Color(0xFFFF6B35)),
@@ -937,7 +1020,7 @@ class _SettingsTabState extends State<SettingsTab> {
                       final country = AppConstants.countries[index];
                       return CheckboxListTile(
                         title: Text(
-                          country,
+                          _getLocalizedCountryName(country),
                           style: TextStyle(
                             color: isDarkTheme ? Colors.white : null,
                           ),

@@ -84,9 +84,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 8),
             
-            // Mesaj
+            // Mesaj (localized)
             Text(
-              message,
+              streak == 1
+                ? AppLocalizations.of(context)!.firstLoginReward
+                : AppLocalizations.of(context)!.streakReward(coins, streak),
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 16),
             ),
@@ -106,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Icon(Icons.monetization_on, color: Colors.amber),
                   const SizedBox(width: 8),
                   Text(
-                    '+$coins Coin',
+                    '+$coins ${AppLocalizations.of(context)!.coins}',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

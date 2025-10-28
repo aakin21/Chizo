@@ -252,7 +252,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
               ElevatedButton.icon(
                 onPressed: _navigateToChampions,
                 icon: const Icon(Icons.emoji_events, size: 16),
-                label: const Text('Şampiyonlar'),
+                label: Text(AppLocalizations.of(context)!.champions),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFF6B35), // Ana turuncu ton
                   foregroundColor: Colors.white,
@@ -439,7 +439,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${tournament.currentParticipants}/${tournament.maxParticipants} katılımcı',
+                    AppLocalizations.of(context)!.participantsCount(tournament.currentParticipants, tournament.maxParticipants),
                     style: TextStyle(
                       fontSize: 14,
                       color: isDarkTheme ? Colors.white70 : Colors.grey[600],
@@ -448,7 +448,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                   if (tournament.isPrivate) ...[
                     const SizedBox(height: 2),
                     Text(
-                      'Oluşturan: ${creatorNames[tournament.creatorId] ?? "Bilinmeyen"}',
+                      AppLocalizations.of(context)!.createdBy(creatorNames[tournament.creatorId] ?? AppLocalizations.of(context)!.unknown),
                       style: TextStyle(
                         fontSize: 12,
                         color: isDarkTheme ? Colors.white60 : Colors.grey[500],
@@ -467,7 +467,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                _getStatusText(tournament.status),
+                _getLocalizedStatusText(tournament.status),
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -520,18 +520,18 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   }
 
   // Durum metni
-  String _getStatusText(String status) {
+  String _getLocalizedStatusText(String status) {
     switch (status) {
       case 'active':
-        return 'Aktif';
+        return AppLocalizations.of(context)!.statusActive;
       case 'upcoming':
-        return 'Yakında';
+        return AppLocalizations.of(context)!.statusUpcoming;
       case 'completed':
-        return 'Tamamlandı';
+        return AppLocalizations.of(context)!.statusCompleted;
       case 'cancelled':
-        return 'İptal';
+        return AppLocalizations.of(context)!.statusCancelled;
       default:
-        return 'Bilinmeyen';
+        return AppLocalizations.of(context)!.unknown;
     }
   }
 
@@ -543,11 +543,11 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
   String _getFormatTooltip(String format) {
     switch (format) {
       case 'league':
-        return 'Lig Usulü: Herkes herkesle oynar, en yüksek win rate kazanır. Sınırsız katılımcı.';
+        return AppLocalizations.of(context)!.leagueFormatTooltip;
       case 'elimination':
-        return 'Eleme Usulü: Tek maçlık eleme sistemi. Maksimum 8 kişi (Çeyrek final, Yarı final, Final).';
+        return AppLocalizations.of(context)!.eliminationFormatTooltip;
       default:
-        return 'Turnuva formatı seçin';
+        return AppLocalizations.of(context)!.selectTournamentFormat;
     }
   }
 
@@ -559,7 +559,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       if (mounted) {
         BeautifulSnackBar.showError(
           context,
-          message: 'Kullanıcı bilgileri alınamadı',
+          message: AppLocalizations.of(context)!.userInfoNotLoaded,
         );
       }
       return;
@@ -570,7 +570,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
       if (mounted) {
         BeautifulSnackBar.showWarning(
           context,
-          message: 'Private turnuva oluşturmak için $requiredCoins coin gerekli. Mevcut coin: ${currentUser.coins}',
+          message: AppLocalizations.of(context)!.privateTournamentInsufficientCoins(requiredCoins, currentUser.coins),
         );
       }
       return;
@@ -612,7 +612,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Private turnuva oluşturmak için 5000 coin gereklidir',
+                AppLocalizations.of(context)!.privateTournamentCostMessage(5000, currentUser.coins),
                 style: TextStyle(
                   color: Colors.orange[700],
                   fontSize: 12,
@@ -643,8 +643,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 // Açıklama
                 TextField(
                   controller: descriptionController,
-                  decoration: const InputDecoration(
-                    labelText: 'Açıklama',
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.descriptionLabel,
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.description),
                   ),
@@ -707,14 +707,14 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 // Cinsiyet
                 DropdownButtonFormField<String>(
                   initialValue: selectedGender,
-                  decoration: const InputDecoration(
-                    labelText: 'Cinsiyet',
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.gender,
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.person),
                   ),
-                  items: const [
-                    DropdownMenuItem(value: 'Erkek', child: Text('Erkek')),
-                    DropdownMenuItem(value: 'Kadın', child: Text('Kadın')),
+                  items: [
+                    DropdownMenuItem(value: 'Erkek', child: Text(AppLocalizations.of(context)!.male)),
+                    DropdownMenuItem(value: 'Kadın', child: Text(AppLocalizations.of(context)!.female)),
                   ],
                   onChanged: (value) {
                     setDialogState(() {
@@ -727,7 +727,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 // Başlangıç tarihi ve saati
                 ListTile(
                   leading: const Icon(Icons.calendar_today),
-                  title: const Text('Başlangıç Tarihi'),
+                  title: Text(AppLocalizations.of(context)!.startDateLabel),
                   subtitle: Text('${startDate.day}/${startDate.month}/${startDate.year}'),
                   onTap: () async {
                     final date = await showDatePicker(
@@ -745,7 +745,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 ),
                 ListTile(
                   leading: const Icon(Icons.access_time),
-                  title: const Text('Başlangıç Saati'),
+                  title: Text(AppLocalizations.of(context)!.startTimeLabel),
                   subtitle: Text('${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}'),
                   onTap: () async {
                     final time = await showTimePicker(
@@ -763,7 +763,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 // Bitiş tarihi ve saati
                 ListTile(
                   leading: const Icon(Icons.event),
-                  title: const Text('Bitiş Tarihi'),
+                  title: Text(AppLocalizations.of(context)!.endDateLabel),
                   subtitle: Text('${endDate.day}/${endDate.month}/${endDate.year}'),
                   onTap: () async {
                     final date = await showDatePicker(
@@ -781,7 +781,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 ),
                 ListTile(
                   leading: const Icon(Icons.access_time),
-                  title: const Text('Bitiş Saati'),
+                  title: Text(AppLocalizations.of(context)!.endTimeLabel),
                   subtitle: Text('${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}'),
                   onTap: () async {
                     final time = await showTimePicker(
@@ -801,7 +801,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('İptal'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -809,8 +809,8 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                     descriptionController.text.isEmpty ||
                     maxParticipantsController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Lütfen tüm alanları doldurun'),
+                    SnackBar(
+                      content: Text(AppLocalizations.of(context)!.pleaseFillAllFields),
                       backgroundColor: Colors.red,
                     ),
                   );
@@ -851,7 +851,7 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
                 backgroundColor: Colors.purple,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Oluştur'),
+              child: Text(AppLocalizations.of(context)!.create),
             ),
           ],
           ),
@@ -893,15 +893,15 @@ class _TurnuvaTabState extends State<TurnuvaTab> {
             backgroundColor: Colors.green,
             duration: const Duration(seconds: 5),
             action: SnackBarAction(
-              label: 'Private Key: ${result['private_key']}',
+              label: '${AppLocalizations.of(context)!.privateKeyLabel}: ${result['private_key']}',
               textColor: Colors.white,
               onPressed: () {
                 // Private key'i kopyala
                 if (!mounted) return;
-                
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Private Key: ${result['private_key']}'),
+                    content: Text('${AppLocalizations.of(context)!.privateKeyLabel}: ${result['private_key']}'),
                     backgroundColor: Colors.blue,
                   ),
                 );

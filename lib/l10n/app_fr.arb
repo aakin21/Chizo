@@ -226,6 +226,7 @@
   "purchaseCoinPackage": "Acheter un pack de pièces",
   "purchaseCoinPackageSubtitle": "Achetez des pièces et gagnez des récompenses",
   "appSettings": "⚙️ Paramètres de l'application",
+  "matchSettings": "⚔️ Paramètres des Matchs",
   "dailyRewards": "Récompenses quotidiennes",
   "dailyRewardsSubtitle": "Voir les récompenses de série et les boosts",
   "aboutApp": "À propos de l'application",
@@ -448,5 +449,280 @@
   "reportSubmitted": "Signalement soumis avec succès",
   "reportError": "Échec de la soumission du signalement",
   "profileVisible": "Le profil est maintenant visible",
-  "profileHidden": "Le profil est maintenant caché"
+  "profileHidden": "Le profil est maintenant caché",
+
+  "countryStatistics": "Statistiques par pays",
+  "@countryStatistics": {
+    "description": "Titre des statistiques par pays"
+  },
+  "selectYourAge": "Sélectionnez votre âge",
+  "@selectYourAge": {
+    "description": "Étiquette de sélection d'âge"
+  },
+  "addInstagramAccount": "Ajoutez votre compte Instagram",
+  "@addInstagramAccount": {
+    "description": "Placeholder d'ajout de compte Instagram"
+  },
+  "addProfessionText": "Ajoutez votre profession",
+  "@addProfessionText": {
+    "description": "Placeholder d'ajout de profession"
+  },
+  "instagramInfoVisibleInMatches": "Info Instagram visible dans les matchs",
+  "@instagramInfoVisibleInMatches": {
+    "description": "Message d'info Instagram visible"
+  },
+  "instagramInfoHiddenInMatches": "Info Instagram cachée dans les matchs",
+  "@instagramInfoHiddenInMatches": {
+    "description": "Message d'info Instagram cachée"
+  },
+  "professionInfoVisibleInMatches": "Info de profession visible dans les matchs",
+  "@professionInfoVisibleInMatches": {
+    "description": "Message d'info de profession visible"
+  },
+  "professionInfoHiddenInMatches": "Info de profession cachée dans les matchs",
+  "@professionInfoHiddenInMatches": {
+    "description": "Message d'info de profession cachée"
+  },
+  "updateError": "Erreur lors de la mise à jour",
+  "@updateError": {
+    "description": "Message d'erreur de mise à jour"
+  },
+  "manageFromSettings": "Cette fonctionnalité peut être gérée depuis la page des paramètres",
+  "@manageFromSettings": {
+    "description": "Message de gestion depuis les paramètres"
+  },
+  "changeUsername": "Changer le nom d'utilisateur",
+  "@changeUsername": {
+    "description": "Titre du dialogue de changement de nom d'utilisateur"
+  },
+  "newUsername": "Nouveau nom d'utilisateur",
+  "@newUsername": {
+    "description": "Étiquette de saisie du nouveau nom d'utilisateur"
+  },
+  "currentCoinsText": "Pièces actuelles : {coins}",
+  "@currentCoinsText": {
+    "description": "Affichage des pièces actuelles",
+    "placeholders": {
+      "coins": {
+        "type": "int"
+      }
+    }
+  },
+  "insufficientCoinsStore": "Pièces insuffisantes ! Vous pouvez acheter des pièces dans la boutique.",
+  "@insufficientCoinsStore": {
+    "description": "Message de pièces insuffisantes dans la boutique"
+  },
+  "change": "Changer",
+  "@change": {
+    "description": "Texte du bouton changer"
+  },
+  "usernameChange": "Changement de nom d'utilisateur",
+  "@usernameChange": {
+    "description": "Description de la transaction de changement de nom d'utilisateur"
+  },
+  "usernameUpdated": "✅ Votre nom d'utilisateur a été mis à jour ({cost} pièces dépensées)",
+  "@usernameUpdated": {
+    "description": "Message de succès de mise à jour du nom d'utilisateur",
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
+  },
+  "usernameUpdateFailed": "Le nom d'utilisateur n'a pas pu être mis à jour",
+  "@usernameUpdateFailed": {
+    "description": "Message d'échec de mise à jour du nom d'utilisateur"
+  },
+  "selectYourAgeTitle": "Sélectionnez Votre Âge",
+  "@selectYourAgeTitle": {
+    "description": "Titre du dialogue de sélection d'âge"
+  },
+  "ageYearsOld": "{age} ans",
+  "@ageYearsOld": {
+    "description": "Étiquette d'âge en années",
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "ageInfoUpdated": "Info d'âge mise à jour",
+  "@ageInfoUpdated": {
+    "description": "Message d'info d'âge mise à jour"
+  },
+  "champions": "Champions",
+  "@champions": {
+    "description": "Texte du bouton champions"
+  },
+  "participantsCount": "{current}/{max} participants",
+  "@participantsCount": {
+    "description": "Affichage du nombre de participants",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "createdBy": "Créé par : {creator}",
+  "@createdBy": {
+    "description": "Affichage de créé par",
+    "placeholders": {
+      "creator": {
+        "type": "String"
+      }
+    }
+  },
+  "unknown": "Inconnu",
+  "@unknown": {
+    "description": "Texte inconnu"
+  },
+  "statusActive": "Actif",
+  "@statusActive": {
+    "description": "Statut actif"
+  },
+  "statusUpcoming": "À venir",
+  "@statusUpcoming": {
+    "description": "Statut à venir"
+  },
+  "statusCompleted": "Terminé",
+  "@statusCompleted": {
+    "description": "Statut terminé"
+  },
+  "statusCancelled": "Annulé",
+  "@statusCancelled": {
+    "description": "Statut annulé"
+  },
+  "leagueFormatTooltip": "Système de ligue : Tout le monde joue contre tout le monde, le taux de victoire le plus élevé gagne. Participants illimités.",
+  "@leagueFormatTooltip": {
+    "description": "Info-bulle du format de ligue"
+  },
+  "eliminationFormatTooltip": "Système d'élimination : Élimination en un seul match. Maximum 8 personnes (Quarts de finale, Demi-finale, Finale).",
+  "@eliminationFormatTooltip": {
+    "description": "Info-bulle du format d'élimination"
+  },
+  "selectTournamentFormat": "Sélectionner le format du tournoi",
+  "@selectTournamentFormat": {
+    "description": "Texte de sélection du format du tournoi"
+  },
+  "privateTournamentInsufficientCoins": "Créer un tournoi privé nécessite {required} pièces. Pièces actuelles : {current}",
+  "@privateTournamentInsufficientCoins": {
+    "description": "Message de pièces insuffisantes pour tournoi privé",
+    "placeholders": {
+      "required": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "myPhotos": "Mes Photos",
+  "@myPhotos": {
+    "description": "Titre de la section mes photos"
+  },
+
+  "privateTournamentCostMessage": "Créer un tournoi privé nécessite {required} pièces. Pièces actuelles : {current}",
+  "@privateTournamentCostMessage": {
+    "description": "Message de coût de tournoi privé",
+    "placeholders": {
+      "required": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "descriptionLabel": "Description",
+  "@descriptionLabel": {
+    "description": "Étiquette de description"
+  },
+  "startDateLabel": "Date de début",
+  "@startDateLabel": {
+    "description": "Étiquette de date de début"
+  },
+  "startTimeLabel": "Heure de début",
+  "@startTimeLabel": {
+    "description": "Étiquette d'heure de début"
+  },
+  "endDateLabel": "Date de fin",
+  "@endDateLabel": {
+    "description": "Étiquette de date de fin"
+  },
+  "endTimeLabel": "Heure de fin",
+  "@endTimeLabel": {
+    "description": "Étiquette d'heure de fin"
+  },
+  "pleaseFillAllFields": "Veuillez remplir tous les champs",
+  "@pleaseFillAllFields": {
+    "description": "Message de remplir tous les champs"
+  },
+  "create": "Créer",
+  "@create": {
+    "description": "Bouton créer"
+  },
+  "privateKeyLabel": "Clé privée",
+  "@privateKeyLabel": {
+    "description": "Étiquette de clé privée"
+  }
+  ,
+  
+  "deleteReasonBored": "Je m'ennuie",
+  "@deleteReasonBored": {
+    "description": "Raison de suppression de compte - ennuyé"
+  },
+  "deleteReasonPoorApp": "Mauvaise qualité de l'application",
+  "@deleteReasonPoorApp": {
+    "description": "Raison de suppression de compte - mauvaise qualité"
+  },
+  "deleteReasonNeedBreak": "J'ai besoin d'une pause",
+  "@deleteReasonNeedBreak": {
+    "description": "Raison de suppression de compte - besoin de pause"
+  },
+  "deleteReasonFoundBetter": "J'ai trouvé une meilleure application",
+  "@deleteReasonFoundBetter": {
+    "description": "Raison de suppression de compte - trouvé meilleure app"
+  },
+  "deleteAccountReasonPrompt": "Veuillez sélectionner une raison:",
+  "@deleteAccountReasonPrompt": {
+    "description": "Demande de raison de suppression de compte"
+  },
+
+  "matchSettings": "⚔️ Paramètres des Matchs",
+
+  "turkey": "Turquie",
+  "germany": "Allemagne",
+  "france": "France",
+  "italy": "Italie",
+  "spain": "Espagne",
+  "netherlands": "Pays-Bas",
+  "belgium": "Belgique",
+  "austria": "Autriche",
+  "switzerland": "Suisse",
+  "poland": "Pologne",
+  "czech_republic": "République Tchèque",
+  "hungary": "Hongrie",
+  "romania": "Roumanie",
+  "bulgaria": "Bulgarie",
+  "croatia": "Croatie",
+  "slovenia": "Slovénie",
+  "slovakia": "Slovaquie",
+  "estonia": "Estonie",
+  "latvia": "Lettonie",
+  "lithuania": "Lituanie",
+  "finland": "Finlande",
+  "sweden": "Suède",
+  "norway": "Norvège",
+  "denmark": "Danemark",
+  "portugal": "Portugal",
+  "greece": "Grèce",
+  "cyprus": "Chypre",
+  "malta": "Malte",
+  "luxembourg": "Luxembourg",
+  "ireland": "Irlande",
+  "united_kingdom": "Royaume-Uni",
+  "iceland": "Islande"
 }

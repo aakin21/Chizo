@@ -923,5 +923,283 @@
   "cropImageInstructions": "Fotoğrafınızı kare formata kırpın",
   "@cropImageInstructions": {
     "description": "Kırpma ekranı talimatları"
-  }
+  },
+
+  "myPhotos": "Fotoğraflarım",
+  "@myPhotos": {
+    "description": "Fotoğraflarım bölüm başlığı"
+  },
+  "countryStatistics": "Ülkelere Göre İstatistikler",
+  "@countryStatistics": {
+    "description": "Ülke istatistikleri başlığı"
+  },
+  "selectYourAge": "Yaşınızı seçin",
+  "@selectYourAge": {
+    "description": "Yaş seçim etiketi"
+  },
+  "addInstagramAccount": "Instagram hesabınızı ekleyin",
+  "@addInstagramAccount": {
+    "description": "Instagram hesabı ekleme placeholder"
+  },
+  "addProfessionText": "Mesleğinizi ekleyin",
+  "@addProfessionText": {
+    "description": "Meslek ekleme placeholder"
+  },
+  "instagramInfoVisibleInMatches": "Instagram bilgisi matchlerde görünür",
+  "@instagramInfoVisibleInMatches": {
+    "description": "Instagram bilgisi görünür mesajı"
+  },
+  "instagramInfoHiddenInMatches": "Instagram bilgisi matchlerde gizli",
+  "@instagramInfoHiddenInMatches": {
+    "description": "Instagram bilgisi gizli mesajı"
+  },
+  "professionInfoVisibleInMatches": "Meslek bilgisi matchlerde görünür",
+  "@professionInfoVisibleInMatches": {
+    "description": "Meslek bilgisi görünür mesajı"
+  },
+  "professionInfoHiddenInMatches": "Meslek bilgisi matchlerde gizli",
+  "@professionInfoHiddenInMatches": {
+    "description": "Meslek bilgisi gizli mesajı"
+  },
+  "updateError": "Güncelleme sırasında hata oluştu",
+  "@updateError": {
+    "description": "Güncelleme hatası mesajı"
+  },
+  "manageFromSettings": "Bu özellik ayarlar sayfasından yönetilebilir",
+  "@manageFromSettings": {
+    "description": "Ayarlardan yönet mesajı"
+  },
+  "changeUsername": "Kullanıcı Adı Değiştir",
+  "@changeUsername": {
+    "description": "Kullanıcı adı değiştirme dialog başlığı"
+  },
+  "newUsername": "Yeni kullanıcı adı",
+  "@newUsername": {
+    "description": "Yeni kullanıcı adı input etiketi"
+  },
+  "currentCoinsText": "Mevcut coinleriniz: {coins}",
+  "@currentCoinsText": {
+    "description": "Mevcut coin gösterimi",
+    "placeholders": {
+      "coins": {
+        "type": "int"
+      }
+    }
+  },
+  "insufficientCoinsStore": "Yetersiz coin! Mağazadan coin satın alabilirsiniz.",
+  "@insufficientCoinsStore": {
+    "description": "Yetersiz coin mağaza mesajı"
+  },
+  "change": "Değiştir",
+  "@change": {
+    "description": "Değiştir butonu metni"
+  },
+  "usernameChange": "Kullanıcı adı değişikliği",
+  "@usernameChange": {
+    "description": "Kullanıcı adı değişikliği işlem açıklaması"
+  },
+  "usernameUpdated": "✅ Kullanıcı adınız güncellendi ({cost} coin harcandı)",
+  "@usernameUpdated": {
+    "description": "Kullanıcı adı güncellendi başarı mesajı",
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
+  },
+  "usernameUpdateFailed": "Kullanıcı adı güncellenemedi",
+  "@usernameUpdateFailed": {
+    "description": "Kullanıcı adı güncelleme hatası mesajı"
+  },
+  "selectYourAgeTitle": "Yaşınızı Seçin",
+  "@selectYourAgeTitle": {
+    "description": "Yaş seçim dialog başlığı"
+  },
+  "ageYearsOld": "{age} yaş",
+  "@ageYearsOld": {
+    "description": "Yaş etiketi",
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "ageInfoUpdated": "Yaş bilgisi güncellendi",
+  "@ageInfoUpdated": {
+    "description": "Yaş bilgisi güncellendi mesajı"
+  },
+
+  "privateTournamentCostMessage": "Özel turnuva oluşturmak için {required} coin gerekiyor. Mevcut coin: {current}",
+  "@privateTournamentCostMessage": {
+    "description": "Özel turnuva maliyet mesajı",
+    "placeholders": {
+      "required": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "descriptionLabel": "Açıklama",
+  "@descriptionLabel": {
+    "description": "Açıklama etiketi"
+  },
+  "startDateLabel": "Başlangıç Tarihi",
+  "@startDateLabel": {
+    "description": "Başlangıç tarihi etiketi"
+  },
+  "startTimeLabel": "Başlangıç Saati",
+  "@startTimeLabel": {
+    "description": "Başlangıç saati etiketi"
+  },
+  "endDateLabel": "Bitiş Tarihi",
+  "@endDateLabel": {
+    "description": "Bitiş tarihi etiketi"
+  },
+  "endTimeLabel": "Bitiş Saati",
+  "@endTimeLabel": {
+    "description": "Bitiş saati etiketi"
+  },
+  "pleaseFillAllFields": "Lütfen tüm alanları doldurun",
+  "@pleaseFillAllFields": {
+    "description": "Tüm alanları doldurun mesajı"
+  },
+  "create": "Oluştur",
+  "@create": {
+    "description": "Oluştur butonu"
+  },
+  "privateKeyLabel": "Özel Anahtar",
+  "@privateKeyLabel": {
+    "description": "Özel anahtar etiketi"
+  },
+
+  "champions": "Şampiyonlar",
+  "@champions": {
+    "description": "Şampiyonlar butonu"
+  },
+  "participantsCount": "{current}/{max} katılımcı",
+  "@participantsCount": {
+    "description": "Katılımcı sayısı",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "createdBy": "Oluşturan: {creator}",
+  "@createdBy": {
+    "description": "Oluşturan gösterimi",
+    "placeholders": {
+      "creator": {
+        "type": "String"
+      }
+    }
+  },
+  "unknown": "Bilinmeyen",
+  "@unknown": {
+    "description": "Bilinmeyen metni"
+  },
+  "statusActive": "Aktif",
+  "@statusActive": {
+    "description": "Aktif durum"
+  },
+  "statusUpcoming": "Yaklaşan",
+  "@statusUpcoming": {
+    "description": "Yaklaşan durum"
+  },
+  "statusCompleted": "Tamamlandı",
+  "@statusCompleted": {
+    "description": "Tamamlandı durumu"
+  },
+  "statusCancelled": "İptal Edildi",
+  "@statusCancelled": {
+    "description": "İptal edildi durumu"
+  },
+  "leagueFormatTooltip": "Lig Sistemi: Herkes herkesle oynar, en yüksek kazanma oranı kazanır. Sınırsız katılımcı.",
+  "@leagueFormatTooltip": {
+    "description": "Lig formatı tooltip"
+  },
+  "eliminationFormatTooltip": "Eleme Sistemi: Tek maç eleme. Maksimum 8 kişi (Çeyrek final, Yarı final, Final).",
+  "@eliminationFormatTooltip": {
+    "description": "Eleme formatı tooltip"
+  },
+  "selectTournamentFormat": "Turnuva formatını seç",
+  "@selectTournamentFormat": {
+    "description": "Turnuva formatı seç metni"
+  },
+  "privateTournamentInsufficientCoins": "Özel turnuva oluşturmak {required} coin gerektirir. Mevcut coin: {current}",
+  "@privateTournamentInsufficientCoins": {
+    "description": "Özel turnuva için yetersiz coin mesajı",
+    "placeholders": {
+      "required": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+
+  "deleteReasonBored": "Sıkıldım",
+  "@deleteReasonBored": {
+    "description": "Hesap silme nedeni - sıkıldım"
+  },
+  "deleteReasonPoorApp": "Uygulama kalitesi düşük",
+  "@deleteReasonPoorApp": {
+    "description": "Hesap silme nedeni - kötü uygulama"
+  },
+  "deleteReasonNeedBreak": "Molaya ihtiyacım var",
+  "@deleteReasonNeedBreak": {
+    "description": "Hesap silme nedeni - mola ihtiyacı"
+  },
+  "deleteReasonFoundBetter": "Daha iyi bir uygulama buldum",
+  "@deleteReasonFoundBetter": {
+    "description": "Hesap silme nedeni - daha iyi uygulama buldu"
+  },
+  "deleteAccountReasonPrompt": "Lütfen bir neden seçin:",
+  "@deleteAccountReasonPrompt": {
+    "description": "Hesap silme nedeni istemi"
+  },
+
+  "matchSettings": "⚔️ Match Ayarları",
+  "@matchSettings": {
+    "description": "Match ayarları bölüm başlığı"
+  },
+
+  "turkey": "Türkiye",
+  "germany": "Almanya",
+  "france": "Fransa",
+  "italy": "İtalya",
+  "spain": "İspanya",
+  "netherlands": "Hollanda",
+  "belgium": "Belçika",
+  "austria": "Avusturya",
+  "switzerland": "İsviçre",
+  "poland": "Polonya",
+  "czech_republic": "Çek Cumhuriyeti",
+  "hungary": "Macaristan",
+  "romania": "Romanya",
+  "bulgaria": "Bulgaristan",
+  "croatia": "Hırvatistan",
+  "slovenia": "Slovenya",
+  "slovakia": "Slovakya",
+  "estonia": "Estonya",
+  "latvia": "Letonya",
+  "lithuania": "Litvanya",
+  "finland": "Finlandiya",
+  "sweden": "İsveç",
+  "norway": "Norveç",
+  "denmark": "Danimarka",
+  "portugal": "Portekiz",
+  "greece": "Yunanistan",
+  "cyprus": "Kıbrıs",
+  "malta": "Malta",
+  "luxembourg": "Lüksemburg",
+  "ireland": "İrlanda",
+  "united_kingdom": "İngiltere",
+  "iceland": "İzlanda"
 }

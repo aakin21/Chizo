@@ -365,7 +365,7 @@ class _ProfileTabState extends State<ProfileTab> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Fotoğraflarım',
+                                AppLocalizations.of(context)!.myPhotos,
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -637,7 +637,7 @@ class _ProfileTabState extends State<ProfileTab> {
                             ),
                           ),
                           title: Text(
-                            'Ülkelere Göre İstatistikler',
+                            AppLocalizations.of(context)!.countryStatistics,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -999,13 +999,13 @@ class _ProfileTabState extends State<ProfileTab> {
                             size: 28,
                           ),
                           title: Text(
-                            'Yaş',
+                            AppLocalizations.of(context)!.age,
                             style: TextStyle(
                               color: isDarkTheme ? Colors.white : null,
                             ),
                           ),
                           subtitle: Text(
-                            currentUser!.age?.toString() ?? 'Yaşınızı seçin',
+                            currentUser!.age?.toString() ?? AppLocalizations.of(context)!.selectYourAge,
                             style: TextStyle(
                               color: isDarkTheme ? Colors.white70 : null,
                             ),
@@ -1056,7 +1056,7 @@ class _ProfileTabState extends State<ProfileTab> {
                             size: 28,
                           ),
                           title: Text(
-                            'Ülke',
+                            AppLocalizations.of(context)!.country,
                             style: TextStyle(
                               color: isDarkTheme ? Colors.white.withValues(alpha: 0.5) : Colors.grey,
                             ),
@@ -1065,7 +1065,7 @@ class _ProfileTabState extends State<ProfileTab> {
                             future: _getCountryName(currentUser!.countryCode),
                             builder: (context, snapshot) {
                               return Text(
-                                snapshot.data ?? 'Ülkenizi seçin',
+                                snapshot.data ?? AppLocalizations.of(context)!.selectYourCountry,
                                 style: TextStyle(
                                   color: isDarkTheme ? Colors.white.withValues(alpha: 0.4) : Colors.grey[600],
                                 ),
@@ -1121,7 +1121,7 @@ class _ProfileTabState extends State<ProfileTab> {
                             size: 28,
                           ),
                           title: Text(
-                            'Cinsiyet',
+                            AppLocalizations.of(context)!.gender,
                             style: TextStyle(
                               color: isDarkTheme ? Colors.white.withValues(alpha: 0.5) : Colors.grey,
                             ),
@@ -1130,7 +1130,7 @@ class _ProfileTabState extends State<ProfileTab> {
                             future: _getGenderName(currentUser!.genderCode),
                             builder: (context, snapshot) {
                               return Text(
-                                snapshot.data ?? 'Cinsiyetinizi seçin',
+                                snapshot.data ?? AppLocalizations.of(context)!.selectYourGender,
                                 style: TextStyle(
                                   color: isDarkTheme ? Colors.white.withValues(alpha: 0.4) : Colors.grey[600],
                                 ),
@@ -1209,7 +1209,7 @@ class _ProfileTabState extends State<ProfileTab> {
                             ),
                           ),
                           subtitle: Text(
-                            currentUser!.instagramHandle != null ? '@${currentUser!.instagramHandle!}' : 'Instagram hesabınızı ekleyin',
+                            currentUser!.instagramHandle != null ? '@${currentUser!.instagramHandle!}' : AppLocalizations.of(context)!.addInstagramAccount,
                             style: TextStyle(
                               color: isDarkTheme ? Colors.white70 : null,
                             ),
@@ -1296,7 +1296,7 @@ class _ProfileTabState extends State<ProfileTab> {
                             ),
                           ),
                           subtitle: Text(
-                            currentUser!.profession ?? 'Mesleğinizi ekleyin',
+                            currentUser!.profession ?? AppLocalizations.of(context)!.addProfessionText,
                             style: TextStyle(
                               color: isDarkTheme ? Colors.white70 : null,
                             ),
@@ -1370,7 +1370,11 @@ class _ProfileTabState extends State<ProfileTab> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(value ? '${field == 'instagram' ? 'Instagram' : 'Meslek'} bilgisi matchlerde görünür' : '${field == 'instagram' ? 'Instagram' : 'Meslek'} bilgisi matchlerde gizli'),
+          content: Text(
+            field == 'instagram'
+              ? (value ? AppLocalizations.of(context)!.instagramInfoVisibleInMatches : AppLocalizations.of(context)!.instagramInfoHiddenInMatches)
+              : (value ? AppLocalizations.of(context)!.professionInfoVisibleInMatches : AppLocalizations.of(context)!.professionInfoHiddenInMatches)
+          ),
           backgroundColor: Colors.green,
         ),
       );
@@ -1384,8 +1388,8 @@ class _ProfileTabState extends State<ProfileTab> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Güncelleme sırasında hata oluştu'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.updateError),
           backgroundColor: Colors.red,
         ),
       );
@@ -1428,7 +1432,7 @@ class _ProfileTabState extends State<ProfileTab> {
             mainAxisSize: MainAxisSize.min,
             children: [
             if (field == 'country' || field == 'gender')
-              const Text('Bu özellik ayarlar sayfasından yönetilebilir')
+              Text(AppLocalizations.of(context)!.manageFromSettings)
             else
               TextField(
                 controller: controller,
@@ -1471,7 +1475,7 @@ class _ProfileTabState extends State<ProfileTab> {
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            const Text('Kullanıcı Adı Değiştir'),
+            Text(AppLocalizations.of(context)!.changeUsername),
             const Spacer(),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -1510,15 +1514,15 @@ class _ProfileTabState extends State<ProfileTab> {
           children: [
             TextField(
               controller: controller,
-              decoration: const InputDecoration(
-                labelText: 'Yeni kullanıcı adı',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.newUsername,
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.person),
               ),
             ),
             const SizedBox(height: 16),
             Text(
-              'Mevcut coinleriniz: ${currentUser!.coins}',
+              AppLocalizations.of(context)!.currentCoinsText(currentUser!.coins),
               style: TextStyle(
                 color: currentUser!.coins >= requiredCoins ? Colors.green : Colors.red,
                 fontWeight: FontWeight.bold,
@@ -1526,9 +1530,9 @@ class _ProfileTabState extends State<ProfileTab> {
             ),
             if (currentUser!.coins < requiredCoins) ...[
               const SizedBox(height: 8),
-              const Text(
-                'Yetersiz coin! Mağazadan coin satın alabilirsiniz.',
-                style: TextStyle(color: Colors.red, fontSize: 12),
+              Text(
+                AppLocalizations.of(context)!.insufficientCoinsStore,
+                style: const TextStyle(color: Colors.red, fontSize: 12),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -1537,7 +1541,7 @@ class _ProfileTabState extends State<ProfileTab> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('İptal'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           if (currentUser!.coins >= requiredCoins)
             ElevatedButton(
@@ -1550,7 +1554,7 @@ class _ProfileTabState extends State<ProfileTab> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFFF6B35),
               ),
-              child: const Text('Değiştir'),
+              child: Text(AppLocalizations.of(context)!.change),
             ),
         ],
       ),
@@ -1561,19 +1565,24 @@ class _ProfileTabState extends State<ProfileTab> {
     try {
       setState(() => isUpdating = true);
 
+      // Extract localization strings before async operations
+      final usernameChangeText = AppLocalizations.of(context)!.usernameChange;
+      final usernameUpdatedText = AppLocalizations.of(context)!.usernameUpdated(cost);
+      final usernameUpdateFailedText = AppLocalizations.of(context)!.usernameUpdateFailed;
+
       // First update username
       final success = await UserService.updateProfile(username: newUsername);
 
       if (success) {
         // Then deduct coins
-        await UserService.updateCoins(-cost, 'spent', 'Kullanıcı adı değişikliği');
+        await UserService.updateCoins(-cost, 'spent', usernameChangeText);
 
         await loadUserData();
         if (!mounted) return;
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('✅ Kullanıcı adınız güncellendi ($cost coin harcandı)'),
+            content: Text(usernameUpdatedText),
             backgroundColor: Colors.green,
           ),
         );
@@ -1581,8 +1590,8 @@ class _ProfileTabState extends State<ProfileTab> {
         if (!mounted) return;
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Kullanıcı adı güncellenemedi'),
+          SnackBar(
+            content: Text(usernameUpdateFailedText),
             backgroundColor: Colors.red,
           ),
         );
@@ -1590,8 +1599,9 @@ class _ProfileTabState extends State<ProfileTab> {
     } catch (e) {
       if (!mounted) return;
 
+      final errorText = AppLocalizations.of(context)!.error;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hata: $e'), backgroundColor: Colors.red),
+        SnackBar(content: Text('$errorText: $e'), backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) {
@@ -1882,7 +1892,7 @@ class _ProfileTabState extends State<ProfileTab> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Yaşınızı Seçin'),
+        title: Text(AppLocalizations.of(context)!.selectYourAgeTitle),
         content: SizedBox(
           width: 300,
           height: 400,
@@ -1891,7 +1901,7 @@ class _ProfileTabState extends State<ProfileTab> {
             itemBuilder: (context, index) {
               final age = index + 18;
               return ListTile(
-                title: Text('$age yaş'),
+                title: Text(AppLocalizations.of(context)!.ageYearsOld(age)),
                 selected: currentUser?.age == age,
                 onTap: () async {
                   Navigator.pop(context);
@@ -1914,14 +1924,14 @@ class _ProfileTabState extends State<ProfileTab> {
         await loadUserData();
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Yaş bilgisi güncellendi')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.ageInfoUpdated)),
         );
       }
     } catch (e) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Güncelleme sırasında hata oluştu')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.updateError)),
       );
     }
   }
@@ -1942,11 +1952,11 @@ class _ProfileTabState extends State<ProfileTab> {
     if (genderCode == null) return null;
     switch (genderCode) {
       case 'M':
-        return 'Erkek';
+        return AppLocalizations.of(context)!.male;
       case 'F':
-        return 'Kadın';
+        return AppLocalizations.of(context)!.female;
       case 'O':
-        return 'Diğer';
+        return AppLocalizations.of(context)!.other;
       default:
         return genderCode;
     }

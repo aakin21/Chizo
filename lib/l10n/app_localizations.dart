@@ -2078,11 +2078,11 @@ abstract class AppLocalizations {
   /// **'+1 coin earned!'**
   String get earnedOneCoin;
 
-  /// No description provided for @myPhotos.
+  /// My photos section title
   ///
   /// In en, this message translates to:
-  /// **'My Photos ({count}/5)'**
-  String myPhotos(Object count);
+  /// **'My Photos'**
+  String get myPhotos;
 
   /// No description provided for @photoCostInfo.
   ///
@@ -3025,6 +3025,486 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Crop your image to square format'**
   String get cropImageInstructions;
+
+  /// Country statistics title
+  ///
+  /// In en, this message translates to:
+  /// **'Country Statistics'**
+  String get countryStatistics;
+
+  /// Select your age label
+  ///
+  /// In en, this message translates to:
+  /// **'Select your age'**
+  String get selectYourAge;
+
+  /// Add Instagram account placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Add your Instagram account'**
+  String get addInstagramAccount;
+
+  /// Add profession placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Add your profession'**
+  String get addProfessionText;
+
+  /// Instagram info visible message
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram info visible in matches'**
+  String get instagramInfoVisibleInMatches;
+
+  /// Instagram info hidden message
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram info hidden in matches'**
+  String get instagramInfoHiddenInMatches;
+
+  /// Profession info visible message
+  ///
+  /// In en, this message translates to:
+  /// **'Profession info visible in matches'**
+  String get professionInfoVisibleInMatches;
+
+  /// Profession info hidden message
+  ///
+  /// In en, this message translates to:
+  /// **'Profession info hidden in matches'**
+  String get professionInfoHiddenInMatches;
+
+  /// Update error message
+  ///
+  /// In en, this message translates to:
+  /// **'Error occurred during update'**
+  String get updateError;
+
+  /// Manage from settings message
+  ///
+  /// In en, this message translates to:
+  /// **'This feature can be managed from settings page'**
+  String get manageFromSettings;
+
+  /// Change username dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Change Username'**
+  String get changeUsername;
+
+  /// New username input label
+  ///
+  /// In en, this message translates to:
+  /// **'New username'**
+  String get newUsername;
+
+  /// Current coins display
+  ///
+  /// In en, this message translates to:
+  /// **'Current coins: {coins}'**
+  String currentCoinsText(int coins);
+
+  /// Insufficient coins store message
+  ///
+  /// In en, this message translates to:
+  /// **'Insufficient coins! You can buy coins from the store.'**
+  String get insufficientCoinsStore;
+
+  /// Change button text
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get change;
+
+  /// Username change transaction description
+  ///
+  /// In en, this message translates to:
+  /// **'Username change'**
+  String get usernameChange;
+
+  /// Username updated success message
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Your username has been updated ({cost} coins spent)'**
+  String usernameUpdated(int cost);
+
+  /// Username update failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Username could not be updated'**
+  String get usernameUpdateFailed;
+
+  /// Select age dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Select Your Age'**
+  String get selectYourAgeTitle;
+
+  /// Age years old label
+  ///
+  /// In en, this message translates to:
+  /// **'{age} years old'**
+  String ageYearsOld(int age);
+
+  /// Age info updated message
+  ///
+  /// In en, this message translates to:
+  /// **'Age info updated'**
+  String get ageInfoUpdated;
+
+  /// Private tournament cost message
+  ///
+  /// In en, this message translates to:
+  /// **'Creating a private tournament requires {required} coins. Current coins: {current}'**
+  String privateTournamentCostMessage(int required, int current);
+
+  /// Description label
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get descriptionLabel;
+
+  /// Start date label
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get startDateLabel;
+
+  /// Start time label
+  ///
+  /// In en, this message translates to:
+  /// **'Start Time'**
+  String get startTimeLabel;
+
+  /// End date label
+  ///
+  /// In en, this message translates to:
+  /// **'End Date'**
+  String get endDateLabel;
+
+  /// End time label
+  ///
+  /// In en, this message translates to:
+  /// **'End Time'**
+  String get endTimeLabel;
+
+  /// Please fill all fields message
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill all fields'**
+  String get pleaseFillAllFields;
+
+  /// Create button
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get create;
+
+  /// Private key label
+  ///
+  /// In en, this message translates to:
+  /// **'Private Key'**
+  String get privateKeyLabel;
+
+  /// Champions label
+  ///
+  /// In en, this message translates to:
+  /// **'Champions'**
+  String get champions;
+
+  /// Participants count
+  ///
+  /// In en, this message translates to:
+  /// **'{current}/{max} participants'**
+  String participantsCount(int current, int max);
+
+  /// Created by label
+  ///
+  /// In en, this message translates to:
+  /// **'Created by: {creator}'**
+  String createdBy(String creator);
+
+  /// Unknown label
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknown;
+
+  /// Active status
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get statusActive;
+
+  /// Upcoming status
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get statusUpcoming;
+
+  /// Completed status
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get statusCompleted;
+
+  /// Cancelled status
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get statusCancelled;
+
+  /// League format tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'League System: Everyone plays against everyone, highest win rate wins. Unlimited participants.'**
+  String get leagueFormatTooltip;
+
+  /// Elimination format tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Elimination System: Single match elimination. Maximum 8 people (Quarterfinals, Semifinals, Final).'**
+  String get eliminationFormatTooltip;
+
+  /// Select tournament format label
+  ///
+  /// In en, this message translates to:
+  /// **'Select tournament format'**
+  String get selectTournamentFormat;
+
+  /// Insufficient coins for private tournament message
+  ///
+  /// In en, this message translates to:
+  /// **'Creating a private tournament requires {required} coins. Current coins: {current}'**
+  String privateTournamentInsufficientCoins(int required, int current);
+
+  /// Delete account reason - bored
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m bored'**
+  String get deleteReasonBored;
+
+  /// Delete account reason - poor app quality
+  ///
+  /// In en, this message translates to:
+  /// **'Poor app quality'**
+  String get deleteReasonPoorApp;
+
+  /// Delete account reason - need a break
+  ///
+  /// In en, this message translates to:
+  /// **'I need a break'**
+  String get deleteReasonNeedBreak;
+
+  /// Delete account reason - found better app
+  ///
+  /// In en, this message translates to:
+  /// **'I found a better app'**
+  String get deleteReasonFoundBetter;
+
+  /// Delete account reason prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a reason:'**
+  String get deleteAccountReasonPrompt;
+
+  /// Match settings section title
+  ///
+  /// In en, this message translates to:
+  /// **'⚔️ Match Settings'**
+  String get matchSettings;
+
+  /// No description provided for @turkey.
+  ///
+  /// In en, this message translates to:
+  /// **'Turkey'**
+  String get turkey;
+
+  /// No description provided for @germany.
+  ///
+  /// In en, this message translates to:
+  /// **'Germany'**
+  String get germany;
+
+  /// No description provided for @france.
+  ///
+  /// In en, this message translates to:
+  /// **'France'**
+  String get france;
+
+  /// No description provided for @italy.
+  ///
+  /// In en, this message translates to:
+  /// **'Italy'**
+  String get italy;
+
+  /// No description provided for @spain.
+  ///
+  /// In en, this message translates to:
+  /// **'Spain'**
+  String get spain;
+
+  /// No description provided for @netherlands.
+  ///
+  /// In en, this message translates to:
+  /// **'Netherlands'**
+  String get netherlands;
+
+  /// No description provided for @belgium.
+  ///
+  /// In en, this message translates to:
+  /// **'Belgium'**
+  String get belgium;
+
+  /// No description provided for @austria.
+  ///
+  /// In en, this message translates to:
+  /// **'Austria'**
+  String get austria;
+
+  /// No description provided for @switzerland.
+  ///
+  /// In en, this message translates to:
+  /// **'Switzerland'**
+  String get switzerland;
+
+  /// No description provided for @poland.
+  ///
+  /// In en, this message translates to:
+  /// **'Poland'**
+  String get poland;
+
+  /// No description provided for @czech_republic.
+  ///
+  /// In en, this message translates to:
+  /// **'Czech Republic'**
+  String get czech_republic;
+
+  /// No description provided for @hungary.
+  ///
+  /// In en, this message translates to:
+  /// **'Hungary'**
+  String get hungary;
+
+  /// No description provided for @romania.
+  ///
+  /// In en, this message translates to:
+  /// **'Romania'**
+  String get romania;
+
+  /// No description provided for @bulgaria.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulgaria'**
+  String get bulgaria;
+
+  /// No description provided for @croatia.
+  ///
+  /// In en, this message translates to:
+  /// **'Croatia'**
+  String get croatia;
+
+  /// No description provided for @slovenia.
+  ///
+  /// In en, this message translates to:
+  /// **'Slovenia'**
+  String get slovenia;
+
+  /// No description provided for @slovakia.
+  ///
+  /// In en, this message translates to:
+  /// **'Slovakia'**
+  String get slovakia;
+
+  /// No description provided for @estonia.
+  ///
+  /// In en, this message translates to:
+  /// **'Estonia'**
+  String get estonia;
+
+  /// No description provided for @latvia.
+  ///
+  /// In en, this message translates to:
+  /// **'Latvia'**
+  String get latvia;
+
+  /// No description provided for @lithuania.
+  ///
+  /// In en, this message translates to:
+  /// **'Lithuania'**
+  String get lithuania;
+
+  /// No description provided for @finland.
+  ///
+  /// In en, this message translates to:
+  /// **'Finland'**
+  String get finland;
+
+  /// No description provided for @sweden.
+  ///
+  /// In en, this message translates to:
+  /// **'Sweden'**
+  String get sweden;
+
+  /// No description provided for @norway.
+  ///
+  /// In en, this message translates to:
+  /// **'Norway'**
+  String get norway;
+
+  /// No description provided for @denmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Denmark'**
+  String get denmark;
+
+  /// No description provided for @portugal.
+  ///
+  /// In en, this message translates to:
+  /// **'Portugal'**
+  String get portugal;
+
+  /// No description provided for @greece.
+  ///
+  /// In en, this message translates to:
+  /// **'Greece'**
+  String get greece;
+
+  /// No description provided for @cyprus.
+  ///
+  /// In en, this message translates to:
+  /// **'Cyprus'**
+  String get cyprus;
+
+  /// No description provided for @malta.
+  ///
+  /// In en, this message translates to:
+  /// **'Malta'**
+  String get malta;
+
+  /// No description provided for @luxembourg.
+  ///
+  /// In en, this message translates to:
+  /// **'Luxembourg'**
+  String get luxembourg;
+
+  /// No description provided for @ireland.
+  ///
+  /// In en, this message translates to:
+  /// **'Ireland'**
+  String get ireland;
+
+  /// No description provided for @united_kingdom.
+  ///
+  /// In en, this message translates to:
+  /// **'United Kingdom'**
+  String get united_kingdom;
+
+  /// No description provided for @iceland.
+  ///
+  /// In en, this message translates to:
+  /// **'Iceland'**
+  String get iceland;
 }
 
 class _AppLocalizationsDelegate

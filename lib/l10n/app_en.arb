@@ -1935,5 +1935,282 @@
   "cropImageInstructions": "Crop your image to square format",
   "@cropImageInstructions": {
     "description": "Instructions for crop screen"
-  }
+  },
+
+  "myPhotos": "My Photos",
+  "@myPhotos": {
+    "description": "My photos section title"
+  },
+  "countryStatistics": "Country Statistics",
+  "@countryStatistics": {
+    "description": "Country statistics title"
+  },
+  "selectYourAge": "Select your age",
+  "@selectYourAge": {
+    "description": "Select your age label"
+  },
+  "addInstagramAccount": "Add your Instagram account",
+  "@addInstagramAccount": {
+    "description": "Add Instagram account placeholder"
+  },
+  "addProfessionText": "Add your profession",
+  "@addProfessionText": {
+    "description": "Add profession placeholder"
+  },
+  "instagramInfoVisibleInMatches": "Instagram info visible in matches",
+  "@instagramInfoVisibleInMatches": {
+    "description": "Instagram info visible message"
+  },
+  "instagramInfoHiddenInMatches": "Instagram info hidden in matches",
+  "@instagramInfoHiddenInMatches": {
+    "description": "Instagram info hidden message"
+  },
+  "professionInfoVisibleInMatches": "Profession info visible in matches",
+  "@professionInfoVisibleInMatches": {
+    "description": "Profession info visible message"
+  },
+  "professionInfoHiddenInMatches": "Profession info hidden in matches",
+  "@professionInfoHiddenInMatches": {
+    "description": "Profession info hidden message"
+  },
+  "updateError": "Error occurred during update",
+  "@updateError": {
+    "description": "Update error message"
+  },
+  "manageFromSettings": "This feature can be managed from settings page",
+  "@manageFromSettings": {
+    "description": "Manage from settings message"
+  },
+  "changeUsername": "Change Username",
+  "@changeUsername": {
+    "description": "Change username dialog title"
+  },
+  "newUsername": "New username",
+  "@newUsername": {
+    "description": "New username input label"
+  },
+  "currentCoinsText": "Current coins: {coins}",
+  "@currentCoinsText": {
+    "description": "Current coins display",
+    "placeholders": {
+      "coins": {
+        "type": "int"
+      }
+    }
+  },
+  "insufficientCoinsStore": "Insufficient coins! You can buy coins from the store.",
+  "@insufficientCoinsStore": {
+    "description": "Insufficient coins store message"
+  },
+  "change": "Change",
+  "@change": {
+    "description": "Change button text"
+  },
+  "usernameChange": "Username change",
+  "@usernameChange": {
+    "description": "Username change transaction description"
+  },
+  "usernameUpdated": "✅ Your username has been updated ({cost} coins spent)",
+  "@usernameUpdated": {
+    "description": "Username updated success message",
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
+  },
+  "usernameUpdateFailed": "Username could not be updated",
+  "@usernameUpdateFailed": {
+    "description": "Username update failed message"
+  },
+  "selectYourAgeTitle": "Select Your Age",
+  "@selectYourAgeTitle": {
+    "description": "Select age dialog title"
+  },
+  "ageYearsOld": "{age} years old",
+  "@ageYearsOld": {
+    "description": "Age years old label",
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "ageInfoUpdated": "Age info updated",
+  "@ageInfoUpdated": {
+    "description": "Age info updated message"
+  },
+
+  "privateTournamentCostMessage": "Creating a private tournament requires {required} coins. Current coins: {current}",
+  "@privateTournamentCostMessage": {
+    "description": "Private tournament cost message",
+    "placeholders": {
+      "required": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "descriptionLabel": "Description",
+  "@descriptionLabel": {
+    "description": "Description label"
+  },
+  "startDateLabel": "Start Date",
+  "@startDateLabel": {
+    "description": "Start date label"
+  },
+  "startTimeLabel": "Start Time",
+  "@startTimeLabel": {
+    "description": "Start time label"
+  },
+  "endDateLabel": "End Date",
+  "@endDateLabel": {
+    "description": "End date label"
+  },
+  "endTimeLabel": "End Time",
+  "@endTimeLabel": {
+    "description": "End time label"
+  },
+  "pleaseFillAllFields": "Please fill all fields",
+  "@pleaseFillAllFields": {
+    "description": "Please fill all fields message"
+  },
+  "create": "Create",
+  "@create": {
+    "description": "Create button"
+  },
+  "privateKeyLabel": "Private Key",
+  "@privateKeyLabel": {
+    "description": "Private key label"
+  },
+  "champions": "Champions",
+  "@champions": {
+    "description": "Champions label"
+  },
+  "participantsCount": "{current}/{max} participants",
+  "@participantsCount": {
+    "description": "Participants count",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "createdBy": "Created by: {creator}",
+  "@createdBy": {
+    "description": "Created by label",
+    "placeholders": {
+      "creator": {
+        "type": "String"
+      }
+    }
+  },
+  "unknown": "Unknown",
+  "@unknown": {
+    "description": "Unknown label"
+  },
+  "statusActive": "Active",
+  "@statusActive": {
+    "description": "Active status"
+  },
+  "statusUpcoming": "Upcoming",
+  "@statusUpcoming": {
+    "description": "Upcoming status"
+  },
+  "statusCompleted": "Completed",
+  "@statusCompleted": {
+    "description": "Completed status"
+  },
+  "statusCancelled": "Cancelled",
+  "@statusCancelled": {
+    "description": "Cancelled status"
+  },
+  "leagueFormatTooltip": "League System: Everyone plays against everyone, highest win rate wins. Unlimited participants.",
+  "@leagueFormatTooltip": {
+    "description": "League format tooltip"
+  },
+  "eliminationFormatTooltip": "Elimination System: Single match elimination. Maximum 8 people (Quarterfinals, Semifinals, Final).",
+  "@eliminationFormatTooltip": {
+    "description": "Elimination format tooltip"
+  },
+  "selectTournamentFormat": "Select tournament format",
+  "@selectTournamentFormat": {
+    "description": "Select tournament format label"
+  },
+  "privateTournamentInsufficientCoins": "Creating a private tournament requires {required} coins. Current coins: {current}",
+  "@privateTournamentInsufficientCoins": {
+    "description": "Insufficient coins for private tournament message",
+    "placeholders": {
+      "required": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+
+  "deleteReasonBored": "I'm bored",
+  "@deleteReasonBored": {
+    "description": "Delete account reason - bored"
+  },
+  "deleteReasonPoorApp": "Poor app quality",
+  "@deleteReasonPoorApp": {
+    "description": "Delete account reason - poor app quality"
+  },
+  "deleteReasonNeedBreak": "I need a break",
+  "@deleteReasonNeedBreak": {
+    "description": "Delete account reason - need a break"
+  },
+  "deleteReasonFoundBetter": "I found a better app",
+  "@deleteReasonFoundBetter": {
+    "description": "Delete account reason - found better app"
+  },
+  "deleteAccountReasonPrompt": "Please select a reason:",
+  "@deleteAccountReasonPrompt": {
+    "description": "Delete account reason prompt"
+  },
+
+  "matchSettings": "⚔️ Match Settings",
+  "@matchSettings": {
+    "description": "Match settings section title"
+  },
+
+  "turkey": "Turkey",
+  "germany": "Germany",
+  "france": "France",
+  "italy": "Italy",
+  "spain": "Spain",
+  "netherlands": "Netherlands",
+  "belgium": "Belgium",
+  "austria": "Austria",
+  "switzerland": "Switzerland",
+  "poland": "Poland",
+  "czech_republic": "Czech Republic",
+  "hungary": "Hungary",
+  "romania": "Romania",
+  "bulgaria": "Bulgaria",
+  "croatia": "Croatia",
+  "slovenia": "Slovenia",
+  "slovakia": "Slovakia",
+  "estonia": "Estonia",
+  "latvia": "Latvia",
+  "lithuania": "Lithuania",
+  "finland": "Finland",
+  "sweden": "Sweden",
+  "norway": "Norway",
+  "denmark": "Denmark",
+  "portugal": "Portugal",
+  "greece": "Greece",
+  "cyprus": "Cyprus",
+  "malta": "Malta",
+  "luxembourg": "Luxembourg",
+  "ireland": "Ireland",
+  "united_kingdom": "United Kingdom",
+  "iceland": "Iceland"
 }

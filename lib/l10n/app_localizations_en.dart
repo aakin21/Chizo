@@ -1110,9 +1110,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get earnedOneCoin => '+1 coin earned!';
 
   @override
-  String myPhotos(Object count) {
-    return 'My Photos ($count/5)';
-  }
+  String get myPhotos => 'My Photos';
 
   @override
   String get photoCostInfo =>
@@ -1621,4 +1619,265 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cropImageInstructions => 'Crop your image to square format';
+
+  @override
+  String get countryStatistics => 'Country Statistics';
+
+  @override
+  String get selectYourAge => 'Select your age';
+
+  @override
+  String get addInstagramAccount => 'Add your Instagram account';
+
+  @override
+  String get addProfessionText => 'Add your profession';
+
+  @override
+  String get instagramInfoVisibleInMatches =>
+      'Instagram info visible in matches';
+
+  @override
+  String get instagramInfoHiddenInMatches => 'Instagram info hidden in matches';
+
+  @override
+  String get professionInfoVisibleInMatches =>
+      'Profession info visible in matches';
+
+  @override
+  String get professionInfoHiddenInMatches =>
+      'Profession info hidden in matches';
+
+  @override
+  String get updateError => 'Error occurred during update';
+
+  @override
+  String get manageFromSettings =>
+      'This feature can be managed from settings page';
+
+  @override
+  String get changeUsername => 'Change Username';
+
+  @override
+  String get newUsername => 'New username';
+
+  @override
+  String currentCoinsText(int coins) {
+    return 'Current coins: $coins';
+  }
+
+  @override
+  String get insufficientCoinsStore =>
+      'Insufficient coins! You can buy coins from the store.';
+
+  @override
+  String get change => 'Change';
+
+  @override
+  String get usernameChange => 'Username change';
+
+  @override
+  String usernameUpdated(int cost) {
+    return '✅ Your username has been updated ($cost coins spent)';
+  }
+
+  @override
+  String get usernameUpdateFailed => 'Username could not be updated';
+
+  @override
+  String get selectYourAgeTitle => 'Select Your Age';
+
+  @override
+  String ageYearsOld(int age) {
+    return '$age years old';
+  }
+
+  @override
+  String get ageInfoUpdated => 'Age info updated';
+
+  @override
+  String privateTournamentCostMessage(int required, int current) {
+    return 'Creating a private tournament requires $required coins. Current coins: $current';
+  }
+
+  @override
+  String get descriptionLabel => 'Description';
+
+  @override
+  String get startDateLabel => 'Start Date';
+
+  @override
+  String get startTimeLabel => 'Start Time';
+
+  @override
+  String get endDateLabel => 'End Date';
+
+  @override
+  String get endTimeLabel => 'End Time';
+
+  @override
+  String get pleaseFillAllFields => 'Please fill all fields';
+
+  @override
+  String get create => 'Create';
+
+  @override
+  String get privateKeyLabel => 'Private Key';
+
+  @override
+  String get champions => 'Champions';
+
+  @override
+  String participantsCount(int current, int max) {
+    return '$current/$max participants';
+  }
+
+  @override
+  String createdBy(String creator) {
+    return 'Created by: $creator';
+  }
+
+  @override
+  String get unknown => 'Unknown';
+
+  @override
+  String get statusActive => 'Active';
+
+  @override
+  String get statusUpcoming => 'Upcoming';
+
+  @override
+  String get statusCompleted => 'Completed';
+
+  @override
+  String get statusCancelled => 'Cancelled';
+
+  @override
+  String get leagueFormatTooltip =>
+      'League System: Everyone plays against everyone, highest win rate wins. Unlimited participants.';
+
+  @override
+  String get eliminationFormatTooltip =>
+      'Elimination System: Single match elimination. Maximum 8 people (Quarterfinals, Semifinals, Final).';
+
+  @override
+  String get selectTournamentFormat => 'Select tournament format';
+
+  @override
+  String privateTournamentInsufficientCoins(int required, int current) {
+    return 'Creating a private tournament requires $required coins. Current coins: $current';
+  }
+
+  @override
+  String get deleteReasonBored => 'I\'m bored';
+
+  @override
+  String get deleteReasonPoorApp => 'Poor app quality';
+
+  @override
+  String get deleteReasonNeedBreak => 'I need a break';
+
+  @override
+  String get deleteReasonFoundBetter => 'I found a better app';
+
+  @override
+  String get deleteAccountReasonPrompt => 'Please select a reason:';
+
+  @override
+  String get matchSettings => '⚔️ Match Settings';
+
+  @override
+  String get turkey => 'Turkey';
+
+  @override
+  String get germany => 'Germany';
+
+  @override
+  String get france => 'France';
+
+  @override
+  String get italy => 'Italy';
+
+  @override
+  String get spain => 'Spain';
+
+  @override
+  String get netherlands => 'Netherlands';
+
+  @override
+  String get belgium => 'Belgium';
+
+  @override
+  String get austria => 'Austria';
+
+  @override
+  String get switzerland => 'Switzerland';
+
+  @override
+  String get poland => 'Poland';
+
+  @override
+  String get czech_republic => 'Czech Republic';
+
+  @override
+  String get hungary => 'Hungary';
+
+  @override
+  String get romania => 'Romania';
+
+  @override
+  String get bulgaria => 'Bulgaria';
+
+  @override
+  String get croatia => 'Croatia';
+
+  @override
+  String get slovenia => 'Slovenia';
+
+  @override
+  String get slovakia => 'Slovakia';
+
+  @override
+  String get estonia => 'Estonia';
+
+  @override
+  String get latvia => 'Latvia';
+
+  @override
+  String get lithuania => 'Lithuania';
+
+  @override
+  String get finland => 'Finland';
+
+  @override
+  String get sweden => 'Sweden';
+
+  @override
+  String get norway => 'Norway';
+
+  @override
+  String get denmark => 'Denmark';
+
+  @override
+  String get portugal => 'Portugal';
+
+  @override
+  String get greece => 'Greece';
+
+  @override
+  String get cyprus => 'Cyprus';
+
+  @override
+  String get malta => 'Malta';
+
+  @override
+  String get luxembourg => 'Luxembourg';
+
+  @override
+  String get ireland => 'Ireland';
+
+  @override
+  String get united_kingdom => 'United Kingdom';
+
+  @override
+  String get iceland => 'Iceland';
 }

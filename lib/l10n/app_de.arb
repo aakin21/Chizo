@@ -785,5 +785,426 @@
   "cropImageInstructions": "Schneiden Sie Ihr Bild auf quadratisches Format zu",
   "@cropImageInstructions": {
     "description": "Anweisungen für Zuschneiden Bildschirm"
+  },
+
+  "viewRecentMatches": "Ihre letzten Matches anzeigen",
+  "@viewRecentMatches": {
+    "description": "Button-Text zum Anzeigen der letzten Matches"
+  },
+  "dataPrivacy": "Datenschutz",
+  "@dataPrivacy": {
+    "description": "Datenschutz-Abschnittstitel"
+  },
+  "dataPrivacyDescription": "Verwalten Sie Ihre Daten- und Datenschutzeinstellungen",
+  "@dataPrivacyDescription": {
+    "description": "Datenschutz-Abschnittsbeschreibung"
+  },
+  "profileVisibility": "Profil-Sichtbarkeit",
+  "@profileVisibility": {
+    "description": "Profil-Sichtbarkeitseinstellung"
+  },
+  "profileVisibilityDescription": "Kontrollieren Sie, wer Ihr Profil sehen kann",
+  "@profileVisibilityDescription": {
+    "description": "Profil-Sichtbarkeitsbeschreibung"
+  },
+  "dataCollection": "Datenerfassung",
+  "@dataCollection": {
+    "description": "Datenerfassungseinstellung"
+  },
+  "dataCollectionDescription": "Datenerfassung für Analysen zulassen",
+  "@dataCollectionDescription": {
+    "description": "Datenerfassungsbeschreibung"
+  },
+  "locationTracking": "Standortverfolgung",
+  "@locationTracking": {
+    "description": "Standortverfolgungseinstellung"
+  },
+  "locationTrackingDescription": "Standortbasierte Funktionen zulassen",
+  "@locationTrackingDescription": {
+    "description": "Standortverfolgungsbeschreibung"
+  },
+  "reportContent": "Inhalt melden",
+  "@reportContent": {
+    "description": "Inhalt melden Button"
+  },
+  "reportInappropriate": "Unangemessen melden",
+  "@reportInappropriate": {
+    "description": "Unangemessenen Inhalt melden"
+  },
+  "reportReason": "Meldegrund",
+  "@reportReason": {
+    "description": "Meldegrund-Label"
+  },
+  "nudity": "Nacktheit",
+  "@nudity": {
+    "description": "Nacktheit-Meldegrund"
+  },
+  "inappropriateContent": "Unangemessener Inhalt",
+  "@inappropriateContent": {
+    "description": "Unangemessener Inhalt-Meldegrund"
+  },
+  "harassment": "Belästigung",
+  "@harassment": {
+    "description": "Belästigungs-Meldegrund"
+  },
+  "spam": "Spam",
+  "@spam": {
+    "description": "Spam-Meldegrund"
+  },
+  "other": "Sonstiges",
+  "@other": {
+    "description": "Sonstiger Meldegrund"
+  },
+  "reportSubmitted": "Meldung erfolgreich eingereicht",
+  "@reportSubmitted": {
+    "description": "Meldung eingereicht Nachricht"
+  },
+  "reportError": "Meldung konnte nicht eingereicht werden",
+  "@reportError": {
+    "description": "Meldungsfehler Nachricht"
+  },
+  "submit": "Einreichen",
+  "@submit": {
+    "description": "Einreichen-Button-Text"
+  },
+  "profileVisible": "Profil ist jetzt sichtbar",
+  "@profileVisible": {
+    "description": "Profil sichtbar Nachricht"
+  },
+  "profileHidden": "Profil ist jetzt verborgen",
+  "@profileHidden": {
+    "description": "Profil verborgen Nachricht"
+  },
+  "referralSystem": "🎁 Empfehlungssystem",
+  "@referralSystem": {
+    "description": "Empfehlungssystem-Abschnittstitel"
+  },
+  "inviteFriends": "Freunde einladen",
+  "@inviteFriends": {
+    "description": "Freunde einladen Titel"
+  },
+  "inviteFriendsDescription": "Laden Sie Ihre Freunde ein und beide verdienen 100 Münzen!",
+  "@inviteFriendsDescription": {
+    "description": "Empfehlungssystembeschreibung"
+  },
+  "yourReferralLink": "Ihr Empfehlungslink",
+  "@yourReferralLink": {
+    "description": "Benutzer-Empfehlungslink Titel"
+  },
+  "copyLink": "Link kopieren",
+  "@copyLink": {
+    "description": "Link kopieren Button"
+  },
+  "linkCopied": "Link kopiert!",
+  "@linkCopied": {
+    "description": "Link kopiert Nachricht"
+  },
+  "shareLink": "Link teilen",
+  "@shareLink": {
+    "description": "Link teilen Button"
+  },
+  "referralReward": "Empfehlungsbelohnung",
+  "@referralReward": {
+    "description": "Empfehlungsbelohnung Titel"
+  },
+  "referralRewardDescription": "Verdienen Sie 100 Münzen für jeden Freund, den Sie einladen!",
+  "@referralRewardDescription": {
+    "description": "Empfehlungsbelohnungsbeschreibung"
+  },
+  "inviteeReward": "Eingeladener Belohnung",
+  "@inviteeReward": {
+    "description": "Eingeladener Belohnung Titel"
+  },
+  "inviteeRewardDescription": "Freunde, die mit Ihrem Link beitreten, verdienen ebenfalls 100 Münzen!",
+  "@inviteeRewardDescription": {
+    "description": "Eingeladener Belohnungsbeschreibung"
+  },
+  "referralStats": "Empfehlungsstatistiken",
+  "@referralStats": {
+    "description": "Empfehlungsstatistiken Titel"
+  },
+  "totalReferrals": "Gesamte Empfehlungen",
+  "@totalReferrals": {
+    "description": "Gesamte Empfehlungszahl"
+  },
+  "referralCoinsEarned": "Durch Empfehlungen verdiente Münzen",
+  "@referralCoinsEarned": {
+    "description": "Durch Empfehlungen verdiente Münzen Betrag"
+  },
+  "countryStatistics": "Länderstatistiken",
+  "@countryStatistics": {
+    "description": "Länderstatistiken Titel"
+  },
+  "selectYourAge": "Wählen Sie Ihr Alter",
+  "@selectYourAge": {
+    "description": "Alter auswählen Label"
+  },
+  "addInstagramAccount": "Fügen Sie Ihr Instagram-Konto hinzu",
+  "@addInstagramAccount": {
+    "description": "Instagram-Konto hinzufügen Platzhalter"
+  },
+  "addProfessionText": "Fügen Sie Ihren Beruf hinzu",
+  "@addProfessionText": {
+    "description": "Beruf hinzufügen Platzhalter"
+  },
+  "instagramInfoVisibleInMatches": "Instagram-Info in Matches sichtbar",
+  "@instagramInfoVisibleInMatches": {
+    "description": "Instagram-Info sichtbar Nachricht"
+  },
+  "instagramInfoHiddenInMatches": "Instagram-Info in Matches verborgen",
+  "@instagramInfoHiddenInMatches": {
+    "description": "Instagram-Info verborgen Nachricht"
+  },
+  "professionInfoVisibleInMatches": "Berufsinfo in Matches sichtbar",
+  "@professionInfoVisibleInMatches": {
+    "description": "Berufsinfo sichtbar Nachricht"
+  },
+  "professionInfoHiddenInMatches": "Berufsinfo in Matches verborgen",
+  "@professionInfoHiddenInMatches": {
+    "description": "Berufsinfo verborgen Nachricht"
+  },
+  "updateError": "Fehler bei der Aktualisierung aufgetreten",
+  "@updateError": {
+    "description": "Aktualisierungsfehler Nachricht"
+  },
+  "manageFromSettings": "Diese Funktion kann über die Einstellungsseite verwaltet werden",
+  "@manageFromSettings": {
+    "description": "Von Einstellungen verwalten Nachricht"
+  },
+  "changeUsername": "Benutzername ändern",
+  "@changeUsername": {
+    "description": "Benutzername ändern Dialog-Titel"
+  },
+  "newUsername": "Neuer Benutzername",
+  "@newUsername": {
+    "description": "Neuer Benutzername Eingabelabel"
+  },
+  "currentCoinsText": "Aktuelle Münzen: {coins}",
+  "@currentCoinsText": {
+    "description": "Aktuelle Münzen Anzeige",
+    "placeholders": {
+      "coins": {
+        "type": "int"
+      }
+    }
+  },
+  "insufficientCoinsStore": "Unzureichende Münzen! Sie können Münzen im Shop kaufen.",
+  "@insufficientCoinsStore": {
+    "description": "Unzureichende Münzen Shop-Nachricht"
+  },
+  "change": "Ändern",
+  "@change": {
+    "description": "Ändern-Button-Text"
+  },
+  "usernameChange": "Benutzernameänderung",
+  "@usernameChange": {
+    "description": "Benutzernameänderung Transaktionsbeschreibung"
+  },
+  "usernameUpdated": "✅ Ihr Benutzername wurde aktualisiert ({cost} Münzen ausgegeben)",
+  "@usernameUpdated": {
+    "description": "Benutzername aktualisiert Erfolgsnachricht",
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
+  },
+  "usernameUpdateFailed": "Benutzername konnte nicht aktualisiert werden",
+  "@usernameUpdateFailed": {
+    "description": "Benutzername-Aktualisierung fehlgeschlagen Nachricht"
+  },
+  "selectYourAgeTitle": "Wählen Sie Ihr Alter",
+  "@selectYourAgeTitle": {
+    "description": "Alter auswählen Dialog-Titel"
+  },
+  "ageYearsOld": "{age} Jahre alt",
+  "@ageYearsOld": {
+    "description": "Alter Jahre alt Label",
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "ageInfoUpdated": "Altersinfo aktualisiert",
+  "@ageInfoUpdated": {
+    "description": "Altersinfo aktualisiert Nachricht"
+  },
+  "champions": "Champions",
+  "@champions": {
+    "description": "Champions button text"
+  },
+  "participantsCount": "{current}/{max} Teilnehmer",
+  "@participantsCount": {
+    "description": "Participants count display",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "createdBy": "Erstellt von: {creator}",
+  "@createdBy": {
+    "description": "Created by display",
+    "placeholders": {
+      "creator": {
+        "type": "String"
+      }
+    }
+  },
+  "unknown": "Unbekannt",
+  "@unknown": {
+    "description": "Unknown text"
+  },
+  "statusActive": "Aktiv",
+  "@statusActive": {
+    "description": "Active status"
+  },
+  "statusUpcoming": "Bevorstehend",
+  "@statusUpcoming": {
+    "description": "Upcoming status"
+  },
+  "statusCompleted": "Abgeschlossen",
+  "@statusCompleted": {
+    "description": "Completed status"
+  },
+  "statusCancelled": "Abgesagt",
+  "@statusCancelled": {
+    "description": "Cancelled status"
+  },
+  "leagueFormatTooltip": "Liga-System: Jeder spielt gegen jeden, höchste Gewinnrate gewinnt. Unbegrenzte Teilnehmer.",
+  "@leagueFormatTooltip": {
+    "description": "League format tooltip"
+  },
+  "eliminationFormatTooltip": "K.O.-System: Einzelspiel-Eliminierung. Maximal 8 Personen (Viertelfinale, Halbfinale, Finale).",
+  "@eliminationFormatTooltip": {
+    "description": "Elimination format tooltip"
+  },
+  "selectTournamentFormat": "Turnierformat auswählen",
+  "@selectTournamentFormat": {
+    "description": "Select tournament format text"
+  },
+  "privateTournamentInsufficientCoins": "Privates Turnier erstellen erfordert {required} Münzen. Aktuelle Münzen: {current}",
+  "@privateTournamentInsufficientCoins": {
+    "description": "Private tournament insufficient coins message",
+    "placeholders": {
+      "required": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "myPhotos": "Meine Fotos",
+  "@myPhotos": {
+    "description": "My photos section title"
+  },
+
+  "privateTournamentCostMessage": "Das Erstellen eines privaten Turniers erfordert {required} Münzen. Aktuelle Münzen: {current}",
+  "@privateTournamentCostMessage": {
+    "description": "Private Turnier Kosten Nachricht",
+    "placeholders": {
+      "required": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "descriptionLabel": "Beschreibung",
+  "@descriptionLabel": {
+    "description": "Beschreibung Label"
+  },
+  "startDateLabel": "Startdatum",
+  "@startDateLabel": {
+    "description": "Startdatum Label"
+  },
+  "startTimeLabel": "Startzeit",
+  "@startTimeLabel": {
+    "description": "Startzeit Label"
+  },
+  "endDateLabel": "Enddatum",
+  "@endDateLabel": {
+    "description": "Enddatum Label"
+  },
+  "endTimeLabel": "Endzeit",
+  "@endTimeLabel": {
+    "description": "Endzeit Label"
+  },
+  "pleaseFillAllFields": "Bitte füllen Sie alle Felder aus",
+  "@pleaseFillAllFields": {
+    "description": "Bitte alle Felder ausfüllen Nachricht"
+  },
+  "create": "Erstellen",
+  "@create": {
+    "description": "Erstellen Button"
+  },
+  "privateKeyLabel": "Privater Schlüssel",
+  "@privateKeyLabel": {
+    "description": "Privater Schlüssel Label"
   }
+  ,
+  
+  "deleteReasonBored": "Mir ist langweilig",
+  "@deleteReasonBored": {
+    "description": "Grund für Kontolöschung - gelangweilt"
+  },
+  "deleteReasonPoorApp": "Schlechte App-Qualität",
+  "@deleteReasonPoorApp": {
+    "description": "Grund für Kontolöschung - schlechte App-Qualität"
+  },
+  "deleteReasonNeedBreak": "Ich brauche eine Pause",
+  "@deleteReasonNeedBreak": {
+    "description": "Grund für Kontolöschung - Pause benötigt"
+  },
+  "deleteReasonFoundBetter": "Ich habe eine bessere App gefunden",
+  "@deleteReasonFoundBetter": {
+    "description": "Grund für Kontolöschung - bessere App gefunden"
+  },
+  "deleteAccountReasonPrompt": "Bitte wählen Sie einen Grund:",
+  "@deleteAccountReasonPrompt": {
+    "description": "Aufforderung zur Auswahl eines Grundes für Kontolöschung"
+  },
+  "matchSettings": "⚔️ Match-Einstellungen",
+  "@matchSettings": {
+    "description": "Match-Einstellungen Abschnittstitel"
+  },
+
+  "turkey": "Türkei",
+  "germany": "Deutschland",
+  "france": "Frankreich",
+  "italy": "Italien",
+  "spain": "Spanien",
+  "netherlands": "Niederlande",
+  "belgium": "Belgien",
+  "austria": "Österreich",
+  "switzerland": "Schweiz",
+  "poland": "Polen",
+  "czech_republic": "Tschechische Republik",
+  "hungary": "Ungarn",
+  "romania": "Rumänien",
+  "bulgaria": "Bulgarien",
+  "croatia": "Kroatien",
+  "slovenia": "Slowenien",
+  "slovakia": "Slowakei",
+  "estonia": "Estland",
+  "latvia": "Lettland",
+  "lithuania": "Litauen",
+  "finland": "Finnland",
+  "sweden": "Schweden",
+  "norway": "Norwegen",
+  "denmark": "Dänemark",
+  "portugal": "Portugal",
+  "greece": "Griechenland",
+  "cyprus": "Zypern",
+  "malta": "Malta",
+  "luxembourg": "Luxemburg",
+  "ireland": "Irland",
+  "united_kingdom": "Vereinigtes Königreich",
+  "iceland": "Island"
 }

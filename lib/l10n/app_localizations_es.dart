@@ -497,7 +497,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Ver tus últimos 5 partidos y oponentes (5 monedas)';
 
   @override
-  String get viewRecentMatches => 'View your recent matches';
+  String get viewRecentMatches => 'Ver tus partidos recientes';
 
   @override
   String get visibleInMatches => 'Visible en Partidos';
@@ -1076,7 +1076,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Recordatorios de recompensas de racha diaria';
 
   @override
-  String get moneyAndCoins => '💰 Dinero y Transacciones de Monedas';
+  String get moneyAndCoins => 'Dinero y Transacciones de Monedas';
 
   @override
   String get purchaseCoinPackage => 'Comprar Paquete de Monedas';
@@ -1086,7 +1086,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Comprar monedas y ganar recompensas';
 
   @override
-  String get appSettings => '⚙️ Configuración de la Aplicación';
+  String get appSettings => 'Configuración de la Aplicación';
 
   @override
   String get dailyRewards => 'Recompensas Diarias';
@@ -1098,7 +1098,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get aboutApp => 'Acerca de la Aplicación';
 
   @override
-  String get accountOperations => '👤 Operaciones de Cuenta';
+  String get accountOperations => 'Operaciones de Cuenta';
 
   @override
   String get dailyStreakRewards => 'Recompensas de Racha Diaria';
@@ -1135,9 +1135,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get earnedOneCoin => '¡+1 moneda ganada!';
 
   @override
-  String myPhotos(Object count) {
-    return 'Mis Fotos ($count/5)';
-  }
+  String get myPhotos => 'Mis Fotos';
 
   @override
   String get photoCostInfo =>
@@ -1494,67 +1492,71 @@ class AppLocalizationsEs extends AppLocalizations {
       'Torneo femenino premium que comienza cuando 100 participantes se unen';
 
   @override
-  String get dataPrivacy => 'Data Privacy';
+  String get dataPrivacy => 'Privacidad de Datos';
 
   @override
-  String get dataPrivacyDescription => 'Manage your data and privacy settings';
+  String get dataPrivacyDescription =>
+      'Gestiona tus datos y configuración de privacidad';
 
   @override
-  String get profileVisibility => 'Profile Visibility';
+  String get profileVisibility => 'Visibilidad del Perfil';
 
   @override
-  String get profileVisibilityDescription => 'Control who can see your profile';
+  String get profileVisibilityDescription =>
+      'Controla quién puede ver tu perfil';
 
   @override
-  String get dataCollection => 'Data Collection';
+  String get dataCollection => 'Recopilación de Datos';
 
   @override
-  String get dataCollectionDescription => 'Allow data collection for analytics';
+  String get dataCollectionDescription =>
+      'Permitir recopilación de datos para análisis';
 
   @override
-  String get locationTracking => 'Location Tracking';
+  String get locationTracking => 'Seguimiento de Ubicación';
 
   @override
-  String get locationTrackingDescription => 'Allow location-based features';
+  String get locationTrackingDescription =>
+      'Permitir funciones basadas en ubicación';
 
   @override
-  String get reportContent => 'Report Content';
+  String get reportContent => 'Reportar Contenido';
 
   @override
-  String get reportInappropriate => 'Report Inappropriate';
+  String get reportInappropriate => 'Reportar Inapropiado';
 
   @override
-  String get reportReason => 'Report Reason';
+  String get reportReason => 'Razón del Reporte';
 
   @override
-  String get nudity => 'Nudity';
+  String get nudity => 'Desnudez';
 
   @override
-  String get inappropriateContent => 'Inappropriate Content';
+  String get inappropriateContent => 'Contenido Inapropiado';
 
   @override
-  String get harassment => 'Harassment';
+  String get harassment => 'Acoso';
 
   @override
   String get spam => 'Spam';
 
   @override
-  String get other => 'Other';
+  String get other => 'Otro';
 
   @override
-  String get reportSubmitted => 'Report submitted successfully';
+  String get reportSubmitted => 'Reporte enviado exitosamente';
 
   @override
-  String get reportError => 'Failed to submit report';
+  String get reportError => 'Error al enviar reporte';
 
   @override
-  String get submit => 'Submit';
+  String get submit => 'Enviar';
 
   @override
-  String get profileVisible => 'Profile is now visible';
+  String get profileVisible => 'El perfil ahora es visible';
 
   @override
-  String get profileHidden => 'Profile is now hidden';
+  String get profileHidden => 'El perfil ahora está oculto';
 
   @override
   String get notificationCenter => 'Notificaciones';
@@ -1581,49 +1583,49 @@ class AppLocalizationsEs extends AppLocalizations {
       'Las nuevas notificaciones aparecerán aquí';
 
   @override
-  String get referralSystem => '🎁 Referral System';
+  String get referralSystem => '🎁 Sistema de Referidos';
 
   @override
-  String get inviteFriends => 'Invite Friends';
+  String get inviteFriends => 'Invitar Amigos';
 
   @override
   String get inviteFriendsDescription =>
-      'Invite your friends and both of you earn 100 coins!';
+      '¡Invita a tus amigos y ambos ganan 100 monedas!';
 
   @override
-  String get yourReferralLink => 'Your Referral Link';
+  String get yourReferralLink => 'Tu Enlace de Referido';
 
   @override
-  String get copyLink => 'Copy Link';
+  String get copyLink => 'Copiar Enlace';
 
   @override
-  String get linkCopied => 'Link copied!';
+  String get linkCopied => '¡Enlace copiado!';
 
   @override
-  String get shareLink => 'Share Link';
+  String get shareLink => 'Compartir Enlace';
 
   @override
-  String get referralReward => 'Referral Reward';
+  String get referralReward => 'Recompensa de Referido';
 
   @override
   String get referralRewardDescription =>
-      'Earn 100 coins for each friend you invite!';
+      '¡Gana 100 monedas por cada amigo que invites!';
 
   @override
-  String get inviteeReward => 'Invitee Reward';
+  String get inviteeReward => 'Recompensa del Invitado';
 
   @override
   String get inviteeRewardDescription =>
-      'Friends who join with your link also earn 100 coins!';
+      '¡Los amigos que se unan con tu enlace también ganan 100 monedas!';
 
   @override
-  String get referralStats => 'Referral Statistics';
+  String get referralStats => 'Estadísticas de Referidos';
 
   @override
-  String get totalReferrals => 'Total Referrals';
+  String get totalReferrals => 'Total de Referidos';
 
   @override
-  String get referralCoinsEarned => 'Coins Earned from Referrals';
+  String get referralCoinsEarned => 'Monedas Ganadas por Referidos';
 
   @override
   String get store => 'Tienda';
@@ -1649,4 +1651,267 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get cropImageInstructions => 'Recorta tu imagen a formato cuadrado';
+
+  @override
+  String get countryStatistics => 'Estadísticas de Países';
+
+  @override
+  String get selectYourAge => 'Selecciona tu edad';
+
+  @override
+  String get addInstagramAccount => 'Agrega tu cuenta de Instagram';
+
+  @override
+  String get addProfessionText => 'Agrega tu profesión';
+
+  @override
+  String get instagramInfoVisibleInMatches =>
+      'Info de Instagram visible en partidos';
+
+  @override
+  String get instagramInfoHiddenInMatches =>
+      'Info de Instagram oculta en partidos';
+
+  @override
+  String get professionInfoVisibleInMatches =>
+      'Info de profesión visible en partidos';
+
+  @override
+  String get professionInfoHiddenInMatches =>
+      'Info de profesión oculta en partidos';
+
+  @override
+  String get updateError => 'Error durante la actualización';
+
+  @override
+  String get manageFromSettings =>
+      'Esta función se puede gestionar desde la página de configuración';
+
+  @override
+  String get changeUsername => 'Cambiar Nombre de Usuario';
+
+  @override
+  String get newUsername => 'Nuevo nombre de usuario';
+
+  @override
+  String currentCoinsText(int coins) {
+    return 'Monedas actuales: $coins';
+  }
+
+  @override
+  String get insufficientCoinsStore =>
+      '¡Monedas insuficientes! Puedes comprar monedas en la tienda.';
+
+  @override
+  String get change => 'Cambiar';
+
+  @override
+  String get usernameChange => 'Cambio de nombre de usuario';
+
+  @override
+  String usernameUpdated(int cost) {
+    return '✅ Tu nombre de usuario ha sido actualizado ($cost monedas gastadas)';
+  }
+
+  @override
+  String get usernameUpdateFailed =>
+      'No se pudo actualizar el nombre de usuario';
+
+  @override
+  String get selectYourAgeTitle => 'Selecciona Tu Edad';
+
+  @override
+  String ageYearsOld(int age) {
+    return '$age años';
+  }
+
+  @override
+  String get ageInfoUpdated => 'Info de edad actualizada';
+
+  @override
+  String privateTournamentCostMessage(int required, int current) {
+    return 'Crear un torneo privado requiere $required monedas. Monedas actuales: $current';
+  }
+
+  @override
+  String get descriptionLabel => 'Descripción';
+
+  @override
+  String get startDateLabel => 'Fecha de inicio';
+
+  @override
+  String get startTimeLabel => 'Hora de inicio';
+
+  @override
+  String get endDateLabel => 'Fecha de finalización';
+
+  @override
+  String get endTimeLabel => 'Hora de finalización';
+
+  @override
+  String get pleaseFillAllFields => 'Por favor complete todos los campos';
+
+  @override
+  String get create => 'Crear';
+
+  @override
+  String get privateKeyLabel => 'Clave privada';
+
+  @override
+  String get champions => 'Campeones';
+
+  @override
+  String participantsCount(int current, int max) {
+    return '$current/$max participantes';
+  }
+
+  @override
+  String createdBy(String creator) {
+    return 'Creado por: $creator';
+  }
+
+  @override
+  String get unknown => 'Desconocido';
+
+  @override
+  String get statusActive => 'Activo';
+
+  @override
+  String get statusUpcoming => 'Próximo';
+
+  @override
+  String get statusCompleted => 'Completado';
+
+  @override
+  String get statusCancelled => 'Cancelado';
+
+  @override
+  String get leagueFormatTooltip =>
+      'Sistema de Liga: Todos juegan contra todos, la tasa de victoria más alta gana. Participantes ilimitados.';
+
+  @override
+  String get eliminationFormatTooltip =>
+      'Sistema de Eliminación: Eliminación de partido único. Máximo 8 personas (Cuartos de final, Semifinal, Final).';
+
+  @override
+  String get selectTournamentFormat => 'Seleccionar formato de torneo';
+
+  @override
+  String privateTournamentInsufficientCoins(int required, int current) {
+    return 'Crear torneo privado requiere $required monedas. Monedas actuales: $current';
+  }
+
+  @override
+  String get deleteReasonBored => 'Estoy aburrido';
+
+  @override
+  String get deleteReasonPoorApp => 'Mala calidad de la aplicación';
+
+  @override
+  String get deleteReasonNeedBreak => 'Necesito un descanso';
+
+  @override
+  String get deleteReasonFoundBetter => 'Encontré una mejor aplicación';
+
+  @override
+  String get deleteAccountReasonPrompt => 'Por favor, seleccione una razón:';
+
+  @override
+  String get matchSettings => '⚔️ Configuración de Partidos';
+
+  @override
+  String get turkey => 'Turquía';
+
+  @override
+  String get germany => 'Alemania';
+
+  @override
+  String get france => 'Francia';
+
+  @override
+  String get italy => 'Italia';
+
+  @override
+  String get spain => 'España';
+
+  @override
+  String get netherlands => 'Países Bajos';
+
+  @override
+  String get belgium => 'Bélgica';
+
+  @override
+  String get austria => 'Austria';
+
+  @override
+  String get switzerland => 'Suiza';
+
+  @override
+  String get poland => 'Polonia';
+
+  @override
+  String get czech_republic => 'República Checa';
+
+  @override
+  String get hungary => 'Hungría';
+
+  @override
+  String get romania => 'Rumania';
+
+  @override
+  String get bulgaria => 'Bulgaria';
+
+  @override
+  String get croatia => 'Croacia';
+
+  @override
+  String get slovenia => 'Eslovenia';
+
+  @override
+  String get slovakia => 'Eslovaquia';
+
+  @override
+  String get estonia => 'Estonia';
+
+  @override
+  String get latvia => 'Letonia';
+
+  @override
+  String get lithuania => 'Lituania';
+
+  @override
+  String get finland => 'Finlandia';
+
+  @override
+  String get sweden => 'Suecia';
+
+  @override
+  String get norway => 'Noruega';
+
+  @override
+  String get denmark => 'Dinamarca';
+
+  @override
+  String get portugal => 'Portugal';
+
+  @override
+  String get greece => 'Grecia';
+
+  @override
+  String get cyprus => 'Chipre';
+
+  @override
+  String get malta => 'Malta';
+
+  @override
+  String get luxembourg => 'Luxemburgo';
+
+  @override
+  String get ireland => 'Irlanda';
+
+  @override
+  String get united_kingdom => 'Reino Unido';
+
+  @override
+  String get iceland => 'Islandia';
 }

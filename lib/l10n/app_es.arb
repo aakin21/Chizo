@@ -495,14 +495,15 @@
   "winCelebration": "Celebración de Victoria",
   "streakReminder": "Recordatorio de Racha",
   "streakReminderSubtitle": "Recordatorios de recompensas de racha diaria",
-  "moneyAndCoins": "💰 Dinero y Transacciones de Monedas",
+  "moneyAndCoins": "Dinero y Transacciones de Monedas",
   "purchaseCoinPackage": "Comprar Paquete de Monedas",
   "purchaseCoinPackageSubtitle": "Comprar monedas y ganar recompensas",
-  "appSettings": "⚙️ Configuración de la Aplicación",
+  "appSettings": "Configuración de la Aplicación",
+  "matchSettings": "Configuración de Partidos",
   "dailyRewards": "Recompensas Diarias",
   "dailyRewardsSubtitle": "Ver recompensas de racha y mejoras",
   "aboutApp": "Acerca de la Aplicación",
-  "accountOperations": "👤 Operaciones de Cuenta",
+  "accountOperations": "Operaciones de Cuenta",
   "deleteAccountSubtitle": "Eliminar permanentemente tu cuenta",
   "dailyStreakRewards": "Recompensas de Racha Diaria",
   "dailyStreakDescription": "🎯 ¡Inicia sesión en la aplicación todos los días y gana bonificaciones!",
@@ -780,6 +781,424 @@
   "cropImageInstructions": "Recorta tu imagen a formato cuadrado",
   "@cropImageInstructions": {
     "description": "Instrucciones para pantalla de recorte"
-  }
-}
+  },
 
+  "viewRecentMatches": "Ver tus partidos recientes",
+  "@viewRecentMatches": {
+    "description": "Texto del botón para ver partidos recientes"
+  },
+  "dataPrivacy": "Privacidad de Datos",
+  "@dataPrivacy": {
+    "description": "Título de la sección de privacidad de datos"
+  },
+  "dataPrivacyDescription": "Gestiona tus datos y configuración de privacidad",
+  "@dataPrivacyDescription": {
+    "description": "Descripción de la sección de privacidad de datos"
+  },
+  "profileVisibility": "Visibilidad del Perfil",
+  "@profileVisibility": {
+    "description": "Configuración de visibilidad del perfil"
+  },
+  "profileVisibilityDescription": "Controla quién puede ver tu perfil",
+  "@profileVisibilityDescription": {
+    "description": "Descripción de visibilidad del perfil"
+  },
+  "dataCollection": "Recopilación de Datos",
+  "@dataCollection": {
+    "description": "Configuración de recopilación de datos"
+  },
+  "dataCollectionDescription": "Permitir recopilación de datos para análisis",
+  "@dataCollectionDescription": {
+    "description": "Descripción de recopilación de datos"
+  },
+  "locationTracking": "Seguimiento de Ubicación",
+  "@locationTracking": {
+    "description": "Configuración de seguimiento de ubicación"
+  },
+  "locationTrackingDescription": "Permitir funciones basadas en ubicación",
+  "@locationTrackingDescription": {
+    "description": "Descripción de seguimiento de ubicación"
+  },
+  "reportContent": "Reportar Contenido",
+  "@reportContent": {
+    "description": "Botón de reportar contenido"
+  },
+  "reportInappropriate": "Reportar Inapropiado",
+  "@reportInappropriate": {
+    "description": "Reportar contenido inapropiado"
+  },
+  "reportReason": "Razón del Reporte",
+  "@reportReason": {
+    "description": "Etiqueta de razón del reporte"
+  },
+  "nudity": "Desnudez",
+  "@nudity": {
+    "description": "Razón de reporte de desnudez"
+  },
+  "inappropriateContent": "Contenido Inapropiado",
+  "@inappropriateContent": {
+    "description": "Razón de reporte de contenido inapropiado"
+  },
+  "harassment": "Acoso",
+  "@harassment": {
+    "description": "Razón de reporte de acoso"
+  },
+  "spam": "Spam",
+  "@spam": {
+    "description": "Razón de reporte de spam"
+  },
+  "other": "Otro",
+  "@other": {
+    "description": "Otra razón de reporte"
+  },
+  "reportSubmitted": "Reporte enviado exitosamente",
+  "@reportSubmitted": {
+    "description": "Mensaje de reporte enviado"
+  },
+  "reportError": "Error al enviar reporte",
+  "@reportError": {
+    "description": "Mensaje de error de reporte"
+  },
+  "submit": "Enviar",
+  "@submit": {
+    "description": "Texto del botón enviar"
+  },
+  "profileVisible": "El perfil ahora es visible",
+  "@profileVisible": {
+    "description": "Mensaje de perfil visible"
+  },
+  "profileHidden": "El perfil ahora está oculto",
+  "@profileHidden": {
+    "description": "Mensaje de perfil oculto"
+  },
+  "referralSystem": "🎁 Sistema de Referidos",
+  "@referralSystem": {
+    "description": "Título de la sección del sistema de referidos"
+  },
+  "inviteFriends": "Invitar Amigos",
+  "@inviteFriends": {
+    "description": "Título de invitar amigos"
+  },
+  "inviteFriendsDescription": "¡Invita a tus amigos y ambos ganan 100 monedas!",
+  "@inviteFriendsDescription": {
+    "description": "Descripción del sistema de referidos"
+  },
+  "yourReferralLink": "Tu Enlace de Referido",
+  "@yourReferralLink": {
+    "description": "Título del enlace de referido del usuario"
+  },
+  "copyLink": "Copiar Enlace",
+  "@copyLink": {
+    "description": "Botón copiar enlace"
+  },
+  "linkCopied": "¡Enlace copiado!",
+  "@linkCopied": {
+    "description": "Mensaje de enlace copiado"
+  },
+  "shareLink": "Compartir Enlace",
+  "@shareLink": {
+    "description": "Botón compartir enlace"
+  },
+  "referralReward": "Recompensa de Referido",
+  "@referralReward": {
+    "description": "Título de recompensa de referido"
+  },
+  "referralRewardDescription": "¡Gana 100 monedas por cada amigo que invites!",
+  "@referralRewardDescription": {
+    "description": "Descripción de recompensa de referido"
+  },
+  "inviteeReward": "Recompensa del Invitado",
+  "@inviteeReward": {
+    "description": "Título de recompensa del invitado"
+  },
+  "inviteeRewardDescription": "¡Los amigos que se unan con tu enlace también ganan 100 monedas!",
+  "@inviteeRewardDescription": {
+    "description": "Descripción de recompensa del invitado"
+  },
+  "referralStats": "Estadísticas de Referidos",
+  "@referralStats": {
+    "description": "Título de estadísticas de referidos"
+  },
+  "totalReferrals": "Total de Referidos",
+  "@totalReferrals": {
+    "description": "Conteo total de referidos"
+  },
+  "referralCoinsEarned": "Monedas Ganadas por Referidos",
+  "@referralCoinsEarned": {
+    "description": "Cantidad de monedas ganadas por referidos"
+  },
+  "countryStatistics": "Estadísticas de Países",
+  "@countryStatistics": {
+    "description": "Título de estadísticas de países"
+  },
+  "selectYourAge": "Selecciona tu edad",
+  "@selectYourAge": {
+    "description": "Etiqueta de seleccionar edad"
+  },
+  "addInstagramAccount": "Agrega tu cuenta de Instagram",
+  "@addInstagramAccount": {
+    "description": "Placeholder de agregar cuenta de Instagram"
+  },
+  "addProfessionText": "Agrega tu profesión",
+  "@addProfessionText": {
+    "description": "Placeholder de agregar profesión"
+  },
+  "instagramInfoVisibleInMatches": "Info de Instagram visible en partidos",
+  "@instagramInfoVisibleInMatches": {
+    "description": "Mensaje de info de Instagram visible"
+  },
+  "instagramInfoHiddenInMatches": "Info de Instagram oculta en partidos",
+  "@instagramInfoHiddenInMatches": {
+    "description": "Mensaje de info de Instagram oculta"
+  },
+  "professionInfoVisibleInMatches": "Info de profesión visible en partidos",
+  "@professionInfoVisibleInMatches": {
+    "description": "Mensaje de info de profesión visible"
+  },
+  "professionInfoHiddenInMatches": "Info de profesión oculta en partidos",
+  "@professionInfoHiddenInMatches": {
+    "description": "Mensaje de info de profesión oculta"
+  },
+  "updateError": "Error durante la actualización",
+  "@updateError": {
+    "description": "Mensaje de error de actualización"
+  },
+  "manageFromSettings": "Esta función se puede gestionar desde la página de configuración",
+  "@manageFromSettings": {
+    "description": "Mensaje de gestionar desde configuración"
+  },
+  "changeUsername": "Cambiar Nombre de Usuario",
+  "@changeUsername": {
+    "description": "Título del diálogo de cambiar nombre de usuario"
+  },
+  "newUsername": "Nuevo nombre de usuario",
+  "@newUsername": {
+    "description": "Etiqueta de entrada de nuevo nombre de usuario"
+  },
+  "currentCoinsText": "Monedas actuales: {coins}",
+  "@currentCoinsText": {
+    "description": "Visualización de monedas actuales",
+    "placeholders": {
+      "coins": {
+        "type": "int"
+      }
+    }
+  },
+  "insufficientCoinsStore": "¡Monedas insuficientes! Puedes comprar monedas en la tienda.",
+  "@insufficientCoinsStore": {
+    "description": "Mensaje de monedas insuficientes en tienda"
+  },
+  "change": "Cambiar",
+  "@change": {
+    "description": "Texto del botón cambiar"
+  },
+  "usernameChange": "Cambio de nombre de usuario",
+  "@usernameChange": {
+    "description": "Descripción de transacción de cambio de nombre de usuario"
+  },
+  "usernameUpdated": "✅ Tu nombre de usuario ha sido actualizado ({cost} monedas gastadas)",
+  "@usernameUpdated": {
+    "description": "Mensaje de éxito de nombre de usuario actualizado",
+    "placeholders": {
+      "cost": {
+        "type": "int"
+      }
+    }
+  },
+  "usernameUpdateFailed": "No se pudo actualizar el nombre de usuario",
+  "@usernameUpdateFailed": {
+    "description": "Mensaje de fallo de actualización de nombre de usuario"
+  },
+  "selectYourAgeTitle": "Selecciona Tu Edad",
+  "@selectYourAgeTitle": {
+    "description": "Título del diálogo de seleccionar edad"
+  },
+  "ageYearsOld": "{age} años",
+  "@ageYearsOld": {
+    "description": "Etiqueta de años de edad",
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "ageInfoUpdated": "Info de edad actualizada",
+  "@ageInfoUpdated": {
+    "description": "Mensaje de info de edad actualizada"
+  },
+  "champions": "Campeones",
+  "@champions": {
+    "description": "Texto del botón campeones"
+  },
+  "participantsCount": "{current}/{max} participantes",
+  "@participantsCount": {
+    "description": "Visualización de conteo de participantes",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "createdBy": "Creado por: {creator}",
+  "@createdBy": {
+    "description": "Visualización de creado por",
+    "placeholders": {
+      "creator": {
+        "type": "String"
+      }
+    }
+  },
+  "unknown": "Desconocido",
+  "@unknown": {
+    "description": "Texto desconocido"
+  },
+  "statusActive": "Activo",
+  "@statusActive": {
+    "description": "Estado activo"
+  },
+  "statusUpcoming": "Próximo",
+  "@statusUpcoming": {
+    "description": "Estado próximo"
+  },
+  "statusCompleted": "Completado",
+  "@statusCompleted": {
+    "description": "Estado completado"
+  },
+  "statusCancelled": "Cancelado",
+  "@statusCancelled": {
+    "description": "Estado cancelado"
+  },
+  "leagueFormatTooltip": "Sistema de Liga: Todos juegan contra todos, la tasa de victoria más alta gana. Participantes ilimitados.",
+  "@leagueFormatTooltip": {
+    "description": "Tooltip de formato de liga"
+  },
+  "eliminationFormatTooltip": "Sistema de Eliminación: Eliminación de partido único. Máximo 8 personas (Cuartos de final, Semifinal, Final).",
+  "@eliminationFormatTooltip": {
+    "description": "Tooltip de formato de eliminación"
+  },
+  "selectTournamentFormat": "Seleccionar formato de torneo",
+  "@selectTournamentFormat": {
+    "description": "Texto de seleccionar formato de torneo"
+  },
+  "privateTournamentInsufficientCoins": "Crear torneo privado requiere {required} monedas. Monedas actuales: {current}",
+  "@privateTournamentInsufficientCoins": {
+    "description": "Mensaje de monedas insuficientes para torneo privado",
+    "placeholders": {
+      "required": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "myPhotos": "Mis Fotos",
+  "@myPhotos": {
+    "description": "Título de la sección mis fotos"
+  },
+
+  "privateTournamentCostMessage": "Crear un torneo privado requiere {required} monedas. Monedas actuales: {current}",
+  "@privateTournamentCostMessage": {
+    "description": "Mensaje de costo de torneo privado",
+    "placeholders": {
+      "required": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "descriptionLabel": "Descripción",
+  "@descriptionLabel": {
+    "description": "Etiqueta de descripción"
+  },
+  "startDateLabel": "Fecha de inicio",
+  "@startDateLabel": {
+    "description": "Etiqueta de fecha de inicio"
+  },
+  "startTimeLabel": "Hora de inicio",
+  "@startTimeLabel": {
+    "description": "Etiqueta de hora de inicio"
+  },
+  "endDateLabel": "Fecha de finalización",
+  "@endDateLabel": {
+    "description": "Etiqueta de fecha de finalización"
+  },
+  "endTimeLabel": "Hora de finalización",
+  "@endTimeLabel": {
+    "description": "Etiqueta de hora de finalización"
+  },
+  "pleaseFillAllFields": "Por favor complete todos los campos",
+  "@pleaseFillAllFields": {
+    "description": "Mensaje de completar todos los campos"
+  },
+  "create": "Crear",
+  "@create": {
+    "description": "Botón de crear"
+  },
+  "privateKeyLabel": "Clave privada",
+  "@privateKeyLabel": {
+    "description": "Etiqueta de clave privada"
+  }
+  ,
+  
+  "deleteReasonBored": "Estoy aburrido",
+  "@deleteReasonBored": {
+    "description": "Razón de eliminación de cuenta - aburrido"
+  },
+  "deleteReasonPoorApp": "Mala calidad de la aplicación",
+  "@deleteReasonPoorApp": {
+    "description": "Razón de eliminación de cuenta - mala calidad"
+  },
+  "deleteReasonNeedBreak": "Necesito un descanso",
+  "@deleteReasonNeedBreak": {
+    "description": "Razón de eliminación de cuenta - necesita descanso"
+  },
+  "deleteReasonFoundBetter": "Encontré una mejor aplicación",
+  "@deleteReasonFoundBetter": {
+    "description": "Razón de eliminación de cuenta - encontró mejor app"
+  },
+  "deleteAccountReasonPrompt": "Por favor, seleccione una razón:",
+  "@deleteAccountReasonPrompt": {
+    "description": "Solicitud de razón de eliminación de cuenta"
+  },
+
+  "matchSettings": "⚔️ Configuración de Partidos",
+
+  "turkey": "Turquía",
+  "germany": "Alemania",
+  "france": "Francia",
+  "italy": "Italia",
+  "spain": "España",
+  "netherlands": "Países Bajos",
+  "belgium": "Bélgica",
+  "austria": "Austria",
+  "switzerland": "Suiza",
+  "poland": "Polonia",
+  "czech_republic": "República Checa",
+  "hungary": "Hungría",
+  "romania": "Rumania",
+  "bulgaria": "Bulgaria",
+  "croatia": "Croacia",
+  "slovenia": "Eslovenia",
+  "slovakia": "Eslovaquia",
+  "estonia": "Estonia",
+  "latvia": "Letonia",
+  "lithuania": "Lituania",
+  "finland": "Finlandia",
+  "sweden": "Suecia",
+  "norway": "Noruega",
+  "denmark": "Dinamarca",
+  "portugal": "Portugal",
+  "greece": "Grecia",
+  "cyprus": "Chipre",
+  "malta": "Malta",
+  "luxembourg": "Luxemburgo",
+  "ireland": "Irlanda",
+  "united_kingdom": "Reino Unido",
+  "iceland": "Islandia"
+}
